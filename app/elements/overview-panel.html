@@ -1,0 +1,80 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/vaadin-charts/vaadin-column-chart.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="overview-panel">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      #container {
+        width: 100%;
+      }
+
+      h1 {
+        color: lightgreen;
+        margin: 40px;
+        font-size: 80px;
+      }
+    </style>
+
+    <div class="layout horizontal" id="container">
+      <div class="layout vertical center-center flex">
+        <h1>[[totalOwed]]</h1>
+      </div>
+      <vaadin-column-chart class="flex-2">
+        <title>Expenses by month</title>
+        <chart background-color="transparent"></chart>
+        <exporting enabled="false"></exporting>
+        <x-axis categories="[[categories]]">
+          <title>Month</title>
+        </x-axis>
+        <y-axis>
+          <title>Moneys</title>
+        </y-axis>
+        <data-series name="Moneys" data="[[seriesData]]"></data-series>>
+      </vaadin-column-chart>
+    </div>
+
+    <iron-ajax auto url="/overview-data.json" handle-as="json" last-response="{{overviewData}}"></iron-ajax>
+
+  </template>
+
+  <script>
+    class OverviewPanel {
+      beforeRegister() {
+        this.is = 'overview-panel';
+        this.properties = {
+          categories: {
+            type: String,
+            value: '',
+            notify: true
+          },
+          seriesData: {
+            type: Array,
+            value: [],
+            notify: true
+          },
+          overviewData: {
+            type: Object,
+            observer: '_dataUpdated'
+          },
+          totalOwed: String
+        };
+      }
+
+      _dataUpdated() {
+        if (this.overviewData) {
+          this.totalOwed = '$' + this.overviewData.totalOwed;
+          this.categories = this.overviewData.history.map(m => m.month).join(', ');
+          this.seriesData = this.overviewData.history.map(m => m.total);
+          console.log(this.categories);
+        }
+      }
+    }
+
+    Polymer(OverviewPanel);
+  </script>
+</dom-module>

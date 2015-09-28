@@ -1,0 +1,40 @@
+{
+  "totalOwed": 15.97,
+  "history": [{
+    "month": "January",
+    "total": 105
+  }, {
+    "month": "February",
+    "total": 238
+  }, {
+    "month": "March",
+    "total": 1789
+  }, {
+    "month": "April",
+    "total": 342
+  }, {
+    "month": "May",
+    "total": 975
+  }, {
+    "month": "June",
+    "total": 647
+  }, {
+    "month": "July",
+    "total": 234
+  }, {
+    "month": "August",
+    "total": 457
+  }, {
+    "month": "September",
+    "total": 1924
+  }, {
+    "month": "October",
+    "total": 342
+  }, {
+    "month": "November",
+    "total": 654
+  }, {
+    "month": "December",
+    "total": 345
+  }]
+}

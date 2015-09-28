@@ -1,0 +1,71 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="expenses-list">
+  <template>
+    <style>
+      :host {
+        display: block;
+        position: relative;
+      }
+
+      #add-button {
+        position: absolute;
+        right: 60px;
+        top: -28px;
+        z-index: 100;
+      }
+
+      #expenses {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+    </style>
+
+    <paper-fab icon="add" on-tap="addExpense" id="add-button"></paper-fab>
+
+    <vaadin-grid id="expenses">
+      <table>
+        <colgroup>
+          <col header-text="Merchant" name="merchant" />
+          <col header-text="Total" name="total" />
+          <col header-text="Date" name="date" />
+          <col header-text="Status" name="status" />
+        </colgroup>
+    </vaadin-grid>
+
+    <iron-ajax auto url="/expenses.json" handle-as="json" last-response="{{expenses}}"></iron-ajax>
+
+  </template>
+
+  <script>
+    class ExpensesList {
+      beforeRegister() {
+        this.is = 'expenses-list';
+        this.properties = {
+          expenses: {
+            type: Array,
+            value: [],
+            observer: '_expensesChanged'
+          }
+        };
+      }
+
+      ready(){
+        this.$.expenses.columns[1].renderer = (cell) => cell.element.innerHTML = '$' + cell.data;
+      }
+
+      _expensesChanged() {
+        this.$.expenses.data.source = this.expenses;
+      }
+    }
+
+    Polymer(ExpensesList);
+  </script>
+</dom-module>

@@ -1,0 +1,82 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
+
+<dom-module id="login-box">
+  <style>
+    :host {
+      display: block;
+      height: 100%;
+      width: 100%;
+      background: url(../images/background.jpg) no-repeat fixed bottom center;
+    }
+
+    #login {
+      width: 400px;
+      --paper-dialog-background-color: #fff;
+    }
+
+    #login h2 {
+      color: var(--default-primary-color);
+    }
+
+    #login-button {
+      color: var(--default-primary-color);
+    }
+  </style>
+
+  <template>
+    <paper-dialog id="login" opened="{{opened}}" no-cancel-on-outside-click entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+      <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_logIn"></iron-a11y-keys>
+      <h2>Log in to Expense App</h2>
+      <div class="content">
+        <paper-input label="Username" id="username" autofocus></paper-input>
+        <paper-input label="Password" id="password" type="password"></paper-input>
+      </div>
+      <div class="buttons layout horizontal end-justified">
+        <paper-button id="login-button" on-tap="_logIn">Log in</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+
+  <script>
+    class LoginBox {
+      beforeRegister() {
+        this.is = 'login-box';
+        this.properties = {
+          token: {
+            type: String,
+            notify: true,
+            value: ''
+          },
+          opened: {
+            computed: '_isLoginVisible(token)'
+          }
+        };
+      }
+
+      _isLoginVisible(token) {
+        return token ? false : true;
+      }
+
+      _logIn() {
+        // TODO: implement actual auth
+        this.token = this.$.username.value;
+        this.fire('logged-in');
+      }
+
+      ready() {
+        // Hack for https://github.com/PolymerElements/paper-dialog/issues/36
+        this.async(() => {
+          this.$.login.center()
+        }, 100);
+      }
+    }
+
+    Polymer(LoginBox);
+  </script>
+</dom-module>

@@ -1,0 +1,24 @@
+<dom-module id="expense-editor">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+  </template>
+  <script>
+    class ExpenseEditor {
+      beforeRegister() {
+        this.is = 'expense-editor';
+        this.properties = {
+          expense: {
+            type: Object,
+            notify: true
+          }
+        };
+      }
+    }
+    Polymer(ExpenseEditor);
+  </script>
+</dom-module>
