@@ -70,7 +70,6 @@
           this.totalOwed = '$' + this.overviewData.totalOwed;
           this.categories = this.overviewData.history.map(m => m.month).join(', ');
           this.seriesData = this.overviewData.history.map(m => m.total);
-          console.log(this.categories);
         }
       }
     }
