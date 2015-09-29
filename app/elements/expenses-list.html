@@ -26,6 +26,11 @@
         right: 0;
         bottom: 0;
       }
+
+      #search {
+        height: 100%;
+        width: 100%;
+      }
     </style>
 
     <paper-fab icon="add" on-tap="addExpense" id="add-button"></paper-fab>
@@ -33,37 +38,85 @@
     <vaadin-grid id="expenses">
       <table>
         <colgroup>
-          <col header-text="Merchant" name="merchant" />
-          <col header-text="Total" name="total" />
-          <col header-text="Date" name="date" />
-          <col header-text="Status" name="status" />
+          <col header-text="Merchant" name="merchant" sortable />
+          <col header-text="Total" name="total" sortable />
+          <col header-text="Date" name="date" sortable />
+          <col header-text="Status" name="status" sortable />
         </colgroup>
       </table>
     </vaadin-grid>
 
-    <iron-ajax auto url="/expenses.json" handle-as="json" last-response="{{expenses}}"></iron-ajax>
-
   </template>
-
+  <script src="../bower_components/accounting/accounting.min.js" charset="utf-8"></script>
+  <script src="../bower_components/moment/moment.js" charset="utf-8"></script>
   <script>
     class ExpensesList {
       beforeRegister() {
         this.is = 'expenses-list';
         this.properties = {
-          expenses: {
-            type: Array,
-            value: [],
-            observer: '_expensesChanged'
-          }
+          token: {
+            type: String,
+            observer: '_tokenChanged'
+          },
+          sortColumn: String,
+          sortDirection: String
         };
       }
 
-      ready(){
-        this.$.expenses.columns[1].renderer = (cell) => cell.element.innerHTML = '$' + cell.data;
+      ready() {
+        let grid = this.$.expenses;
+
+        grid.columns[1].renderer = (cell) => cell.element.innerHTML = accounting.formatMoney(cell.data);
+        grid.columns[2].renderer = (cell) => cell.element.innerHTML = moment(cell.data).format('mm/DD/YYYY');
+
+        grid.addEventListener('sort', () => {
+          this.sortColumn = grid.columns[grid.data.sortOrder[0].column].name;
+          this.sortDirection = grid.data.sortOrder[0].direction;
+          grid.scrollToStart();
+        });
       }
 
-      _expensesChanged() {
-        this.$.expenses.data.source = this.expenses;
+      // We don't want to set the data source until we have a valid token
+      _tokenChanged() {
+        if (!this.token) {
+          return
+        };
+        this.$.expenses.data.source = (req => {
+          this.fetchData(req.index, req.count).then(json => {
+            //only first call
+            if (json.metadata.totalcount) {
+              this.totalcount = json.metadata.totalcount;
+            }
+            req.success(json.result, this.totalcount);
+          });
+        });
+      }
+
+      fetchData(index, count) {
+        return new Promise((resolve, reject) => {
+          var xhr = new XMLHttpRequest();
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+              if (xhr.status === 200) {
+                var json = JSON.parse(xhr.responseText);
+                resolve(json);
+              } else {
+                reject();
+              }
+            }
+          };
+          xhr.open('GET', this._getURLWithQuery(index, count), true);
+          xhr.setRequestHeader('x-access-token', this.token);
+          xhr.send();
+        });
+      }
+
+      _getURLWithQuery(index, count) {
+        let url = `http://localhost:8080/api/v1/expenses?index=${index}&count=${count}`;
+        if (this.sortColumn && this.sortDirection) {
+          url += `&sort=${this.sortColumn}&direction=${this.sortDirection}`;
+        }
+        return url;
       }
     }
 

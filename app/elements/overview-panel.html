@@ -41,7 +41,7 @@
     <iron-ajax auto url="/overview-data.json" handle-as="json" last-response="{{overviewData}}"></iron-ajax>
 
   </template>
-
+  <script src="../bower_components/accounting/accounting.min.js" charset="utf-8"></script>
   <script>
     class OverviewPanel {
       beforeRegister() {
@@ -67,7 +67,7 @@
 
       _dataUpdated() {
         if (this.overviewData) {
-          this.totalOwed = '$' + this.overviewData.totalOwed;
+          this.totalOwed = accounting.formatMoney(this.overviewData.totalOwed);
           this.categories = this.overviewData.history.map(m => m.month).join(', ');
           this.seriesData = this.overviewData.history.map(m => m.total);
         }

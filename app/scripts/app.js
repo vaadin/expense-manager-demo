@@ -12,7 +12,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   let app = document.querySelector('#app');
   app.selected = 0;
-  // app.token = 'secret';
+  //app.token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NjA5YWFlMTAzYzcwZGY0ZTY4N2MwNTAiLCJuYW1lIjoiZGVtbyIsInBhc3N3b3JkIjoiJDJhJDEwJGhKck9GbUlQb3RpVTZzUmVOcVZSSXVhTlJHOVNRMS9IQk1obVRZVzU4QXVQSzVvbnl4dVdTIiwiX192IjowfQ.sZAqcTL_eR_gCIPbf9MbXdBUhBE_NvZT_ocD9bdHjww';
   document.addEventListener('logged-in', () => app.selected = 1);
 
   window.addEventListener('WebComponentsReady', () => {
