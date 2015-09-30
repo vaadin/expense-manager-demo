@@ -20,6 +20,8 @@
     "Polymer": true,
     "Platform": true,
     "page": true,
-    "app": true
+    "app": true,
+    "moment": true,
+    "accounting": true
   }
 }

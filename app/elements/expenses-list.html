@@ -54,10 +54,7 @@
       beforeRegister() {
         this.is = 'expenses-list';
         this.properties = {
-          token: {
-            type: String,
-            observer: '_tokenChanged'
-          },
+          token: String,
           sortColumn: String,
           sortDirection: String
         };
@@ -67,20 +64,13 @@
         let grid = this.$.expenses;
 
         grid.columns[1].renderer = (cell) => cell.element.innerHTML = accounting.formatMoney(cell.data);
-        grid.columns[2].renderer = (cell) => cell.element.innerHTML = moment(cell.data).format('mm/DD/YYYY');
+        grid.columns[2].renderer = (cell) => cell.element.innerHTML = moment(cell.data).format('MM/DD/YYYY');
 
         grid.addEventListener('sort', () => {
           this.sortColumn = grid.columns[grid.data.sortOrder[0].column].name;
           this.sortDirection = grid.data.sortOrder[0].direction;
           grid.scrollToStart();
         });
-      }
-
-      // We don't want to set the data source until we have a valid token
-      _tokenChanged() {
-        if (!this.token) {
-          return
-        };
         this.$.expenses.data.source = (req => {
           this.fetchData(req.index, req.count).then(json => {
             //only first call

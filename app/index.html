@@ -33,16 +33,18 @@
         <login-box token="{{token}}"></login-box>
       </neon-animatable>
       <neon-animatable>
-        <paper-header-panel class="fit">
-          <div class="fit layout vertical">
-            <paper-toolbar>
-              <h1>Expense App</h1>
-            </paper-toolbar>
+        <template is="dom-if" if="[[token]]">
+          <paper-header-panel class="fit">
+            <div class="fit layout vertical">
+              <paper-toolbar>
+                <h1>Expense App</h1>
+              </paper-toolbar>
 
-            <overview-panel token=[[token]]></overview-panel>
-            <expenses-list class="flex" token=[[token]]></expenses-list>
-          </div>
-        </paper-header-panel>
+              <overview-panel token=[[token]]></overview-panel>
+              <expenses-list class="flex" token=[[token]]></expenses-list>
+            </div>
+          </paper-header-panel>
+        </template>
       </neon-animatable>
     </neon-animated-pages>
 

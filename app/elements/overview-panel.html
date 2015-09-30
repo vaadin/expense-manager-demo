@@ -16,7 +16,7 @@
       h1 {
         color: lightgreen;
         margin: 40px;
-        font-size: 80px;
+        font-size: 5em;
       }
     </style>
 
@@ -38,7 +38,7 @@
       </vaadin-column-chart>
     </div>
 
-    <iron-ajax auto url="/overview-data.json" handle-as="json" last-response="{{overviewData}}"></iron-ajax>
+    <iron-ajax auto id="ajax" url="http://localhost:8080/api/v1/expenses/overview" handle-as="json" headers="[[requestHeader]]" last-response="{{overviewData}}"></iron-ajax>
 
   </template>
   <script src="../bower_components/accounting/accounting.min.js" charset="utf-8"></script>
@@ -61,16 +61,29 @@
             type: Object,
             observer: '_dataUpdated'
           },
-          totalOwed: String
+          totalOwed: String,
+          token: String,
+          requestHeader: {
+            type: Object,
+            computed: '_createRequestHeader(token)'
+          }
         };
       }
 
       _dataUpdated() {
         if (this.overviewData) {
           this.totalOwed = accounting.formatMoney(this.overviewData.totalOwed);
-          this.categories = this.overviewData.history.map(m => m.month).join(', ');
+          this.categories = this.overviewData.history.map(m => {
+            return `${m._id.month}/${m._id.year}`;
+          }).join(', ');
           this.seriesData = this.overviewData.history.map(m => m.total);
         }
+      }
+
+      _createRequestHeader(token) {
+        return {
+          'x-access-token': token
+        };
       }
     }
 
