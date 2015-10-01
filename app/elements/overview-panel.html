@@ -74,7 +74,7 @@
         if (this.overviewData) {
           this.totalOwed = accounting.formatMoney(this.overviewData.totalOwed);
           this.categories = this.overviewData.history.map(m => {
-            return `${m._id.month}/${m._id.year}`;
+            return `${m.month}/${m.year}`;
           }).join(', ');
           this.seriesData = this.overviewData.history.map(m => m.total);
         }
