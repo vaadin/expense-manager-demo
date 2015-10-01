@@ -15,20 +15,20 @@
       width: 100%;
       background: #333;
     }
-
+    
     #login {
       width: 400px;
       --paper-dialog-background-color: #fff;
     }
-
+    
     #login h2 {
       color: var(--default-primary-color);
     }
-
+    
     #login-button {
       color: var(--default-primary-color);
     }
-
+    
     .error-message {
       color: red;
     }
@@ -48,12 +48,7 @@
       </div>
 
     </paper-dialog>
-    <iron-ajax
-      id="ajax"
-      url="http://localhost:8080/api/v1/authenticate"
-      method="POST"
-      handle-as="json"
-      on-response="handleResponse"></iron-ajax>
+    <iron-ajax id="ajax" url="http://localhost:8080/api/v1/authenticate" method="POST" handle-as="json" on-response="handleResponse"></iron-ajax>
   </template>
 
   <script>
@@ -89,7 +84,10 @@
         this.errorMessage = '';
         let ajax = this.$.ajax;
         ajax.contentType = 'application/json';
-        ajax.body = {username: this.username, password: this.password};
+        ajax.body = {
+          username: this.username,
+          password: this.password
+        };
         ajax.generateRequest();
       }
 
