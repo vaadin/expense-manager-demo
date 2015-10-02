@@ -25,33 +25,7 @@
 
 <body unresolved class="fullbleed layout vertical">
   <span id="browser-sync-binding"></span>
-
-
-  <template is="dom-bind" id="app">
-    <neon-animated-pages id="pages" class="flex" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-      <neon-animatable>
-        <login-box token="{{token}}"></login-box>
-      </neon-animatable>
-      <neon-animatable>
-        <template is="dom-if" if="[[token]]">
-          <paper-header-panel class="fit">
-            <div class="fit layout vertical">
-              <paper-toolbar>
-                <h1>Expense App</h1>
-              </paper-toolbar>
-
-              <overview-panel token=[[token]]></overview-panel>
-              <expenses-list class="flex" token=[[token]]></expenses-list>
-            </div>
-          </paper-header-panel>
-        </template>
-      </neon-animatable>
-    </neon-animated-pages>
-
-  </template>
-  <!-- build:js scripts/app.js -->
-  <script src="scripts/app.js"></script>
-  <!-- endbuild-->
+  <expense-app class="fit"></expense-app>
 </body>
 
 </html>

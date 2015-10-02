@@ -24,7 +24,7 @@
       <div class="layout vertical center-center flex">
         <h1>[[totalOwed]]</h1>
       </div>
-      <vaadin-column-chart class="flex-2">
+      <vaadin-column-chart class="flex">
         <title>Expenses by month</title>
         <chart background-color="transparent"></chart>
         <exporting enabled="false"></exporting>
@@ -68,6 +68,10 @@
             computed: '_createRequestHeader(token)'
           }
         };
+      }
+
+      update() {
+        this.$.ajax.generateRequest();
       }
 
       _dataUpdated() {

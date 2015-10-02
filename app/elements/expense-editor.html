@@ -26,7 +26,7 @@
         <label for="date">Date</label>
         <input name="date" type="date" id="date" required auto-validate></input>
       </div>
-      <paper-textarea name="comment" label="Comment"></paper-textarea>
+      <paper-textarea name="comment" label="Comment" value=""></paper-textarea>
       <div class="buttons layout horizontal">
         <paper-button>Cancel</paper-button>
         <paper-button raised on-tap="_add" class="save">Add</paper-button>
@@ -45,11 +45,20 @@
           },
           token: String
         };
+        this.listeners = {
+          'iron-form-response': '_handleResponse'
+        };
       }
+
       _add() {
         let form = this.$.form;
         if (form.validate()) {
           form.submit();
+        }
+      }
+
+      _handleResponse(evt) {
+        if (evt.detail.success) {
           this.fire('expenses-updated');
         }
       }

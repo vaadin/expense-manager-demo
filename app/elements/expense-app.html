@@ -1,0 +1,69 @@
+<link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="../styles/app-theme.html">
+<dom-module id="expense-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <neon-animated-pages id="pages" class="fit" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+      <neon-animatable>
+        <login-box token="{{token}}"></login-box>
+      </neon-animatable>
+      <neon-animatable>
+        <template is="dom-if" if="[[token]]">
+          <paper-header-panel class="flex">
+            <div class="fit layout vertical">
+              <paper-toolbar>
+                <h1>Expense App</h1>
+              </paper-toolbar>
+
+              <overview-panel id="overview" token=[[token]]></overview-panel>
+              <expenses-list id="expenses" class="flex" token=[[token]]></expenses-list>
+            </div>
+          </paper-header-panel>
+        </template>
+      </neon-animatable>
+    </neon-animated-pages>
+  </template>
+  <script>
+    class ExpenseApp {
+      beforeRegister() {
+        this.is = 'expense-app';
+        this.properties = {
+          selected: {
+            type: Number,
+            value: 0,
+            notify: true
+          },
+          token: {
+            type: String,
+            notify: true,
+            //value: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NjA5YWFlMTAzYzcwZGY0ZTY4N2MwNTAiLCJuYW1lIjoiZGVtbyIsInBhc3N3b3JkIjoiJDJhJDEwJGhKck9GbUlQb3RpVTZzUmVOcVZSSXVhTlJHOVNRMS9IQk1obVRZVzU4QXVQSzVvbnl4dVdTIiwiX192IjowfQ.sZAqcTL_eR_gCIPbf9MbXdBUhBE_NvZT_ocD9bdHjww'
+          }
+        };
+        this.listeners = {
+          'logged-in': '_handleLogin',
+          'expenses-updated': '_updateExpenses'
+        };
+
+      }
+
+      _handleLogin() {
+        this.selected = 1;
+      }
+
+      _updateExpenses() {
+        document.querySelector('overview-panel').update();
+        document.querySelector('expenses-list').update();
+      }
+    }
+
+    Polymer(ExpenseApp);
+  </script>
+</dom-module>
