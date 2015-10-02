@@ -3,6 +3,7 @@
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="expense-editor.html">
 
 <dom-module id="expenses-list">
   <template>
@@ -16,7 +17,7 @@
         position: absolute;
         right: 60px;
         top: -28px;
-        z-index: 100;
+        z-index: 2;
       }
       
       #expenses {
@@ -31,9 +32,14 @@
         height: 100%;
         width: 100%;
       }
+      
+      #expenseEditor {
+        width: 500px;
+        background: #fff;
+      }
     </style>
 
-    <paper-fab icon="add" on-tap="addExpense" id="add-button"></paper-fab>
+    <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
 
     <vaadin-grid id="expenses">
       <table>
@@ -45,7 +51,10 @@
         </colgroup>
       </table>
     </vaadin-grid>
-
+    <paper-dialog modal id="expenseEditor">
+      <h2>Add Expense</h2>
+      <expense-editor token="[[token]]"></expense-editor>
+    </paper-dialog>
   </template>
   <script src="../bower_components/accounting/accounting.min.js" charset="utf-8"></script>
   <script src="../bower_components/moment/moment.js" charset="utf-8"></script>
@@ -57,6 +66,9 @@
           token: String,
           sortColumn: String,
           sortDirection: String
+        };
+        this.listeners = {
+          'expenses-updated': 'update'
         };
       }
 
@@ -101,12 +113,21 @@
         });
       }
 
+      update() {
+        this.$.expenseEditor.close();
+        this.$.expenses.data.clearCache();
+      }
+
       _getURLWithQuery(index, count) {
         let url = `http://localhost:8080/api/v1/expenses?index=${index}&count=${count}`;
         if (this.sortColumn && this.sortDirection) {
           url += `&sort=${this.sortColumn}&direction=${this.sortDirection}`;
         }
         return url;
+      }
+
+      _showExpenseEditor() {
+        this.$.expenseEditor.open();
       }
     }
 

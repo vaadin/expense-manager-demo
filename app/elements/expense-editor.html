@@ -1,10 +1,37 @@
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 <dom-module id="expense-editor">
   <template>
     <style>
       :host {
         display: block;
       }
+      
+      paper-button.save {
+        background: var(--default-primary-color);
+        color: var(--text-primary-color);
+      }
     </style>
+    <form is="iron-form" id="form" method="post" action="http://localhost:8080/api/v1/expenses">
+      <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_add"></iron-a11y-keys>
+      <input type="hidden" name="token" value="[[token]]"></input>
+      <paper-input name="merchant" label="Merchant" autofocus required auto-validate error-message="Merchant name required"></paper-input>
+      <div class="layout horizontal">
+        <paper-input name="total" label="Total" required auto-validate pattern="[\d,.]+" error-message="Numeric values only">
+          <div prefix>$</div>
+        </paper-input>
+        <label for="date">Date</label>
+        <input name="date" type="date" id="date" required auto-validate></input>
+      </div>
+      <paper-textarea name="comment" label="Comment"></paper-textarea>
+      <div class="buttons layout horizontal">
+        <paper-button>Cancel</paper-button>
+        <paper-button raised on-tap="_add" class="save">Add</paper-button>
+      </div>
+    </form>
 
   </template>
   <script>
@@ -15,8 +42,16 @@
           expense: {
             type: Object,
             notify: true
-          }
+          },
+          token: String
         };
+      }
+      _add() {
+        let form = this.$.form;
+        if (form.validate()) {
+          form.submit();
+          this.fire('expenses-updated');
+        }
       }
     }
     Polymer(ExpenseEditor);
