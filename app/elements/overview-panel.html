@@ -32,13 +32,13 @@
           <title>Month</title>
         </x-axis>
         <y-axis>
-          <title>Moneys</title>
+          <title>$</title>
         </y-axis>
-        <data-series name="Moneys" data="[[seriesData]]"></data-series>>
+        <data-series name="$" data="[[seriesData]]"></data-series>>
       </vaadin-column-chart>
     </div>
 
-    <iron-ajax auto id="ajax" url="http://localhost:8080/api/v1/expenses/overview" handle-as="json" headers="[[requestHeader]]" last-response="{{overviewData}}"></iron-ajax>
+    <iron-ajax auto id="ajax" url="[[url]]" handle-as="json" headers="[[requestHeader]]" last-response="{{overviewData}}"></iron-ajax>
 
   </template>
   <script src="../bower_components/accounting/accounting.min.js" charset="utf-8"></script>
@@ -61,17 +61,22 @@
             type: Object,
             observer: '_dataUpdated'
           },
-          totalOwed: String,
-          token: String,
           requestHeader: {
             type: Object,
             computed: '_createRequestHeader(token)'
-          }
+          },
+          url: String,
+          totalOwed: String,
+          token: String
         };
       }
 
       update() {
         this.$.ajax.generateRequest();
+      }
+
+      ready() {
+        this.url = Config.baseURL + '/expenses/overview';
       }
 
       _dataUpdated() {

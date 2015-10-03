@@ -10,7 +10,8 @@
     "page": "visionmedia/page.js#~1.6.3",
     "vaadin-components": "~0.3.0-beta9",
     "vaadin-charts": "~3.0.0-alpha6",
-    "accounting": "~0.3.2"
+    "accounting": "~0.3.2",
+    "file-input": "~2.0.0"
   },
   "devDependencies": {
     "web-component-tester": "*",

@@ -14,25 +14,53 @@
         background: var(--default-primary-color);
         color: var(--text-primary-color);
       }
+      
+      #receipt {
+        width: 50%;
+        margin: 10px 2.5%;
+        background: #ccc;
+      }
+      
+      #dialog {
+        width: 80vw;
+        background: #fff;
+      }
+      
+      #error {
+        color: red;
+      }
     </style>
-    <form is="iron-form" id="form" method="post" action="http://localhost:8080/api/v1/expenses">
-      <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_add"></iron-a11y-keys>
-      <input type="hidden" name="token" value="[[token]]"></input>
-      <paper-input name="merchant" label="Merchant" autofocus required auto-validate error-message="Merchant name required"></paper-input>
-      <div class="layout horizontal">
-        <paper-input name="total" label="Total" required auto-validate pattern="[\d,.]+" error-message="Numeric values only">
-          <div prefix>$</div>
-        </paper-input>
-        <label for="date">Date</label>
-        <input name="date" type="date" id="date" required auto-validate></input>
+    <paper-dialog modal id="dialog">
+      <h2>Add Expense</h2>
+      <div>
+        <div class="layout horizontal">
+          <form is="iron-form" id="form" method="post" action="[[url]]">
+            <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_add"></iron-a11y-keys>
+            <input type="hidden" name="token" value="[[token]]" />
+            <template is="dom-if" if="[[expense._id]]">
+              <input type="hidden" name="_id" value="[[expense._id]]" />
+            </template>
+            <paper-input name="merchant" label="Merchant" value="[[expense.merchant]]" autofocus required error-message="Merchant name required"></paper-input>
+            <div class="layout horizontal">
+              <paper-input name="total" label="Total" value="[[expense.total]]" required pattern="[\d,.]+" error-message="Numeric values only">
+                <div prefix>$</div>
+              </paper-input>
+              <label for="date">Date</label>
+              <input name="date" type="date" id="date" value="[[expense.date]]" required></input>
+            </div>
+            <label for="receiptupload">Upload receipt</label>
+            <input type="file" accept="image/jpeg" id="receiptupload" name="receipt" capture="camera">
+            <paper-textarea name="comment" label="Comment" value=""></paper-textarea>
+          </form>
+          <img id="receipt" scr="#" alt="receipt" />
+        </div>
+        <span id="error"></span>
+        <div class="buttons layout horizontal">
+          <paper-button on-tap="close">Cancel</paper-button>
+          <paper-button raised on-tap="_save" class="save">Save</paper-button>
+        </div>
       </div>
-      <paper-textarea name="comment" label="Comment" value=""></paper-textarea>
-      <div class="buttons layout horizontal">
-        <paper-button>Cancel</paper-button>
-        <paper-button raised on-tap="_add" class="save">Add</paper-button>
-      </div>
-    </form>
-
+    </paper-dialog>
   </template>
   <script>
     class ExpenseEditor {
@@ -41,16 +69,51 @@
         this.properties = {
           expense: {
             type: Object,
-            notify: true
+            notify: true,
+            value: {}
           },
+          url: String,
           token: String
         };
         this.listeners = {
-          'iron-form-response': '_handleResponse'
+          'iron-form-response': '_handleResponse',
+          'iron-form-error': '_handleSubmitError'
         };
       }
 
-      _add() {
+      showReceipt(evt) {
+        let input = evt.target;
+        if (input.files && input.files[0]) {
+          let receipt = input.files[0];
+          if (!receipt.type.match('image.*')) {
+            return;
+          }
+
+          let reader = new FileReader();
+          reader.onload = (e) => {
+            document.querySelector('#receipt').src = e.target.result;
+            document.querySelector('#dialog').center();
+          };
+          reader.readAsDataURL(receipt);
+        }
+      }
+
+      ready() {
+        this.url = Config.baseURL + '/expenses';
+        this.$.receiptupload.addEventListener('change', this.showReceipt);
+      }
+
+      open() {
+        this.$.dialog.open();
+      }
+
+      close() {
+        this.$.dialog.close();
+        this.expense = {};
+      }
+
+      _save() {
+        this.$.error.text = '';
         let form = this.$.form;
         if (form.validate()) {
           form.submit();
@@ -61,6 +124,10 @@
         if (evt.detail.success) {
           this.fire('expenses-updated');
         }
+      }
+
+      _handleSubmitError(evt) {
+        this.$.error.text = evt.details.message;
       }
     }
     Polymer(ExpenseEditor);

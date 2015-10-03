@@ -3,7 +3,6 @@
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="expense-editor.html">
 
 <dom-module id="expenses-list">
   <template>
@@ -32,11 +31,6 @@
         height: 100%;
         width: 100%;
       }
-      
-      #expenseEditor {
-        width: 500px;
-        background: #fff;
-      }
     </style>
 
     <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
@@ -51,10 +45,6 @@
         </colgroup>
       </table>
     </vaadin-grid>
-    <paper-dialog modal id="expenseEditor">
-      <h2>Add Expense</h2>
-      <expense-editor token="[[token]]"></expense-editor>
-    </paper-dialog>
   </template>
   <script src="../bower_components/accounting/accounting.min.js" charset="utf-8"></script>
   <script src="../bower_components/moment/moment.js" charset="utf-8"></script>
@@ -65,7 +55,8 @@
         this.properties = {
           token: String,
           sortColumn: String,
-          sortDirection: String
+          sortDirection: String,
+          baseURL: String
         };
       }
 
@@ -111,12 +102,11 @@
       }
 
       update() {
-        this.$.expenseEditor.close();
         this.$.expenses.data.clearCache();
       }
 
       _getURLWithQuery(index, count) {
-        let url = `http://localhost:8080/api/v1/expenses?index=${index}&count=${count}`;
+        let url = `${Config.baseURL}/expenses?index=${index}&count=${count}`;
         if (this.sortColumn && this.sortDirection) {
           url += `&sort=${this.sortColumn}&direction=${this.sortDirection}`;
         }
@@ -124,7 +114,7 @@
       }
 
       _showExpenseEditor() {
-        this.$.expenseEditor.open();
+        this.fire('edit-expense');
       }
     }
 

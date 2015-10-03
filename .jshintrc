@@ -22,6 +22,7 @@
     "page": true,
     "app": true,
     "moment": true,
-    "accounting": true
+    "accounting": true,
+    "Config": true
   }
 }

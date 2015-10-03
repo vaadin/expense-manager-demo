@@ -48,7 +48,7 @@
       </div>
 
     </paper-dialog>
-    <iron-ajax id="ajax" url="http://localhost:8080/api/v1/authenticate" method="POST" handle-as="json" on-response="handleResponse"></iron-ajax>
+    <iron-ajax id="ajax" url="{{url}}" method="POST" handle-as="json" on-response="handleResponse"></iron-ajax>
   </template>
 
   <script>
@@ -72,7 +72,8 @@
             type: String,
             value: 'demo'
           },
-          errorMessage: String
+          errorMessage: String,
+          url: String
         };
       }
 
@@ -101,10 +102,13 @@
         }
       }
       ready() {
+        this.url = Config.baseURL + '/authenticate';
         // Hack for https://github.com/PolymerElements/paper-dialog/issues/36
-        this.async(() => {
-          this.$.login.center();
-        }, 100);
+        if (this.opened) {
+          this.async(() => {
+            this.$.login.center();
+          }, 100);
+        }
       }
     }
 
