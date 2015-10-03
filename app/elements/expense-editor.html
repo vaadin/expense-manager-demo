@@ -31,7 +31,7 @@
       }
     </style>
     <paper-dialog modal id="dialog">
-      <h2>Add Expense</h2>
+      <h2>{{header}}</h2>
       <div>
         <div class="layout horizontal">
           <form is="iron-form" id="form" method="post" action="[[url]]">
@@ -49,7 +49,7 @@
               <input name="date" type="date" id="date" value="[[expense.date]]" required></input>
             </div>
             <label for="receiptupload">Upload receipt</label>
-            <input type="file" accept="image/jpeg" id="receiptupload" name="receipt" capture="camera">
+            <input type="file" accept="image/jpeg" id="receiptupload" name="receipt" capture="camera" required>
             <paper-textarea name="comment" label="Comment" value=""></paper-textarea>
           </form>
           <img id="receipt" scr="#" alt="receipt" />
@@ -71,6 +71,10 @@
             type: Object,
             notify: true,
             value: {}
+          },
+          header: {
+            type: String,
+            computed: '_getHeader(expense)'
           },
           url: String,
           token: String
@@ -110,6 +114,14 @@
       close() {
         this.$.dialog.close();
         this.expense = {};
+      }
+
+      _getHeader(expense) {
+        if (expense.merchant) {
+          return 'Edit Expense';
+        } else {
+          return 'Add Expense';
+        }
       }
 
       _save() {

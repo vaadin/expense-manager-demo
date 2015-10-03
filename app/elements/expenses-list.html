@@ -62,6 +62,7 @@
 
       ready() {
         let grid = this.$.expenses;
+        let self = this;
 
         grid.columns[1].renderer = (cell) => cell.element.innerHTML = accounting.formatMoney(cell.data);
         grid.columns[2].renderer = (cell) => cell.element.innerHTML = moment(cell.data).format('MM/DD/YYYY');
@@ -71,7 +72,7 @@
           this.sortDirection = grid.data.sortOrder[0].direction;
           grid.scrollToStart();
         });
-        this.$.expenses.data.source = (req => {
+        grid.data.source = (req => {
           this.fetchData(req.index, req.count).then(json => {
             //only first call
             if (json.metadata.totalcount) {
@@ -80,6 +81,18 @@
             req.success(json.result, this.totalcount);
           });
         });
+
+        grid.addEventListener('select', () => {
+          let selection = grid.selection.selected();
+          if (selection.length === 1) {
+            grid.data.getItem(selection[0], (err, item) => {
+              self.fire('edit-expense', {
+                expense: item
+              });
+            });
+          }
+        });
+
       }
 
       fetchData(index, count) {
