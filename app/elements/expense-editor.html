@@ -10,39 +10,42 @@
       :host {
         display: block;
       }
-      
+
       paper-button.save {
         background: var(--default-primary-color);
         color: var(--text-primary-color);
       }
-      
+
       #preview {
         width: 50%;
         margin: 10px 2.5%;
       }
-      
+
       #dialog {
         width: 80vw;
         background: #fff;
       }
-      
+
       #error {
         color: red;
       }
     </style>
     <paper-dialog modal id="dialog">
       <h2>{{header}}</h2>
+
       <div>
         <div class="layout horizontal">
           <form is="iron-form" id="form" method="post" action="[[url]]" contentType="multipart/form-data">
             <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_add"></iron-a11y-keys>
-            <input type="hidden" name="token" value="[[token]]" />
+            <input type="hidden" name="token" value="[[token]]"/>
             <template is="dom-if" if="[[expense._id]]">
-              <input type="hidden" name="_id" value="[[expense._id]]" />
+              <input type="hidden" name="_id" value="[[expense._id]]"/>
             </template>
-            <paper-input name="merchant" label="Merchant" value="[[expense.merchant]]" autofocus required error-message="Merchant name required"></paper-input>
+            <paper-input name="merchant" label="Merchant" value="[[expense.merchant]]" autofocus required
+                         error-message="Merchant name required"></paper-input>
             <div class="layout horizontal">
-              <paper-input name="total" label="Total" value="[[expense.total]]" required pattern="[\d,.]+" error-message="Numeric values only">
+              <paper-input name="total" label="Total" value="[[expense.total]]" required pattern="[\d,.]+"
+                           error-message="Numeric values only">
                 <div prefix>$</div>
               </paper-input>
               <label for="date">Date</label>
@@ -52,9 +55,10 @@
             <input type="file" accept="image/jpeg" id="receiptupload" name="receipt" capture="camera" required>
             <paper-textarea name="comment" label="Comment" value=""></paper-textarea>
           </form>
-          <canvas-img id="preview" />
+          <canvas-img id="preview"/>
         </div>
         <span id="error"></span>
+
         <div class="buttons layout horizontal">
           <paper-button on-tap="close">Cancel</paper-button>
           <paper-button raised on-tap="_save" class="save">Save</paper-button>
@@ -63,86 +67,83 @@
     </paper-dialog>
   </template>
   <script>
-    class ExpenseEditor {
-      beforeRegister() {
-        this.is = 'expense-editor';
-        this.properties = {
-          expense: {
-            type: Object,
-            notify: true,
-            value: {}
-          },
-          header: {
-            type: String,
-            computed: '_getHeader(expense)'
-          },
-          url: String,
-          token: String
-        };
-        this.listeners = {
-          'iron-form-response': '_handleResponse',
-          'iron-form-error': '_handleSubmitError'
-        };
-      }
+    Polymer({
+      is: 'expense-editor',
+      properties: {
+        expense: {
+          type: Object,
+          notify: true,
+          value: {}
+        },
+        header: {
+          type: String,
+          computed: '_getHeader(expense)'
+        },
+        url: String,
+        token: String
+      },
+      listeners: {
+        'iron-form-response': '_handleResponse',
+        'iron-form-error': '_handleSubmitError'
+      },
 
-      showReceipt(evt) {
-        let input = evt.target;
-        let preview = document.querySelector('#preview');
+      showReceipt: function (evt) {
+        var input = evt.target;
+        var preview = document.querySelector('#preview');
         if (input.files && input.files[0]) {
-          let receipt = input.files[0];
+          var receipt = input.files[0];
           if (!receipt.type.match('image.*')) {
             return;
           }
 
-          let reader = new FileReader();
-          reader.onload = (e) => {
+          var reader = new FileReader();
+          reader.onload = function (e) {
             preview.src = e.target.result;
             document.querySelector('#dialog').center();
           };
           reader.readAsDataURL(receipt);
         }
-      }
+      },
 
-      ready() {
+      ready: function () {
         this.url = Config.baseURL + '/expenses';
         this.$.receiptupload.addEventListener('change', this.showReceipt);
-      }
+      },
 
-      open() {
+      open: function () {
         this.$.dialog.open();
-      }
+      },
 
-      close() {
+      close: function () {
         this.$.dialog.close();
         this.expense = {};
-      }
+      },
 
-      _getHeader(expense) {
+      _getHeader: function (expense) {
         if (expense.merchant) {
           return 'Edit Expense';
         } else {
           return 'Add Expense';
         }
-      }
+      },
 
-      _save() {
+      _save: function () {
         this.$.error.text = '';
-        let form = this.$.form;
+        var form = this.$.form;
         if (form.validate()) {
           form.submit();
         }
-      }
+      },
 
-      _handleResponse(evt) {
+      _handleResponse: function (evt) {
         if (evt.detail.success) {
           this.fire('expenses-updated');
         }
-      }
+      },
 
-      _handleSubmitError(evt) {
+      _handleSubmitError: function (evt) {
         this.$.error.text = evt.details.message;
       }
-    }
-    Polymer(ExpenseEditor);
+    });
   </script>
 </dom-module>

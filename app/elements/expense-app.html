@@ -13,7 +13,8 @@
         display: block;
       }
     </style>
-    <neon-animated-pages id="pages" class="fit" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+    <neon-animated-pages id="pages" class="fit" selected="[[selected]]" entry-animation="fade-in-animation"
+                         exit-animation="fade-out-animation">
       <neon-animatable>
         <login-box token="{{token}}"></login-box>
       </neon-animatable>
@@ -38,49 +39,45 @@
     <paper-toast id="saveNotification" text="Expense saved"></paper-toast>
   </template>
   <script>
-    class ExpenseApp {
-      beforeRegister() {
-        this.is = 'expense-app';
-        this.properties = {
-          selected: {
-            type: Number,
-            value: 0,
-            notify: true
-          },
-          token: {
-            type: String,
-            notify: true,
-            //value: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NjA5YWFlMTAzYzcwZGY0ZTY4N2MwNTAiLCJuYW1lIjoiZGVtbyIsInBhc3N3b3JkIjoiJDJhJDEwJGhKck9GbUlQb3RpVTZzUmVOcVZSSXVhTlJHOVNRMS9IQk1obVRZVzU4QXVQSzVvbnl4dVdTIiwiX192IjowfQ.sZAqcTL_eR_gCIPbf9MbXdBUhBE_NvZT_ocD9bdHjww'
-          }
-        };
-        this.listeners = {
-          'logged-in': '_handleLogin',
-          'expenses-updated': '_updateExpenses',
-          'edit-expense': '_editExpense'
-        };
+    Polymer({
+      is: 'expense-app',
+      properties: {
+        selected: {
+          type: Number,
+          value: 0,
+          notify: true
+        },
+        token: {
+          type: String,
+          notify: true,
+          //value: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NjA5YWFlMTAzYzcwZGY0ZTY4N2MwNTAiLCJuYW1lIjoiZGVtbyIsInBhc3N3b3JkIjoiJDJhJDEwJGhKck9GbUlQb3RpVTZzUmVOcVZSSXVhTlJHOVNRMS9IQk1obVRZVzU4QXVQSzVvbnl4dVdTIiwiX192IjowfQ.sZAqcTL_eR_gCIPbf9MbXdBUhBE_NvZT_ocD9bdHjww'
+        }
+      },
+      listeners: {
+        'logged-in': '_handleLogin',
+        'expenses-updated': '_updateExpenses',
+        'edit-expense': '_editExpense'
+      },
 
-      }
 
-      _handleLogin() {
+      _handleLogin: function () {
         this.selected = 1;
-      }
+      },
 
-      _editExpense(evt) {
-        let editor = this.$.expenseEditor;
+      _editExpense: function (evt) {
+        var editor = this.$.expenseEditor;
         if (evt.detail && evt.detail.expense) {
           editor.expense = evt.detail.expense;
         }
         editor.open();
-      }
+      },
 
-      _updateExpenses() {
+      _updateExpenses: function () {
         document.querySelector('overview-panel').update();
         document.querySelector('expenses-list').update();
         this.$.expenseEditor.close();
         this.$.saveNotification.show();
       }
-    }
-
-    Polymer(ExpenseApp);
+    });
   </script>
 </dom-module>

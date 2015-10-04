@@ -15,29 +15,31 @@
       width: 100%;
       background: #333;
     }
-    
+
     #login {
       width: 400px;
       --paper-dialog-background-color: #fff;
     }
-    
+
     #login h2 {
       color: var(--default-primary-color);
     }
-    
+
     #login-button {
       color: var(--default-primary-color);
     }
-    
+
     .error-message {
       color: red;
     }
   </style>
 
   <template>
-    <paper-dialog id="login" opened="{{opened}}" no-cancel-on-outside-click no-cancel-on-esc-key entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+    <paper-dialog id="login" opened="{{opened}}" no-cancel-on-outside-click no-cancel-on-esc-key
+                  entry-animation="scale-up-animation" exit-animation="fade-out-animation">
       <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_logIn"></iron-a11y-keys>
       <h2>Log in to Expense App</h2>
+
       <div class="content">
         <form is="iron-form" id="form" method="post" action="[[url]]">
           <paper-input value={{username}} label="Username" name="username" autofocus></paper-input>
@@ -54,68 +56,67 @@
   </template>
 
   <script>
-    class LoginBox {
-      beforeRegister() {
-        this.is = 'login-box';
-        this.properties = {
-          token: {
-            type: String,
-            notify: true,
-            value: ''
-          },
-          opened: {
-            computed: '_isLoginVisible(token)'
-          },
-          username: {
-            type: String,
-            value: 'demo'
-          },
-          password: {
-            type: String,
-            value: 'demo'
-          },
-          errorMessage: String,
-          url: String
-        };
-        this.listeners = {
-          'iron-form-response': '_handleResponse',
-          'iron-form-error': '_handleSubmitError'
-        };
-      }
+    Polymer({
+      is: 'login-box',
+      properties: {
+        token: {
+          type: String,
+          notify: true,
+          value: ''
+        },
+        opened: {
+          computed: '_isLoginVisible(token)'
+        },
+        username: {
+          type: String,
+          value: 'demo'
+        },
+        password: {
+          type: String,
+          value: 'demo'
+        },
+        errorMessage: String,
+        url: String
+      },
 
-      _isLoginVisible(token) {
+      listeners: {
+        'iron-form-response': '_handleResponse',
+        'iron-form-error': '_handleSubmitError'
+      },
+
+
+      _isLoginVisible: function (token) {
         return token ? false : true;
-      }
+      },
 
-      _logIn() {
+      _logIn: function () {
         this.$.form.submit();
-      }
+      },
 
-      _handleResponse(evt) {
-        let response = evt.detail;
+      _handleResponse: function (evt) {
+        var response = evt.detail;
         if (response.success) {
           this.token = response.token;
           this.fire('logged-in');
         } else {
           this.errorMessage = response.message;
         }
-      }
+      },
 
-      _handleSubmitError() {
+      _handleSubmitError: function () {
         this.errorMessage = 'Login failed';
-      }
+      },
 
-      ready() {
+      ready: function () {
         this.url = Config.baseURL + '/authenticate';
+        var _this = this;
         // Hack for https://github.com/PolymerElements/paper-dialog/issues/36
         if (this.opened) {
-          this.async(() => {
-            this.$.login.center();
+          this.async(function () {
+            _this.$.login.center();
           }, 100);
         }
       }
-    }
-
-    Polymer(LoginBox);
+    });
   </script>
 </dom-module>

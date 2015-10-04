@@ -11,14 +11,14 @@
         display: block;
         position: relative;
       }
-      
+
       #add-button {
         position: absolute;
         right: 60px;
         top: -28px;
         z-index: 2;
       }
-      
+
       #expenses {
         position: absolute;
         top: 0;
@@ -26,7 +26,7 @@
         right: 0;
         bottom: 0;
       }
-      
+
       #search {
         height: 100%;
         width: 100%;
@@ -38,10 +38,10 @@
     <vaadin-grid id="expenses">
       <table>
         <colgroup>
-          <col header-text="Merchant" name="merchant" sortable />
-          <col header-text="Total" name="total" sortable />
-          <col header-text="Date" name="date" sortable />
-          <col header-text="Status" name="status" sortable />
+          <col header-text="Merchant" name="merchant" sortable/>
+          <col header-text="Total" name="total" sortable/>
+          <col header-text="Date" name="date" sortable/>
+          <col header-text="Status" name="status" sortable/>
         </colgroup>
       </table>
     </vaadin-grid>
@@ -49,56 +49,59 @@
   <script src="../bower_components/accounting/accounting.min.js" charset="utf-8"></script>
   <script src="../bower_components/moment/moment.js" charset="utf-8"></script>
   <script>
-    class ExpensesList {
-      beforeRegister() {
-        this.is = 'expenses-list';
-        this.properties = {
-          token: String,
-          sortColumn: String,
-          sortDirection: String,
-          baseURL: String
+    Polymer({
+      is: 'expenses-list',
+      properties: {
+        token: String,
+        sortColumn: String,
+        sortDirection: String,
+        baseURL: String
+      },
+
+      ready: function () {
+        var grid = this.$.expenses;
+        var _this = this;
+
+        grid.columns[1].renderer = function (cell) {
+          cell.element.innerHTML = accounting.formatMoney(cell.data);
         };
-      }
+        grid.columns[2].renderer = function (cell) {
+          cell.element.innerHTML = moment(cell.data).format('MM/DD/YYYY');
+        };
 
-      ready() {
-        let grid = this.$.expenses;
-        let self = this;
-
-        grid.columns[1].renderer = (cell) => cell.element.innerHTML = accounting.formatMoney(cell.data);
-        grid.columns[2].renderer = (cell) => cell.element.innerHTML = moment(cell.data).format('MM/DD/YYYY');
-
-        grid.addEventListener('sort', () => {
-          this.sortColumn = grid.columns[grid.data.sortOrder[0].column].name;
-          this.sortDirection = grid.data.sortOrder[0].direction;
+        grid.addEventListener('sort', function () {
+          _this.sortColumn = grid.columns[grid.data.sortOrder[0].column].name;
+          _this.sortDirection = grid.data.sortOrder[0].direction;
           grid.scrollToStart();
         });
-        grid.data.source = (req => {
-          this.fetchData(req.index, req.count).then(json => {
+        grid.data.source = function (req) {
+          _this.fetchData(req.index, req.count).then(function (json) {
             //only first call
             if (json.metadata.totalcount) {
-              this.totalcount = json.metadata.totalcount;
+              _this.totalcount = json.metadata.totalcount;
             }
-            req.success(json.result, this.totalcount);
+            req.success(json.result, _this.totalcount);
           });
-        });
+        };
 
-        grid.addEventListener('select', () => {
-          let selection = grid.selection.selected();
+        grid.addEventListener('select', function () {
+          var selection = grid.selection.selected();
           if (selection.length === 1) {
-            grid.data.getItem(selection[0], (err, item) => {
-              self.fire('edit-expense', {
+            grid.data.getItem(selection[0], function (err, item) {
+              _this.fire('edit-expense', {
                 expense: item
               });
             });
           }
         });
 
-      }
+      },
 
-      fetchData(index, count) {
-        return new Promise((resolve, reject) => {
+      fetchData: function (index, count) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
           var xhr = new XMLHttpRequest();
-          xhr.onreadystatechange = function() {
+          xhr.onreadystatechange = function () {
             if (xhr.readyState === XMLHttpRequest.DONE) {
               if (xhr.status === 200) {
                 var json = JSON.parse(xhr.responseText);
@@ -108,29 +111,27 @@
               }
             }
           };
-          xhr.open('GET', this._getURLWithQuery(index, count), true);
-          xhr.setRequestHeader('x-access-token', this.token);
+          xhr.open('GET', _this._getURLWithQuery(index, count), true);
+          xhr.setRequestHeader('x-access-token', _this.token);
           xhr.send();
         });
-      }
+      },
 
-      update() {
+      update: function () {
         this.$.expenses.data.clearCache();
-      }
+      },
 
-      _getURLWithQuery(index, count) {
-        let url = `${Config.baseURL}/expenses?index=${index}&count=${count}`;
+      _getURLWithQuery: function (index, count) {
+        var url = Config.baseURL + '/expenses?index=' + index + '&count=' + count;
         if (this.sortColumn && this.sortDirection) {
-          url += `&sort=${this.sortColumn}&direction=${this.sortDirection}`;
+          url += '&sort=' + this.sortColumn + '&direction=' + this.sortDirection;
         }
         return url;
-      }
+      },
 
-      _showExpenseEditor() {
+      _showExpenseEditor: function () {
         this.fire('edit-expense');
       }
-    }
-
-    Polymer(ExpensesList);
+    });
   </script>
 </dom-module>

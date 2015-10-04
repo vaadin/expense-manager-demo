@@ -8,11 +8,11 @@
       :host {
         display: block;
       }
-      
+
       #container {
         width: 100%;
       }
-      
+
       h1 {
         color: lightgreen;
         margin: 40px;
@@ -34,68 +34,69 @@
         <y-axis>
           <title>$</title>
         </y-axis>
-        <data-series name="$" data="[[seriesData]]"></data-series>>
+        <data-series name="$" data="[[seriesData]]"></data-series>
+        >
       </vaadin-column-chart>
     </div>
 
-    <iron-ajax auto id="ajax" url="[[url]]" handle-as="json" headers="[[requestHeader]]" last-response="{{overviewData}}"></iron-ajax>
+    <iron-ajax auto id="ajax" url="[[url]]" handle-as="json" headers="[[requestHeader]]"
+               last-response="{{overviewData}}"></iron-ajax>
 
   </template>
   <script src="../bower_components/accounting/accounting.min.js" charset="utf-8"></script>
   <script>
-    class OverviewPanel {
-      beforeRegister() {
-        this.is = 'overview-panel';
-        this.properties = {
-          categories: {
-            type: String,
-            value: '',
-            notify: true
-          },
-          seriesData: {
-            type: Array,
-            value: [],
-            notify: true
-          },
-          overviewData: {
-            type: Object,
-            observer: '_dataUpdated'
-          },
-          requestHeader: {
-            type: Object,
-            computed: '_createRequestHeader(token)'
-          },
-          url: String,
-          totalOwed: String,
-          token: String
-        };
-      }
+    Polymer({
+      is: 'overview-panel',
+      properties: {
+        categories: {
+          type: String,
+          value: '',
+          notify: true
+        },
+        seriesData: {
+          type: Array,
+          value: [],
+          notify: true
+        },
+        overviewData: {
+          type: Object,
+          observer: '_dataUpdated'
+        },
+        requestHeader: {
+          type: Object,
+          computed: '_createRequestHeader(token)'
+        },
+        url: String,
+        totalOwed: String,
+        token: String
+      },
 
-      update() {
+
+      update: function () {
         this.$.ajax.generateRequest();
-      }
+      },
 
-      ready() {
+      ready: function () {
         this.url = Config.baseURL + '/expenses/overview';
-      }
+      },
 
-      _dataUpdated() {
+      _dataUpdated: function () {
         if (this.overviewData) {
           this.totalOwed = accounting.formatMoney(this.overviewData.totalOwed);
-          this.categories = this.overviewData.history.map(m => {
-            return `${m.month}/${m.year}`;
+          this.categories = this.overviewData.history.map(function (m) {
+            return m.month + '/' + m.year;
           }).join(', ');
-          this.seriesData = this.overviewData.history.map(m => m.total);
+          this.seriesData = this.overviewData.history.map(function (m) {
+            return m.total;
+          });
         }
-      }
+      },
 
-      _createRequestHeader(token) {
+      _createRequestHeader: function (token) {
         return {
           'x-access-token': token
         };
       }
-    }
-
-    Polymer(OverviewPanel);
+    });
   </script>
 </dom-module>
