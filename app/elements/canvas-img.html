@@ -1,0 +1,45 @@
+<!-- Data URL images do not scale proportionally with only CSS,
+     need to use Canvas to properly show pre-upload preview-->
+<dom-module id="canvas-img">
+  <template>
+    <style>
+      :host {
+        display: block;
+        max-height: 400px;
+        overflow: scroll;
+      }
+      
+      #content {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <div id="content">
+
+    </div>
+  </template>
+  <script src="../bower_components/blueimp-load-image/js/load-image.all.min.js"></script>
+  <script>
+    class CanvasImg {
+      beforeRegister() {
+        this.is = 'canvas-img';
+        this.properties = {
+          src: {
+            type: String,
+            observer: '_updateCanvas'
+          }
+        };
+      }
+
+      _updateCanvas() {
+        loadImage(this.src, img => {
+          this.$.content.appendChild(img);
+        }, {
+          maxWidth: this.offsetWidth,
+          canvas: true
+        });
+      }
+    }
+    Polymer(CanvasImg);
+  </script>
+</dom-module>

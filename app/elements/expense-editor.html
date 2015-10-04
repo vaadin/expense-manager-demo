@@ -3,6 +3,7 @@
 <link rel="import" href="../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="canvas-img.html">
 <dom-module id="expense-editor">
   <template>
     <style>
@@ -15,10 +16,9 @@
         color: var(--text-primary-color);
       }
       
-      #receipt {
+      #preview {
         width: 50%;
         margin: 10px 2.5%;
-        background: #ccc;
       }
       
       #dialog {
@@ -34,7 +34,7 @@
       <h2>{{header}}</h2>
       <div>
         <div class="layout horizontal">
-          <form is="iron-form" id="form" method="post" action="[[url]]">
+          <form is="iron-form" id="form" method="post" action="[[url]]" contentType="multipart/form-data">
             <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_add"></iron-a11y-keys>
             <input type="hidden" name="token" value="[[token]]" />
             <template is="dom-if" if="[[expense._id]]">
@@ -52,7 +52,7 @@
             <input type="file" accept="image/jpeg" id="receiptupload" name="receipt" capture="camera" required>
             <paper-textarea name="comment" label="Comment" value=""></paper-textarea>
           </form>
-          <img id="receipt" scr="#" alt="receipt" />
+          <canvas-img id="preview" />
         </div>
         <span id="error"></span>
         <div class="buttons layout horizontal">
@@ -87,6 +87,7 @@
 
       showReceipt(evt) {
         let input = evt.target;
+        let preview = document.querySelector('#preview');
         if (input.files && input.files[0]) {
           let receipt = input.files[0];
           if (!receipt.type.match('image.*')) {
@@ -95,7 +96,7 @@
 
           let reader = new FileReader();
           reader.onload = (e) => {
-            document.querySelector('#receipt').src = e.target.result;
+            preview.src = e.target.result;
             document.querySelector('#dialog').center();
           };
           reader.readAsDataURL(receipt);

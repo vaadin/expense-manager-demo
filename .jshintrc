@@ -23,6 +23,7 @@
     "app": true,
     "moment": true,
     "accounting": true,
-    "Config": true
+    "Config": true,
+    "loadImage": true
   }
 }
