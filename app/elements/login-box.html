@@ -5,7 +5,7 @@
 <link rel="import" href="../bower_components/neon-animation/animations/scale-up-animation.html">
 <link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
-<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
 
 <dom-module id="login-box">
   <style>
@@ -39,8 +39,10 @@
       <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_logIn"></iron-a11y-keys>
       <h2>Log in to Expense App</h2>
       <div class="content">
-        <paper-input value={{username}} label="Username" id="username" autofocus></paper-input>
-        <paper-input value="{{password}}" label="Password" id="password" type="password"></paper-input>
+        <form is="iron-form" id="form" method="post" action="[[url]]">
+          <paper-input value={{username}} label="Username" name="username" autofocus></paper-input>
+          <paper-input value="{{password}}" label="Password" name="password" type="password"></paper-input>
+        </form>
         <span class="error-message">[[errorMessage]]</span>
       </div>
       <div class="buttons layout horizontal end-justified">
@@ -75,6 +77,10 @@
           errorMessage: String,
           url: String
         };
+        this.listeners = {
+          'iron-form-response': '_handleResponse',
+          'iron-form-error': '_handleSubmitError'
+        };
       }
 
       _isLoginVisible(token) {
@@ -82,18 +88,11 @@
       }
 
       _logIn() {
-        this.errorMessage = '';
-        let ajax = this.$.ajax;
-        ajax.contentType = 'application/json';
-        ajax.body = {
-          username: this.username,
-          password: this.password
-        };
-        ajax.generateRequest();
+        this.$.form.submit();
       }
 
-      handleResponse(evt) {
-        let response = evt.detail.response;
+      _handleResponse(evt) {
+        let response = evt.detail;
         if (response.success) {
           this.token = response.token;
           this.fire('logged-in');
@@ -101,6 +100,11 @@
           this.errorMessage = response.message;
         }
       }
+
+      _handleSubmitError() {
+        this.errorMessage = 'Login failed';
+      }
+
       ready() {
         this.url = Config.baseURL + '/authenticate';
         // Hack for https://github.com/PolymerElements/paper-dialog/issues/36
