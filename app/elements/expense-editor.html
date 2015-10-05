@@ -9,6 +9,7 @@
     <style>
       :host {
         display: block;
+        border: 1px solid #ccc;
       }
 
       paper-button.save {
@@ -26,21 +27,25 @@
         background: #fff;
       }
 
+      #dialog h2 {
+        color: var(--default-primary-color);
+      }
+
       #error {
         color: red;
       }
     </style>
     <paper-dialog modal id="dialog">
-      <h2>{{header}}</h2>
+      <h2>{{heading}}</h2>
 
       <div>
         <div class="layout horizontal">
-          <form is="iron-form" id="form" method="post" action="[[url]]" contentType="multipart/form-data">
+          <form is="iron-form" id="form">
             <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_add"></iron-a11y-keys>
-            <input type="hidden" name="token" value="[[token]]"/>
-            <template is="dom-if" if="[[expense._id]]">
-              <input type="hidden" name="_id" value="[[expense._id]]"/>
+            <template is="dom-if" if="[[expense.id]]">
+              <input type="hidden" name="id" value="[[expense.id]]"/>
             </template>
+            <input type="hidden" value="[[token]]" name="token">
             <paper-input name="merchant" label="Merchant" value="[[expense.merchant]]" autofocus required
                          error-message="Merchant name required"></paper-input>
             <div class="layout horizontal">
@@ -49,13 +54,13 @@
                 <div prefix>$</div>
               </paper-input>
               <label for="date">Date</label>
-              <input name="date" type="date" id="date" value="[[expense.date]]" required></input>
+              <input name="date" type="date" id="date" value="[[expense.date]]" required>
             </div>
             <label for="receiptupload">Upload receipt</label>
             <input type="file" accept="image/jpeg" id="receiptupload" name="receipt" capture="camera" required>
             <paper-textarea name="comment" label="Comment" value=""></paper-textarea>
           </form>
-          <canvas-img id="preview"/>
+          <canvas-img id="preview"></canvas-img>
         </div>
         <span id="error"></span>
 
@@ -73,18 +78,14 @@
         expense: {
           type: Object,
           notify: true,
-          value: {}
+          value: {},
+          observer: '_expenseChanged'
         },
-        header: {
+        heading: String,
+        token: {
           type: String,
-          computed: '_getHeader(expense)'
-        },
-        url: String,
-        token: String
-      },
-      listeners: {
-        'iron-form-response': '_handleResponse',
-        'iron-form-error': '_handleSubmitError'
+          value: ''
+        }
       },
 
       showReceipt: function (evt) {
@@ -106,7 +107,6 @@
       },
 
       ready: function () {
-        this.url = Config.baseURL + '/expenses';
         this.$.receiptupload.addEventListener('change', this.showReceipt);
       },
 
@@ -119,30 +119,45 @@
         this.expense = {};
       },
 
-      _getHeader: function (expense) {
-        if (expense.merchant) {
-          return 'Edit Expense';
+      _expenseChanged: function () {
+        if (this.expense.id) {
+          this.heading = 'Edit Expense';
+          this.$.preview.src = Config.baseURL + '/expenses/' + this.expense.id + '/receipt.jpg?token=' + this.token;
         } else {
-          return 'Add Expense';
+          this.heading = 'Add Expense';
+          this.$.preview.src = null;
         }
       },
 
       _save: function () {
         this.$.error.text = '';
+        var _this = this;
         var form = this.$.form;
+        var url = Config.baseURL + '/expenses';
+        if (this.expense.id) {
+          url += '/' + this.expense.id;
+        }
         if (form.validate()) {
-          form.submit();
+          var formData = new FormData(form);
+          var xhr = new XMLHttpRequest();
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+              if (xhr.status === 200) {
+                var json = JSON.parse(xhr.responseText);
+                if (json.success) {
+                  _this.fire('expenses-updated');
+                } else {
+                  console.log('XHR failed with status ' + xhr.status);
+                }
+              } else {
+                console.log('XHR failed with status ' + xhr.status);
+              }
+            }
+          };
+          xhr.open('POST', url, true);
+          xhr.setRequestHeader('x-access-token', _this.token);
+          xhr.send(formData);
         }
-      },
-
-      _handleResponse: function (evt) {
-        if (evt.detail.success) {
-          this.fire('expenses-updated');
-        }
-      },
-
-      _handleSubmitError: function (evt) {
-        this.$.error.text = evt.details.message;
       }
     });
   </script>

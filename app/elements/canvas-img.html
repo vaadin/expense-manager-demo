@@ -29,13 +29,20 @@
         }
       },
       _updateCanvas: function () {
-        var _this = this;
-        loadImage(this.src, function (img) {
-          _this.$.content.appendChild(img);
-        }, {
-          maxWidth: this.offsetWidth,
-          canvas: true
-        });
+        var content = this.$.content;
+
+        if (content.firstChild) {
+          content.removeChild(content.firstChild);
+        }
+
+        if (this.src) {
+          loadImage(this.src, function (img) {
+            content.appendChild(img);
+          }, {
+            maxWidth: this.offsetWidth,
+            canvas: true
+          });
+        }
       }
     });
   </script>
