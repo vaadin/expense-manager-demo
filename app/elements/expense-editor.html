@@ -45,19 +45,18 @@
             <template is="dom-if" if="[[expense.id]]">
               <input type="hidden" name="id" value="[[expense.id]]"/>
             </template>
-            <input type="hidden" value="[[token]]" name="token">
-            <paper-input name="merchant" label="Merchant" value="[[expense.merchant]]" autofocus required
+            <paper-input name="merchant" id="merchant" label="Merchant" auto-validate autofocus required
                          error-message="Merchant name required"></paper-input>
             <div class="layout horizontal">
-              <paper-input name="total" label="Total" value="[[expense.total]]" required pattern="[\d,.]+"
+              <paper-input name="total" id="total" label="Total" auto-validate required pattern="[\d,.]+"
                            error-message="Numeric values only">
                 <div prefix>$</div>
               </paper-input>
               <label for="date">Date</label>
-              <input name="date" type="date" id="date" value="[[expense.date]]" required>
+              <input name="date" type="date" id="date" auto-validate required>
             </div>
             <label for="receiptupload">Upload receipt</label>
-            <input type="file" accept="image/jpeg" id="receiptupload" name="receipt" capture="camera" required>
+            <input type="file" accept="image/jpeg" id="receiptupload" name="receipt" capture="camera">
             <paper-textarea name="comment" label="Comment" value=""></paper-textarea>
           </form>
           <canvas-img id="preview"></canvas-img>
@@ -71,6 +70,8 @@
       </div>
     </paper-dialog>
   </template>
+  <script src="../bower_components/accounting/accounting.min.js" charset="utf-8"></script>
+  <script src="../bower_components/moment/moment.js" charset="utf-8"></script>
   <script>
     Polymer({
       is: 'expense-editor',
@@ -86,6 +87,9 @@
           type: String,
           value: ''
         }
+      },
+      listeners: {
+        'iron-form-invalid': '_showValidationErrors'
       },
 
       showReceipt: function (evt) {
@@ -123,14 +127,31 @@
         if (this.expense.id) {
           this.heading = 'Edit Expense';
           this.$.preview.src = Config.baseURL + '/expenses/' + this.expense.id + '/receipt.jpg?token=' + this.token;
+
+          // Need to set these manually as we need to update formats etc
+          if (this.expense.merchant) {
+            this.$.merchant.value = this.expense.merchant;
+          }
+          if (this.expense.total) {
+            this.$.total.value = accounting.formatNumber(this.expense.total, 2);
+          }
+          if (this.expense.date) {
+            this.$.date.value = moment(this.expense.date).format('YYYY-MM-DD');
+          }
+          this.$.receiptupload.removeAttribute('required');
+
         } else {
           this.heading = 'Add Expense';
           this.$.preview.src = null;
+          this.$.form.reset();
+          this.$.date.value = moment().format('YYYY-MM-DD');
+          this.$.receiptupload.setAttribute('required', true);
+
         }
       },
 
       _save: function () {
-        this.$.error.text = '';
+        this.$.error.innerText = '';
         var _this = this;
         var form = this.$.form;
         var url = Config.baseURL + '/expenses';
@@ -157,7 +178,13 @@
           xhr.open('POST', url, true);
           xhr.setRequestHeader('x-access-token', _this.token);
           xhr.send(formData);
+        } else {
+          this.$.error.innerText = 'Please fill all required fields';
         }
+      },
+
+      _showValidationErrors: function (evt) {
+        console.log(evt);
       }
     });
   </script>
