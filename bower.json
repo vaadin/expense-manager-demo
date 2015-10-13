@@ -11,7 +11,8 @@
     "vaadin-components": "~0.3.0-beta9",
     "vaadin-charts": "~3.0.0-alpha6",
     "accounting": "~0.3.2",
-    "blueimp-load-image": "~1.14.0"
+    "blueimp-load-image": "~1.14.0",
+    "moment": "~2.10.6"
   },
   "devDependencies": {
     "web-component-tester": "*",
