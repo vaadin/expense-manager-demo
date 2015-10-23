@@ -11,25 +11,20 @@
         display: block;
         position: relative;
       }
-
+      
       #add-button {
         position: absolute;
         right: 60px;
         top: -28px;
         z-index: 2;
       }
-
+      
       #expenses {
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-      }
-
-      #search {
-        height: 100%;
-        width: 100%;
       }
     </style>
 
@@ -58,36 +53,32 @@
         baseURL: String
       },
 
-      ready: function () {
+      ready: function() {
         var grid = this.$.expenses;
         var _this = this;
 
-        grid.columns[1].renderer = function (cell) {
+        grid.columns[1].renderer = function(cell) {
           cell.element.innerHTML = accounting.formatMoney(cell.data);
         };
-        grid.columns[2].renderer = function (cell) {
+        grid.columns[2].renderer = function(cell) {
           cell.element.innerHTML = moment(cell.data).format('MM/DD/YYYY');
         };
 
-        grid.addEventListener('sort', function () {
-          _this.sortColumn = grid.columns[grid.data.sortOrder[0].column].name;
-          _this.sortDirection = grid.data.sortOrder[0].direction;
+        grid.addEventListener('sort-order-changed', function() {
+          _this.sortColumn = grid.columns[grid.sortOrder[0].column].name;
+          _this.sortDirection = grid.sortOrder[0].direction;
           grid.scrollToStart();
         });
-        grid.data.source = function (req) {
-          _this.fetchData(req.index, req.count).then(function (json) {
-            //only first call
-            if (json.metadata.totalcount) {
-              _this.totalcount = json.metadata.totalcount;
-            }
-            req.success(json.result, _this.totalcount);
+        grid.datasource = function(req) {
+          _this.fetchData(req.index, req.count).then(function(json) {
+            req.success(json.result, json.metadata.totalcount);
           });
         };
 
-        grid.addEventListener('select', function () {
+        grid.addEventListener('select', function() {
           var selection = grid.selection.selected();
           if (selection.length === 1) {
-            grid.data.getItem(selection[0], function (err, item) {
+            grid.getItem(selection[0], function(err, item) {
               _this.fire('edit-expense', {
                 expense: item
               });
@@ -97,11 +88,11 @@
 
       },
 
-      fetchData: function (index, count) {
+      fetchData: function(index, count) {
         var _this = this;
-        return new Promise(function (resolve, reject) {
+        return new Promise(function(resolve, reject) {
           var xhr = new XMLHttpRequest();
-          xhr.onreadystatechange = function () {
+          xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
               if (xhr.status === 200) {
                 var json = JSON.parse(xhr.responseText);
@@ -117,11 +108,11 @@
         });
       },
 
-      update: function () {
+      update: function() {
         this.$.expenses.data.clearCache();
       },
 
-      _getURLWithQuery: function (index, count) {
+      _getURLWithQuery: function(index, count) {
         var url = Config.baseURL + '/expenses?index=' + index + '&count=' + count;
         if (this.sortColumn && this.sortDirection) {
           url += '&sort=' + this.sortColumn + '&direction=' + this.sortDirection;
@@ -129,7 +120,7 @@
         return url;
       },
 
-      _showExpenseEditor: function () {
+      _showExpenseEditor: function() {
         this.fire('edit-expense');
       }
     });

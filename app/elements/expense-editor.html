@@ -3,6 +3,7 @@
 <link rel="import" href="../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="canvas-img.html">
 <dom-module id="expense-editor">
   <template>
@@ -55,14 +56,16 @@
               <label for="date">Date</label>
               <input name="date" type="date" id="date" auto-validate required>
             </div>
-            <label for="receiptupload">Upload receipt</label>
-            <input type="file" accept="image/jpeg" id="receiptupload" name="receipt" capture="camera">
             <paper-textarea name="comment" label="Comment" value=""></paper-textarea>
+            <paper-button on-tap="_triggerUpload" raised>
+              <iron-icon icon="file-upload"></iron-icon>
+              Upload receipt
+            </paper-button>
+            <input type="file" accept="image/jpeg" id="receiptupload" name="receipt" capture="camera" hidden>
           </form>
           <canvas-img id="preview"></canvas-img>
         </div>
         <span id="error"></span>
-
         <div class="buttons layout horizontal">
           <paper-button on-tap="close">Cancel</paper-button>
           <paper-button raised on-tap="_save" class="save">Save</paper-button>
@@ -148,6 +151,10 @@
           this.$.receiptupload.setAttribute('required', true);
 
         }
+      },
+
+      _triggerUpload: function() {
+        this.$.receiptupload.click();
       },
 
       _save: function () {
