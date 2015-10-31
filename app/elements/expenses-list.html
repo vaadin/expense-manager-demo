@@ -3,6 +3,10 @@
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="search-filters.html">
 
 <dom-module id="expenses-list">
   <template>
@@ -10,39 +14,57 @@
       :host {
         display: block;
         position: relative;
+        @apply(--layout-vertical);
       }
-      
+
       #add-button {
         position: absolute;
-        right: 60px;
-        top: -28px;
+        right: 32px;
+        bottom: 32px;
         z-index: 2;
       }
-      
+
       #expenses {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        color: var(--primary-text-color);
+        font-weight: 300;
+      }
+
+      #expenses ::content thead.vaadin-grid-header th,
+      #expenses /deep/ thead.vaadin-grid-header th {
+        background: var(--dark-primary-color);
+        color: #ccc;
+        font-size: 1.2em;
+        font-weight: 400;
+      }
+
+      vaadin-grid ::content tr.vaadin-grid-row-stripe td,
+      vaadin-grid /deep/ tr.vaadin-grid-row-stripe td {
+        background: #F7F8F8;
+      }
+
+      #expenses ::content thead.vaadin-grid-header th.last-frozen,
+      #expenses /deep/ thead.vaadin-grid-header th.last-frozen {
+        border-right: 1px solid #2A3A42;
       }
     </style>
 
-    <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
 
-    <vaadin-grid id="expenses">
+    <search-filters filters="[[filters]]"></search-filters>
+
+    <vaadin-grid class="flex" id="expenses" frozen-columns="1">
       <table>
         <colgroup>
+          <col header-text="Date" name="date" sortable/>
           <col header-text="Merchant" name="merchant" sortable/>
           <col header-text="Total" name="total" sortable/>
-          <col header-text="Date" name="date" sortable/>
           <col header-text="Status" name="status" sortable/>
+          <col header-text="Comment" name="comment" sortable/>
         </colgroup>
       </table>
     </vaadin-grid>
+    <expense-editor token="[[token]]" id="expenseEditor"></expense-editor>
+    <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
   </template>
-  <script src="../bower_components/accounting/accounting.min.js" charset="utf-8"></script>
-  <script src="../bower_components/moment/moment.js" charset="utf-8"></script>
   <script>
     Polymer({
       is: 'expenses-list',
@@ -50,35 +72,46 @@
         token: String,
         sortColumn: String,
         sortDirection: String,
-        baseURL: String
+        baseURL: String,
+        filters: {
+          type: Object,
+          value: {},
+          notify: true
+        }
       },
 
-      ready: function() {
+      listeners: {
+        'on-filters-change': 'fetchData'
+      },
+
+      ready: function () {
         var grid = this.$.expenses;
         var _this = this;
 
-        grid.columns[1].renderer = function(cell) {
-          cell.element.innerHTML = accounting.formatMoney(cell.data);
-        };
-        grid.columns[2].renderer = function(cell) {
+        grid.columns[0].renderer = function (cell) {
           cell.element.innerHTML = moment(cell.data).format('MM/DD/YYYY');
         };
 
-        grid.addEventListener('sort-order-changed', function() {
+        grid.columns[2].renderer = function (cell) {
+          cell.element.innerHTML = accounting.formatMoney(cell.data);
+        };
+
+
+        grid.addEventListener('sort-order-changed', function () {
           _this.sortColumn = grid.columns[grid.sortOrder[0].column].name;
           _this.sortDirection = grid.sortOrder[0].direction;
           grid.scrollToStart();
         });
-        grid.datasource = function(req) {
-          _this.fetchData(req.index, req.count).then(function(json) {
+        grid.datasource = function (req) {
+          _this.fetchData(req.index, req.count).then(function (json) {
             req.success(json.result, json.metadata.totalcount);
           });
         };
 
-        grid.addEventListener('select', function() {
+        grid.addEventListener('select', function () {
           var selection = grid.selection.selected();
           if (selection.length === 1) {
-            grid.getItem(selection[0], function(err, item) {
+            grid.getItem(selection[0], function (err, item) {
               _this.fire('edit-expense', {
                 expense: item
               });
@@ -88,11 +121,11 @@
 
       },
 
-      fetchData: function(index, count) {
+      fetchData: function (index, count) {
         var _this = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
           var xhr = new XMLHttpRequest();
-          xhr.onreadystatechange = function() {
+          xhr.onreadystatechange = function () {
             if (xhr.readyState === XMLHttpRequest.DONE) {
               if (xhr.status === 200) {
                 var json = JSON.parse(xhr.responseText);
@@ -108,11 +141,11 @@
         });
       },
 
-      update: function() {
+      update: function () {
         this.$.expenses.data.clearCache();
       },
 
-      _getURLWithQuery: function(index, count) {
+      _getURLWithQuery: function (index, count) {
         var url = Config.baseURL + '/expenses?index=' + index + '&count=' + count;
         if (this.sortColumn && this.sortDirection) {
           url += '&sort=' + this.sortColumn + '&direction=' + this.sortDirection;
@@ -120,7 +153,7 @@
         return url;
       },
 
-      _showExpenseEditor: function() {
+      _showExpenseEditor: function () {
         this.fire('edit-expense');
       }
     });

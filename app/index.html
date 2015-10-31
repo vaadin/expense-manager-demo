@@ -3,8 +3,10 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <title>Expense App</title>
+
+  <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700' rel='stylesheet' type='text/css'>
 
   <!-- build:css styles/main.css -->
   <link rel="stylesheet" href="styles/main.css">
@@ -23,13 +25,14 @@
 
 
   <!-- build:js scripts/app.js -->
+  <script src="../bower_components/accounting/accounting.min.js" charset="utf-8"></script>
+  <script src="../bower_components/moment/moment.js" charset="utf-8"></script>
   <script src="scripts/config.js"></script>
   <!-- endbuild-->
 </head>
 
-<body unresolved class="fullbleed layout vertical">
+<body unresolved class="fullbleed vertical layout">
 <span id="browser-sync-binding"></span>
-<expense-app class="fit"></expense-app>
+<expense-app class="flex"></expense-app>
 </body>
-
 </html>

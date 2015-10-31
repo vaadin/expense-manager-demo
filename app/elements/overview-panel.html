@@ -1,5 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/vaadin-charts/vaadin-column-chart.html">
+<link rel="import" href="../bower_components/vaadin-charts/vaadin-bar-chart.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 
 <dom-module id="overview-panel">
@@ -7,43 +7,54 @@
     <style>
       :host {
         display: block;
+        background: var(--light-primary-color);
       }
 
-      #container {
+      .total {
+        background: var(--default-primary-color);
+        color: var(--text-primary-color);
+        box-sizing: border-box;
         width: 100%;
+        padding: 20px;
       }
 
-      h1 {
-        color: lightgreen;
-        margin: 40px;
-        font-size: 5em;
+      .total .sum {
+        font-size: 24px;
+      }
+
+      @media (max-width: 600px) {
+        .chart {
+          display: none;
+        }
       }
     </style>
 
-    <div class="layout horizontal" id="container">
+    <div class="layout vertical" id="container">
       <div class="layout vertical center-center flex">
-        <h1>[[totalOwed]]</h1>
+        <div class="total layout vertical center-center">
+          <div>Total</div>
+          <div class="sum">[[totalOwed]]</div>
+        </div>
       </div>
-      <vaadin-column-chart class="flex">
-        <title>Expenses by month</title>
-        <chart background-color="transparent"></chart>
-        <exporting enabled="false"></exporting>
-        <x-axis categories="[[categories]]">
-          <title>Month</title>
-        </x-axis>
-        <y-axis>
-          <title>$</title>
-        </y-axis>
-        <data-series name="$" data="[[seriesData]]"></data-series>
-        >
-      </vaadin-column-chart>
+      <div class="chart">
+        <vaadin-bar-chart class="flex">
+          <title>Last 12 months</title>
+          <chart background-color="transparent"></chart>
+          <exporting enabled="false"></exporting>
+          <x-axis categories="[[categories]]">
+            <title>Month</title>
+          </x-axis>
+          <data-series name="$" data="[[seriesData]]">
+            <color>#80CBC4</color>
+          </data-series>
+        </vaadin-bar-chart>
+      </div>
     </div>
 
     <iron-ajax auto id="ajax" url="[[url]]" handle-as="json" headers="[[requestHeader]]"
                last-response="{{overviewData}}"></iron-ajax>
 
   </template>
-  <script src="../bower_components/accounting/accounting.min.js" charset="utf-8"></script>
   <script>
     Polymer({
       is: 'overview-panel',

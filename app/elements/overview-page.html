@@ -1,0 +1,150 @@
+<link rel="import" href="expense-editor.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/neon-animation/neon-shared-element-animatable-behavior.html">
+<link rel="import" href="../bower_components/neon-animation/animations/hero-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="expenses-list.html">
+<link rel="import" href="overview-panel.html">
+<dom-module id="overview-page">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      paper-toolbar {
+        background: var(--dark-primary-color);
+      }
+
+      paper-toolbar h1 {
+        font-weight: 300;
+      }
+
+      paper-toolbar .logo {
+        color: var(--default-primary-color);
+        margin-left: 16px;
+      }
+
+      .expenses {
+        box-shadow: 0 5px 5px 0 rgba(150, 150, 150, 0.9);
+      }
+
+      .content {
+        position: absolute;
+        top: 64px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+
+      .logout-button {
+        font-size: 0.8em;
+      }
+
+      @media (max-width: 600px) {
+        .content {
+          @apply(--layout-vertical);
+        }
+
+        .overview {
+          width: 100%;
+          max-width: 100%;
+          height: auto;
+        }
+      }
+
+      @media (min-width: 600px) {
+        .content {
+          @apply(--layout-horizontal);
+          @apply(--layout-horizontal-reverse);
+        }
+
+        .overview {
+          width: 33%;
+          max-width: 300px;
+        }
+      }
+
+    </style>
+    <paper-header-panel class="fit">
+      <paper-toolbar>
+        <h1>Expense App</h1>
+        <iron-icon id="logo" class="logo" icon="vaadin-icons:chart"></iron-icon>
+        <span class="flex"></span>
+        <paper-button class="logout-button" on-tap="_logout">Logout</paper-button>
+      </paper-toolbar>
+      <div class="content">
+        <overview-panel class="overview" token="[[token]]"></overview-panel>
+        <expenses-list class="expenses flex" token="[[token]]"></expenses-list>
+      </div>
+    </paper-header-panel>
+    <expense-editor token="[[token]]" id="expenseEditor"></expense-editor>
+    <paper-toast id="saveNotification" text="Expense saved"></paper-toast>
+  </template>
+  <script>
+    Polymer({
+      is: 'overview-page',
+
+      properties: {
+        token: String,
+        animationConfig: {
+          value: function () {
+            return {
+              'entry': [{
+                name: 'fade-in-animation',
+                node: this
+              }, {
+                name: 'hero-animation',
+                id: 'hero',
+                toPage: this
+              }],
+              'exit': {
+                name: 'fade-out-animation',
+                node: this
+              }
+            };
+          }
+        }
+      },
+
+      listeners: {
+        'edit-expense': '_editExpense',
+        'expenses-updated': '_updateExpenses'
+      },
+
+      behaviors: [Polymer.NeonSharedElementAnimatableBehavior],
+
+      sharedElements: {
+        value: function () {
+          return {
+            'hero': this.$.logo
+          };
+        }
+      },
+
+
+
+      _editExpense: function (evt) {
+        var editor = this.$.expenseEditor;
+        if (evt.detail && evt.detail.expense) {
+          editor.expense = evt.detail.expense;
+        }
+        editor.open();
+      },
+
+      _updateExpenses: function () {
+        document.querySelector('overview-panel').update();
+        document.querySelector('expenses-list').update();
+        this.$.expenseEditor.close();
+        this.$.saveNotification.show();
+      },
+
+      _logout: function () {
+        this.fire('logged-out');
+      }
+    });
+  </script>
+</dom-module>

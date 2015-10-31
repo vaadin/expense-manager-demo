@@ -1,0 +1,75 @@
+<dom-module id="search-filters">
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 16px;
+      }
+
+      .status {
+        width: 100%;
+        margin-top: 16px;
+      }
+
+      .caption {
+        text-transform: uppercase;
+        font-size: 0.8em;
+      }
+
+      .caption.expand {
+        width: 100%;
+      }
+
+      .status paper-checkbox {
+        margin-left: 16px;
+        --paper-checkbox-unchecked-color: var(--accent-color);
+      }
+      @media (max-width: 600px) {
+        #content .merchants,
+        #content .total,
+        #content .status {
+          display: none;
+        }
+      }
+    </style>
+    <div id="content">
+      <div class="filters layout horizontal wrap justified">
+        <div class="date layout horizontal wrap center">
+          <span class="caption expand">Date</span>
+          <paper-input label="Begin"></paper-input>
+          &nbsp;
+          <paper-input label="End"></paper-input>
+        </div>
+        <div class="merchants">
+          <span class="caption expand">Merchants</span>
+          <paper-input label="All merchants"></paper-input>
+        </div>
+        <div class="total layout horizontal center wrap">
+          <span class="caption expand">Total</span>
+          <paper-input label="Min"></paper-input>
+          &nbsp;
+          <paper-input label="Max"></paper-input>
+        </div>
+        <div class="status">
+          <span class="caption">Status</span>
+          <paper-checkbox>New</paper-checkbox>
+          <paper-checkbox>In progress</paper-checkbox>
+          <paper-checkbox>Reimbursed</paper-checkbox>
+        </div>
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'search-filters',
+      properties: {
+        filters: {
+          type: Object,
+          notify: true
+        }
+      }
+    });
+  </script>
+</dom-module>
+
+

@@ -22,13 +22,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   /* Application theme */
 
   :root {
-    --dark-primary-color:       #1976D2;
-    --default-primary-color:    #2196F3;
-    --light-primary-color:      #BBDEFB;
+    --dark-primary-color:       #37474F;
+    --default-primary-color:    #80CBC4;
+    --light-primary-color:      #F2FAF9;
     --text-primary-color:       #FFFFFF;
-    --accent-color:             #FF4081;
-    --primary-background-color: #BBDEFB;
-    --primary-text-color:       #212121;
+    --accent-color:             #00BFA5;
+    --primary-background-color: #FFFFFF;
+    --primary-text-color:       #666666;
     --secondary-text-color:     #727272;
     --disabled-text-color:      #BDBDBD;
     --divider-color:            #B6B6B6;
@@ -47,134 +47,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   /* General styles */
 
-  #drawerToolbar {
-    color: var(--secondary-text-color);
-    background-color: var(--drawer-menu-color);
-    border-bottom: var(--drawer-toolbar-border-color);
-  }
 
-  paper-scroll-header-panel {
-    height: 100%;
-  }
-
-  paper-material {
-    border-radius: 2px;
-    height: 100%;
-    padding: 16px 0 16px 0;
-    width: calc(98.66% - 16px);
-    margin: 16px auto;
-    background: white;
-  }
-
-  paper-menu iron-icon {
-    margin-right: 33px;
-    opacity: 0.54;
-  }
-
-  .paper-menu > .iron-selected {
-    color: var(--default-primary-color);
-  }
-
-  paper-menu a {
-    text-decoration: none;
-    color: var(--menu-link-color);
-    display: -ms-flexbox;
-    display: -webkit-flex;
-    display: flex;
-    -ms-flex-direction: row;
-    -webkit-flex-direction: row;
-    flex-direction: row;
-    -ms-flex-align: center;
-    -webkit-align-items: center;
-    align-items: center;
-    font-family: 'Roboto', 'Noto', sans-serif;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 24px;
-    min-height: 48px;
-    padding: 0 16px;
-  }
-
-  paper-toolbar.tall .app-name {
-    font-size: 40px;
-    font-weight: 300;
-    /* Required for main area's paper-scroll-header-panel custom condensing transformation */
-    -webkit-transform-origin: left center;
-    transform-origin: left center;
-  }
-
-  #mainToolbar .middle-container  {
-    height: 100%;
-    margin-left: 48px;
-  }
-
-  #mainToolbar:not(.tall) .middle {
-    font-size: 18px;
-    padding-bottom: 0;
-  }
-
-  #mainToolbar .bottom {
-    margin-left: 48px;
-    /* Required for main area's paper-scroll-header-panel custom condensing transformation */
-    -webkit-transform-origin: left center;
-    transform-origin: left center;
-  }
-
-  /* Height of the scroll area */
-  .content {
-    height: 900px;
-  }
 
   /* Breakpoints */
 
   /* Small */
   @media (max-width: 600px) {
 
-    paper-material {
-      --menu-container-display: none;
-      width: calc(97.33% - 32px);
-      padding-left: 16px;
-      padding-right: 16px;
-    }
 
-    paper-toolbar.tall .app-name {
-      font-size: 24px;
-      font-weight: 400;
-    }
-
-    #drawer .paper-toolbar {
-      margin-left: 16px;
-    }
-
-    #overlay {
-      min-width: 360px;
-    }
-
-    .bg {
-      background: white;
-    }
 
   }
 
   /* Tablet+ */
   @media (min-width: 601px) {
 
-    paper-material {
-      width: calc(98% - 46px);
-      margin-bottom: 32px;
-      padding-left: 30px;
-      padding-right: 30px;
-    }
-
-    #drawer.paper-drawer-panel > [drawer] {
-      border-right: 1px solid rgba(0, 0, 0, 0.14);
-    }
-
-    iron-pages {
-      padding: 48px 62px;
-    }
 
   }
 

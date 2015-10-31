@@ -1,0 +1,165 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/neon-animation/neon-shared-element-animatable-behavior.html">
+<link rel="import" href="../bower_components/neon-animation/animations/hero-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
+
+<dom-module id="login-page">
+  <style>
+    :host {
+      display: block;
+      @apply(--layout-vertical);
+    }
+
+    .login paper-input {
+      width: 300px;
+      max-width: 80vw;
+    }
+
+    #login-button {
+      margin-top: 20px;
+      padding-left: 30px;
+      padding-right: 30px;
+      background: var(--accent-color);
+      color: var(--text-primary-color);
+    }
+
+    .error-message {
+      color: red;
+    }
+
+    .header {
+      background: var(--dark-primary-color);
+      height: 40%;
+    }
+
+    .header .logo {
+      color: var(--default-primary-color);
+      --iron-icon-height: 96px;
+      --iron-icon-width: 96px;
+    }
+
+    .header h1 {
+      color: var(--text-primary-color);
+      font-size: 60px;
+      font-weight: 100;
+      margin-top: 0;
+    }
+
+    .login {
+      height: 60%;
+      padding: 30px;
+    }
+
+    @media (max-width: 600px) {
+      .login, .header {
+        height: 50%;
+      }
+    }
+
+  </style>
+
+  <template>
+
+    <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_logIn"></iron-a11y-keys>
+    <div id="header" class="header layout vertical center end-justified">
+      <iron-icon class="logo" id="logo" icon="vaadin-icons:chart"></iron-icon>
+      <h1>Expense App</h1>
+    </div>
+    <div class="login layout vertical center">
+      <form is="iron-form" id="form" method="post" action="[[url]]">
+        <paper-input value={{username}} label="USERNAME" name="username"></paper-input>
+        <paper-input value="{{password}}" label="PASSWORD" name="password" type="password"></paper-input>
+      </form>
+      <span class="error-message">[[errorMessage]]</span>
+      <paper-button id="login-button" on-tap="_logIn" raised>Login</paper-button>
+    </div>
+
+    <iron-ajax id="ajax" url="{{url}}" method="POST" handle-as="json" on-response="handleResponse"></iron-ajax>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'login-page',
+      properties: {
+        token: {
+          type: String,
+          notify: true,
+          value: ''
+        },
+        username: {
+          type: String,
+          value: 'demo'
+        },
+        password: {
+          type: String,
+          value: 'demo'
+        },
+        errorMessage: String,
+        url: String,
+
+        animationConfig: {
+          value: function () {
+            return {
+              'entry': {
+                name: 'fade-in-animation',
+                node: this
+              },
+              'exit': [{
+                name: 'hero-animation',
+                id: 'hero',
+                fromPage: this
+              }, {
+                name: 'fade-out-animation',
+                node: this
+              }]
+            };
+          }
+        }
+      },
+
+      behaviors: [Polymer.NeonSharedElementAnimatableBehavior],
+
+      sharedElements: {
+        value: function () {
+          return {
+            'hero': this.$.logo
+          };
+        }
+      },
+
+      listeners: {
+        'iron-form-response': '_handleResponse',
+        'iron-form-error': '_handleSubmitError'
+      },
+
+      _logIn: function () {
+        this.$.form.submit();
+      },
+
+      _handleResponse: function (evt) {
+        var response = evt.detail.response;
+        if (response.success) {
+          this.token = response.token;
+          this.fire('logged-in');
+        } else {
+          this.errorMessage = response.message;
+        }
+      },
+
+      _handleSubmitError: function () {
+        this.errorMessage = 'Login failed';
+      },
+
+      ready: function () {
+        this.url = Config.baseURL + '/authenticate';
+      }
+    });
+  </script>
+</dom-module>
