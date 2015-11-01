@@ -6,6 +6,8 @@
 <link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/neon-animation/animations/slide-down-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="receipt-display.html">
 <dom-module id="expense-editor">
   <template>
@@ -85,7 +87,7 @@
         }
       }
     </style>
-    <paper-dialog modal id="dialog">
+    <paper-dialog modal id="dialog" entry-animation="slide-down-animation">
       <div class="layout horizontal">
         <h2>{{heading}}</h2>
         <span class="flex"></span>

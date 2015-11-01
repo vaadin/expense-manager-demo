@@ -92,7 +92,6 @@
         </colgroup>
       </table>
     </vaadin-grid>
-    <expense-editor token="[[token]]" id="expenseEditor"></expense-editor>
     <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
   </template>
   <script>
@@ -172,7 +171,7 @@
       },
 
       update: function () {
-        this.$.expenses.data.clearCache();
+        this.$.expenses.clearCache();
       },
 
       _getURLWithQuery: function (index, count) {
