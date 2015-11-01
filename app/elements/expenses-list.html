@@ -48,7 +48,7 @@
       }
 
       #expenses ::content .vaadin-grid-header.vaadin-grid .sort-asc.vaadin-grid:after,
-      #expenses /deep/  .vaadin-grid-header.vaadin-grid .sort-asc.vaadin-grid:after{
+      #expenses /deep/ .vaadin-grid-header.vaadin-grid .sort-asc.vaadin-grid:after {
         content: "\e7bc " attr(sort-order);
         font-family: Vaadin-Icons;
         font-size: 16px;
@@ -63,7 +63,7 @@
       }
 
       #expenses ::content .vaadin-grid-header.vaadin-grid .sort-desc.vaadin-grid:after,
-      #expenses /deep/  .vaadin-grid-header.vaadin-grid .sort-desc.vaadin-grid:after{
+      #expenses /deep/ .vaadin-grid-header.vaadin-grid .sort-desc.vaadin-grid:after {
         content: "\e7c3 " attr(sort-order);
         font-family: Vaadin-Icons;
         font-size: 16px;
@@ -98,7 +98,11 @@
     Polymer({
       is: 'expenses-list',
       properties: {
-        token: String,
+        token: {
+          type: String,
+          notify: true,
+          observer: '_setDataSource'
+        },
         sortColumn: String,
         sortDirection: String,
         baseURL: String,
@@ -107,10 +111,6 @@
           value: {},
           notify: true
         }
-      },
-
-      listeners: {
-        'on-filters-change': 'fetchData'
       },
 
       ready: function () {
@@ -125,17 +125,11 @@
           cell.element.innerHTML = accounting.formatMoney(cell.data);
         };
 
-
         grid.addEventListener('sort-order-changed', function () {
           _this.sortColumn = grid.columns[grid.sortOrder[0].column].name;
           _this.sortDirection = grid.sortOrder[0].direction;
           grid.scrollToStart();
         });
-        grid.datasource = function (req) {
-          _this.fetchData(req.index, req.count).then(function (json) {
-            req.success(json.result, json.metadata.totalcount);
-          });
-        };
 
         grid.addEventListener('select', function () {
           var selection = grid.selection.selected();
@@ -148,6 +142,18 @@
           }
         });
 
+      },
+
+      _setDataSource: function () {
+        if (this.token) {
+          var _this = this;
+          var grid = this.$.expenses;
+          grid.datasource = function (req) {
+            _this.fetchData(req.index, req.count).then(function (json) {
+              req.success(json.result, json.metadata.totalcount);
+            });
+          };
+        }
       },
 
       fetchData: function (index, count) {

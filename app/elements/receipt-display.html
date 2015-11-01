@@ -16,13 +16,16 @@
       }
 
       .content {
+        box-sizing: border-box;
         background: var(--light-primary-color);
         border: 2px dashed var(--accent-color);
         position: relative;
         min-height: 64px;
+        padding: 8px;
       }
 
-      :host.has-receipt .content {
+      /*Shady DOM does shady stuff, the plain .content selector overrides this without the extra .content */
+      .content.content.has-receipt {
         background: #F7F8F8;
         border: none;
       }
@@ -31,7 +34,7 @@
         font-weight: 400;
       }
 
-      :host.has-receipt .upload-button {
+      .content.has-receipt .upload-button {
         display: none;
       }
 
@@ -46,7 +49,7 @@
         overflow-y: scroll;
       }
 
-      :host.has-receipt .caption {
+      .content.has-receipt .caption {
         display: inline;
       }
 
@@ -58,17 +61,17 @@
         color: var(--accent-color);
       }
 
-      :host.has-receipt .action-menu {
+      .content.has-receipt .action-menu {
         display: block;
       }
 
     </style>
     <span class="caption">Receipt</span>
-    <div class="content flex layout vertical center-center">
+    <div id="content" class="content flex layout vertical center-center">
       <paper-menu-button class="action-menu">
         <paper-icon-button icon="vaadin-icons:ellipsis-v" class="dropdown-trigger"></paper-icon-button>
         <paper-menu class="dropdown-content">
-          <paper-item on-tap="_fireUpload">Upload new</paper-item>
+          <paper-item on-tap="_fireUpload">Upload new receipt</paper-item>
         </paper-menu>
       </paper-menu-button>
 
@@ -109,7 +112,7 @@
           });
         }
 
-        this.toggleClass('has-receipt', this.src);
+        this.toggleClass('has-receipt', this.src, this.$.content);
       },
 
       _fireUpload: function () {

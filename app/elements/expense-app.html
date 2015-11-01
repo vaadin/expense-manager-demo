@@ -2,6 +2,7 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
 <link rel="import" href="overview-page.html">
 <link rel="import" href="login-page.html">
 <link rel="import" href="../styles/app-theme.html">
@@ -15,23 +16,24 @@
     </style>
 
     <neon-animated-pages id="pages" class="fit" selected="[[selected]]">
-      <login-page token="{{token}}"></login-page>
+      <login-page token="[[token]]"></login-page>
       <overview-page token="[[token]]"></overview-page>
     </neon-animated-pages>
+    <iron-localstorage id="tokenStorage" name="auth-token" value="{{token}}"></iron-localstorage>
   </template>
+
   <script>
     Polymer({
       is: 'expense-app',
       properties: {
         selected: {
           type: Number,
-          value: 1,
-          notify: true
+          notify: true,
+          computed: '_selectPage(token)'
         },
         token: {
           type: String,
-          notify: true,
-          value: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NjA5YWFlMTAzYzcwZGY0ZTY4N2MwNTAiLCJuYW1lIjoiZGVtbyIsInBhc3N3b3JkIjoiJDJhJDEwJGhKck9GbUlQb3RpVTZzUmVOcVZSSXVhTlJHOVNRMS9IQk1obVRZVzU4QXVQSzVvbnl4dVdTIiwiX192IjowfQ.sZAqcTL_eR_gCIPbf9MbXdBUhBE_NvZT_ocD9bdHjww'
+          notify: true
         }
       },
       listeners: {
@@ -39,14 +41,20 @@
         'logged-out': '_handleLogout'
       },
 
-      _handleLogin: function () {
+      _handleLogin: function (args) {
+        this.token = args.detail.token;
         this.selected = 1;
       },
 
       _handleLogout: function () {
         this.token = null;
         this.selected = 0;
+      },
+
+      _selectPage: function(token){
+        return token ? 1 : 0;
       }
+
     });
   </script>
 </dom-module>

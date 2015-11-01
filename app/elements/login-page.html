@@ -148,7 +148,7 @@
         var response = evt.detail.response;
         if (response.success) {
           this.token = response.token;
-          this.fire('logged-in');
+          this.fire('logged-in', {token: this.token});
         } else {
           this.errorMessage = response.message;
         }
