@@ -1,0 +1,120 @@
+<!-- Data URL images do not scale proportionally with only CSS,
+     need to use Canvas to properly show pre-upload preview-->
+<link rel="import" href="../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/vaadin-icons/vaadin-icons.html">
+<dom-module id="receipt-display">
+  <template>
+    <style>
+      :host {
+        display: block;
+        @apply(--layout-vertical);
+      }
+
+      .content {
+        background: var(--light-primary-color);
+        border: 2px dashed var(--accent-color);
+        position: relative;
+        min-height: 64px;
+      }
+
+      :host.has-receipt .content {
+        background: #F7F8F8;
+        border: none;
+      }
+
+      .upload-button {
+        font-weight: 400;
+      }
+
+      :host.has-receipt .upload-button {
+        display: none;
+      }
+
+      .caption {
+        text-transform: uppercase;
+        display: none;
+        font-weight: 600;
+      }
+
+      #receipt {
+        max-width: 100%;
+        overflow-y: scroll;
+      }
+
+      :host.has-receipt .caption {
+        display: inline;
+      }
+
+      .action-menu {
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: none;
+        color: var(--accent-color);
+      }
+
+      :host.has-receipt .action-menu {
+        display: block;
+      }
+
+    </style>
+    <span class="caption">Receipt</span>
+    <div class="content flex layout vertical center-center">
+      <paper-menu-button class="action-menu">
+        <paper-icon-button icon="vaadin-icons:ellipsis-v" class="dropdown-trigger"></paper-icon-button>
+        <paper-menu class="dropdown-content">
+          <paper-item on-tap="_fireUpload">Upload new</paper-item>
+        </paper-menu>
+      </paper-menu-button>
+
+      <paper-button on-tap="_fireUpload" class="upload-button">
+        <iron-icon icon="vaadin-icons:upload"></iron-icon>
+        Upload receipt
+      </paper-button>
+
+      <div id="receipt"></div>
+    </div>
+  </template>
+  <script src="../bower_components/blueimp-load-image/js/load-image.all.min.js"></script>
+  <script>
+    Polymer({
+      is: 'receipt-display',
+      properties: {
+        src: {
+          type: String,
+          observer: '_updateCanvas'
+        }
+      },
+      _updateCanvas: function () {
+        var receipt = this.$.receipt;
+
+        if (receipt.firstChild) {
+          receipt.removeChild(receipt.firstChild);
+        }
+
+        if (this.src) {
+          loadImage(this.src, function (img) {
+            receipt.appendChild(img);
+            console.log('added');
+            console.log(img);
+            console.log(receipt);
+          }, {
+            maxWidth: receipt.offsetWidth,
+            canvas: true
+          });
+        }
+
+        this.toggleClass('has-receipt', this.src);
+      },
+
+      _fireUpload: function () {
+        this.fire('upload-requested');
+      }
+    });
+  </script>
+</dom-module>

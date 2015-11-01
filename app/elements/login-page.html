@@ -121,18 +121,18 @@
               }]
             };
           }
+        },
+
+        sharedElements: {
+          value: function () {
+            return {
+              'hero': this.$.logo
+            };
+          }
         }
       },
 
       behaviors: [Polymer.NeonSharedElementAnimatableBehavior],
-
-      sharedElements: {
-        value: function () {
-          return {
-            'hero': this.$.logo
-          };
-        }
-      },
 
       listeners: {
         'iron-form-response': '_handleResponse',

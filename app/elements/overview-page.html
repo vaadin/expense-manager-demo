@@ -108,6 +108,14 @@
               }
             };
           }
+        },
+
+        sharedElements: {
+          value: function () {
+            return {
+              'hero': this.$.logo
+            };
+          }
         }
       },
 
@@ -117,16 +125,6 @@
       },
 
       behaviors: [Polymer.NeonSharedElementAnimatableBehavior],
-
-      sharedElements: {
-        value: function () {
-          return {
-            'hero': this.$.logo
-          };
-        }
-      },
-
-
 
       _editExpense: function (evt) {
         var editor = this.$.expenseEditor;
@@ -145,6 +143,10 @@
 
       _logout: function () {
         this.fire('logged-out');
+      },
+
+      ready: function () {
+        this._editExpense({});
       }
     });
   </script>
