@@ -1,5 +1,5 @@
-<!-- Data URL images do not scale proportionally with only CSS,
-     need to use Canvas to properly show pre-upload preview-->
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
@@ -46,6 +46,7 @@
 
       #receipt {
         max-width: 100%;
+        max-height: 70vh;
         overflow-y: scroll;
       }
 
@@ -63,6 +64,12 @@
 
       .content.has-receipt .action-menu {
         display: block;
+      }
+
+      @media (max-width: 600px) {
+        #receipt {
+          max-height: inherit;
+        }
       }
 
     </style>
@@ -103,9 +110,6 @@
         if (this.src) {
           loadImage(this.src, function (img) {
             receipt.appendChild(img);
-            console.log('added');
-            console.log(img);
-            console.log(receipt);
           }, {
             maxWidth: 400,
             canvas: true

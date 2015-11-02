@@ -1,3 +1,8 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+
 <dom-module id="search-filters">
   <template>
     <style>
@@ -11,19 +16,20 @@
         margin-top: 16px;
       }
 
-      .caption {
-        text-transform: uppercase;
-        font-size: 0.8em;
+      paper-input {
+        margin-right: 4px;
+        margin-left: 4px;
       }
 
-      .caption.expand {
-        width: 100%;
+      .merchants {
+        min-width: 200px;
       }
 
       .status paper-checkbox {
         margin-left: 16px;
         --paper-checkbox-unchecked-color: var(--accent-color);
       }
+
       @media (max-width: 600px) {
         #content .merchants,
         #content .total,
@@ -34,29 +40,26 @@
         #content .date paper-input {
           width: 45%;
         }
-        #content .date .caption {
-          display: none;
-        }
       }
     </style>
+
     <div id="content">
       <div class="filters layout horizontal wrap justified">
+
         <div class="date layout horizontal wrap center">
-          <span class="caption expand">Date</span>
-          <paper-input label="Begin"></paper-input>
-          &nbsp;
-          <paper-input label="End"></paper-input>
+          <paper-input label="After" value="{{filters.start}}"></paper-input>
+          <paper-input label="Before" value="{{filters.end}}"></paper-input>
         </div>
-        <div class="merchants">
-          <span class="caption expand">Merchants</span>
-          <paper-input label="All merchants"></paper-input>
+
+        <div class="merchants flex">
+          <paper-input label="Merchant" value="{{filters.merchant}}"></paper-input>
         </div>
+
         <div class="total layout horizontal center wrap">
-          <span class="caption expand">Total</span>
-          <paper-input label="Min"></paper-input>
-          &nbsp;
-          <paper-input label="Max"></paper-input>
+          <paper-input label="Min ($)" value="{{filters.min}}"></paper-input>
+          <paper-input label="Max ($)" value="{{filters.max}}"></paper-input>
         </div>
+
         <div class="status">
           <span class="caption">Status</span>
           <paper-checkbox>New</paper-checkbox>
@@ -72,7 +75,8 @@
       properties: {
         filters: {
           type: Object,
-          notify: true
+          notify: true,
+          value: {}
         }
       }
     });
