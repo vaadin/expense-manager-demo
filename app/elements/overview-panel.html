@@ -23,13 +23,6 @@
         font-size: 24px;
       }
 
-      vaadin-bar-chart ::content .highcharts-title,
-      vaadin-bar-chart ::content .highcharts-xaxis-title,
-      vaadin-bar-chart ::content .highcharts-yaxis-title,
-      vaadin-bar-chart ::content .highcharts-legend {
-        display: none;
-      }
-
       .chart-title {
         font-weight: 300;
         text-align: center;
@@ -51,7 +44,7 @@
       </div>
       <div class="chart">
         <h2 class="chart-title">Last 12 months</h2>
-        <vaadin-bar-chart class="flex">
+        <vaadin-bar-chart>
           <title>Last 12 months</title>
           <chart background-color="transparent"></chart>
           <exporting enabled="false"></exporting>
