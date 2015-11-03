@@ -30,7 +30,7 @@
     }
 
     .error-message {
-      color: red;
+      font-weight: 600;
     }
 
     .header {
@@ -73,10 +73,12 @@
   <template>
 
     <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_logIn"></iron-a11y-keys>
+
     <div id="header" class="header layout vertical center end-justified">
       <iron-icon class="logo" id="logo" icon="vaadin-icons:chart"></iron-icon>
       <h1>Expense App</h1>
     </div>
+
     <div class="login layout vertical center">
       <form is="iron-form" id="form" method="post" action="[[url]]">
         <paper-input value={{username}} label="USERNAME" name="username"></paper-input>
@@ -92,6 +94,9 @@
   <script>
     Polymer({
       is: 'login-page',
+
+      behaviors: [Polymer.NeonSharedElementAnimatableBehavior],
+
       properties: {
         token: {
           type: String,
@@ -108,7 +113,6 @@
         },
         errorMessage: String,
         url: String,
-
         animationConfig: {
           value: function () {
             return {
@@ -128,7 +132,6 @@
             };
           }
         },
-
         sharedElements: {
           value: function () {
             return {
@@ -137,8 +140,6 @@
           }
         }
       },
-
-      behaviors: [Polymer.NeonSharedElementAnimatableBehavior],
 
       listeners: {
         'iron-form-response': '_handleResponse',

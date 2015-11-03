@@ -26,6 +26,7 @@
   <script>
     Polymer({
       is: 'expense-app',
+
       properties: {
         selected: {
           type: Number,
@@ -37,6 +38,7 @@
           notify: true
         }
       },
+
       listeners: {
         'logged-in': '_handleLogin',
         'logged-out': '_handleLogout'
@@ -52,7 +54,7 @@
         this.selected = 0;
       },
 
-      _selectPage: function(token){
+      _selectPage: function (token) {
         return token ? 1 : 0;
       }
     });

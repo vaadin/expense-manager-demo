@@ -7,6 +7,8 @@
 <link rel="import" href="../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/vaadin-icons/vaadin-icons.html">
+<link rel="import" href="../scripts/load-image.html">
+
 <dom-module id="receipt-display">
   <template>
     <style>
@@ -71,9 +73,10 @@
           max-height: inherit;
         }
       }
-
     </style>
+
     <span class="caption">Receipt</span>
+
     <div id="content" class="content flex layout vertical center-center">
       <paper-menu-button class="action-menu">
         <paper-icon-button icon="vaadin-icons:ellipsis-v" class="dropdown-trigger"></paper-icon-button>
@@ -89,8 +92,8 @@
 
       <div id="receipt"></div>
     </div>
+
   </template>
-  <script src="../bower_components/blueimp-load-image/js/load-image.all.min.js"></script>
   <script>
     Polymer({
       is: 'receipt-display',
@@ -100,6 +103,7 @@
           observer: '_updateCanvas'
         }
       },
+
       _updateCanvas: function () {
         var receipt = this.$.receipt;
 

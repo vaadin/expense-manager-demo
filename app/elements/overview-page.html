@@ -91,6 +91,8 @@
     Polymer({
       is: 'overview-page',
 
+      behaviors: [Polymer.NeonSharedElementAnimatableBehavior],
+
       properties: {
         token: String,
         animationConfig: {
@@ -125,8 +127,6 @@
         'edit-expense': '_editExpense',
         'expenses-updated': '_updateExpenses'
       },
-
-      behaviors: [Polymer.NeonSharedElementAnimatableBehavior],
 
       _editExpense: function (evt) {
         var editor = this.$.expenseEditor;

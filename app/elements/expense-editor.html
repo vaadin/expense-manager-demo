@@ -28,6 +28,7 @@
       .buttons-layout paper-button {
         width: 150px;
       }
+
       .save-button {
         background: var(--accent-color);
         color: var(--text-primary-color);
@@ -84,6 +85,7 @@
           @apply(--layout-vertical);
         }
       }
+
       @media (max-width: 600px) {
         #dialog {
           bottom: 0;
@@ -132,6 +134,7 @@
   <script>
     Polymer({
       is: 'expense-editor',
+
       properties: {
         expense: {
           type: Object,
@@ -145,6 +148,7 @@
           value: ''
         }
       },
+
       listeners: {
         'iron-form-invalid': '_showValidationErrors',
         'upload-requested': '_triggerUpload'

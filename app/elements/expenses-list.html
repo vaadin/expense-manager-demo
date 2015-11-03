@@ -92,11 +92,14 @@
         </colgroup>
       </table>
     </vaadin-grid>
+
     <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
+
   </template>
   <script>
     Polymer({
       is: 'expenses-list',
+
       properties: {
         token: {
           type: String,
@@ -146,18 +149,6 @@
         });
       },
 
-      _setDataSource: function () {
-        if (this.token) {
-          var _this = this;
-          var grid = this.$.expenses;
-          grid.datasource = function (req) {
-            _this.fetchData(req.index, req.count).then(function (json) {
-              req.success(json.result, json.metadata.totalcount);
-            });
-          };
-        }
-      },
-
       fetchData: function (index, count) {
         var _this = this;
         return new Promise(function (resolve, reject) {
@@ -205,6 +196,18 @@
           url += '&end=' + this.filters.end;
         }
         return url;
+      },
+
+      _setDataSource: function () {
+        if (this.token) {
+          var _this = this;
+          var grid = this.$.expenses;
+          grid.datasource = function (req) {
+            _this.fetchData(req.index, req.count).then(function (json) {
+              req.success(json.result, json.metadata.totalcount);
+            });
+          };
+        }
       },
 
       _showExpenseEditor: function () {
