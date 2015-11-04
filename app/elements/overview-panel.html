@@ -43,7 +43,7 @@
         </div>
       </div>
       <div class="chart">
-        <h2 class="chart-title">Last 12 months</h2>
+        <!--<h2 class="chart-title">Last 12 months</h2>-->
         <vaadin-bar-chart>
           <title>Last 12 months</title>
           <chart background-color="transparent"></chart>
@@ -57,15 +57,15 @@
         </vaadin-bar-chart>
       </div>
     </div>
-
-    <iron-ajax id="ajax" url="[[url]]" handle-as="json" headers="[[requestHeader]]"
-               last-response="{{overviewData}}"></iron-ajax>
-
   </template>
   <script>
     Polymer({
       is: 'overview-panel',
+
       properties: {
+        service: {
+          type: Object
+        },
         categories: {
           type: String,
           value: '',
@@ -76,49 +76,28 @@
           value: [],
           notify: true
         },
-        overviewData: {
-          type: Object,
-          observer: '_dataUpdated'
-        },
-        requestHeader: {
-          type: Object,
-          computed: '_createRequestHeader(token)'
-        },
-        url: String,
-        totalOwed: String,
-        token: {
-          type: String,
-          observer: 'update'
-        }
+        totalOwed: String
       },
 
+      ready: function() {
+        this.update();
+      },
 
       update: function () {
-        if (this.token) {
-          this.$.ajax.generateRequest();
-        }
-      },
-
-      ready: function () {
-        this.url = Config.baseURL + '/expenses/overview';
-      },
-
-      _dataUpdated: function () {
-        if (this.overviewData) {
-          this.totalOwed = accounting.formatMoney(this.overviewData.totalOwed);
-          this.categories = this.overviewData.history.map(function (m) {
-            return m.month + '/' + m.year;
-          }).join(', ');
-          this.seriesData = this.overviewData.history.map(function (m) {
-            return m.total;
+        var _this = this;
+        this.service.getOverviewData()
+          .then(function (overviewData) {
+            _this.totalOwed = accounting.formatMoney(overviewData.totalOwed);
+            _this.categories = overviewData.history.map(function (m) {
+              return m.month + '/' + m.year;
+            }).join(', ');
+            _this.seriesData = overviewData.history.map(function (m) {
+              return m.total;
+            });
+          })
+          .catch(function (error) {
+            console.log(error);
           });
-        }
-      },
-
-      _createRequestHeader: function (token) {
-        return {
-          'x-access-token': token
-        };
       }
     });
   </script>

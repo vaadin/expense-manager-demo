@@ -78,26 +78,18 @@
       <h1>Expense App</h1>
     </div>
     <div class="login layout vertical center">
-      <form is="iron-form" id="form" method="post" action="[[url]]">
-        <paper-input value={{username}} label="USERNAME" name="username"></paper-input>
-        <paper-input value="{{password}}" label="PASSWORD" name="password" type="password"></paper-input>
-      </form>
+      <paper-input value={{username}} label="USERNAME" name="username"></paper-input>
+      <paper-input value="{{password}}" label="PASSWORD" name="password" type="password"></paper-input>
       <span class="error-message">[[errorMessage]]</span>
       <paper-button id="login-button" on-tap="_logIn" raised>Login</paper-button>
     </div>
-
-    <iron-ajax id="ajax" url="{{url}}" method="POST" handle-as="json" on-response="handleResponse"></iron-ajax>
   </template>
 
   <script>
     Polymer({
       is: 'login-page',
       properties: {
-        token: {
-          type: String,
-          notify: true,
-          value: ''
-        },
+        service: Object,
         username: {
           type: String,
           value: 'demo'
@@ -140,31 +132,12 @@
 
       behaviors: [Polymer.NeonSharedElementAnimatableBehavior],
 
-      listeners: {
-        'iron-form-response': '_handleResponse',
-        'iron-form-error': '_handleSubmitError'
-      },
-
       _logIn: function () {
-        this.$.form.submit();
-      },
-
-      _handleResponse: function (evt) {
-        var response = evt.detail.response;
-        if (response.success) {
-          this.token = response.token;
-          this.fire('logged-in', {token: this.token});
-        } else {
-          this.errorMessage = response.message;
-        }
-      },
-
-      _handleSubmitError: function () {
-        this.errorMessage = 'Login failed';
-      },
-
-      ready: function () {
-        this.url = Config.baseURL + '/authenticate';
+        var _this = this;
+        this.service.login(this.username, this.password)
+          .catch(function (error) {
+          _this.errorMessage = error;
+        });
       }
     });
   </script>

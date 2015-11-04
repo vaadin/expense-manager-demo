@@ -2,7 +2,7 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
-<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
@@ -13,12 +13,20 @@
 <link rel="import" href="receipt-display.html">
 <link rel="import" href="../scripts/accounting-js.html">
 <link rel="import" href="../scripts/moment-js.html">
+
 <dom-module id="expense-editor">
   <template>
     <style>
       :host {
         display: block;
+        padding: 16px;
         border: 1px solid #ccc;
+        position: absolute;
+        top: 0;
+        margin: 0;
+        width: 80vw;
+        background: var(--primary-background-color);
+        overflow-y: scroll;
       }
 
       .buttons-layout {
@@ -28,6 +36,7 @@
       .buttons-layout paper-button {
         width: 150px;
       }
+
       .save-button {
         background: var(--accent-color);
         color: var(--text-primary-color);
@@ -37,16 +46,7 @@
         color: var(--accent-color);
       }
 
-      #dialog {
-        position: absolute;
-        top: 0;
-        margin: 0;
-        width: 80vw;
-        background: var(--default-background-color);
-        overflow-y: scroll;
-      }
-
-      #dialog h2 {
+      h2 {
         font-size: 2em;
         font-weight: 300;
       }
@@ -61,8 +61,8 @@
       }
 
       .wrapper {
-        overflow-y: scroll;
-        @apply(--layout-flex);
+        height: 100%;
+        width: 100%;
       }
 
       .close-button {
@@ -84,55 +84,52 @@
           @apply(--layout-vertical);
         }
       }
+
       @media (max-width: 600px) {
-        #dialog {
-          bottom: 0;
+        :host {
           width: 100vw;
         }
       }
     </style>
-    <paper-dialog modal id="dialog" entry-animation="slide-down-animation">
-      <div class="layout horizontal">
-        <h2>{{heading}}</h2>
-        <span class="flex"></span>
-        <paper-icon-button icon="close" on-tap="close" class="close-button self-start"></paper-icon-button>
+    <link rel="import" type="css" href="../bower_components/paper-dialog-behavior/paper-dialog-common.css">
+    <div class="layout horizontal">
+      <h2>{{heading}}</h2>
+      <span class="flex"></span>
+      <paper-icon-button icon="close" on-tap="close" class="close-button self-start"></paper-icon-button>
+    </div>
+
+    <div class="wrapper">
+      <div class="form flex-2">
+        <form is="iron-form" id="form">
+          <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
+          <paper-input name="merchant" id="merchant" label="Merchant" auto-validate required
+                       error-message="Merchant name required"></paper-input>
+          <paper-input name="total" id="total" label="Total" auto-validate required pattern="[\d,.]+"
+                       error-message="Numeric values only">
+            <div prefix>$</div>
+          </paper-input>
+
+          <paper-input label="Date" id="date" name="date"></paper-input>
+          <paper-textarea name="comment" label="Comment" value=""></paper-textarea>
+
+          <input type="file" accept="image/jpeg" id="receiptupload" name="receipt" capture="camera" hidden>
+        </form>
+        <span id="error"></span>
       </div>
-
-      <div class="wrapper">
-        <div class="form flex-2">
-          <form is="iron-form" id="form">
-            <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_add"></iron-a11y-keys>
-            <template is="dom-if" if="[[expense.id]]">
-              <input type="hidden" name="id" value="[[expense.id]]"/>
-            </template>
-            <paper-input name="merchant" id="merchant" label="Merchant" auto-validate required
-                         error-message="Merchant name required"></paper-input>
-            <paper-input name="total" id="total" label="Total" auto-validate required pattern="[\d,.]+"
-                         error-message="Numeric values only">
-              <div prefix>$</div>
-            </paper-input>
-
-            <paper-input label="Date" id="date" name="date"></paper-input>
-            <paper-textarea name="comment" label="Comment" value=""></paper-textarea>
-
-            <input type="file" accept="image/jpeg" id="receiptupload" name="receipt" capture="camera" hidden>
-          </form>
-          <span id="error"></span>
-        </div>
-        <receipt-display id="preview" class="receipt flex-3"></receipt-display>
-      </div>
-      <div class="layout horizontal buttons-layout">
-        <paper-button raised on-tap="_save" class="save-button">Save</paper-button>
-        <paper-button on-tap="close" class="cancel-button">Cancel</paper-button>
-      </div>
-
-
-    </paper-dialog>
+      <receipt-display id="preview" class="receipt flex-3"></receipt-display>
+    </div>
+    <div class="layout horizontal buttons-layout">
+      <paper-button raised on-tap="_save" class="save-button">Save</paper-button>
+      <paper-button on-tap="close" class="cancel-button">Cancel</paper-button>
+    </div>
   </template>
+
   <script>
     Polymer({
       is: 'expense-editor',
+
       properties: {
+        service: Object,
         expense: {
           type: Object,
           notify: true,
@@ -140,11 +137,16 @@
           observer: '_expenseChanged'
         },
         heading: String,
-        token: {
-          type: String,
-          value: ''
+        modal: {
+          type: Boolean,
+          value: true
         }
       },
+
+      behaviors: [
+        Polymer.PaperDialogBehavior
+      ],
+
       listeners: {
         'iron-form-invalid': '_showValidationErrors',
         'upload-requested': '_triggerUpload'
@@ -152,7 +154,8 @@
 
       showReceipt: function (evt) {
         var input = evt.target;
-        var preview = document.querySelector('#preview');
+        var preview = this.$.preview;
+
         if (input.files && input.files[0]) {
           var receipt = input.files[0];
           if (!receipt.type.match('image.*')) {
@@ -168,22 +171,14 @@
       },
 
       ready: function () {
-        this.$.receiptupload.addEventListener('change', this.showReceipt);
-      },
-
-      open: function () {
-        this.$.dialog.open();
-      },
-
-      close: function () {
-        this.$.dialog.close();
-        this.expense = {};
+        this.$.receiptupload.addEventListener('change', this.showReceipt.bind(this));
       },
 
       _expenseChanged: function () {
         if (this.expense.id) {
           this.heading = 'Edit Expense';
-          this.$.preview.src = Config.baseURL + '/expenses/' + this.expense.id + '/receipt.jpg?token=' + this.token;
+
+          this.$.preview.src = this.service.getReceiptURL(this.expense.id);
 
           // Need to set these manually as we need to update formats etc
           if (this.expense.merchant) {
@@ -212,33 +207,17 @@
       },
 
       _save: function () {
-        this.$.error.innerText = '';
         var _this = this;
+        this.$.error.innerText = '';
         var form = this.$.form;
-        var url = Config.baseURL + '/expenses';
-        if (this.expense.id) {
-          url += '/' + this.expense.id;
-        }
         if (form.validate()) {
-          var formData = new FormData(form);
-          var xhr = new XMLHttpRequest();
-          xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-              if (xhr.status === 200) {
-                var json = JSON.parse(xhr.responseText);
-                if (json.success) {
-                  _this.fire('expenses-updated');
-                } else {
-                  console.log('XHR failed with status ' + xhr.status);
-                }
-              } else {
-                console.log('XHR failed with status ' + xhr.status);
-              }
-            }
-          };
-          xhr.open('POST', url, true);
-          xhr.setRequestHeader('x-access-token', _this.token);
-          xhr.send(formData);
+          this.service.saveExpense(this.expense.id, new FormData(form))
+            .then(function () {
+              _this.fire('expenses-updated');
+            })
+            .catch(function () {
+              _this.error.innerText = 'Save failed.';
+            });
         } else {
           this.$.error.innerText = 'Please fill all required fields';
         }

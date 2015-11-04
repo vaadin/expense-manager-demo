@@ -78,12 +78,14 @@
         <span class="flex"></span>
         <paper-button class="logout-button" on-tap="_logout">Logout</paper-button>
       </paper-toolbar>
-      <div class="content fit">
-        <overview-panel id="overview" class="overview" token="[[token]]"></overview-panel>
-        <expenses-list id="list" class="expenses flex" token="[[token]]"></expenses-list>
-      </div>
+      <template is="dom-if" if="[[loggedIn]]" restamp>
+        <div class="content fit">
+          <overview-panel id="overviewPanel" class="overview" service="[[service]]"></overview-panel>
+          <expenses-list id="list" class="expenses flex" service="[[service]]"></expenses-list>
+        </div>
+      </template>
     </paper-header-panel>
-    <expense-editor token="[[token]]" id="expenseEditor"></expense-editor>
+    <expense-editor service="[[service]]" id="expenseEditor"></expense-editor>
     <paper-toast id="saveNotification" text="Expense saved"></paper-toast>
   </template>
 
@@ -92,7 +94,8 @@
       is: 'overview-page',
 
       properties: {
-        token: String,
+        service: Object,
+        loggedIn: Boolean,
         animationConfig: {
           value: function () {
             return {
@@ -128,6 +131,11 @@
 
       behaviors: [Polymer.NeonSharedElementAnimatableBehavior],
 
+      update: function () {
+        this.$$('#list').update();
+        this.$$('#overviewPanel').update();
+      },
+
       _editExpense: function (evt) {
         var editor = this.$.expenseEditor;
         if (evt.detail && evt.detail.expense) {
@@ -138,8 +146,7 @@
 
       _updateExpenses: function () {
         this.$.expenseEditor.close();
-        this.$.list.update();
-        this.$.overview.update();
+        this.update();
         this.$.saveNotification.show();
       },
 
