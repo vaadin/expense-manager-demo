@@ -1,0 +1,212 @@
+<!--
+Exposes methods for fetching data either from a server or local storage.
+
+Currently, we will use a server if the server attribute is set.
+If not, we'll use dummy data from a json file.
+
+This approach will also allow us centralize offline handling in the future instead
+of having every component deal with it separately.
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
+
+<dom-module id="expense-service">
+  <template>
+    <iron-localstorage id="tokenStorage" name="auth-token" value="{{token}}"></iron-localstorage>
+  </template>
+  <script>
+    Polymer({
+      is: 'expense-service',
+
+      properties: {
+        token: {
+          type: String
+        },
+        loggedIn: {
+          type: Boolean,
+          computed: '_loggedIn(token)',
+          notify: true,
+          reflectToAttribute: true
+        },
+        server: String,
+        service: {
+          type: Object,
+          notify: true
+        }
+      },
+
+      ready: function () {
+        var _this = this;
+        this.service = {
+          login: _this.login.bind(_this),
+          logout: _this.logout.bind(_this),
+          getOverviewData: _this.getOverviewData.bind(_this),
+          getExpenses: _this.getExpenses.bind(_this),
+          saveExpense: _this.saveExpense.bind(_this),
+          getReceiptURL: _this.getReceiptURL.bind(_this)
+        };
+      },
+
+      login: function (username, password) {
+        if (this.server) {
+          return this._loginToServer(username, password);
+        } else {
+          return this._loginLocal(username, password);
+        }
+      },
+
+      logout: function () {
+        this.token = null;
+      },
+
+      getOverviewData: function () {
+        if (this.server) {
+          return this._getOverviewDataFromServer();
+        } else {
+          return this._getOverviewDataLocal();
+        }
+      },
+
+      getExpenses: function (params) {
+        if (this.server) {
+          return this._getExpensesFromServer(params);
+        } else {
+          return this._getExpensesLocal(params);
+        }
+      },
+
+      saveExpense: function (id, data) {
+        if (this.server) {
+          return this._saveExpenseToServer(id, data);
+        } else {
+          return this._saveExpenseLocal(id, data);
+        }
+      },
+
+      getReceiptURL: function (id) {
+        return this.server + '/expenses/' + id + '/receipt.jpg?token=' + this.token;
+      },
+
+      _loginToServer: function (username, password) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+          var xhr = new XMLHttpRequest();
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+              if (xhr.status === 200) {
+                var json = JSON.parse(xhr.responseText);
+                if (json.token) {
+                  _this.token = json.token;
+                  _this.fire('logged-in');
+                  resolve(json);
+                } else {
+                  reject(json.message);
+                }
+              }
+            }
+          };
+          xhr.open('POST', _this.server + '/authenticate', true);
+          xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+          xhr.send(_this._serializeParams({
+            username: username,
+            password: password
+          }));
+        });
+      },
+
+      _getOverviewDataFromServer: function () {
+        return this._get(this.server + '/expenses/overview');
+      },
+
+      _getExpensesFromServer: function (params) {
+        return this._get(this.server + '/expenses', params);
+      },
+
+      _saveExpenseToServer: function (id, data) {
+        var url = this.server + '/expenses';
+        if (id) {
+          url += '/' + id;
+        }
+        return this._post(url, data);
+      },
+
+      _loginLocal: function (username, password) {
+
+      },
+
+      _getOverviewDataLocal: function () {
+
+      },
+
+      _getExpensesLocal: function (params) {
+
+      },
+
+      _saveExpenseLocal: function (expense) {
+
+      },
+
+      _serializeParams: function (params) {
+        var serialized = [];
+        for (var p in params) {
+          // don't serialize empty/null values
+          if (params.hasOwnProperty(p) && params[p]) {
+            serialized.push(encodeURIComponent(p) + '=' + encodeURIComponent(params[p]));
+          }
+        }
+        return serialized.join('&');
+      },
+
+      _get: function (url, params) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+          var xhr = new XMLHttpRequest();
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+              if (xhr.status === 200) {
+                var json = JSON.parse(xhr.responseText);
+                resolve(json);
+              } else {
+                reject('Received status ' + xhr.status);
+              }
+            }
+          };
+          if (params) {
+            url += '?' + _this._serializeParams(params);
+          }
+          xhr.open('GET', url, true);
+          xhr.setRequestHeader('x-access-token', _this.token);
+          xhr.send();
+        });
+      },
+
+      _post: function (url, body) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+          var xhr = new XMLHttpRequest();
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+              if (xhr.status === 200) {
+                var json = JSON.parse(xhr.responseText);
+                if (json.success) {
+                  resolve(json);
+                } else {
+                  reject(json);
+                }
+              }
+            }
+          };
+          xhr.open('POST', url, true);
+          xhr.setRequestHeader('x-access-token', _this.token);
+          xhr.send(body);
+        });
+      },
+
+      _loggedIn: function (token) {
+        return token ? true : false;
+      }
+
+    });
+  </script>
+</dom-module>

@@ -92,31 +92,25 @@
         </colgroup>
       </table>
     </vaadin-grid>
-
     <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
-
   </template>
   <script>
     Polymer({
       is: 'expenses-list',
 
       properties: {
-        token: {
-          type: String,
-          notify: true,
-          observer: '_setDataSource'
-        },
+        service: Object,
         sortColumn: String,
         sortDirection: String,
-        baseURL: String,
         filters: {
           type: Object,
-          value: {}
+          value: {},
+          notify: true
         }
       },
 
       listeners: {
-        'filters-changed': 'update'
+        'filters-changed': '_filtersChanged'
       },
 
       ready: function () {
@@ -132,8 +126,6 @@
         };
 
         grid.addEventListener('sort-order-changed', function () {
-          _this.sortColumn = grid.columns[grid.sortOrder[0].column].name;
-          _this.sortDirection = grid.sortOrder[0].direction;
           grid.scrollToStart();
         });
 
@@ -147,71 +139,51 @@
             });
           }
         });
-      },
 
-      fetchData: function (index, count) {
-        var _this = this;
-        return new Promise(function (resolve, reject) {
-          var xhr = new XMLHttpRequest();
-          xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-              if (xhr.status === 200) {
-                var json = JSON.parse(xhr.responseText);
-                resolve(json);
-              } else {
-                reject();
-              }
-            }
-          };
-          xhr.open('GET', _this._getURLWithQuery(index, count), true);
-          xhr.setRequestHeader('x-access-token', _this.token);
-          xhr.send();
-        });
-      },
-
-      update: function () {
-        console.log('Updating list');
-        this.$.expenses.clearCache();
-        this.$.expenses.scrollToStart();
-      },
-
-      _getURLWithQuery: function (index, count) {
-        var url = Config.baseURL + '/expenses?index=' + index + '&count=' + count;
-        if (this.sortColumn && this.sortDirection) {
-          url += '&sort=' + this.sortColumn + '&direction=' + this.sortDirection;
-        }
-        if (this.filters.min) {
-          url += '&min=' + this.filters.min;
-        }
-        if (this.filters.max) {
-          url += '&max=' + this.filters.max;
-        }
-        if (this.filters.merchant) {
-          url += '&merchant=' + this.filters.merchant;
-        }
-        if (this.filters.start) {
-          url += '&start=' + this.filters.start;
-        }
-        if (this.filters.end) {
-          url += '&end=' + this.filters.end;
-        }
-        return url;
+        this._setDataSource();
       },
 
       _setDataSource: function () {
-        if (this.token) {
-          var _this = this;
-          var grid = this.$.expenses;
-          grid.datasource = function (req) {
-            _this.fetchData(req.index, req.count).then(function (json) {
-              req.success(json.result, json.metadata.totalcount);
-            });
+        var _this = this;
+        var grid = this.$.expenses;
+        grid.datasource = function (req) {
+          var queryParams = {
+            index: req.index,
+            count: req.count,
+            min: _this.filters.min,
+            max: _this.filters.max,
+            merchant: _this.filters.merchant,
+            start: _this.filters.start,
+            end: _this.filters.end
           };
+
+          if (req.sortOrder && req.sortOrder[0]) {
+            queryParams.sort = grid.columns[req.sortOrder[0].column].name;
+            queryParams.direction = req.sortOrder[0].direction;
+          }
+
+          _this.service.getExpenses(queryParams).then(function (json) {
+            req.success(json.result, json.metadata.totalcount);
+          });
+        };
+      },
+
+      update: function () {
+        var grid = this.$.expenses;
+        if (grid.datasource) {
+          grid.clearCache();
+          grid.scrollToStart();
         }
       },
 
       _showExpenseEditor: function () {
-        this.fire('edit-expense');
+        this.fire('edit-expense', {});
+      },
+
+      _filtersChanged: function () {
+        if(this.$.expenses.datasource) {
+          this.update();
+        }
       }
     });
   </script>
