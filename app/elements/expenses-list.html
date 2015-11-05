@@ -79,7 +79,7 @@
     </style>
 
 
-    <search-filters filters="[[filters]]"></search-filters>
+    <search-filters filters="{{filters}}"></search-filters>
 
     <vaadin-grid class="flex" id="expenses" frozen-columns="1">
       <table>
@@ -104,14 +104,15 @@
         sortDirection: String,
         filters: {
           type: Object,
-          value: {},
-          notify: true
+          value: function () {
+            return {};
+          }
         }
       },
 
-      listeners: {
-        'filters-changed': '_filtersChanged'
-      },
+      observers: [
+        '_filtersChanged(filters.*)'
+      ],
 
       ready: function () {
         var grid = this.$.expenses;
@@ -181,7 +182,7 @@
       },
 
       _filtersChanged: function () {
-        if(this.$.expenses.datasource) {
+        if (this.$.expenses.datasource) {
           this.update();
         }
       }
