@@ -182,12 +182,13 @@
       },
 
       _filtersChanged: function () {
-        var _this = this;
-        this.debounce('_filtersChanged', function(){
-          if (_this.$.expenses.datasource) {
+        if (this.$.expenses.datasource) {
+          var _this = this;
+          this.debounce('_filtersChanged', function () {
             _this.update();
-          }
-        }, 300);
+
+          }, 300);
+        }
 
       }
     });
