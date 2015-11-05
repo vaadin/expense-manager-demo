@@ -211,12 +211,16 @@
         this.$.error.innerText = '';
         var form = this.$.form;
         if (form.validate()) {
-          this.service.saveExpense(this.expense.id, new FormData(form))
+          // Note, sending raw serialized data too as FormData is read only.
+          var rawData = form.serialize();
+          rawData.receipt = _this.$.preview.src;
+          this.service.saveExpense(this.expense.id, new FormData(form), rawData)
             .then(function () {
               _this.fire('expenses-updated');
             })
-            .catch(function () {
-              _this.error.innerText = 'Save failed.';
+            .catch(function (e) {
+              console.log(e);
+              _this.$.error.innerText = 'Save failed.';
             });
         } else {
           this.$.error.innerText = 'Please fill all required fields';

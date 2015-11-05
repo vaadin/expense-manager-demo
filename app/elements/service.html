@@ -10,10 +10,12 @@ of having every component deal with it separately.
 
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../scripts/moment-js.html">
 
 <dom-module id="expense-service">
   <template>
     <iron-localstorage id="tokenStorage" name="auth-token" value="{{token}}"></iron-localstorage>
+    <iron-localstorage id="expenses" name="expense-cache" value="{{expenses}}"></iron-localstorage>
   </template>
   <script>
     Polymer({
@@ -33,7 +35,8 @@ of having every component deal with it separately.
         service: {
           type: Object,
           notify: true
-        }
+        },
+        expenses: Array
       },
 
       ready: function () {
@@ -58,6 +61,7 @@ of having every component deal with it separately.
 
       logout: function () {
         this.token = null;
+        this.expenses = null;
       },
 
       getOverviewData: function () {
@@ -76,16 +80,25 @@ of having every component deal with it separately.
         }
       },
 
-      saveExpense: function (id, data) {
+      saveExpense: function (id, formData, rawData) {
         if (this.server) {
-          return this._saveExpenseToServer(id, data);
+          return this._saveExpenseToServer(id, formData);
         } else {
-          return this._saveExpenseLocal(id, data);
+          return this._saveExpenseLocal(id, rawData);
         }
       },
 
       getReceiptURL: function (id) {
-        return this.server + '/expenses/' + id + '/receipt.jpg?token=' + this.token;
+        if (this.server) {
+          return this.server + '/expenses/' + id + '/receipt.jpg?token=' + this.token;
+        } else {
+          var expense = this._findExpense(id);
+          if (expense && expense.receipt && expense.receipt.indexOf('data:') >= 0) {
+            return expense.receipt;
+          } else {
+            return '/images/default-receipt.jpg';
+          }
+        }
       },
 
       _loginToServer: function (username, password) {
@@ -116,11 +129,11 @@ of having every component deal with it separately.
       },
 
       _getOverviewDataFromServer: function () {
-        return this._get(this.server + '/expenses/overview');
+        return this._getData(this.server + '/expenses/overview');
       },
 
       _getExpensesFromServer: function (params) {
-        return this._get(this.server + '/expenses', params);
+        return this._getData(this.server + '/expenses', params);
       },
 
       _saveExpenseToServer: function (id, data) {
@@ -128,23 +141,176 @@ of having every component deal with it separately.
         if (id) {
           url += '/' + id;
         }
-        return this._post(url, data);
+        return this._postData(url, data);
       },
 
-      _loginLocal: function (username, password) {
-
+      _loginLocal: function () {
+        var _this = this;
+        return new Promise(function (resolve) {
+          _this.token = 'demologin';
+          _this.fire('logged-in');
+          resolve();
+        });
       },
 
       _getOverviewDataLocal: function () {
+        var _this = this;
 
+        function calculateOverviewData() {
+
+          var total = _this.expenses.filter(function (expense) {
+              return expense.status === 'New';
+            })
+            .map(function (expense) {
+              return expense.total;
+            })
+            .reduce(function (a, b) {
+              return a + b;
+            }, 0);
+
+          var history = [];
+          var oneYearAgo = moment().subtract(1, 'years');
+          _this.expenses.filter(function (expense) {
+            return moment(expense.date).isAfter(oneYearAgo);
+          }).forEach(function (expense) {
+            findMonth(expense.date, history).total += expense.total;
+          });
+
+          return {
+            totalOwed: total,
+            history: history
+          };
+        }
+
+        function findMonth(rawDate, history) {
+          var date = moment(rawDate);
+          var month;
+
+          history.forEach(function (m) {
+            if (m.month === date.month() && m.year === date.year()) {
+              month = m;
+            }
+          });
+
+          if (!month) {
+            month = {
+              month: date.month(),
+              year: date.year(),
+              total: 0
+            };
+            history.push(month);
+          }
+          return month;
+        }
+
+        return new Promise(function (resolve) {
+          if (_this.expenses) {
+            resolve(calculateOverviewData());
+          } else {
+            _this._getData('../demodata.json')
+              .then(function (json) {
+                _this.expenses = json;
+                resolve(calculateOverviewData());
+              });
+          }
+        });
       },
 
       _getExpensesLocal: function (params) {
+        var _this = this;
 
+        function filterAndSort(params) {
+          // Filter
+          var result = _this.expenses
+            .filter(function (expense) {
+              return !(params.merchant && expense.merchant.toUpperCase().indexOf(params.merchant.toUpperCase()) < 0);
+            })
+            .filter(function (expense) {
+              return !(params.min && expense.total < params.min);
+            })
+            .filter(function (expense) {
+              return !(params.max && expense.total > params.max);
+            });
+
+          // Sort
+          if (params.sort) {
+            var sortProperty = params.sort;
+            var sortDirection = params.direction || 'desc';
+            result.sort(function (a, b) {
+              var res;
+              if (!isNaN(a[sortProperty])) {
+                res = parseInt(a[sortProperty], 10) - parseInt(b[sortProperty], 10);
+              } else {
+                // Let's pretend everything that's not a number is a string.
+                res = a[sortProperty].localeCompare(b[sortProperty]);
+              }
+
+              if ('desc' === sortDirection) {
+                res *= -1;
+              }
+              return res;
+            });
+          }
+
+          // Return correct sub-array and metadata
+          return {
+            metadata: {
+              index: params.index,
+              count: params.count,
+              totalcount: result.length
+            },
+            result: result.slice(params.index, params.index + params.count)
+          };
+        }
+
+        return new Promise(function (resolve) {
+          if (_this.expenses) {
+            resolve(filterAndSort(params));
+          } else {
+            _this._getData('../demodata.json')
+              .then(function (json) {
+                _this.expenses = json;
+                resolve(filterAndSort(params));
+              });
+          }
+        });
       },
 
-      _saveExpenseLocal: function (expense) {
+      _saveExpenseLocal: function (id, data) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+          if (data) {
+            var expense = _this._findExpense(id);
 
+            if (data.total) {
+              data.total = parseFloat(data.total.replace(/[^\d.]/g, ''));
+            }
+            if (expense) {
+              expense.merchant = data.merchant;
+              expense.total = data.total;
+              expense.date = data.date;
+              expense.comment = data.comment;
+              expense.receipt = data.receipt;
+            } else {
+              data.id = new Date().getTime();
+              data.status = 'New';
+              _this.push('expenses', data);
+            }
+            resolve();
+          } else {
+            reject();
+          }
+        });
+      },
+
+      _findExpense: function (id) {
+        var expense = null;
+        this.expenses.forEach(function (e) {
+          if (e.id === id) {
+            expense = e;
+          }
+        });
+        return expense;
       },
 
       _serializeParams: function (params) {
@@ -158,13 +324,13 @@ of having every component deal with it separately.
         return serialized.join('&');
       },
 
-      _get: function (url, params) {
+      _getData: function (url, params) {
         var _this = this;
         return new Promise(function (resolve, reject) {
           var xhr = new XMLHttpRequest();
           xhr.onreadystatechange = function () {
             if (xhr.readyState === XMLHttpRequest.DONE) {
-              if (xhr.status === 200) {
+              if (xhr.status >= 200 && xhr.status < 300) {
                 var json = JSON.parse(xhr.responseText);
                 resolve(json);
               } else {
@@ -181,13 +347,13 @@ of having every component deal with it separately.
         });
       },
 
-      _post: function (url, body) {
+      _postData: function (url, body) {
         var _this = this;
         return new Promise(function (resolve, reject) {
           var xhr = new XMLHttpRequest();
           xhr.onreadystatechange = function () {
             if (xhr.readyState === XMLHttpRequest.DONE) {
-              if (xhr.status === 200) {
+              if (xhr.status >= 200 && xhr.status < 300) {
                 var json = JSON.parse(xhr.responseText);
                 if (json.success) {
                   resolve(json);
@@ -206,7 +372,7 @@ of having every component deal with it separately.
       _loggedIn: function (token) {
         return token ? true : false;
       }
-
-    });
+    })
+    ;
   </script>
 </dom-module>
