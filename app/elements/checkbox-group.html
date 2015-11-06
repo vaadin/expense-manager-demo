@@ -1,0 +1,62 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<dom-module id="checkbox-group">
+  <template>
+    <style>
+      :host {
+        display: block;
+        @apply(--layout-horizontal);
+      }
+
+      .content-wrapper > ::content paper-checkbox {
+        margin-left: 16px;
+        --paper-checkbox-unchecked-color: var(--accent-color);
+      }
+
+    </style>
+    <span class="caption">{{caption}}</span>
+
+    <div class="content-wrapper">
+      <content></content>
+    </div>
+  </template>
+
+  <script>
+    (function () {
+      'use strict';
+
+      Polymer({
+        is: 'checkbox-group',
+
+        properties: {
+          caption: String,
+          options: Array,
+          value: {
+            type: Array,
+            notify: true,
+            value: function () {
+              return [];
+            }
+          }
+        },
+
+        ready: function () {
+          var _this = this;
+          this.getContentChildren().forEach(function (child) {
+            if(child.is === 'paper-checkbox'){
+              child.onChange = _this._checkboxObserver;
+            }
+          });
+        },
+
+        _checkboxObserver: function(checkbox){
+          console.log(checkbox);
+        }
+      });
+    })();
+  </script>
+</dom-module>
+
+

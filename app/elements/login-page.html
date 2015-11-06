@@ -86,59 +86,62 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'login-page',
-      properties: {
-        service: Object,
-        username: {
-          type: String,
-          value: 'demo'
-        },
-        password: {
-          type: String,
-          value: 'demo'
-        },
-        errorMessage: String,
-        url: String,
+    (function () {
+      'use strict';
+      Polymer({
+        is: 'login-page',
+        properties: {
+          service: Object,
+          username: {
+            type: String,
+            value: 'demo'
+          },
+          password: {
+            type: String,
+            value: 'demo'
+          },
+          errorMessage: String,
+          url: String,
 
-        animationConfig: {
-          value: function () {
-            return {
-              'entry': {
-                name: 'fade-in-animation',
-                node: this
-              },
-              'exit': [{
-                name: 'hero-animation',
-                id: 'hero',
-                fromPage: this,
-                timing: {easing: 'ease-in'}
-              }, {
-                name: 'fade-out-animation',
-                node: this
-              }]
-            };
+          animationConfig: {
+            value: function () {
+              return {
+                'entry': {
+                  name: 'fade-in-animation',
+                  node: this
+                },
+                'exit': [{
+                  name: 'hero-animation',
+                  id: 'hero',
+                  fromPage: this,
+                  timing: {easing: 'ease-in'}
+                }, {
+                  name: 'fade-out-animation',
+                  node: this
+                }]
+              };
+            }
+          },
+
+          sharedElements: {
+            value: function () {
+              return {
+                'hero': this.$.logo
+              };
+            }
           }
         },
 
-        sharedElements: {
-          value: function () {
-            return {
-              'hero': this.$.logo
-            };
-          }
+        behaviors: [Polymer.NeonSharedElementAnimatableBehavior],
+
+        _logIn: function () {
+          var _this = this;
+          this.service.login(this.username, this.password)
+            .catch(function (error) {
+              _this.errorMessage = error;
+            });
         }
-      },
-
-      behaviors: [Polymer.NeonSharedElementAnimatableBehavior],
-
-      _logIn: function () {
-        var _this = this;
-        this.service.login(this.username, this.password)
-          .catch(function (error) {
-          _this.errorMessage = error;
-        });
-      }
-    });
+      });
+    })();
   </script>
 </dom-module>

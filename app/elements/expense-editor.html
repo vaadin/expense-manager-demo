@@ -114,7 +114,7 @@
 
           <input type="file" accept="image/jpeg" id="receiptupload" name="receipt" capture="camera" hidden>
         </form>
-        <span id="error"></span>
+        <span id="error">{{errorText}}</span>
       </div>
       <receipt-display id="preview" class="receipt flex-3"></receipt-display>
     </div>
@@ -125,111 +125,116 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'expense-editor',
+    (function () {
+      'use strict';
 
-      properties: {
-        service: Object,
-        expense: {
-          type: Object,
-          notify: true,
-          value: {},
-          observer: '_expenseChanged'
+      Polymer({
+        is: 'expense-editor',
+
+        properties: {
+          service: Object,
+          expense: {
+            type: Object,
+            notify: true,
+            value: {},
+            observer: '_expenseChanged'
+          },
+          heading: String,
+          errorText: String
         },
-        heading: String,
-        modal: {
-          type: Boolean,
-          value: true
-        }
-      },
 
-      behaviors: [
-        Polymer.PaperDialogBehavior
-      ],
+        hostAttributes: {
+          modal: true
+        },
 
-      listeners: {
-        'iron-form-invalid': '_showValidationErrors',
-        'upload-requested': '_triggerUpload'
-      },
+        behaviors: [
+          Polymer.PaperDialogBehavior
+        ],
 
-      showReceipt: function (evt) {
-        var input = evt.target;
-        var preview = this.$.preview;
+        listeners: {
+          'iron-form-invalid': '_showValidationErrors',
+          'upload-requested': '_triggerUpload'
+        },
 
-        if (input.files && input.files[0]) {
-          var receipt = input.files[0];
-          if (!receipt.type.match('image.*')) {
-            return;
+        showReceipt: function (evt) {
+          var input = evt.target;
+          var preview = this.$.preview;
+
+          if (input.files && input.files[0]) {
+            var receipt = input.files[0];
+            if (!receipt.type.match('image.*')) {
+              return;
+            }
+
+            var reader = new FileReader();
+            reader.onload = function (e) {
+              preview.src = e.target.result;
+            };
+            reader.readAsDataURL(receipt);
           }
+        },
 
-          var reader = new FileReader();
-          reader.onload = function (e) {
-            preview.src = e.target.result;
-          };
-          reader.readAsDataURL(receipt);
-        }
-      },
+        ready: function () {
+          this.$.receiptupload.addEventListener('change', this.showReceipt.bind(this));
+        },
 
-      ready: function () {
-        this.$.receiptupload.addEventListener('change', this.showReceipt.bind(this));
-      },
+        _expenseChanged: function () {
+          if (this.expense.id) {
+            this.heading = 'Edit Expense';
 
-      _expenseChanged: function () {
-        if (this.expense.id) {
-          this.heading = 'Edit Expense';
+            this.$.preview.src = this.service.getReceiptURL(this.expense.id);
 
-          this.$.preview.src = this.service.getReceiptURL(this.expense.id);
+            // Need to set these manually as we need to update formats etc
+            if (this.expense.merchant) {
+              this.$.merchant.value = this.expense.merchant;
+            }
+            if (this.expense.total) {
+              this.$.total.value = accounting.formatNumber(this.expense.total, 2);
+            }
+            if (this.expense.date) {
+              this.$.date.value = moment(this.expense.date).format('YYYY-MM-DD');
+            }
+            this.$.receiptupload.removeAttribute('required');
 
-          // Need to set these manually as we need to update formats etc
-          if (this.expense.merchant) {
-            this.$.merchant.value = this.expense.merchant;
+          } else {
+            this.heading = 'Add Expense';
+            this.$.preview.src = null;
+            this.$.form.reset();
+            this.$.date.value = moment().format('YYYY-MM-DD');
+            this.$.receiptupload.setAttribute('required', true);
+
           }
-          if (this.expense.total) {
-            this.$.total.value = accounting.formatNumber(this.expense.total, 2);
+        },
+
+        _triggerUpload: function () {
+          this.$.receiptupload.click();
+        },
+
+        _save: function () {
+          var _this = this;
+          this.$.error.innerText = '';
+          var form = this.$.form;
+          if (form.validate()) {
+            // Note, sending raw serialized data too as FormData is read only.
+            var rawData = form.serialize();
+            rawData.receipt = _this.$.preview.src;
+            this.service.saveExpense(this.expense.id, new FormData(form), rawData)
+              .then(function () {
+                _this.fire('expenses-updated');
+              })
+              .catch(function (e) {
+                console.log(e);
+                _this.errorText = 'Save failed.';
+              });
+          } else {
+            this.errorText = 'Please fill all required fields';
           }
-          if (this.expense.date) {
-            this.$.date.value = moment(this.expense.date).format('YYYY-MM-DD');
-          }
-          this.$.receiptupload.removeAttribute('required');
+        },
 
-        } else {
-          this.heading = 'Add Expense';
-          this.$.preview.src = null;
-          this.$.form.reset();
-          this.$.date.value = moment().format('YYYY-MM-DD');
-          this.$.receiptupload.setAttribute('required', true);
-
+        _showValidationErrors: function (evt) {
+          console.log(evt);
         }
-      },
-
-      _triggerUpload: function () {
-        this.$.receiptupload.click();
-      },
-
-      _save: function () {
-        var _this = this;
-        this.$.error.innerText = '';
-        var form = this.$.form;
-        if (form.validate()) {
-          // Note, sending raw serialized data too as FormData is read only.
-          var rawData = form.serialize();
-          rawData.receipt = _this.$.preview.src;
-          this.service.saveExpense(this.expense.id, new FormData(form), rawData)
-            .then(function () {
-              _this.fire('expenses-updated');
-            })
-            .catch(function (e) {
-              console.log(e);
-              _this.$.error.innerText = 'Save failed.';
-            });
-        } else {
-          this.$.error.innerText = 'Please fill all required fields';
-        }
-      },
-
-      _showValidationErrors: function (evt) {
-        console.log(evt);
-      }
-    });
+      });
+    })();
   </script>
 </dom-module>

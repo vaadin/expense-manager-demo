@@ -2,6 +2,7 @@
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="checkbox-group.html">
 
 <dom-module id="search-filters">
   <template>
@@ -68,25 +69,42 @@
 
         <div class="status">
           <span class="caption">Status</span>
-          <paper-checkbox>New</paper-checkbox>
-          <paper-checkbox>In progress</paper-checkbox>
-          <paper-checkbox>Reimbursed</paper-checkbox>
+          <paper-checkbox on-change="_updateStatus" name="new">New</paper-checkbox>
+          <paper-checkbox on-change="_updateStatus" name="in_progress">In progress</paper-checkbox>
+          <paper-checkbox on-change="_updateStatus" name="reimbursed">Reimbursed</paper-checkbox>
         </div>
       </div>
     </div>
   </template>
 
   <script>
-    Polymer({
-      is: 'search-filters',
+    (function () {
+      'use strict';
 
-      properties: {
-        filters: {
-          type: Object,
-          notify: true
+      Polymer({
+        is: 'search-filters',
+
+        properties: {
+          filters: {
+            type: Object,
+            notify: true
+          }
+        },
+
+        _updateStatus: function (evt) {
+          console.log('status filtering not yet implemented.');
+        },
+
+        contains: function (a, obj) {
+          for (var i = 0; i < a.length; i++) {
+            if (a[i] === obj) {
+              return true;
+            }
+          }
+          return false;
         }
-      }
-    });
+      });
+    })();
   </script>
 </dom-module>
 

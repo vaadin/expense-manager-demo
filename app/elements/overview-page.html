@@ -90,69 +90,72 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'overview-page',
+    (function () {
+      'use strict';
+      Polymer({
+        is: 'overview-page',
 
-      properties: {
-        service: Object,
-        loggedIn: Boolean,
-        animationConfig: {
-          value: function () {
-            return {
-              'entry': [{
-                name: 'fade-in-animation',
-                node: this
-              }, {
-                name: 'hero-animation',
-                id: 'hero',
-                toPage: this
-              }],
-              'exit': {
-                name: 'fade-out-animation',
-                node: this
-              }
-            };
+        properties: {
+          service: Object,
+          loggedIn: Boolean,
+          animationConfig: {
+            value: function () {
+              return {
+                'entry': [{
+                  name: 'fade-in-animation',
+                  node: this
+                }, {
+                  name: 'hero-animation',
+                  id: 'hero',
+                  toPage: this
+                }],
+                'exit': {
+                  name: 'fade-out-animation',
+                  node: this
+                }
+              };
+            }
+          },
+
+          sharedElements: {
+            value: function () {
+              return {
+                'hero': this.$.logo
+              };
+            }
           }
         },
 
-        sharedElements: {
-          value: function () {
-            return {
-              'hero': this.$.logo
-            };
+        listeners: {
+          'edit-expense': '_editExpense',
+          'expenses-updated': '_updateExpenses'
+        },
+
+        behaviors: [Polymer.NeonSharedElementAnimatableBehavior],
+
+        update: function () {
+          this.$$('#list').update();
+          this.$$('#overviewPanel').update();
+        },
+
+        _editExpense: function (evt) {
+          var editor = this.$.expenseEditor;
+          if (evt.detail && evt.detail.expense) {
+            editor.expense = evt.detail.expense;
           }
+          editor.open();
+        },
+
+        _updateExpenses: function () {
+          this.$.expenseEditor.close();
+          this.update();
+          this.$.saveNotification.show();
+        },
+
+        _logout: function () {
+          this.fire('logged-out');
         }
-      },
-
-      listeners: {
-        'edit-expense': '_editExpense',
-        'expenses-updated': '_updateExpenses'
-      },
-
-      behaviors: [Polymer.NeonSharedElementAnimatableBehavior],
-
-      update: function () {
-        this.$$('#list').update();
-        this.$$('#overviewPanel').update();
-      },
-
-      _editExpense: function (evt) {
-        var editor = this.$.expenseEditor;
-        if (evt.detail && evt.detail.expense) {
-          editor.expense = evt.detail.expense;
-        }
-        editor.open();
-      },
-
-      _updateExpenses: function () {
-        this.$.expenseEditor.close();
-        this.update();
-        this.$.saveNotification.show();
-      },
-
-      _logout: function () {
-        this.fire('logged-out');
-      }
-    });
+      });
+    })();
   </script>
 </dom-module>

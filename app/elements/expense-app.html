@@ -26,40 +26,44 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'expense-app',
-      properties: {
-        service: Object,
-        selected: {
-          type: Number,
-          notify: true,
-          computed: '_selectPage(loggedIn)'
+    (function () {
+      'use strict';
+
+      Polymer({
+        is: 'expense-app',
+        properties: {
+          service: Object,
+          selected: {
+            type: Number,
+            notify: true,
+            computed: '_selectPage(loggedIn)'
+          },
+          loggedIn: {
+            type: Boolean,
+            notify: true
+          }
         },
-        loggedIn: {
-          type: Boolean,
-          notify: true
+
+        observers: [
+          '_initOverviewPage(token)'
+        ],
+
+        listeners: {
+          'logged-out': '_handleLogout'
+        },
+
+        ready: function () {
+          //this.$.service.server = 'http://' + window.location.hostname + ':8080/api/v1';
+        },
+
+        _handleLogout: function () {
+          this.service.logout();
+        },
+
+        _selectPage: function (loggedIn) {
+          return loggedIn ? 1 : 0;
         }
-      },
-
-      observers: [
-        '_initOverviewPage(token)'
-      ],
-
-      listeners: {
-        'logged-out': '_handleLogout'
-      },
-
-      ready: function () {
-        //this.$.service.server = 'http://' + window.location.hostname + ':8080/api/v1';
-      },
-
-      _handleLogout: function () {
-        this.service.logout();
-      },
-
-      _selectPage: function (loggedIn) {
-        return loggedIn ? 1 : 0;
-      }
-    });
+      });
+    })();
   </script>
 </dom-module>

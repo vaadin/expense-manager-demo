@@ -59,46 +59,49 @@
     </div>
   </template>
   <script>
-    Polymer({
-      is: 'overview-panel',
+    (function () {
+      'use strict';
+      Polymer({
+        is: 'overview-panel',
 
-      properties: {
-        service: {
-          type: Object
+        properties: {
+          service: {
+            type: Object
+          },
+          categories: {
+            type: String,
+            value: '',
+            notify: true
+          },
+          seriesData: {
+            type: Array,
+            value: [],
+            notify: true
+          },
+          totalOwed: String
         },
-        categories: {
-          type: String,
-          value: '',
-          notify: true
-        },
-        seriesData: {
-          type: Array,
-          value: [],
-          notify: true
-        },
-        totalOwed: String
-      },
 
-      ready: function() {
-        this.update();
-      },
+        ready: function () {
+          this.update();
+        },
 
-      update: function () {
-        var _this = this;
-        this.service.getOverviewData()
-          .then(function (overviewData) {
-            _this.totalOwed = accounting.formatMoney(overviewData.totalOwed);
-            _this.categories = overviewData.history.map(function (m) {
-              return m.month + '/' + m.year;
-            }).join(', ');
-            _this.seriesData = overviewData.history.map(function (m) {
-              return m.total;
+        update: function () {
+          var _this = this;
+          this.service.getOverviewData()
+            .then(function (overviewData) {
+              _this.totalOwed = accounting.formatMoney(overviewData.totalOwed);
+              _this.categories = overviewData.history.map(function (m) {
+                return m.month + '/' + m.year;
+              }).join(', ');
+              _this.seriesData = overviewData.history.map(function (m) {
+                return m.total;
+              });
+            })
+            .catch(function (error) {
+              console.log(error);
             });
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-      }
-    });
+        }
+      });
+    })();
   </script>
 </dom-module>

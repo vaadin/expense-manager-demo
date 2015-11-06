@@ -95,102 +95,106 @@
     <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
   </template>
   <script>
-    Polymer({
-      is: 'expenses-list',
+    (function () {
+      'use strict';
 
-      properties: {
-        service: Object,
-        sortColumn: String,
-        sortDirection: String,
-        filters: {
-          type: Object,
-          value: function () {
-            return {};
+      Polymer({
+        is: 'expenses-list',
+
+        properties: {
+          service: Object,
+          sortColumn: String,
+          sortDirection: String,
+          filters: {
+            type: Object,
+            value: function () {
+              return {};
+            }
           }
-        }
-      },
+        },
 
-      observers: [
-        '_filtersChanged(filters.*)'
-      ],
+        observers: [
+          '_filtersChanged(filters.*)'
+        ],
 
-      ready: function () {
-        var grid = this.$.expenses;
-        var _this = this;
+        ready: function () {
+          var grid = this.$.expenses;
+          var _this = this;
 
-        grid.columns[0].renderer = function (cell) {
-          cell.element.innerHTML = moment(cell.data).format('YYYY-MM-DD');
-        };
-
-        grid.columns[2].renderer = function (cell) {
-          cell.element.innerHTML = accounting.formatMoney(cell.data);
-        };
-
-        grid.addEventListener('sort-order-changed', function () {
-          grid.scrollToStart();
-        });
-
-        grid.addEventListener('select', function () {
-          var selection = grid.selection.selected();
-          if (selection.length === 1) {
-            grid.getItem(selection[0], function (err, item) {
-              _this.fire('edit-expense', {
-                expense: item
-              });
-            });
-          }
-        });
-
-        this._setDataSource();
-      },
-
-      _setDataSource: function () {
-        var _this = this;
-        var grid = this.$.expenses;
-        grid.datasource = function (req) {
-          var queryParams = {
-            index: req.index,
-            count: req.count,
-            min: _this.filters.min,
-            max: _this.filters.max,
-            merchant: _this.filters.merchant,
-            start: _this.filters.start,
-            end: _this.filters.end
+          grid.columns[0].renderer = function (cell) {
+            cell.element.innerHTML = moment(cell.data).format('YYYY-MM-DD');
           };
 
-          if (req.sortOrder && req.sortOrder[0]) {
-            queryParams.sort = grid.columns[req.sortOrder[0].column].name;
-            queryParams.direction = req.sortOrder[0].direction;
+          grid.columns[2].renderer = function (cell) {
+            cell.element.innerHTML = accounting.formatMoney(cell.data);
+          };
+
+          grid.addEventListener('sort-order-changed', function () {
+            grid.scrollToStart();
+          });
+
+          grid.addEventListener('select', function () {
+            var selection = grid.selection.selected();
+            if (selection.length === 1) {
+              grid.getItem(selection[0], function (err, item) {
+                _this.fire('edit-expense', {
+                  expense: item
+                });
+              });
+            }
+          });
+
+          this._setDataSource();
+        },
+
+        _setDataSource: function () {
+          var _this = this;
+          var grid = this.$.expenses;
+          grid.datasource = function (req) {
+            var queryParams = {
+              index: req.index,
+              count: req.count,
+              min: _this.filters.min,
+              max: _this.filters.max,
+              merchant: _this.filters.merchant,
+              start: _this.filters.start,
+              end: _this.filters.end
+            };
+
+            if (req.sortOrder && req.sortOrder[0]) {
+              queryParams.sort = grid.columns[req.sortOrder[0].column].name;
+              queryParams.direction = req.sortOrder[0].direction;
+            }
+
+            _this.service.getExpenses(queryParams).then(function (json) {
+              req.success(json.result, json.metadata.totalcount);
+            });
+          };
+        },
+
+        update: function () {
+          var grid = this.$.expenses;
+          if (grid.datasource) {
+            grid.clearCache();
+            grid.scrollToStart();
+          }
+        },
+
+        _showExpenseEditor: function () {
+          this.fire('edit-expense', {});
+        },
+
+        _filtersChanged: function () {
+          if (this.$.expenses.datasource) {
+            var _this = this;
+            this.debounce('_filtersChanged', function () {
+              _this.update();
+
+            }, 300);
           }
 
-          _this.service.getExpenses(queryParams).then(function (json) {
-            req.success(json.result, json.metadata.totalcount);
-          });
-        };
-      },
-
-      update: function () {
-        var grid = this.$.expenses;
-        if (grid.datasource) {
-          grid.clearCache();
-          grid.scrollToStart();
         }
-      },
-
-      _showExpenseEditor: function () {
-        this.fire('edit-expense', {});
-      },
-
-      _filtersChanged: function () {
-        if (this.$.expenses.datasource) {
-          var _this = this;
-          this.debounce('_filtersChanged', function () {
-            _this.update();
-
-          }, 300);
-        }
-
-      }
-    });
+      });
+    })();
   </script>
 </dom-module>

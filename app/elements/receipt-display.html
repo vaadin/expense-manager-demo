@@ -94,37 +94,41 @@
 
   </template>
   <script>
-    Polymer({
-      is: 'receipt-display',
-      properties: {
-        src: {
-          type: String,
-          observer: '_updateCanvas'
+    (function () {
+      'use strict';
+
+      Polymer({
+        is: 'receipt-display',
+        properties: {
+          src: {
+            type: String,
+            observer: '_updateCanvas'
+          }
+        },
+
+        _updateCanvas: function () {
+          var receipt = this.$.receipt;
+
+          if (receipt.firstChild) {
+            receipt.removeChild(receipt.firstChild);
+          }
+
+          if (this.src) {
+            loadImage(this.src, function (img) {
+              receipt.appendChild(img);
+            }, {
+              maxWidth: 400,
+              canvas: true
+            });
+          }
+
+          this.toggleClass('has-receipt', this.src, this.$.content);
+        },
+
+        _fireUpload: function () {
+          this.fire('upload-requested');
         }
-      },
-
-      _updateCanvas: function () {
-        var receipt = this.$.receipt;
-
-        if (receipt.firstChild) {
-          receipt.removeChild(receipt.firstChild);
-        }
-
-        if (this.src) {
-          loadImage(this.src, function (img) {
-            receipt.appendChild(img);
-          }, {
-            maxWidth: 400,
-            canvas: true
-          });
-        }
-
-        this.toggleClass('has-receipt', this.src, this.$.content);
-      },
-
-      _fireUpload: function () {
-        this.fire('upload-requested');
-      }
-    });
+      });
+    })();
   </script>
 </dom-module>
