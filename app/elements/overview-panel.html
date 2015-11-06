@@ -17,6 +17,7 @@
         box-sizing: border-box;
         width: 100%;
         padding: 20px;
+        text-align: center;
       }
 
       .total .sum {
@@ -41,13 +42,11 @@
     </style>
 
     <div class="layout vertical" id="container">
-      <div class="layout vertical center-center flex">
-        <div class="total layout vertical center-center">
-          <div>Total</div>
-          <div class="sum">[[totalOwed]]</div>
-        </div>
+      <div class="total">
+        <div>Total</div>
+        <div class="sum">[[totalOwed]]</div>
       </div>
-      <div class="chart">
+      <div class="chart flex">
         <h2 class="chart-title">Last 12 months</h2>
         <vaadin-bar-chart id="barchart">
           <title>
