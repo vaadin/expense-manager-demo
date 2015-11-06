@@ -28,6 +28,10 @@
         text-align: center;
       }
 
+      .chart {
+          height: 400px;
+      }
+
       @media (max-width: 600px) {
         .chart {
           display: none;
@@ -44,7 +48,7 @@
       </div>
       <div class="chart">
         <!--<h2 class="chart-title">Last 12 months</h2>-->
-        <vaadin-bar-chart>
+        <vaadin-bar-chart id="barchart">
           <title>Last 12 months</title>
           <chart background-color="transparent"></chart>
           <exporting enabled="false"></exporting>
@@ -96,6 +100,9 @@
               _this.seriesData = overviewData.history.map(function (m) {
                 return m.total;
               });
+              _this.async(function() {
+                _this.$.barchart.chart.reflow();
+              }, 200);
             })
             .catch(function (error) {
               console.log(error);
