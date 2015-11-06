@@ -51,12 +51,14 @@
       margin-top: 0;
     }
 
-    .login {
-      height: 60%;
+    .login > div {
       padding: 30px;
     }
 
     .icon-attribution {
+      position: absolute;
+      bottom: 1em;
+      width: 100%;
       font-size: 70%;
       opacity: 0.6;
       text-align: center;
@@ -83,17 +85,18 @@
   </style>
 
   <template>
-
     <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_logIn"></iron-a11y-keys>
-    <div id="header" class="header layout vertical center end-justified">
+    <div id="header" class="flex header layout vertical center end-justified">
       <iron-icon class="logo" id="logo" src="/images/app-icon.svg"></iron-icon>
       <h1>Expense Manager</h1>
     </div>
-    <div class="login layout vertical center">
-      <paper-input value={{username}} label="USERNAME" name="username"></paper-input>
-      <paper-input value="{{password}}" label="PASSWORD" name="password" type="password"></paper-input>
-      <span class="error-message">[[errorMessage]]</span>
-      <paper-button id="login-button" on-tap="_logIn" raised>Login</paper-button>
+    <div class="flex login layout vertical center">
+      <div>
+        <paper-input value={{username}} label="USERNAME" name="username"></paper-input>
+        <paper-input value="{{password}}" label="PASSWORD" name="password" type="password"></paper-input>
+        <span class="error-message">[[errorMessage]]</span>
+        <paper-button id="login-button" on-tap="_logIn" raised>Login</paper-button>
+      </div>
     </div>
     <div class="icon-attribution">Icon by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed under <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>
   </template>
