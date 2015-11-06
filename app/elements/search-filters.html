@@ -15,6 +15,7 @@
       .status {
         width: 100%;
         margin-top: 16px;
+        margin-left: 4px;
       }
 
       paper-input {
@@ -29,6 +30,12 @@
       .status paper-checkbox {
         margin-left: 16px;
         --paper-checkbox-unchecked-color: var(--accent-color);
+      }
+
+      .filters ::content label,
+      .status .caption {
+        text-transform: uppercase;
+        font-weight: bold !important;
       }
 
       @media (max-width: 600px) {
@@ -107,5 +114,3 @@
     })();
   </script>
 </dom-module>
-
-

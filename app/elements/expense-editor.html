@@ -19,7 +19,7 @@
     <style>
       :host {
         display: block;
-        padding: 16px;
+        padding: 16px 32px 64px 32px;
         border: 1px solid #ccc;
         position: absolute;
         top: 0;
@@ -67,6 +67,11 @@
 
       .close-button {
         color: var(--accent-color);
+      }
+
+      form ::content label {
+        text-transform: uppercase;
+        font-weight: bold !important;
       }
 
       @media (min-width: 900px) {
