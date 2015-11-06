@@ -26,6 +26,7 @@
       .chart-title {
         font-weight: 300;
         text-align: center;
+        font-size: 18px;
       }
 
       .chart {
@@ -47,9 +48,11 @@
         </div>
       </div>
       <div class="chart">
-        <!--<h2 class="chart-title">Last 12 months</h2>-->
+        <h2 class="chart-title">Last 12 months</h2>
         <vaadin-bar-chart id="barchart">
-          <title>Last 12 months</title>
+          <title>
+            <style display="none"></style>
+          </title>
           <chart background-color="transparent"></chart>
           <exporting enabled="false"></exporting>
           <x-axis categories="[[categories]]">
