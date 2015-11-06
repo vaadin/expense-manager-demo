@@ -54,9 +54,13 @@
           </title>
           <chart background-color="transparent"></chart>
           <exporting enabled="false"></exporting>
-          <x-axis categories="[[categories]]">
-            <title>Month</title>
+          <x-axis>
+            <title><style display="none"></style></title>
           </x-axis>
+          <y-axis>
+            <title><style display="none"></style></title>
+          </y-axis>
+          <tooltip formatter="function() { return '$' + this.y.toFixed(2); }"></tooltip>
           <data-series name="$" data="[[seriesData]]">
             <color>#80CBC4</color>
           </data-series>
@@ -73,11 +77,6 @@
         properties: {
           service: {
             type: Object
-          },
-          categories: {
-            type: String,
-            value: '',
-            notify: true
           },
           seriesData: {
             type: Array,
@@ -96,13 +95,16 @@
           this.service.getOverviewData()
             .then(function (overviewData) {
               _this.totalOwed = accounting.formatMoney(overviewData.totalOwed);
-              _this.categories = overviewData.history.map(function (m) {
-                return m.month + '/' + m.year;
-              }).join(', ');
-              _this.seriesData = overviewData.history.map(function (m) {
+              var categories = overviewData.history.map(function(m, i) {
+                var label = moment().year(m.year).month(m.month);
+                var format = (i === 0 || m.month === 11) ? 'YYYY MMM' : 'MMM';
+                return label.format(format);
+              });
+              _this.seriesData = overviewData.history.map(function(m) {
                 return m.total;
               });
               _this.async(function() {
+                _this.$.barchart.chart.xAxis[0].setCategories(categories);
                 _this.$.barchart.chart.reflow();
               }, 200);
             })
