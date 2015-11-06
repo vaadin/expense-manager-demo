@@ -206,6 +206,11 @@
           }
         },
 
+        _resetValidationErrors: function() {
+          this.$.merchant.invalid = false;
+          this.$.total.invalid = false;
+        },
+
         _triggerUpload: function () {
           this.$.receiptupload.click();
         },
