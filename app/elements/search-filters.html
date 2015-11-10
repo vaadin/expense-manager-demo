@@ -77,8 +77,8 @@
       <div class="filters layout horizontal wrap justified">
 
         <div class="date layout horizontal wrap center">
-          <paper-input label="After" value="{{filters.start}}"></paper-input>
-          <paper-input label="Before" value="{{filters.end}}"></paper-input>
+          <paper-input label="After" value="{{filters.start}}" pattern="\d{4}-\d{2}-\d{2}" error-message="Value must be in YYYY-MM-DD" auto-validate></paper-input>
+          <paper-input label="Before" value="{{filters.end}}" pattern="\d{4}-\d{2}-\d{2}" error-message="Value must be in YYYY-MM-DD" auto-validate></paper-input>
         </div>
 
         <div class="merchants flex">
