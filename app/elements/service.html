@@ -98,7 +98,7 @@ of having every component deal with it separately.
             if (expense && expense.receipt && expense.receipt.indexOf('data:') >= 0) {
               return expense.receipt;
             } else {
-              return '/images/default-receipt.jpg';
+              return 'images/default-receipt.jpg';
             }
           }
         },
@@ -209,7 +209,7 @@ of having every component deal with it separately.
             if (_this.expenses) {
               resolve(calculateOverviewData());
             } else {
-              _this._getData('../demodata.json')
+              _this._getData('demodata.json')
                 .then(function (json) {
                   _this.expenses = json;
                   resolve(calculateOverviewData());
@@ -300,7 +300,7 @@ of having every component deal with it separately.
             if (_this.expenses) {
               resolve(filterAndSort(params));
             } else {
-              _this._getData('../demodata.json')
+              _this._getData('demodata.json')
                 .then(function (json) {
                   _this.expenses = json;
                   resolve(filterAndSort(params));
