@@ -140,9 +140,7 @@
 
         _editExpense: function (evt) {
           var editor = this.$.expenseEditor;
-          if (evt.detail && evt.detail.expense) {
-            editor.expense = evt.detail.expense;
-          }
+          editor.expense = evt.detail.expense || {};
           editor.open();
         },
 
