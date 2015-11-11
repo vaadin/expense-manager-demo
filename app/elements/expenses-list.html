@@ -161,6 +161,12 @@
             }
           };
 
+          grid.columns[3].renderer = function(cell) {
+            var status = cell.data.replace(/_/g, ' ');
+            status = status.charAt(0).toUpperCase() + status.slice(1);
+            cell.element.innerText = status;
+          };
+
           this._setDataSource();
         },
 

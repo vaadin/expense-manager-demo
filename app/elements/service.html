@@ -161,7 +161,7 @@ of having every component deal with it separately.
           function calculateOverviewData() {
 
             var total = _this.expenses.filter(function (expense) {
-                return expense.status === 'New';
+                return expense.status === 'new';
               })
               .map(function (expense) {
                 return expense.total;
@@ -235,7 +235,7 @@ of having every component deal with it separately.
               })
               .filter(function (expense) {
                 if (params.status && params.status.length > 0) {
-                  return _this._contains(params.status, expense.status.toLowerCase().replace(/\s/, '_'));
+                  return _this._contains(params.status, expense.status);
                 } else {
                   return true;
                 }
