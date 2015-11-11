@@ -49,6 +49,7 @@ of having every component deal with it separately.
             getOverviewData: _this.getOverviewData.bind(_this),
             getExpenses: _this.getExpenses.bind(_this),
             saveExpense: _this.saveExpense.bind(_this),
+            deleteExpense: _this.deleteExpense.bind(_this),
             getReceiptURL: _this.getReceiptURL.bind(_this)
           };
         },
@@ -87,6 +88,14 @@ of having every component deal with it separately.
             return this._saveExpenseToServer(id, formData);
           } else {
             return this._saveExpenseLocal(id, rawData);
+          }
+        },
+
+        deleteExpense: function (id) {
+          if (this.server) {
+            return this._deleteExpenseFromServer(id);
+          } else {
+            return this._deleteExpenseLocal(id);
           }
         },
 
@@ -131,11 +140,11 @@ of having every component deal with it separately.
         },
 
         _getOverviewDataFromServer: function () {
-          return this._getData(this.server + '/expenses/overview');
+          return this._ajax(this.server + '/expenses/overview');
         },
 
         _getExpensesFromServer: function (params) {
-          return this._getData(this.server + '/expenses', params);
+          return this._ajax(this.server + '/expenses', params);
         },
 
         _saveExpenseToServer: function (id, data) {
@@ -144,6 +153,11 @@ of having every component deal with it separately.
             url += '/' + id;
           }
           return this._postData(url, data);
+        },
+
+        _deleteExpenseFromServer: function (id) {
+          var url = this.server + '/expenses/' + id;
+          return this._ajax(url, {}, 'DELETE');
         },
 
         _loginLocal: function () {
@@ -209,7 +223,7 @@ of having every component deal with it separately.
             if (_this.expenses) {
               resolve(calculateOverviewData());
             } else {
-              _this._getData('demodata.json')
+              _this._ajax('demodata.json')
                 .then(function (json) {
                   _this.expenses = json;
                   resolve(calculateOverviewData());
@@ -300,7 +314,7 @@ of having every component deal with it separately.
             if (_this.expenses) {
               resolve(filterAndSort(params));
             } else {
-              _this._getData('demodata.json')
+              _this._ajax('demodata.json')
                 .then(function (json) {
                   _this.expenses = json;
                   resolve(filterAndSort(params));
@@ -336,6 +350,22 @@ of having every component deal with it separately.
           });
         },
 
+        _deleteExpenseLocal: function (id) {
+          var _this = this;
+          return new Promise(function (resolve, reject) {
+            for (var i = 0; i < _this.expenses.length; i++) {
+              var expense = _this.expenses[i];
+
+              if (expense.id === id && expense.status === 'new') {
+                _this.splice('expenses', i, 1);
+                resolve();
+                return;
+              }
+            }
+            reject();
+          });
+        },
+
         _findExpense: function (id) {
           var expense = null;
           this.expenses.forEach(function (e) {
@@ -357,8 +387,9 @@ of having every component deal with it separately.
           return serialized.join('&');
         },
 
-        _getData: function (url, params) {
+        _ajax: function (url, params, method) {
           var _this = this;
+          method = method || 'GET';
           return new Promise(function (resolve, reject) {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
@@ -374,7 +405,7 @@ of having every component deal with it separately.
             if (params) {
               url += '?' + _this._serializeParams(params);
             }
-            xhr.open('GET', url, true);
+            xhr.open(method, url, true);
             xhr.setRequestHeader('x-access-token', _this.token);
             xhr.send();
           });

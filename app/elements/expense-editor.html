@@ -130,6 +130,7 @@
       <div class="layout horizontal buttons-layout">
         <paper-button raised on-tap="_save" class="save-button">Save</paper-button>
         <paper-button on-tap="close" class="cancel-button">Cancel</paper-button>
+        <paper-button on-tap="_delete" id="delete" class="delete-button right-justify">Delete</paper-button>
       </div>
     </paper-dialog>
   </template>
@@ -181,6 +182,7 @@
         },
 
         _expenseChanged: function () {
+          this.errorText = '';
           if (this.expense.id) {
             this.heading = 'Edit Expense';
 
@@ -200,6 +202,7 @@
               this.$.comment.value = this.expense.comment;
             }
             this.$.receiptupload.removeAttribute('required');
+            this.$.delete.hidden = this.expense.status !== 'new';
 
           } else {
             this.heading = 'Add Expense';
@@ -207,7 +210,6 @@
             this.$.form.reset();
             this.$.date.value = moment().format('YYYY-MM-DD');
             this.$.receiptupload.setAttribute('required', true);
-
           }
         },
 
@@ -245,14 +247,24 @@
           console.log(evt);
         },
 
-        open: function(){
+        open: function () {
           this.$.dialog.open();
         },
 
-        close: function() {
+        close: function () {
           this.$.dialog.close();
-        }
+        },
 
+        _delete: function () {
+          var _this = this;
+          this.service.deleteExpense(this.expense.id).then(function () {
+              _this.fire('expenses-updated', {reason: 'deleted'});
+            })
+            .catch(function (e) {
+              console.log(e);
+              _this.errorText = 'Delete failed.';
+            });
+        }
       });
     })();
   </script>
