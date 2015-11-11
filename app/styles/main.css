@@ -9,11 +9,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 @font-face {
   font-family: 'Vaadin-Icons';
-  src: url('fonts/Vaadin-Icons.eot');
-  src: url('fonts/Vaadin-Icons.eot?#iefix') format('embedded-opentype'),
-  url('fonts/Vaadin-Icons.woff') format('woff'),
-  url('fonts/Vaadin-Icons.ttf') format('truetype'),
-  url('fonts/Vaadin-Icons.svg#icomoon') format('svg');
+  src: url('../fonts/Vaadin-Icons.eot');
+  src: url('../fonts/Vaadin-Icons.eot?#iefix') format('embedded-opentype'),
+  url('../fonts/Vaadin-Icons.woff') format('woff'),
+  url('../fonts/Vaadin-Icons.ttf') format('truetype'),
+  url('../fonts/Vaadin-Icons.svg#icomoon') format('svg');
 }
 
 body {
