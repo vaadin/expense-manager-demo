@@ -77,8 +77,10 @@
       <div class="filters layout horizontal wrap justified">
 
         <div class="date layout horizontal wrap center">
-          <paper-input label="After" value="{{filters.start}}" pattern="\d{4}-\d{2}-\d{2}" error-message="Value must be in YYYY-MM-DD" auto-validate></paper-input>
-          <paper-input label="Before" value="{{filters.end}}" pattern="\d{4}-\d{2}-\d{2}" error-message="Value must be in YYYY-MM-DD" auto-validate></paper-input>
+          <paper-input label="After" value="{{filters.start}}" pattern="\d{4}-\d{2}-\d{2}"
+                       error-message="Value must be in YYYY-MM-DD" auto-validate></paper-input>
+          <paper-input label="Before" value="{{filters.end}}" pattern="\d{4}-\d{2}-\d{2}"
+                       error-message="Value must be in YYYY-MM-DD" auto-validate></paper-input>
         </div>
 
         <div class="merchants flex">
@@ -92,6 +94,7 @@
 
         <div class="status">
           <span class="caption">Status</span>
+
           <div class="checkboxes">
             <paper-checkbox on-change="_updateStatus" name="new">New</paper-checkbox>
             <paper-checkbox on-change="_updateStatus" name="in_progress">In progress</paper-checkbox>
@@ -117,10 +120,32 @@
         },
 
         _updateStatus: function (evt) {
-          console.log('status filtering not yet implemented.');
+          var checkbox = evt.target;
+
+
+          if (checkbox.checked) {
+            this._addStatus(checkbox.name);
+          } else {
+            this._removeStatus(checkbox.name);
+          }
         },
 
-        contains: function (a, obj) {
+        _addStatus: function (status) {
+          var statuses = this.filters.status;
+          if (statuses && !this._contains(statuses, status)) {
+            this.push('filters.status', status);
+          } else {
+            this.set('filters.status', [status])
+          }
+        },
+
+        _removeStatus: function (status) {
+          if (this.filters.status && this.filters.status.indexOf(status) >= 0) {
+            this.splice('filters.status', this.filters.status.indexOf(status), 1);
+          }
+        },
+
+        _contains: function (a, obj) {
           for (var i = 0; i < a.length; i++) {
             if (a[i] === obj) {
               return true;

@@ -234,6 +234,13 @@ of having every component deal with it separately.
                 return !(params.max && expense.total > params.max);
               })
               .filter(function (expense) {
+                if (params.status && params.status.length > 0) {
+                  return _this._contains(params.status, expense.status.toLowerCase().replace(/\s/, '_'));
+                } else {
+                  return true;
+                }
+              })
+              .filter(function (expense) {
                 if (params.start) {
                   var startDate = moment(params.start);
                   if (startDate.isValid() && moment(expense.date).isAfter(startDate)) {
@@ -397,6 +404,16 @@ of having every component deal with it separately.
 
         _loggedIn: function (token) {
           return token ? true : false;
+        },
+
+
+        _contains: function (a, obj) {
+          for (var i = 0; i < a.length; i++) {
+            if (a[i] === obj) {
+              return true;
+            }
+          }
+          return false;
         }
       });
     })();
