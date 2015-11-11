@@ -2,7 +2,7 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
-<link rel="import" href="../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
@@ -17,13 +17,13 @@
 <dom-module id="expense-editor">
   <template>
     <style>
-      :host {
+      #dialog {
         display: block;
         padding: 16px 32px 64px 32px;
         border: 1px solid #ccc;
         position: absolute;
         top: 0;
-        margin: 0 !important; /*Important is needed because something overrides this in dist otherwise */
+        margin: 0;
         width: 80vw;
         background: var(--primary-background-color);
         overflow-y: scroll;
@@ -60,9 +60,10 @@
         color: red;
       }
 
-      .wrapper {
+      :host > .wrapper {
         height: 100%;
         width: 100%;
+        padding: 0;
       }
 
       .close-button {
@@ -91,42 +92,44 @@
       }
 
       @media (max-width: 600px) {
-        :host {
+        #dialog {
           width: 100vw;
         }
       }
     </style>
-    <link rel="import" type="css" href="../bower_components/paper-dialog-behavior/paper-dialog-common.css">
-    <div class="layout horizontal">
-      <h2>{{heading}}</h2>
-      <span class="flex"></span>
-      <paper-icon-button icon="close" on-tap="close" class="close-button self-start"></paper-icon-button>
-    </div>
-
-    <div class="wrapper">
-      <div class="form flex-2">
-        <form is="iron-form" id="form">
-          <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
-          <paper-input name="merchant" id="merchant" label="Merchant" auto-validate required
-                       error-message="Merchant name required"></paper-input>
-          <paper-input name="total" id="total" label="Total" auto-validate required pattern="[\d,.]+"
-                       error-message="Numeric values only">
-            <div prefix>$</div>
-          </paper-input>
-
-          <paper-input label="Date" id="date" name="date" pattern="\d{4}-\d{2}-\d{2}" error-message="Value must be in YYYY-MM-DD" auto-validate></paper-input>
-          <paper-textarea id="comment" name="comment" label="Comment" value=""></paper-textarea>
-
-          <input type="file" accept="image/jpeg" id="receiptupload" name="receipt" capture="camera" hidden>
-        </form>
-        <span id="error">{{errorText}}</span>
+    <paper-dialog id="dialog" modal>
+      <div class="layout horizontal">
+        <h2>{{heading}}</h2>
+        <span class="flex"></span>
+        <paper-icon-button icon="close" on-tap="close" class="close-button self-start"></paper-icon-button>
       </div>
-      <receipt-display id="preview" class="receipt flex-3"></receipt-display>
-    </div>
-    <div class="layout horizontal buttons-layout">
-      <paper-button raised on-tap="_save" class="save-button">Save</paper-button>
-      <paper-button on-tap="close" class="cancel-button">Cancel</paper-button>
-    </div>
+
+      <div class="wrapper">
+        <div class="form flex-2">
+          <form is="iron-form" id="form">
+            <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
+            <paper-input name="merchant" id="merchant" label="Merchant" auto-validate required
+                         error-message="Merchant name required"></paper-input>
+            <paper-input name="total" id="total" label="Total" auto-validate required pattern="[\d,.]+"
+                         error-message="Numeric values only">
+              <div prefix>$</div>
+            </paper-input>
+
+            <paper-input label="Date" id="date" name="date" pattern="\d{4}-\d{2}-\d{2}"
+                         error-message="Value must be in YYYY-MM-DD" auto-validate></paper-input>
+            <paper-textarea id="comment" name="comment" label="Comment" value=""></paper-textarea>
+
+            <input type="file" accept="image/jpeg" id="receiptupload" name="receipt" capture="camera" hidden>
+          </form>
+          <span id="error">{{errorText}}</span>
+        </div>
+        <receipt-display id="preview" class="receipt flex-3"></receipt-display>
+      </div>
+      <div class="layout horizontal buttons-layout">
+        <paper-button raised on-tap="_save" class="save-button">Save</paper-button>
+        <paper-button on-tap="close" class="cancel-button">Cancel</paper-button>
+      </div>
+    </paper-dialog>
   </template>
 
   <script>
@@ -147,14 +150,6 @@
           heading: String,
           errorText: String
         },
-
-        hostAttributes: {
-          modal: true
-        },
-
-        behaviors: [
-          Polymer.PaperDialogBehavior
-        ],
 
         listeners: {
           'iron-form-invalid': '_showValidationErrors',
@@ -198,7 +193,8 @@
             }
             if (this.expense.date) {
               this.$.date.value = moment(this.expense.date).format('YYYY-MM-DD');
-            } if (this.expense.comment) {
+            }
+            if (this.expense.comment) {
               this.$.comment.value = this.expense.comment;
             }
             this.$.receiptupload.removeAttribute('required');
@@ -213,7 +209,7 @@
           }
         },
 
-        _resetValidationErrors: function() {
+        _resetValidationErrors: function () {
           this.$.merchant.invalid = false;
           this.$.total.invalid = false;
         },
@@ -245,7 +241,16 @@
 
         _showValidationErrors: function (evt) {
           console.log(evt);
+        },
+
+        open: function(){
+          this.$.dialog.open();
+        },
+
+        close: function() {
+          this.$.dialog.close();
         }
+
       });
     })();
   </script>
