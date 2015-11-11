@@ -114,8 +114,8 @@
             <div prefix>$</div>
           </paper-input>
 
-          <paper-input label="Date" id="date" name="date"></paper-input>
-          <paper-textarea name="comment" label="Comment" value=""></paper-textarea>
+          <paper-input label="Date" id="date" name="date" pattern="\d{4}-\d{2}-\d{2}" error-message="Value must be in YYYY-MM-DD" auto-validate></paper-input>
+          <paper-textarea id="comment" name="comment" label="Comment" value=""></paper-textarea>
 
           <input type="file" accept="image/jpeg" id="receiptupload" name="receipt" capture="camera" hidden>
         </form>
@@ -198,6 +198,8 @@
             }
             if (this.expense.date) {
               this.$.date.value = moment(this.expense.date).format('YYYY-MM-DD');
+            } if (this.expense.comment) {
+              this.$.comment.value = this.expense.comment;
             }
             this.$.receiptupload.removeAttribute('required');
 
