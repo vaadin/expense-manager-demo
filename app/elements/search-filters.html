@@ -2,7 +2,6 @@
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
-<link rel="import" href="checkbox-group.html">
 
 <dom-module id="search-filters">
   <template>
@@ -106,7 +105,7 @@
   </template>
 
   <script>
-    (function () {
+    (function() {
       'use strict';
 
       Polymer({
@@ -119,9 +118,8 @@
           }
         },
 
-        _updateStatus: function (evt) {
+        _updateStatus: function(evt) {
           var checkbox = evt.target;
-
 
           if (checkbox.checked) {
             this._addStatus(checkbox.name);
@@ -130,7 +128,7 @@
           }
         },
 
-        _addStatus: function (status) {
+        _addStatus: function(status) {
           var statuses = this.filters.status;
           if (statuses && !this._contains(statuses, status)) {
             this.push('filters.status', status);
@@ -139,13 +137,13 @@
           }
         },
 
-        _removeStatus: function (status) {
+        _removeStatus: function(status) {
           if (this.filters.status && this.filters.status.indexOf(status) >= 0) {
             this.splice('filters.status', this.filters.status.indexOf(status), 1);
           }
         },
 
-        _contains: function (a, obj) {
+        _contains: function(a, obj) {
           for (var i = 0; i < a.length; i++) {
             if (a[i] === obj) {
               return true;

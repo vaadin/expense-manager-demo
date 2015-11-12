@@ -38,7 +38,7 @@
       }
 
       .chart {
-          height: 400px;
+        height: 400px;
       }
 
       #barchart ::content text {
@@ -49,10 +49,12 @@
         .chart {
           display: none;
         }
+
         .total {
           height: 64px;
           @apply(--layout-horizontal);
         }
+
         .total .sum {
           margin-left: 12px;
         }
@@ -73,10 +75,14 @@
           <chart background-color="transparent"></chart>
           <exporting enabled="false"></exporting>
           <x-axis>
-            <title><style display="none"></style></title>
+            <title>
+              <style display="none"></style>
+            </title>
           </x-axis>
           <y-axis>
-            <title><style display="none"></style></title>
+            <title>
+              <style display="none"></style>
+            </title>
           </y-axis>
           <tooltip formatter="function() { return '$' + this.y.toFixed(2); }"></tooltip>
           <data-series name="$" data="[[seriesData]]">
@@ -88,7 +94,7 @@
     </div>
   </template>
   <script>
-    (function () {
+    (function() {
       'use strict';
       Polymer({
         is: 'overview-panel',
@@ -105,14 +111,14 @@
           totalOwed: String
         },
 
-        ready: function () {
+        ready: function() {
           this.update();
         },
 
-        update: function () {
+        update: function() {
           var _this = this;
           this.service.getOverviewData()
-            .then(function (overviewData) {
+            .then(function(overviewData) {
               _this.totalOwed = accounting.formatMoney(overviewData.totalOwed);
               var categories = overviewData.history.map(function(m, i) {
                 var label = moment().year(m.year).month(m.month);
@@ -127,7 +133,7 @@
                 _this.$.barchart.chart.reflow();
               }, 200);
             })
-            .catch(function (error) {
+            .catch(function(error) {
               console.log(error);
             });
         }

@@ -1,5 +1,4 @@
 {
-  "esnext": true,
   "node": true,
   "browser": true,
   "bitwise": true,
@@ -23,7 +22,7 @@
     "app": true,
     "moment": true,
     "accounting": true,
-    "Config": true,
-    "loadImage": true
+    "loadImage": true,
+    "Promise": true
   }
 }

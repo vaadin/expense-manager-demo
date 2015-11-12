@@ -103,7 +103,7 @@
 
   </template>
   <script>
-    (function () {
+    (function() {
       'use strict';
 
       Polymer({
@@ -115,7 +115,7 @@
           }
         },
 
-        _updateCanvas: function () {
+        _updateCanvas: function() {
           var receipt = this.$.receipt;
 
           if (receipt.firstChild) {
@@ -123,7 +123,7 @@
           }
 
           if (this.src) {
-            loadImage(this.src, function (img) {
+            loadImage(this.src, function(img) {
               receipt.appendChild(img);
             }, {
               maxWidth: 400,
@@ -134,7 +134,7 @@
           this.toggleClass('has-receipt', this.src, this.$.content);
         },
 
-        _fireUpload: function () {
+        _fireUpload: function() {
           this.fire('upload-requested');
         }
       });

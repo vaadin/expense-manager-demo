@@ -3,7 +3,8 @@
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
-<link rel="import" href="../bower_components/neon-animation/neon-shared-element-animatable-behavior.html">
+<link rel="import"
+      href="../bower_components/neon-animation/neon-shared-element-animatable-behavior.html">
 <link rel="import" href="../bower_components/neon-animation/animations/hero-animation.html">
 <link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
 <link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
@@ -55,7 +56,6 @@
       padding-top: 30px;
     }
 
-
     @media (max-width: 600px) {
       .login, .header {
         height: 50%;
@@ -77,16 +77,17 @@
       <h1>Expense Manager</h1>
     </div>
     <div class="flex login layout vertical center">
-        <paper-input value={{username}} label="USERNAME" name="username"></paper-input>
-        <paper-input value="{{password}}" label="PASSWORD" name="password" type="password"></paper-input>
-        <span class="error-message">[[errorMessage]]</span>
-        <paper-button id="login-button" on-tap="_logIn" raised>Login</paper-button>
+      <paper-input value={{username}} label="USERNAME" name="username"></paper-input>
+      <paper-input value="{{password}}" label="PASSWORD" name="password"
+                   type="password"></paper-input>
+      <span class="error-message">[[errorMessage]]</span>
+      <paper-button id="login-button" on-tap="_logIn" raised>Login</paper-button>
     </div>
 
   </template>
 
   <script>
-    (function () {
+    (function() {
       'use strict';
       Polymer({
         is: 'login-page',
@@ -104,7 +105,7 @@
           url: String,
 
           animationConfig: {
-            value: function () {
+            value: function() {
               return {
                 'entry': {
                   name: 'fade-in-animation',
@@ -124,7 +125,7 @@
           },
 
           sharedElements: {
-            value: function () {
+            value: function() {
               return {
                 'hero': this.$.logo
               };
@@ -134,10 +135,10 @@
 
         behaviors: [Polymer.NeonSharedElementAnimatableBehavior],
 
-        _logIn: function () {
+        _logIn: function() {
           var _this = this;
           this.service.login(this.username, this.password)
-            .catch(function (error) {
+            .catch(function(error) {
               _this.errorMessage = error;
             });
         }

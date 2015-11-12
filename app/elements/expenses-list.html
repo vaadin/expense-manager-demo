@@ -106,7 +106,7 @@
     <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
   </template>
   <script>
-    (function () {
+    (function() {
       'use strict';
 
       Polymer({
@@ -118,7 +118,7 @@
           sortDirection: String,
           filters: {
             type: Object,
-            value: function () {
+            value: function() {
               return {};
             }
           }
@@ -128,26 +128,26 @@
           '_filtersChanged(filters.*)'
         ],
 
-        ready: function () {
+        ready: function() {
           var grid = this.$.expenses;
           var _this = this;
 
-          grid.columns[0].renderer = function (cell) {
+          grid.columns[0].renderer = function(cell) {
             cell.element.innerHTML = moment(cell.data).format('YYYY-MM-DD');
           };
 
-          grid.columns[2].renderer = function (cell) {
+          grid.columns[2].renderer = function(cell) {
             cell.element.innerHTML = accounting.formatMoney(cell.data);
           };
 
-          grid.addEventListener('sort-order-changed', function () {
+          grid.addEventListener('sort-order-changed', function() {
             grid.scrollToStart();
           });
 
-          grid.addEventListener('select', function () {
+          grid.addEventListener('select', function() {
             var selection = grid.selection.selected();
             if (selection.length === 1) {
-              grid.getItem(selection[0], function (err, item) {
+              grid.getItem(selection[0], function(err, item) {
                 _this.fire('edit-expense', {
                   expense: item
                 });
@@ -170,10 +170,10 @@
           this._setDataSource();
         },
 
-        _setDataSource: function () {
+        _setDataSource: function() {
           var _this = this;
           var grid = this.$.expenses;
-          grid.datasource = function (req) {
+          grid.datasource = function(req) {
             var queryParams = {
               index: req.index,
               count: req.count,
@@ -190,13 +190,13 @@
               queryParams.direction = req.sortOrder[0].direction;
             }
 
-            _this.service.getExpenses(queryParams).then(function (json) {
+            _this.service.getExpenses(queryParams).then(function(json) {
               req.success(json.result, json.metadata.totalcount);
             });
           };
         },
 
-        update: function () {
+        update: function() {
           var grid = this.$.expenses;
           if (grid.datasource) {
             grid.clearCache();
@@ -204,14 +204,14 @@
           }
         },
 
-        _showExpenseEditor: function () {
+        _showExpenseEditor: function() {
           this.fire('edit-expense', {});
         },
 
-        _filtersChanged: function () {
+        _filtersChanged: function() {
           if (this.$.expenses.datasource) {
             var _this = this;
-            this.debounce('_filtersChanged', function () {
+            this.debounce('_filtersChanged', function() {
               _this.update();
 
             }, 300);

@@ -26,7 +26,7 @@
   </template>
 
   <script>
-    (function () {
+    (function() {
       'use strict';
 
       Polymer({
@@ -52,15 +52,15 @@
           'logged-out': '_handleLogout'
         },
 
-        ready: function () {
+        ready: function() {
           //this.$.service.server = 'http://' + window.location.hostname + ':8080/api/v1';
         },
 
-        _handleLogout: function () {
+        _handleLogout: function() {
           this.service.logout();
         },
 
-        _selectPage: function (loggedIn) {
+        _selectPage: function(loggedIn) {
           return loggedIn ? 1 : 0;
         }
       });

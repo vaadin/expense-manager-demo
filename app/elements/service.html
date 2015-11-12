@@ -18,7 +18,7 @@ of having every component deal with it separately.
     <iron-localstorage id="expenses" name="expense-cache" value="{{expenses}}"></iron-localstorage>
   </template>
   <script>
-    (function () {
+    (function() {
       'use strict';
       Polymer({
         is: 'expense-service',
@@ -41,7 +41,7 @@ of having every component deal with it separately.
           expenses: Array
         },
 
-        ready: function () {
+        ready: function() {
           var _this = this;
           this.service = {
             login: _this.login.bind(_this),
@@ -54,7 +54,7 @@ of having every component deal with it separately.
           };
         },
 
-        login: function (username, password) {
+        login: function(username, password) {
           if (this.server) {
             return this._loginToServer(username, password);
           } else {
@@ -62,12 +62,12 @@ of having every component deal with it separately.
           }
         },
 
-        logout: function () {
+        logout: function() {
           this.token = null;
           this.expenses = null;
         },
 
-        getOverviewData: function () {
+        getOverviewData: function() {
           if (this.server) {
             return this._getOverviewDataFromServer();
           } else {
@@ -75,7 +75,7 @@ of having every component deal with it separately.
           }
         },
 
-        getExpenses: function (params) {
+        getExpenses: function(params) {
           if (this.server) {
             return this._getExpensesFromServer(params);
           } else {
@@ -83,7 +83,7 @@ of having every component deal with it separately.
           }
         },
 
-        saveExpense: function (id, formData, rawData) {
+        saveExpense: function(id, formData, rawData) {
           if (this.server) {
             return this._saveExpenseToServer(id, formData);
           } else {
@@ -91,7 +91,7 @@ of having every component deal with it separately.
           }
         },
 
-        deleteExpense: function (id) {
+        deleteExpense: function(id) {
           if (this.server) {
             return this._deleteExpenseFromServer(id);
           } else {
@@ -99,7 +99,7 @@ of having every component deal with it separately.
           }
         },
 
-        getReceiptURL: function (id) {
+        getReceiptURL: function(id) {
           if (this.server) {
             return this.server + '/expenses/' + id + '/receipt.jpg?token=' + this.token;
           } else {
@@ -112,11 +112,11 @@ of having every component deal with it separately.
           }
         },
 
-        _loginToServer: function (username, password) {
+        _loginToServer: function(username, password) {
           var _this = this;
-          return new Promise(function (resolve, reject) {
+          return new Promise(function(resolve, reject) {
             var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
+            xhr.onreadystatechange = function() {
               if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 200) {
                   var json = JSON.parse(xhr.responseText);
@@ -139,15 +139,15 @@ of having every component deal with it separately.
           });
         },
 
-        _getOverviewDataFromServer: function () {
+        _getOverviewDataFromServer: function() {
           return this._ajax(this.server + '/expenses/overview');
         },
 
-        _getExpensesFromServer: function (params) {
+        _getExpensesFromServer: function(params) {
           return this._ajax(this.server + '/expenses', params);
         },
 
-        _saveExpenseToServer: function (id, data) {
+        _saveExpenseToServer: function(id, data) {
           var url = this.server + '/expenses';
           if (id) {
             url += '/' + id;
@@ -155,40 +155,40 @@ of having every component deal with it separately.
           return this._postData(url, data);
         },
 
-        _deleteExpenseFromServer: function (id) {
+        _deleteExpenseFromServer: function(id) {
           var url = this.server + '/expenses/' + id;
           return this._ajax(url, {}, 'DELETE');
         },
 
-        _loginLocal: function () {
+        _loginLocal: function() {
           var _this = this;
-          return new Promise(function (resolve) {
+          return new Promise(function(resolve) {
             _this.token = 'demologin';
             _this.fire('logged-in');
             resolve();
           });
         },
 
-        _getOverviewDataLocal: function () {
+        _getOverviewDataLocal: function() {
           var _this = this;
 
           function calculateOverviewData() {
 
-            var total = _this.expenses.filter(function (expense) {
+            var total = _this.expenses.filter(function(expense) {
                 return expense.status === 'new';
               })
-              .map(function (expense) {
+              .map(function(expense) {
                 return expense.total;
               })
-              .reduce(function (a, b) {
+              .reduce(function(a, b) {
                 return a + b;
               }, 0);
 
             var history = [];
             var oneYearAgo = moment().subtract(1, 'years');
-            _this.expenses.filter(function (expense) {
+            _this.expenses.filter(function(expense) {
               return moment(expense.date).isAfter(oneYearAgo);
-            }).forEach(function (expense) {
+            }).forEach(function(expense) {
               findMonth(expense.date, history).total += expense.total;
             });
 
@@ -202,7 +202,7 @@ of having every component deal with it separately.
             var date = moment(rawDate);
             var month;
 
-            history.forEach(function (m) {
+            history.forEach(function(m) {
               if (m.month === date.month() && m.year === date.year()) {
                 month = m;
               }
@@ -219,12 +219,12 @@ of having every component deal with it separately.
             return month;
           }
 
-          return new Promise(function (resolve) {
+          return new Promise(function(resolve) {
             if (_this.expenses) {
               resolve(calculateOverviewData());
             } else {
               _this._ajax('demodata.json')
-                .then(function (json) {
+                .then(function(json) {
                   _this.expenses = json;
                   resolve(calculateOverviewData());
                 });
@@ -232,29 +232,30 @@ of having every component deal with it separately.
           });
         },
 
-        _getExpensesLocal: function (params) {
+        _getExpensesLocal: function(params) {
           var _this = this;
 
           function filterAndSort(params) {
             // Filter
             var result = _this.expenses
-              .filter(function (expense) {
-                return !(params.merchant && expense.merchant.toUpperCase().indexOf(params.merchant.toUpperCase()) < 0);
+              .filter(function(expense) {
+                return !(params.merchant && expense.merchant
+                  .toUpperCase().indexOf(params.merchant.toUpperCase()) < 0);
               })
-              .filter(function (expense) {
+              .filter(function(expense) {
                 return !(params.min && expense.total < params.min);
               })
-              .filter(function (expense) {
+              .filter(function(expense) {
                 return !(params.max && expense.total > params.max);
               })
-              .filter(function (expense) {
+              .filter(function(expense) {
                 if (params.status && params.status.length > 0) {
                   return _this._contains(params.status, expense.status);
                 } else {
                   return true;
                 }
               })
-              .filter(function (expense) {
+              .filter(function(expense) {
                 if (params.start) {
                   var startDate = moment(params.start);
                   if (startDate.isValid() && moment(expense.date).isAfter(startDate)) {
@@ -266,7 +267,7 @@ of having every component deal with it separately.
                   return true;
                 }
               })
-              .filter(function (expense) {
+              .filter(function(expense) {
                 if (params.end) {
                   var endDate = moment(params.end);
                   if (endDate.isValid() && moment(expense.date).isBefore(endDate)) {
@@ -283,7 +284,7 @@ of having every component deal with it separately.
             if (params.sort) {
               var sortProperty = params.sort;
               var sortDirection = params.direction || 'desc';
-              result.sort(function (a, b) {
+              result.sort(function(a, b) {
                 var res;
                 if (!isNaN(a[sortProperty])) {
                   res = parseInt(a[sortProperty], 10) - parseInt(b[sortProperty], 10);
@@ -310,12 +311,12 @@ of having every component deal with it separately.
             };
           }
 
-          return new Promise(function (resolve) {
+          return new Promise(function(resolve) {
             if (_this.expenses) {
               resolve(filterAndSort(params));
             } else {
               _this._ajax('demodata.json')
-                .then(function (json) {
+                .then(function(json) {
                   _this.expenses = json;
                   resolve(filterAndSort(params));
                 });
@@ -323,9 +324,9 @@ of having every component deal with it separately.
           });
         },
 
-        _saveExpenseLocal: function (id, data) {
+        _saveExpenseLocal: function(id, data) {
           var _this = this;
-          return new Promise(function (resolve, reject) {
+          return new Promise(function(resolve, reject) {
             if (data) {
               var expense = _this._findExpense(id);
 
@@ -350,9 +351,9 @@ of having every component deal with it separately.
           });
         },
 
-        _deleteExpenseLocal: function (id) {
+        _deleteExpenseLocal: function(id) {
           var _this = this;
-          return new Promise(function (resolve, reject) {
+          return new Promise(function(resolve, reject) {
             for (var i = 0; i < _this.expenses.length; i++) {
               var expense = _this.expenses[i];
 
@@ -366,9 +367,9 @@ of having every component deal with it separately.
           });
         },
 
-        _findExpense: function (id) {
+        _findExpense: function(id) {
           var expense = null;
-          this.expenses.forEach(function (e) {
+          this.expenses.forEach(function(e) {
             if (e.id === id) {
               expense = e;
             }
@@ -376,7 +377,7 @@ of having every component deal with it separately.
           return expense;
         },
 
-        _serializeParams: function (params) {
+        _serializeParams: function(params) {
           var serialized = [];
           for (var p in params) {
             // don't serialize empty/null values
@@ -387,12 +388,12 @@ of having every component deal with it separately.
           return serialized.join('&');
         },
 
-        _ajax: function (url, params, method) {
+        _ajax: function(url, params, method) {
           var _this = this;
           method = method || 'GET';
-          return new Promise(function (resolve, reject) {
+          return new Promise(function(resolve, reject) {
             var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
+            xhr.onreadystatechange = function() {
               if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status >= 200 && xhr.status < 300) {
                   var json = JSON.parse(xhr.responseText);
@@ -411,11 +412,11 @@ of having every component deal with it separately.
           });
         },
 
-        _postData: function (url, body) {
+        _postData: function(url, body) {
           var _this = this;
-          return new Promise(function (resolve, reject) {
+          return new Promise(function(resolve, reject) {
             var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
+            xhr.onreadystatechange = function() {
               if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status >= 200 && xhr.status < 300) {
                   var json = JSON.parse(xhr.responseText);
@@ -433,12 +434,11 @@ of having every component deal with it separately.
           });
         },
 
-        _loggedIn: function (token) {
+        _loggedIn: function(token) {
           return token ? true : false;
         },
 
-
-        _contains: function (a, obj) {
+        _contains: function(a, obj) {
           for (var i = 0; i < a.length; i++) {
             if (a[i] === obj) {
               return true;

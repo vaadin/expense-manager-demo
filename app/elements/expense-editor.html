@@ -136,7 +136,7 @@
   </template>
 
   <script>
-    (function () {
+    (function() {
       'use strict';
 
       Polymer({
@@ -159,7 +159,7 @@
           'upload-requested': '_triggerUpload'
         },
 
-        showReceipt: function (evt) {
+        showReceipt: function(evt) {
           var input = evt.target;
           var preview = this.$.preview;
 
@@ -170,18 +170,18 @@
             }
 
             var reader = new FileReader();
-            reader.onload = function (e) {
+            reader.onload = function(e) {
               preview.src = e.target.result;
             };
             reader.readAsDataURL(receipt);
           }
         },
 
-        ready: function () {
+        ready: function() {
           this.$.receiptupload.addEventListener('change', this.showReceipt.bind(this));
         },
 
-        _expenseChanged: function () {
+        _expenseChanged: function() {
           this.errorText = '';
           if (this.expense.id) {
             this.heading = 'Edit Expense';
@@ -213,16 +213,16 @@
           }
         },
 
-        _resetValidationErrors: function () {
+        _resetValidationErrors: function() {
           this.$.merchant.invalid = false;
           this.$.total.invalid = false;
         },
 
-        _triggerUpload: function () {
+        _triggerUpload: function() {
           this.$.receiptupload.click();
         },
 
-        _save: function () {
+        _save: function() {
           var _this = this;
           this.$.error.innerText = '';
           var form = this.$.form;
@@ -231,10 +231,10 @@
             var rawData = form.serialize();
             rawData.receipt = _this.$.preview.src;
             this.service.saveExpense(this.expense.id, new FormData(form), rawData)
-              .then(function () {
+              .then(function() {
                 _this.fire('expenses-updated');
               })
-              .catch(function (e) {
+              .catch(function(e) {
                 console.log(e);
                 _this.errorText = 'Save failed.';
               });
@@ -243,24 +243,24 @@
           }
         },
 
-        _showValidationErrors: function (evt) {
+        _showValidationErrors: function(evt) {
           console.log(evt);
         },
 
-        open: function () {
+        open: function() {
           this.$.dialog.open();
         },
 
-        close: function () {
+        close: function() {
           this.$.dialog.close();
         },
 
-        _delete: function () {
+        _delete: function() {
           var _this = this;
-          this.service.deleteExpense(this.expense.id).then(function () {
+          this.service.deleteExpense(this.expense.id).then(function() {
               _this.fire('expenses-updated', {reason: 'deleted'});
             })
-            .catch(function (e) {
+            .catch(function(e) {
               console.log(e);
               _this.errorText = 'Delete failed.';
             });
