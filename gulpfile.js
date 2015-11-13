@@ -24,7 +24,8 @@ var glob = require('glob-all');
 var historyApiFallback = require('connect-history-api-fallback');
 var packageJson = require('./package.json');
 var crypto = require('crypto');
-// var ghPages = require('gulp-gh-pages');
+var manifest = require('gulp-appcache');
+//var ghPages = require('gulp-gh-pages');
 
 var AUTOPREFIXER_BROWSERS = [
   'ie >= 10',
@@ -160,11 +161,7 @@ gulp.task('copy', function() {
   var swToolbox = gulp.src(['bower_components/sw-toolbox/*.js'])
     .pipe(gulp.dest(dist('sw-toolbox')));
 
-  var vulcanized = gulp.src(['app/elements/elements.html'])
-    .pipe($.rename('elements.vulcanized.html'))
-    .pipe(gulp.dest(dist('elements')));
-
-  return merge(app, bower, elements, vulcanized, swBootstrap, swToolbox)
+  return merge(app, bower, elements, swBootstrap, swToolbox)
     .pipe($.size({
       title: 'copy'
     }));
@@ -297,6 +294,23 @@ gulp.task('serve:dist', ['default'], function() {
   });
 });
 
+gulp.task('appcache', function() {
+  return gulp.src([
+    'dist/**/*',
+    '!dist/elements/*-*.html',
+    '!dist/bower_components/**',
+    '!dist/sw-toolbox/**',
+    '!dist/elements/bootstrap/**',
+    '!dist/scripts/**'])
+    .pipe(manifest({
+      hash: true,
+      filename: 'manifest.appcache',
+      exclude: 'manifest.appcache',
+      network: ['*']
+    }))
+    .pipe(gulp.dest('dist'));
+});
+
 // Build production files, the default task
 gulp.task('default', ['clean'], function(cb) {
   // Uncomment 'cache-config' if you are going to use service workers.
@@ -304,7 +318,7 @@ gulp.task('default', ['clean'], function(cb) {
     ['copy', 'styles'],
     'elements',
     ['lint', 'images', 'fonts', 'html'],
-    'vulcanize', // 'cache-config',
+    'vulcanize', //'appcache',
     cb);
 });
 
