@@ -198,7 +198,7 @@
 
         update: function() {
           var grid = this.$.expenses;
-          if (grid.datasource) {
+          if (grid.items) {
             grid.clearCache();
             grid.scrollToStart();
           }
@@ -209,7 +209,7 @@
         },
 
         _filtersChanged: function() {
-          if (this.$.expenses.datasource) {
+          if (this.$.expenses.items) {
             var _this = this;
             this.debounce('_filtersChanged', function() {
               _this.update();

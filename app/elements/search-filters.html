@@ -27,7 +27,7 @@
       }
 
       .merchants {
-        min-width: 200px;
+        min-width: 300px;
       }
 
       .status paper-checkbox {
@@ -89,7 +89,7 @@
           <paper-input label="Merchant" value="{{filters.merchant}}"></paper-input>
         </div>
 
-        <div class="total layout horizontal center wrap">
+        <div class="total layout horizontal center">
           <paper-input label="Min ($)" value="{{filters.min}}" pattern="\d+" auto-validate error-message="Only numbers"></paper-input>
           <paper-input label="Max ($)" value="{{filters.max}}" pattern="\d+" auto-validate error-message="Only numbers"></paper-input>
         </div>
