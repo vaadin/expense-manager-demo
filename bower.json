@@ -8,7 +8,7 @@
     "platinum-elements": "PolymerElements/platinum-elements#^1.1.0",
     "neon-elements": "PolymerElements/neon-elements#^1.0.0",
     "page": "visionmedia/page.js#~1.6.3",
-    "vaadin-elements": "0.3.0-beta11",
+    "vaadin-elements": "0.3.0-beta12",
     "vaadin-charts": "^3.0.0-alpha7",
     "accounting": "~0.3.2",
     "blueimp-load-image": "~1.14.0",

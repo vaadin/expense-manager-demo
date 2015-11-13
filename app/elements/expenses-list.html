@@ -144,7 +144,7 @@
             grid.scrollToStart();
           });
 
-          grid.addEventListener('select', function() {
+          grid.addEventListener('selected-items-changed', function() {
             var selection = grid.selection.selected();
             if (selection.length === 1) {
               grid.getItem(selection[0], function(err, item) {
@@ -173,10 +173,10 @@
         _setDataSource: function() {
           var _this = this;
           var grid = this.$.expenses;
-          grid.datasource = function(req) {
+          grid.items = function(params, callback) {
             var queryParams = {
-              index: req.index,
-              count: req.count,
+              index: params.index,
+              count: params.count,
               min: _this.filters.min,
               max: _this.filters.max,
               merchant: _this.filters.merchant,
@@ -185,13 +185,13 @@
               status: _this.filters.status
             };
 
-            if (req.sortOrder && req.sortOrder[0]) {
-              queryParams.sort = grid.columns[req.sortOrder[0].column].name;
-              queryParams.direction = req.sortOrder[0].direction;
+            if (params.sortOrder && params.sortOrder[0]) {
+              queryParams.sort = grid.columns[params.sortOrder[0].column].name;
+              queryParams.direction = params.sortOrder[0].direction;
             }
 
             _this.service.getExpenses(queryParams).then(function(json) {
-              req.success(json.result, json.metadata.totalcount);
+              callback(json.result, json.metadata.totalcount);
             });
           };
         },
