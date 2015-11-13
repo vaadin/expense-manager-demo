@@ -53,7 +53,9 @@
       }
 
       @media (max-width: 600px) {
-        #content .merchants,
+        #content .merchants {
+          margin-bottom: 12px;
+        }
         #content .total,
         #content .status {
           display: none;
@@ -75,20 +77,21 @@
     <div id="content">
       <div class="filters layout horizontal wrap justified">
 
+        <!-- Hide these until we have date picker in Vaadin Elements
         <div class="date layout horizontal wrap center">
           <paper-input label="After" value="{{filters.start}}" pattern="\d{4}-\d{2}-\d{2}"
                        error-message="Value must be in YYYY-MM-DD" auto-validate></paper-input>
           <paper-input label="Before" value="{{filters.end}}" pattern="\d{4}-\d{2}-\d{2}"
                        error-message="Value must be in YYYY-MM-DD" auto-validate></paper-input>
         </div>
-
+        -->
         <div class="merchants flex">
           <paper-input label="Merchant" value="{{filters.merchant}}"></paper-input>
         </div>
 
         <div class="total layout horizontal center wrap">
-          <paper-input label="Min ($)" value="{{filters.min}}"></paper-input>
-          <paper-input label="Max ($)" value="{{filters.max}}"></paper-input>
+          <paper-input label="Min ($)" value="{{filters.min}}" pattern="\d+" auto-validate error-message="Only numbers"></paper-input>
+          <paper-input label="Max ($)" value="{{filters.max}}" pattern="\d+" auto-validate error-message="Only numbers"></paper-input>
         </div>
 
         <div class="status">
