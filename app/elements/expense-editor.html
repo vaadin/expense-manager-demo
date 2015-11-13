@@ -103,7 +103,8 @@
       <div class="layout horizontal">
         <h2>{{heading}}</h2>
         <span class="flex"></span>
-        <paper-icon-button icon="close" on-tap="close" class="close-button self-start"></paper-icon-button>
+        <paper-icon-button icon="close" on-tap="close"
+                           class="close-button self-start"></paper-icon-button>
       </div>
 
       <div class="wrapper">
@@ -112,7 +113,8 @@
             <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
             <paper-input name="merchant" id="merchant" label="Merchant" auto-validate required
                          error-message="Merchant name required"></paper-input>
-            <paper-input name="total" id="total" label="Total" auto-validate required pattern="[\d,.]+"
+            <paper-input name="total" id="total" label="Total" auto-validate required
+                         pattern="[\d,.]+"
                          error-message="Numeric values only">
               <div prefix>$</div>
             </paper-input>
@@ -121,7 +123,8 @@
                          error-message="Value must be in YYYY-MM-DD" auto-validate></paper-input>
             <paper-textarea id="comment" name="comment" label="Comment" value=""></paper-textarea>
 
-            <input type="file" accept="image/jpeg" id="receiptupload" name="receipt" capture="camera" hidden>
+            <input type="file" accept="image/jpeg" id="receiptupload" name="receipt"
+                   capture="camera" hidden>
           </form>
           <span id="error">{{errorText}}</span>
         </div>
@@ -130,7 +133,8 @@
       <div class="layout horizontal buttons-layout">
         <paper-button raised on-tap="_save" class="save-button">Save</paper-button>
         <paper-button on-tap="close" class="cancel-button">Cancel</paper-button>
-        <paper-button on-tap="_delete" id="delete" class="delete-button right-justify">Delete</paper-button>
+        <paper-button on-tap="_delete" id="delete" class="delete-button right-justify">Delete
+        </paper-button>
       </div>
     </paper-dialog>
   </template>
@@ -147,8 +151,7 @@
           expense: {
             type: Object,
             notify: true,
-            value: {},
-            observer: '_expenseChanged'
+            value: {}
           },
           heading: String,
           errorText: String
@@ -181,7 +184,7 @@
           this.$.receiptupload.addEventListener('change', this.showReceipt.bind(this));
         },
 
-        _expenseChanged: function() {
+        _reset: function() {
           this.errorText = '';
           if (this.expense.id) {
             this.heading = 'Edit Expense';
@@ -202,8 +205,6 @@
               this.$.comment.value = this.expense.comment;
             }
             this.$.receiptupload.removeAttribute('required');
-            this.$.delete.hidden = this.expense.status !== 'new';
-
           } else {
             this.heading = 'Add Expense';
             this.$.preview.src = null;
@@ -211,6 +212,7 @@
             this.$.date.value = moment().format('YYYY-MM-DD');
             this.$.receiptupload.setAttribute('required', true);
           }
+          this.$.delete.hidden = !(this.expense.id && this.expense.status === 'new');
         },
 
         _resetValidationErrors: function() {
@@ -227,7 +229,8 @@
           this.$.error.innerText = '';
           var form = this.$.form;
           if (form.validate()) {
-            // Note, sending raw serialized data too as FormData is read only.
+            // Sending raw serialized data too as FormData is read only. It's used for localstorage
+            // if offline
             var rawData = form.serialize();
             rawData.receipt = _this.$.preview.src;
             this.service.saveExpense(this.expense.id, new FormData(form), rawData)
@@ -248,6 +251,7 @@
         },
 
         open: function() {
+          this._reset();
           this.$.dialog.open();
         },
 
