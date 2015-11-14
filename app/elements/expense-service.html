@@ -219,16 +219,12 @@ of having every component deal with it separately.
             return month;
           }
 
+          if (!_this.expenses) {
+            this._generateTestData();
+          }
+
           return new Promise(function(resolve) {
-            if (_this.expenses) {
-              resolve(calculateOverviewData());
-            } else {
-              _this._ajax('demodata.json')
-                .then(function(json) {
-                  _this.expenses = json;
-                  resolve(calculateOverviewData());
-                });
-            }
+            resolve(calculateOverviewData());
           });
         },
 
@@ -311,16 +307,12 @@ of having every component deal with it separately.
             };
           }
 
+          if (!_this.expenses) {
+            this._generateTestData();
+          }
+
           return new Promise(function(resolve) {
-            if (_this.expenses) {
-              resolve(filterAndSort(params));
-            } else {
-              _this._ajax('demodata.json')
-                .then(function(json) {
-                  _this.expenses = json;
-                  resolve(filterAndSort(params));
-                });
-            }
+            resolve(filterAndSort(params));
           });
         },
 
@@ -438,6 +430,34 @@ of having every component deal with it separately.
           return token ? true : false;
         },
 
+        _generateTestData: function() {
+          var date = moment();
+          var expenses = [];
+          for (var i = 0; i < 250; i++) {
+            date = date.subtract(Math.floor(Math.random() * 72), 'hours');
+            var status = 'new';
+            if (i > 30) {
+              status = 'reimbursed';
+            } else if (i > 15) {
+              status = 'in_progress';
+            }
+
+            expenses.push({
+              id: new Date().getTime(),
+              user: 'demo',
+              date: date.format('YYYY-MM-DD'),
+              merchant: ['Electronics', 'Rental car', 'Airline', 'Hotel', 'Restaurant', 'Taxi']
+                [Math.floor(Math.random() * 6)],
+              total: Math.random() * (Math.random() * 3) * 300 + 10,
+              status: status,
+              comment: 'No comments, please.',
+              receipt: 'default'
+            });
+          }
+          this.expenses = expenses;
+          console.log('Genereated demo data');
+        },
+
         _contains: function(a, obj) {
           for (var i = 0; i < a.length; i++) {
             if (a[i] === obj) {
@@ -446,7 +466,8 @@ of having every component deal with it separately.
           }
           return false;
         }
-      });
+      })
+      ;
     })();
   </script>
 </dom-module>
