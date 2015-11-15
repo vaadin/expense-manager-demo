@@ -18,11 +18,10 @@
     "unwrap": true,
     "Polymer": true,
     "Platform": true,
-    "page": true,
-    "app": true,
     "moment": true,
     "accounting": true,
     "loadImage": true,
-    "Promise": true
+    "Promise": true,
+    "Offline": true
   }
 }

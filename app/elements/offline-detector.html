@@ -1,0 +1,33 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../scripts/offline.html">
+
+<dom-module id="offline-detector">
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'offline-detector',
+
+        properties: {
+          online: {
+            type: Boolean,
+            notify: true
+          }
+        },
+
+        ready: function() {
+          var _this = this;
+          this.online = Offline.state === 'up';
+
+          Offline.on('confirmed-up', function() {
+            _this.online = true;
+          });
+          Offline.on('confirmed-down', function() {
+            _this.online = false;
+          });
+        }
+      });
+    })();
+  </script>
+</dom-module>
