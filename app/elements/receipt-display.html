@@ -51,6 +51,10 @@
         overflow-x: scroll;
       }
 
+      #receipt img {
+        max-width: 400px;
+      }
+
       .content.has-receipt .caption {
         display: inline;
       }
@@ -87,7 +91,8 @@
 
     <div id="content" class="content flex layout vertical center-center">
       <paper-menu-button class="action-menu">
-        <paper-icon-button icon="vaadin-icons:ellipsis-v" class="dropdown-trigger"></paper-icon-button>
+        <paper-icon-button icon="vaadin-icons:ellipsis-v"
+                           class="dropdown-trigger"></paper-icon-button>
         <paper-menu class="dropdown-content">
           <paper-item on-tap="_fireUpload">Upload new receipt</paper-item>
         </paper-menu>
@@ -111,26 +116,57 @@
         properties: {
           src: {
             type: String,
+            observer: '_updateImage'
+          },
+          preview: {
+            type: Object,
             observer: '_updateCanvas'
           }
         },
 
         _updateCanvas: function() {
           var receipt = this.$.receipt;
+          var _this = this;
 
           if (receipt.firstChild) {
-            receipt.removeChild(receipt.firstChild);
+            Polymer.dom(receipt).removeChild(receipt.firstChild);
+          }
+
+          if (this.preview) {
+            var options = {
+              maxWidth: 400,
+              canvas: true,
+              orientation: true
+            };
+
+            loadImage.parseMetaData(this.preview, function(data) {
+              if (data.exif) {
+                options.orientation = data.exif.get('Orientation');
+              }
+
+              loadImage(_this.preview, function(img) {
+                receipt.appendChild(img);
+              }, options);
+            });
+
+          }
+
+          this.toggleClass('has-receipt', this.preview, this.$.content);
+        },
+
+        _updateImage: function() {
+          var receipt = this.$.receipt;
+          if (receipt.firstChild) {
+            Polymer.dom(receipt).removeChild(receipt.firstChild);
           }
 
           if (this.src) {
-            loadImage(this.src, function(img) {
-              receipt.appendChild(img);
-            }, {
-              maxWidth: 400,
-              canvas: true
-            });
-          }
+            var img = document.createElement('img');
 
+            img.setAttribute('src', this.src);
+
+            Polymer.dom(receipt).appendChild(img);
+          }
           this.toggleClass('has-receipt', this.src, this.$.content);
         },
 

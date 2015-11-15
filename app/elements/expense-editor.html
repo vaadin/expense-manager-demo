@@ -163,6 +163,7 @@
         },
 
         showReceipt: function(evt) {
+          var _this = this;
           var input = evt.target;
           var preview = this.$.preview;
 
@@ -174,7 +175,8 @@
 
             var reader = new FileReader();
             reader.onload = function(e) {
-              preview.src = e.target.result;
+              preview.preview = receipt;
+              _this.uploadDataURL = e.target.result;
             };
             reader.readAsDataURL(receipt);
           }
@@ -208,9 +210,12 @@
           } else {
             this.heading = 'Add Expense';
             this.$.preview.src = null;
-            this.$.form.reset();
+            this.$.merchant.value = "";
+            this.$.total.value = "";
+            this.$.comment.value = "";
             this.$.date.value = moment().format('YYYY-MM-DD');
             this.$.receiptupload.setAttribute('required', true);
+            this._resetValidationErrors();
           }
           this.$.delete.hidden = !(this.expense.id && this.expense.status === 'new');
         },
@@ -232,7 +237,7 @@
             // Sending raw serialized data too as FormData is read only. It's used for localstorage
             // if offline
             var rawData = form.serialize();
-            rawData.receipt = _this.$.preview.src;
+            rawData.receipt = _this.uploadDataURL;
             this.service.saveExpense(this.expense.id, new FormData(form), rawData)
               .then(function() {
                 _this.fire('expenses-updated');
