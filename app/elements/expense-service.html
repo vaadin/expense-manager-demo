@@ -17,7 +17,7 @@ of having every component deal with it separately.
   <template>
     <iron-localstorage id="tokenStorage" name="auth-token" value="{{token}}"></iron-localstorage>
     <iron-localstorage id="expenses" name="expense-cache" value="{{expenses}}"></iron-localstorage>
-    <offline-detector connection-state="{{connectionState}}"></offline-detector>
+    <offline-detector online="{{online}}"></offline-detector>
   </template>
   <script>
     (function() {
@@ -431,34 +431,6 @@ of having every component deal with it separately.
 
         _loggedIn: function(token) {
           return token ? true : false;
-        },
-
-        _generateTestData: function() {
-          var date = moment();
-          var expenses = [];
-          for (var i = 0; i < 250; i++) {
-            date = date.subtract(Math.floor(Math.random() * 72), 'hours');
-            var status = 'new';
-            if (i > 30) {
-              status = 'reimbursed';
-            } else if (i > 15) {
-              status = 'in_progress';
-            }
-
-            expenses.push({
-              id: new Date().getTime(),
-              user: 'demo',
-              date: date.format('YYYY-MM-DD'),
-              merchant: ['Electronics', 'Rental car', 'Airline', 'Hotel', 'Restaurant', 'Taxi']
-                [Math.floor(Math.random() * 6)],
-              total: Math.random() * (Math.random() * 3) * 300 + 10,
-              status: status,
-              comment: 'No comments, please.',
-              receipt: 'default'
-            });
-          }
-          this.expenses = expenses;
-          console.log('Genereated demo data');
         },
 
         _contains: function(a, obj) {
