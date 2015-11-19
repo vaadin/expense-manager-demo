@@ -41,7 +41,10 @@ of having every component deal with it separately.
             notify: true
           },
           expenses: Array,
-          online: Boolean
+          online: {
+            type: Boolean,
+            value: true
+          }
         },
 
         ready: function() {
@@ -120,7 +123,7 @@ of having every component deal with it separately.
           return new Promise(function(resolve, reject) {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
-              if (xhr.readyState === XMLHttpRequest.DONE) {
+              if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
                   var json = JSON.parse(xhr.responseText);
                   if (json.token) {
@@ -389,7 +392,7 @@ of having every component deal with it separately.
           return new Promise(function(resolve, reject) {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
-              if (xhr.readyState === XMLHttpRequest.DONE) {
+              if (xhr.readyState === 4) {
                 if (xhr.status >= 200 && xhr.status < 300) {
                   var json = JSON.parse(xhr.responseText);
                   resolve(json);
@@ -412,7 +415,7 @@ of having every component deal with it separately.
           return new Promise(function(resolve, reject) {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
-              if (xhr.readyState === XMLHttpRequest.DONE) {
+              if (xhr.readyState === 4) {
                 if (xhr.status >= 200 && xhr.status < 300) {
                   var json = JSON.parse(xhr.responseText);
                   if (json.success) {
@@ -431,6 +434,33 @@ of having every component deal with it separately.
 
         _loggedIn: function(token) {
           return token ? true : false;
+        },
+
+        _generateTestData: function() {
+          var date = moment();
+          var expenses = [];
+          for (var i = 0; i < 250; i++) {
+            date = date.subtract(Math.floor(Math.random() * 72), 'hours');
+            var status = 'new';
+            if (i > 30) {
+              status = 'reimbursed';
+            } else if (i > 15) {
+              status = 'in_progress';
+            }
+            expenses.push({
+              id: new Date().getTime(),
+              user: 'demo',
+              date: date.format('YYYY-MM-DD'),
+              merchant: ['Electronics', 'Rental car', 'Airline', 'Hotel', 'Restaurant', 'Taxi']
+                [Math.floor(Math.random() * 6)],
+              total: Math.random() * (Math.random() * 3) * 300 + 10,
+              status: status,
+              comment: 'No comments, please.',
+              receipt: 'default'
+            });
+          }
+          this.expenses = expenses;
+          console.log('Genereated demo data');
         },
 
         _contains: function(a, obj) {

@@ -4,8 +4,7 @@
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
-<link rel="import"
-      href="../bower_components/neon-animation/neon-shared-element-animatable-behavior.html">
+<link rel="import" href="../bower_components/neon-animation/neon-shared-element-animatable-behavior.html">
 <link rel="import" href="../bower_components/neon-animation/animations/hero-animation.html">
 <link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
 <link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
@@ -20,63 +19,59 @@
       :host {
         display: block;
       }
-
+      
       paper-toolbar {
         background: var(--dark-primary-color);
       }
-
+      
       paper-toolbar h1 {
         font-weight: 300;
       }
-
+      
       paper-toolbar .logo {
         color: var(--default-primary-color);
         margin-left: 16px;
       }
-
+      
       .expenses {
         box-shadow: 0 0 6px 0 rgba(150, 150, 150, 0.9);
       }
-
+      
       .about-button {
         opacity: 0.5;
       }
-
+      
       .logout-button {
         font-size: 0.8em;
         color: var(--default-primary-color);
       }
-
+      
       @media (max-width: 600px) {
         .content {
           @apply(--layout-vertical);
         }
-
         .overview {
           width: 100%;
           max-width: 100%;
           height: auto;
         }
-
         @media (max-width: 500px) {
           paper-toolbar h1 {
             font-size: 1.2em;
           }
         }
       }
-
+      
       @media (min-width: 600px) {
         .content {
           @apply(--layout-horizontal);
           @apply(--layout-horizontal-reverse);
         }
-
         .overview {
           width: 33%;
           max-width: 300px;
         }
       }
-
     </style>
 
     <paper-header-panel>
@@ -84,17 +79,13 @@
         <h1>Expense Manager</h1>
         <iron-icon id="logo" class="logo" src="../images/app-icon.svg"></iron-icon>
         <span class="flex"></span>
-        <paper-icon-button icon="vaadin-icons:info-circle" on-tap="_showAbout"
-                           class="about-button"></paper-icon-button>
+        <paper-icon-button icon="vaadin-icons:info-circle" on-tap="_showAbout" class="about-button"></paper-icon-button>
         <paper-button class="logout-button" on-tap="_logout">Logout</paper-button>
       </paper-toolbar>
-      <template is="dom-if" if="[[loggedIn]]" restamp>
-        <div class="content fit">
-          <overview-panel id="overviewPanel" class="overview"
-                          service="[[service]]"></overview-panel>
-          <expenses-list id="list" class="expenses flex" service="[[service]]"></expenses-list>
-        </div>
-      </template>
+      <div class="content fit">
+        <overview-panel id="overviewPanel" class="overview" service="[[service]]"></overview-panel>
+        <expenses-list id="list" class="expenses flex" service="[[service]]"></expenses-list>
+      </div>
     </paper-header-panel>
     <expense-editor service="[[service]]" id="expenseEditor"></expense-editor>
     <paper-toast id="saveNotification" text="Expense saved"></paper-toast>
@@ -109,7 +100,10 @@
 
         properties: {
           service: Object,
-          loggedIn: Boolean,
+          loggedIn: {
+            type: Boolean,
+            observer: '_loggedIn'
+          },
           animationConfig: {
             value: function() {
               return {
@@ -160,6 +154,10 @@
           this.$.expenseEditor.close();
           this.update();
           this.$.saveNotification.show();
+        },
+
+        _loggedIn: function() {
+          this.update();
         },
 
         _logout: function() {

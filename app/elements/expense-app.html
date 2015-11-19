@@ -3,6 +3,9 @@
 <link rel="import" href="../bower_components/vaadin-icons/vaadin-icons.html">
 <link rel="import" href="../bower_components/neon-animation/neon-animated-pages.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../bower_components/platinum-sw/platinum-sw-cache.html">
+<link rel="import" href="../bower_components/platinum-sw/platinum-sw-register.html">
 <link rel="import" href="overview-page.html">
 <link rel="import" href="login-page.html">
 <link rel="import" href="../styles/app-theme.html">
@@ -22,6 +25,15 @@
     </neon-animated-pages>
 
     <expense-service id="service" service="{{service}}" logged-in="{{loggedIn}}"></expense-service>
+
+    <platinum-sw-register auto-register
+                          clients-claim
+                          skip-waiting
+                          on-service-worker-installed="_cachingComplete">
+      <platinum-sw-cache default-cache-strategy="fastest"
+                         cache-config-file="cache-config.json">
+      </platinum-sw-cache>
+    </platinum-sw-register>
 
   </template>
 
@@ -58,6 +70,10 @@
 
         _selectPage: function(loggedIn) {
           return loggedIn ? 1 : 0;
+        },
+
+        _cachingComplete: function() {
+          console.log('Caching complete.');
         }
       });
     })();

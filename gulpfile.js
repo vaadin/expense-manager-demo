@@ -24,7 +24,6 @@ var glob = require('glob-all');
 var historyApiFallback = require('connect-history-api-fallback');
 var packageJson = require('./package.json');
 var crypto = require('crypto');
-var manifest = require('gulp-appcache');
 //var ghPages = require('gulp-gh-pages');
 
 var AUTOPREFIXER_BROWSERS = [
@@ -215,7 +214,7 @@ gulp.task('cache-config', function(callback) {
       'index.html',
       './',
       'bower_components/webcomponentsjs/webcomponents-lite.min.js',
-      '{elements,scripts,styles}/**/*.*'],
+      '{elements,scripts,styles,images}/**/*.*'],
     {cwd: dir}, function(error, files) {
       if (error) {
         callback(error);
@@ -294,23 +293,6 @@ gulp.task('serve:dist', ['default'], function() {
   });
 });
 
-gulp.task('appcache', function() {
-  return gulp.src([
-    'dist/**/*',
-    '!dist/elements/*-*.html',
-    '!dist/bower_components/**',
-    '!dist/sw-toolbox/**',
-    '!dist/elements/bootstrap/**',
-    '!dist/scripts/**'])
-    .pipe(manifest({
-      hash: true,
-      filename: 'manifest.appcache',
-      exclude: 'manifest.appcache',
-      network: ['*']
-    }))
-    .pipe(gulp.dest('dist'));
-});
-
 // Build production files, the default task
 gulp.task('default', ['clean'], function(cb) {
   // Uncomment 'cache-config' if you are going to use service workers.
@@ -318,7 +300,7 @@ gulp.task('default', ['clean'], function(cb) {
     ['copy', 'styles'],
     'elements',
     ['lint', 'images', 'fonts', 'html'],
-    'vulcanize', //'appcache',
+    'vulcanize', 'cache-config',
     cb);
 });
 

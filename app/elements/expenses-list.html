@@ -166,8 +166,6 @@
             status = status.charAt(0).toUpperCase() + status.slice(1);
             cell.element.innerText = status;
           };
-
-          this._setDataSource();
         },
 
         _setDataSource: function() {
@@ -201,6 +199,8 @@
           if (grid.items) {
             grid.clearCache();
             grid.scrollToStart();
+          } else {
+            this._setDataSource();
           }
         },
 

@@ -10,11 +10,13 @@
     body {
       width: 100% !important;
     }
+    
     body.loading {
       width: 100vw;
       height: 100vh;
       overflow: hidden;
     }
+    
     #loadingScreen {
       display: block;
       width: 100vw;
@@ -27,20 +29,22 @@
       background-size: 200px 200px;
       transition: opacity 400ms;
     }
+    
     .ready #loadingScreen {
       opacity: 0 !important;
     }
   </style>
+  <link rel="manifest" href="manifest.json">
 
-  <meta name="theme-color" content="#37474F"/>
-  <meta name="mobile-web-app-capable" content="yes"/>
-  <link rel="icon" sizes="192x192" href="images/app-icon-192.png"/>
+  <meta name="theme-color" content="#37474F" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="icon" sizes="192x192" href="images/app-icon-192.png" />
   <meta name="application-name" content="Expense Manager">
 
   <!-- iOS -->
-  <link rel="apple-touch-icon" href="images/app-icon-192.png"/>
-  <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <link rel="apple-touch-icon" href="images/app-icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Expense Manager">
 
   <!-- build:css styles/main.css -->
@@ -58,44 +62,45 @@
 </head>
 
 <body class="loading fullbleed vertical layout">
-<div id="loadingScreen"></div>
-<span id="browser-sync-binding"></span>
-<script>
-  var webComponentsSupported = (
-  'registerElement' in document &&
-  'import' in document.createElement('link') &&
-  'content' in document.createElement('template'));
-  if (!webComponentsSupported) {
-    var script = document.createElement('script');
-    script.async = true;
-    script.src = 'bower_components/webcomponentsjs/webcomponents-lite.min.js';
-    script.onload = finishLazyLoading;
-    document.head.appendChild(script);
-  } else {
-    finishLazyLoading();
-  }
-
-  function finishLazyLoading() {
-    var link = document.querySelector('#bundle');
-    if (link.import && link.import.readyState === 'complete') {
-      onImportLoaded();
+  <div id="loadingScreen"></div>
+  <span id="browser-sync-binding"></span>
+  <script>
+    var webComponentsSupported = (
+      'registerElement' in document &&
+      'import' in document.createElement('link') &&
+      'content' in document.createElement('template'));
+    if (!webComponentsSupported) {
+      var script = document.createElement('script');
+      script.async = true;
+      script.src = 'bower_components/webcomponentsjs/webcomponents-lite.min.js';
+      script.onload = finishLazyLoading;
+      document.head.appendChild(script);
     } else {
-      link.addEventListener('load', onImportLoaded);
+      finishLazyLoading();
     }
-  }
 
-  function onImportLoaded() {
-    var loadingScreen = document.querySelector('#loadingScreen');
-    loadingScreen.addEventListener('transitionend', function () {
-      // Remove the loading screen from DOM after CSS transition.
-      document.body.removeChild(loadingScreen);
-    });
+    function finishLazyLoading() {
+      var link = document.querySelector('#bundle');
+      if (link.import && link.import.readyState === 'complete') {
+        onImportLoaded();
+      } else {
+        link.addEventListener('load', onImportLoaded);
+      }
+    }
 
-    document.body.classList.remove('loading');
-    document.body.classList.add('ready');
-    var appElement = document.createElement('expense-app');
-    document.body.appendChild(appElement);
-  }
-</script>
+    function onImportLoaded() {
+      var loadingScreen = document.querySelector('#loadingScreen');
+      loadingScreen.addEventListener('transitionend', function() {
+        // Remove the loading screen from DOM after CSS transition.
+        document.body.removeChild(loadingScreen);
+      });
+
+      document.body.classList.remove('loading');
+      document.body.classList.add('ready');
+      var appElement = document.createElement('expense-app');
+      document.body.appendChild(appElement);
+    }
+  </script>
 </body>
+
 </html>

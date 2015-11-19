@@ -18,12 +18,16 @@
 
         ready: function() {
           var _this = this;
+          Offline.options = {requests: false};
+
           this.online = Offline.state === 'up';
 
-          Offline.on('confirmed-up', function() {
+          Offline.on('up', function() {
+            console.log('Server connection resumed');
             _this.online = true;
           });
-          Offline.on('confirmed-down', function() {
+          Offline.on('down', function() {
+            console.log('Lost server connection.');
             _this.online = false;
           });
         }
