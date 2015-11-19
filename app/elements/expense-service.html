@@ -14,11 +14,13 @@ of having every component deal with it separately.
 <link rel="import" href="offline-detector.html">
 
 <dom-module id="expense-service">
+
   <template>
     <iron-localstorage id="tokenStorage" name="auth-token" value="{{token}}"></iron-localstorage>
     <iron-localstorage id="expenses" name="expense-cache" value="{{expenses}}"></iron-localstorage>
     <offline-detector online="{{online}}"></offline-detector>
   </template>
+
   <script>
     (function() {
       'use strict';

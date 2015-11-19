@@ -3,8 +3,7 @@
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
-<link rel="import"
-      href="../bower_components/neon-animation/neon-shared-element-animatable-behavior.html">
+<link rel="import" href="../bower_components/neon-animation/neon-shared-element-animatable-behavior.html">
 <link rel="import" href="../bower_components/neon-animation/animations/hero-animation.html">
 <link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
 <link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
@@ -16,12 +15,12 @@
       display: block;
       @apply(--layout-vertical);
     }
-
+    
     .login paper-input {
       width: 300px;
       max-width: 80vw;
     }
-
+    
     #login-button {
       margin-top: 20px;
       padding-left: 30px;
@@ -29,45 +28,45 @@
       background: var(--accent-color);
       color: var(--text-primary-color);
     }
-
+    
     .error-message {
       color: red;
     }
-
+    
     .header {
       background: var(--dark-primary-color);
       height: 40%;
     }
-
+    
     .header .logo {
       color: var(--default-primary-color);
       --iron-icon-height: 96px;
       --iron-icon-width: 96px;
     }
-
+    
     .header h1 {
       color: var(--text-primary-color);
       font-size: 60px;
       font-weight: 100;
       margin-top: 0;
     }
-
+    
     .login {
       padding-top: 30px;
     }
-
+    
     @media (max-width: 600px) {
-      .login, .header {
+      .login,
+      .header {
         height: 50%;
       }
     }
-
+    
     @media (max-width: 500px) {
       .header h1 {
         font-size: 40px;
       }
     }
-
   </style>
 
   <template>
@@ -78,8 +77,7 @@
     </div>
     <div class="flex login layout vertical center">
       <paper-input value={{username}} label="USERNAME" name="username"></paper-input>
-      <paper-input value="{{password}}" label="PASSWORD" name="password"
-                   type="password"></paper-input>
+      <paper-input value="{{password}}" label="PASSWORD" name="password" type="password"></paper-input>
       <span class="error-message">[[errorMessage]]</span>
       <paper-button id="login-button" on-tap="_logIn" raised>Login</paper-button>
     </div>
@@ -115,7 +113,9 @@
                   name: 'hero-animation',
                   id: 'hero',
                   fromPage: this,
-                  timing: {easing: 'ease-in'}
+                  timing: {
+                    easing: 'ease-in'
+                  }
                 }, {
                   name: 'fade-out-animation',
                   node: this
