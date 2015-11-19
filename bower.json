@@ -1,5 +1,5 @@
 {
-  "name": "polymer-starter-kit",
+  "name": "expense-manager",
   "private": true,
   "dependencies": {
     "polymer": "Polymer/polymer#^1.1.2",
