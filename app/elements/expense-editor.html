@@ -28,69 +28,68 @@
         background: var(--primary-background-color);
         overflow-y: scroll;
       }
-
+      
       .buttons-layout {
         margin-top: 16px;
       }
-
+      
       .buttons-layout paper-button {
         width: 150px;
       }
-
+      
       .save-button {
         background: var(--accent-color);
         color: var(--text-primary-color);
       }
-
+      
       .cancel-button {
         color: var(--accent-color);
       }
-
+      
       h2 {
         font-size: 2em;
         font-weight: 300;
       }
-
+      
       .receipt {
         margin-left: 24px;
         min-height: 64px;
       }
-
+      
       #error {
         color: red;
       }
-
+      
       :host > .wrapper {
         height: 100%;
         width: 100%;
         padding: 0;
       }
-
+      
       .close-button {
         color: var(--accent-color);
       }
-
-      form ::content label {
+      
+      form::content label {
         font-weight: bold !important;
         color: #999 !important;
       }
-
+      
       @media (min-width: 900px) {
         .wrapper {
           @apply(--layout-horizontal);
         }
       }
-
+      
       @media (max-width: 900px) {
         .receipt {
           margin: 24px 0 0 0;
         }
-
         .wrapper {
           @apply(--layout-vertical);
         }
       }
-
+      
       @media (max-width: 600px) {
         #dialog {
           width: 100vw;
@@ -103,28 +102,22 @@
       <div class="layout horizontal">
         <h2>{{heading}}</h2>
         <span class="flex"></span>
-        <paper-icon-button icon="close" on-tap="close"
-                           class="close-button self-start"></paper-icon-button>
+        <paper-icon-button icon="close" on-tap="close" class="close-button self-start"></paper-icon-button>
       </div>
 
       <div class="wrapper">
         <div class="form flex-2">
           <form is="iron-form" id="form">
             <iron-a11y-keys keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
-            <paper-input name="merchant" id="merchant" label="Merchant" auto-validate required
-                         error-message="Merchant name required"></paper-input>
-            <paper-input name="total" id="total" label="Total" auto-validate required
-                         pattern="[\d,.]+"
-                         error-message="Numeric values only">
+            <paper-input name="merchant" id="merchant" label="Merchant" auto-validate required error-message="Merchant name required"></paper-input>
+            <paper-input name="total" id="total" label="Total" auto-validate required pattern="[\d,.]+" error-message="Numeric values only">
               <div prefix>$</div>
             </paper-input>
 
-            <paper-input label="Date" id="date" name="date" pattern="\d{4}-\d{2}-\d{2}"
-                         error-message="Value must be in YYYY-MM-DD" auto-validate></paper-input>
+            <paper-input label="Date" id="date" name="date" pattern="\d{4}-\d{2}-\d{2}" error-message="Value must be in YYYY-MM-DD" auto-validate></paper-input>
             <paper-textarea id="comment" name="comment" label="Comment" value=""></paper-textarea>
 
-            <input type="file" accept="image/jpeg" id="receiptupload" name="receipt"
-                   capture="camera" hidden>
+            <input type="file" accept="image/jpeg" id="receiptupload" name="receipt" capture="camera" hidden>
           </form>
           <span id="error">{{errorText}}</span>
         </div>
@@ -172,13 +165,9 @@
             if (!receipt.type.match('image.*')) {
               return;
             }
+            _this.receiptFile = receipt;
+            preview.preview = receipt;
 
-            var reader = new FileReader();
-            reader.onload = function(e) {
-              preview.preview = receipt;
-              _this.uploadDataURL = e.target.result;
-            };
-            reader.readAsDataURL(receipt);
           }
         },
 
@@ -191,7 +180,11 @@
           if (this.expense.id) {
             this.heading = 'Edit Expense';
 
-            this.$.preview.src = this.service.getReceiptURL(this.expense.id);
+            if (this.expense.receipt && this.expense.receipt instanceof File) {
+              this.$.preview.preview = this.expense.receipt;
+            } else {
+              this.$.preview.src = this.service.getReceiptURL(this.expense.id);
+            }
 
             // Need to set these manually as we need to update formats etc
             if (this.expense.merchant) {
@@ -234,11 +227,9 @@
           this.$.error.innerText = '';
           var form = this.$.form;
           if (form.validate()) {
-            // Sending raw serialized data too as FormData is read only. It's used for localstorage
-            // if offline
-            var rawData = form.serialize();
-            rawData.receipt = _this.uploadDataURL;
-            this.service.saveExpense(this.expense.id, new FormData(form), rawData)
+            var data = form.serialize();
+            data.receipt = _this.receiptFile;
+            this.service.saveExpense(this.expense.id, data)
               .then(function() {
                 _this.fire('expenses-updated');
               })
@@ -267,7 +258,9 @@
         _delete: function() {
           var _this = this;
           this.service.deleteExpense(this.expense.id).then(function() {
-              _this.fire('expenses-updated', {reason: 'deleted'});
+              _this.fire('expenses-updated', {
+                reason: 'deleted'
+              });
             })
             .catch(function(e) {
               console.log(e);

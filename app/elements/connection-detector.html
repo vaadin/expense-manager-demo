@@ -1,24 +1,28 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../scripts/offline.html">
 
-<dom-module id="offline-detector">
+<dom-module id="connection-detector">
   <script>
     (function() {
       'use strict';
 
       Polymer({
-        is: 'offline-detector',
+        is: 'connection-detector',
 
         properties: {
           online: {
             type: Boolean,
             notify: true
+          },
+          pingUrl: {
+            type: String,
+            observer: '_pingUrlChanged'
           }
         },
 
         ready: function() {
           var _this = this;
-          Offline.options = {requests: false};
+          Offline.options.requests = false;
 
           this.online = Offline.state === 'up';
 
@@ -30,6 +34,16 @@
             console.log('Lost server connection.');
             _this.online = false;
           });
+        },
+
+        _pingUrlChanged: function(url) {
+          if (url) {
+            Offline.options.checks = {
+              xhr: {
+                url: url
+              }
+            };
+          }
         }
       });
     })();

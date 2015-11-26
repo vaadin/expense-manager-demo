@@ -1,29 +1,20 @@
-<!--
-Exposes methods for fetching data either from a server or local storage.
-
-Currently, we will use a server if the server attribute is set.
-If not, we'll use dummy data from a json file.
-
-This approach will also allow us centralize offline handling in the future instead
-of having every component deal with it separately.
--->
-
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
 <link rel="import" href="../scripts/moment-js.html">
-<link rel="import" href="offline-detector.html">
+<link rel="import" href="connection-detector.html">
 
 <dom-module id="expense-service">
 
   <template>
     <iron-localstorage id="tokenStorage" name="auth-token" value="{{token}}"></iron-localstorage>
     <iron-localstorage id="expenses" name="expense-cache" value="{{expenses}}"></iron-localstorage>
-    <offline-detector online="{{online}}"></offline-detector>
+    <connection-detector online="{{online}}" id="detector"></connection-detector>
   </template>
 
   <script>
     (function() {
       'use strict';
+
       Polymer({
         is: 'expense-service',
 
@@ -34,18 +25,22 @@ of having every component deal with it separately.
           loggedIn: {
             type: Boolean,
             computed: '_loggedIn(token)',
-            notify: true,
-            reflectToAttribute: true
+            notify: true
           },
-          server: String,
+          server: {
+            type: String,
+            observer: '_serverChanged'
+          },
           service: {
             type: Object,
             notify: true
           },
           expenses: Array,
+          unsavedExpenses: Array,
           online: {
             type: Boolean,
-            value: true
+            notify: true,
+            observer: '_onlineObserver'
           }
         },
 
@@ -91,20 +86,44 @@ of having every component deal with it separately.
           }
         },
 
-        saveExpense: function(id, formData, rawData) {
-          if (this.server && this.online) {
-            return this._saveExpenseToServer(id, formData);
-          } else {
-            return this._saveExpenseLocal(id, rawData);
-          }
+        saveExpense: function(id, data) {
+          var _this = this;
+          return new Promise(function(resolve) {
+            if (_this.server && _this.online) {
+              _this._saveExpenseToServer(id, data)
+                .then(function(response) {
+                  _this._updateToCache(response.saved);
+                  resolve(response);
+                })
+                // If save to server is unsuccessful, save locally
+                .catch(function(e) {
+                  console.log(e);
+                  resolve(_this._saveExpenseLocal(id, data));
+                });
+            } else {
+              resolve(_this._saveExpenseLocal(id, data));
+            }
+          });
         },
 
         deleteExpense: function(id) {
-          if (this.server && this.online) {
-            return this._deleteExpenseFromServer(id);
-          } else {
-            return this._deleteExpenseLocal(id);
-          }
+          var _this = this;
+          return new Promise(function(resolve) {
+            if (_this.server && _this.online) {
+              _this._deleteExpenseFromServer(id)
+                .then(function(response) {
+                  _this._removeExpenseFromCache(id);
+                  resolve(response);
+                })
+                // If save to server is unsuccessful, save locally
+                .catch(function(e) {
+                  console.log(e);
+                  resolve(_this._deleteExpenseLocal(id));
+                });
+            } else {
+              resolve(_this._deleteExpenseLocal(id));
+            }
+          });
         },
 
         getReceiptURL: function(id) {
@@ -112,12 +131,37 @@ of having every component deal with it separately.
             return this.server + '/expenses/' + id + '/receipt.png?token=' + this.token;
           } else {
             var expense = this._findExpense(id);
-            if (expense && expense.receipt && expense.receipt.indexOf('data:') >= 0) {
-              return expense.receipt;
-            } else {
+            if (expense && expense.receipt && expense.receipt.indexOf('default') >= 0) {
               return 'images/default-receipt.png';
+            } else {
+              return 'images/receipt-placeholder.png';
             }
           }
+        },
+
+        _onlineObserver: function(online) {
+          if (online) {
+            this._syncLocalDataToServer();
+          }
+        },
+
+        _serverChanged: function() {
+          if (this.server) {
+            var url = this.server + '/ping' || null;
+            console.log(url);
+            this.$.detector.pingUrl = url;
+          }
+        },
+
+        _getCache: function() {
+          if (!this.expenses) {
+            this._generateTestData();
+          }
+
+          // remove any possible deleted expenses that have not been synced to the server
+          return this.expenses.filter(function(e) {
+            return !(e.pending && e.pending === 'delete');
+          });
         },
 
         _loginToServer: function(username, password) {
@@ -130,6 +174,7 @@ of having every component deal with it separately.
                   var json = JSON.parse(xhr.responseText);
                   if (json.token) {
                     _this.token = json.token;
+                    _this._updateCache();
                     _this.fire('logged-in');
                     resolve(json);
                   } else {
@@ -148,24 +193,100 @@ of having every component deal with it separately.
         },
 
         _getOverviewDataFromServer: function() {
-          return this._ajax(this.server + '/expenses/overview');
+          return this._ajax({
+            url: this.server + '/expenses/overview'
+          });
         },
 
         _getExpensesFromServer: function(params) {
-          return this._ajax(this.server + '/expenses', params);
+          return this._ajax({
+            url: this.server + '/expenses',
+            params: params
+          });
         },
 
         _saveExpenseToServer: function(id, data) {
+          var formData = new FormData();
+          ['merchant', 'total', 'date', 'comment', 'receipt'].forEach(function(attr) {
+            formData.append(attr, data[attr]);
+          });
+
           var url = this.server + '/expenses';
           if (id) {
             url += '/' + id;
           }
-          return this._postData(url, data);
+          return this._ajax({
+            method: 'POST',
+            url: url,
+            body: formData
+          });
         },
 
         _deleteExpenseFromServer: function(id) {
           var url = this.server + '/expenses/' + id;
-          return this._ajax(url, {}, 'DELETE');
+          return this._ajax({
+            method: 'DELETE',
+            url: url
+          });
+        },
+
+        _syncLocalDataToServer: function() {
+          if (this.loggedIn && this.expenses) {
+            var _this = this;
+
+            var pending = this.expenses.filter(function(exp) {
+              return exp.pending && exp.pending !== '';
+            });
+
+            if (pending.length > 0) {
+              console.log('Syncing ' + pending.length + ' pending operations to server');
+              Promise.all(
+                  // Replay all pending operations. If they fail again, they will just be set to
+                  // pending again
+                  pending.map(function(exp) {
+                    if (exp.pending === 'delete') {
+                      return _this.deleteExpense(exp.id);
+                    } else if (exp.pending === 'save') {
+                      if (exp.id.indexOf('local') >= 0) {
+                        // Delete the locally stored expense if this is a newly created expense.
+                        // Otherwise we'll get duplicates if this operation fails too.
+                        _this._removeExpenseFromCache(exp.id);
+                        return _this.saveExpense(null, exp);
+                      } else {
+                        return _this.saveExpense(exp.id, exp);
+                      }
+                    }
+                  }))
+                .then(function() {
+                  _this.fire('sync-complete', {
+                    success: true
+                  });
+                })
+                .catch(function(e) {
+                  console.log(e);
+                  _this.fire('sync-complete', {
+                    success: false
+                  });
+                  // Retry operation
+                  _this.async(_this._syncLocalDataToServer, 30000);
+                });
+            }
+          }
+        },
+
+        _updateCache: function() {
+          var _this = this;
+          this._ajax({
+            url: this.server + '/expenses',
+            params: {
+              index: 0,
+              count: 200
+            }
+          }).then(function(expenses) {
+            _this.expenses = expenses.result;
+          }).catch(function(e) {
+            console.log('Cache update failed', e);
+          });
         },
 
         _loginLocal: function() {
@@ -178,11 +299,11 @@ of having every component deal with it separately.
         },
 
         _getOverviewDataLocal: function() {
-          var _this = this;
+          var expenses = this._getCache();
 
           function calculateOverviewData() {
 
-            var total = _this.expenses.filter(function(expense) {
+            var total = expenses.filter(function(expense) {
                 return expense.status === 'new';
               })
               .map(function(expense) {
@@ -194,7 +315,8 @@ of having every component deal with it separately.
 
             var history = [];
             var oneYearAgo = moment().subtract(1, 'years');
-            _this.expenses.filter(function(expense) {
+
+            expenses.filter(function(expense) {
               return moment(expense.date).isAfter(oneYearAgo);
             }).forEach(function(expense) {
               findMonth(expense.date, history).total += expense.total;
@@ -227,10 +349,6 @@ of having every component deal with it separately.
             return month;
           }
 
-          if (!_this.expenses) {
-            this._generateTestData();
-          }
-
           return new Promise(function(resolve) {
             resolve(calculateOverviewData());
           });
@@ -238,10 +356,11 @@ of having every component deal with it separately.
 
         _getExpensesLocal: function(params) {
           var _this = this;
+          var expenses = this._getCache();
 
           function filterAndSort(params) {
             // Filter
-            var result = _this.expenses
+            var result = expenses
               .filter(function(expense) {
                 return !(params.merchant && expense.merchant
                   .toUpperCase().indexOf(params.merchant.toUpperCase()) < 0);
@@ -315,10 +434,6 @@ of having every component deal with it separately.
             };
           }
 
-          if (!_this.expenses) {
-            this._generateTestData();
-          }
-
           return new Promise(function(resolve) {
             resolve(filterAndSort(params));
           });
@@ -330,7 +445,7 @@ of having every component deal with it separately.
             if (data) {
               var expense = _this._findExpense(id);
 
-              if (data.total) {
+              if (data.total && typeof data.total === 'string') {
                 data.total = parseFloat(data.total.replace(/[^\d.]/g, ''));
               }
               if (expense) {
@@ -339,9 +454,12 @@ of having every component deal with it separately.
                 expense.date = data.date;
                 expense.comment = data.comment;
                 expense.receipt = data.receipt;
+                expense.pending = 'save';
               } else {
-                data.id = new Date().getTime();
+                // Temporary id for locally saved expenses
+                data.id = 'local-' + new Date().getTime();
                 data.status = 'New';
+                data.pending = 'save';
                 _this.push('expenses', data);
               }
               resolve();
@@ -354,16 +472,14 @@ of having every component deal with it separately.
         _deleteExpenseLocal: function(id) {
           var _this = this;
           return new Promise(function(resolve, reject) {
-            for (var i = 0; i < _this.expenses.length; i++) {
-              var expense = _this.expenses[i];
+            var expense = _this._findExpense(id);
 
-              if (expense.id === id && expense.status === 'new') {
-                _this.splice('expenses', i, 1);
-                resolve();
-                return;
-              }
+            if (expense && expense.id === id && expense.status === 'new') {
+              expense.pending = 'delete';
+              resolve();
+            } else {
+              reject();
             }
-            reject();
           });
         },
 
@@ -377,6 +493,21 @@ of having every component deal with it separately.
           return expense;
         },
 
+        _removeExpenseFromCache: function(id) {
+          var _this = this;
+          for (var i = 0; i < _this.expenses.length; i++) {
+            var expense = _this.expenses[i];
+            if (expense.id === id) {
+              _this.splice('expenses', i, 1);
+            }
+          }
+        },
+
+        _updateToCache: function(expense) {
+          this._removeExpenseFromCache(expense.id);
+          this.push('expenses', expense);
+        },
+
         _serializeParams: function(params) {
           var serialized = [];
           for (var p in params) {
@@ -388,9 +519,11 @@ of having every component deal with it separately.
           return serialized.join('&');
         },
 
-        _ajax: function(url, params, method) {
+        _ajax: function(options) {
           var _this = this;
-          method = method || 'GET';
+          var method = options.method || 'GET';
+          var url = options.url;
+
           return new Promise(function(resolve, reject) {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
@@ -399,38 +532,23 @@ of having every component deal with it separately.
                   var json = JSON.parse(xhr.responseText);
                   resolve(json);
                 } else {
-                  reject('Received status ' + xhr.status);
+                  reject({
+                    success: false,
+                    status: xhr.status
+                  });
                 }
               }
             };
-            if (params) {
-              url += '?' + _this._serializeParams(params);
+            if (options.params) {
+              url += '?' + _this._serializeParams(options.params);
             }
             xhr.open(method, url, true);
             xhr.setRequestHeader('x-access-token', _this.token);
-            xhr.send();
-          });
-        },
-
-        _postData: function(url, body) {
-          var _this = this;
-          return new Promise(function(resolve, reject) {
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-              if (xhr.readyState === 4) {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                  var json = JSON.parse(xhr.responseText);
-                  if (json.success) {
-                    resolve(json);
-                  } else {
-                    reject(json);
-                  }
-                }
-              }
-            };
-            xhr.open('POST', url, true);
-            xhr.setRequestHeader('x-access-token', _this.token);
-            xhr.send(body);
+            if (method === 'POST' && options.body) {
+              xhr.send(options.body);
+            } else {
+              xhr.send();
+            }
           });
         },
 
@@ -462,7 +580,6 @@ of having every component deal with it separately.
             });
           }
           this.expenses = expenses;
-          console.log('Genereated demo data');
         },
 
         _contains: function(a, obj) {
@@ -473,8 +590,7 @@ of having every component deal with it separately.
           }
           return false;
         }
-      })
-      ;
+      });
     })();
   </script>
 </dom-module>

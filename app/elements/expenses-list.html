@@ -17,48 +17,48 @@
         overflow: hidden;
         @apply(--layout-vertical);
       }
-
+      
       #add-button {
         position: absolute;
         right: 32px;
         bottom: 32px;
         z-index: 2;
       }
-
+      
       #expenses {
         color: var(--primary-text-color);
         font-weight: 300;
       }
-
-      #expenses ::content thead.vaadin-grid-header th,
+      
+      #expenses::content thead.vaadin-grid-header th,
       #expenses /deep/ thead.vaadin-grid-header th {
         background: var(--dark-primary-color);
         color: #ccc;
         font-size: 1.2em;
         font-weight: 400;
       }
-
-      vaadin-grid ::content tr.vaadin-grid-row-stripe td,
+      
+      vaadin-grid::content tr.vaadin-grid-row-stripe td,
       vaadin-grid /deep/ tr.vaadin-grid-row-stripe td {
         background: #F7F8F8;
       }
-
-      vaadin-grid ::content td.status-new,
+      
+      vaadin-grid::content td.status-new,
       vaadin-grid /deep/ td.status-new {
         font-weight: bold;
       }
-
-      vaadin-grid ::content td.status-reimbursed span,
+      
+      vaadin-grid::content td.status-reimbursed span,
       vaadin-grid /deep/ td.status-reimbursed span {
         opacity: 0.4;
       }
-
-      #expenses ::content thead.vaadin-grid-header th.last-frozen,
+      
+      #expenses::content thead.vaadin-grid-header th.last-frozen,
       #expenses /deep/ thead.vaadin-grid-header th.last-frozen {
         border-right: 1px solid #2A3A42;
       }
-
-      #expenses ::content .vaadin-grid-header.vaadin-grid .sort-asc.vaadin-grid:after,
+      
+      #expenses::content .vaadin-grid-header.vaadin-grid .sort-asc.vaadin-grid:after,
       #expenses /deep/ .vaadin-grid-header.vaadin-grid .sort-asc.vaadin-grid:after {
         content: "\e7bc " attr(sort-order);
         font-family: Vaadin-Icons;
@@ -72,8 +72,8 @@
         -webkit-font-smoothing: antialiased;
         color: var(--default-primary-color);
       }
-
-      #expenses ::content .vaadin-grid-header.vaadin-grid .sort-desc.vaadin-grid:after,
+      
+      #expenses::content .vaadin-grid-header.vaadin-grid .sort-desc.vaadin-grid:after,
       #expenses /deep/ .vaadin-grid-header.vaadin-grid .sort-desc.vaadin-grid:after {
         content: "\e7c3 " attr(sort-order);
         font-family: Vaadin-Icons;
@@ -98,7 +98,7 @@
           <col header-text="Date" name="date" width="120" sortable/>
           <col header-text="Merchant" name="merchant" width="200" sortable/>
           <col header-text="Total" name="total" width="150" sortable/>
-          <col header-text="Status" name="status" width="200" sortable/>
+          <col header-text="Status" name="status" width="150" sortable/>
           <col header-text="Comment" name="comment" sortable/>
         </colgroup>
       </table>

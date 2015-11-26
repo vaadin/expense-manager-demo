@@ -46,6 +46,10 @@
         color: var(--default-primary-color);
       }
       
+      .offline-indicator iron-icon {
+        margin: 0 16px;
+      }
+      
       @media (max-width: 600px) {
         .content {
           @apply(--layout-vertical);
@@ -78,6 +82,8 @@
       <paper-toolbar>
         <h1>Expense Manager</h1>
         <iron-icon id="logo" class="logo" src="../images/app-icon.svg"></iron-icon>
+        <span class="offline-indicator" hidden$="[[online]]">
+          <iron-icon icon="cloud-off"></iron-icon>Connection offline.</span>
         <span class="flex"></span>
         <paper-icon-button icon="vaadin-icons:info-circle" on-tap="_showAbout" class="about-button"></paper-icon-button>
         <paper-button class="logout-button" on-tap="_logout">Logout</paper-button>
@@ -103,6 +109,11 @@
           loggedIn: {
             type: Boolean,
             observer: '_loggedIn'
+          },
+          online: {
+            type: Boolean,
+            notify: true,
+            observer: '_connectionStatusChanged'
           },
           animationConfig: {
             value: function() {
@@ -166,6 +177,12 @@
 
         _showAbout: function() {
           this.$.about.open();
+        },
+
+        _connectionStatusChanged: function() {
+          if (this.loggedIn && this.service) {
+            this.update();
+          }
         }
       });
     })();
