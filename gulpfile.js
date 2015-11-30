@@ -48,12 +48,16 @@ var styleTask = function(stylesPath, srcs) {
   return gulp.src(srcs.map(function(src) {
       return path.join('app', stylesPath, src);
     }))
-    .pipe($.changed(stylesPath, {extension: '.css'}))
+    .pipe($.changed(stylesPath, {
+      extension: '.css'
+    }))
     .pipe($.autoprefixer(AUTOPREFIXER_BROWSERS))
     .pipe(gulp.dest('.tmp/' + stylesPath))
     .pipe($.cssmin())
     .pipe(gulp.dest(dist(stylesPath)))
-    .pipe($.size({title: stylesPath}));
+    .pipe($.size({
+      title: stylesPath
+    }));
 };
 
 var imageOptimizeTask = function(src, dest) {
@@ -63,7 +67,9 @@ var imageOptimizeTask = function(src, dest) {
       interlaced: true
     }))
     .pipe(gulp.dest(dest))
-    .pipe($.size({title: 'images'}));
+    .pipe($.size({
+      title: 'images'
+    }));
 };
 
 var optimizeHtmlTask = function(src, dest) {
@@ -120,8 +126,8 @@ gulp.task('lint', function() {
       once: true
     }))
 
-    // JSCS has not yet a extract option
-    .pipe($.if('*.html', $.htmlExtract()))
+  // JSCS has not yet a extract option
+  .pipe($.if('*.html', $.htmlExtract()))
     .pipe($.jshint())
     .pipe($.jscs())
     .pipe($.jscsStylish.combineWithHintResults())
@@ -193,7 +199,9 @@ gulp.task('vulcanize', function() {
     }))
     .pipe($.minifyInline())
     .pipe(gulp.dest(DEST_DIR))
-    .pipe($.size({title: 'vulcanize'}));
+    .pipe($.size({
+      title: 'vulcanize'
+    }));
 });
 
 // Generate config data for the <sw-precache-cache> element.
@@ -211,24 +219,30 @@ gulp.task('cache-config', function(callback) {
   };
 
   glob([
-      'index.html',
-      './',
-      'bower_components/webcomponentsjs/webcomponents-lite.min.js',
-      '{elements,scripts,styles,images}/**/*.*'],
-    {cwd: dir}, function(error, files) {
-      if (error) {
-        callback(error);
-      } else {
-        config.precache = files;
+    'index.html',
+    './',
+    'bower_components/webcomponentsjs/webcomponents-lite.min.js',
+    'bower_components/accounting/accounting.min.js',
+    'bower_components/blueimp-load-image/js/load-image.all.min.js',
+    'bower_components/offline/offline.min.js',
+    'bower_components/moment/moment.js',
+    '{elements,scripts,styles,images}/**/*.*'
+  ], {
+    cwd: dir
+  }, function(error, files) {
+    if (error) {
+      callback(error);
+    } else {
+      config.precache = files;
 
-        var md5 = crypto.createHash('md5');
-        md5.update(JSON.stringify(config.precache));
-        config.precacheFingerprint = md5.digest('hex');
+      var md5 = crypto.createHash('md5');
+      md5.update(JSON.stringify(config.precache));
+      config.precacheFingerprint = md5.digest('hex');
 
-        var configPath = path.join(dir, 'cache-config.json');
-        fs.writeFile(configPath, JSON.stringify(config), callback);
-      }
-    });
+      var configPath = path.join(dir, 'cache-config.json');
+      fs.writeFile(configPath, JSON.stringify(config), callback);
+    }
+  });
 });
 
 // Clean output directory
@@ -298,8 +312,7 @@ gulp.task('default', ['clean'], function(cb) {
   // Uncomment 'cache-config' if you are going to use service workers.
   runSequence(
     ['copy', 'styles'],
-    'elements',
-    ['lint', 'images', 'fonts', 'html'],
+    'elements', ['lint', 'images', 'fonts', 'html'],
     'vulcanize', 'cache-config',
     cb);
 });
@@ -325,5 +338,4 @@ require('web-component-tester').gulp.init(gulp);
 // Load custom tasks from the `tasks` directory
 try {
   require('require-dir')('tasks');
-} catch (err) {
-}
+} catch (err) {}

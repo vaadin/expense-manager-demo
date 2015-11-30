@@ -83,6 +83,7 @@
           var toast = this.$.syncInfo;
           if (evt.detail.success) {
             toast.text = 'Synced offline data to server.';
+            this.$.overview.update();
           } else {
             toast.text = 'Sync of offline data failed, will try again later.';
           }

@@ -92,6 +92,7 @@
             if (_this.server && _this.online) {
               _this._saveExpenseToServer(id, data)
                 .then(function(response) {
+                  console.log('Saved successfully to server', response);
                   _this._updateToCache(response.saved);
                   resolve(response);
                 })
@@ -458,7 +459,7 @@
               } else {
                 // Temporary id for locally saved expenses
                 data.id = 'local-' + new Date().getTime();
-                data.status = 'New';
+                data.status = 'new';
                 data.pending = 'save';
                 _this.push('expenses', data);
               }
@@ -504,8 +505,10 @@
         },
 
         _updateToCache: function(expense) {
+          var cacheSize = this.expenses.length;
           this._removeExpenseFromCache(expense.id);
           this.push('expenses', expense);
+          console.log('Updated cache, size ' + (this.expenses.length - cacheSize));
         },
 
         _serializeParams: function(params) {
@@ -530,7 +533,15 @@
               if (xhr.readyState === 4) {
                 if (xhr.status >= 200 && xhr.status < 300) {
                   var json = JSON.parse(xhr.responseText);
-                  resolve(json);
+                  if (json.hasOwnProperty('success') && !json.success) {
+                    reject({
+                      success: false,
+                      status: xhr.status,
+                      error: json.error
+                    });
+                  } else {
+                    resolve(json);
+                  }
                 } else {
                   reject({
                     success: false,
