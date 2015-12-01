@@ -461,7 +461,7 @@
                 data.id = 'local-' + new Date().getTime();
                 data.status = 'new';
                 data.pending = 'save';
-                _this.push('expenses', data);
+                _this.unshift('expenses', data);
               }
               resolve();
             } else {

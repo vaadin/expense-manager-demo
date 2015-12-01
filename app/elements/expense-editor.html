@@ -232,7 +232,9 @@
             data.receipt = _this.receiptFile;
             this.service.saveExpense(this.expense.id, data)
               .then(function() {
-                _this.fire('expenses-updated');
+                _this.fire('expenses-updated', {
+                  reason: 'saved'
+                });
               })
               .catch(function(e) {
                 console.log(e);

@@ -11,7 +11,7 @@
         display: block;
         background: var(--light-primary-color);
       }
-
+      
       .total {
         background: var(--default-primary-color);
         color: var(--text-primary-color);
@@ -25,36 +25,34 @@
         @apply(--layout-center);
         @apply(--layout-center-justified);
       }
-
+      
       .total .sum {
         font-size: 32px;
         font-weight: 200;
       }
-
+      
       .chart-title {
         font-weight: 500;
         text-align: center;
         font-size: 18px;
       }
-
+      
       .chart {
         height: 400px;
       }
-
-      #barchart ::content text {
+      
+      #barchart::content text {
         font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
       }
-
+      
       @media (max-width: 600px) {
         .chart {
           display: none;
         }
-
         .total {
           height: 64px;
           @apply(--layout-horizontal);
         }
-
         .total .sum {
           margin-left: 12px;
         }

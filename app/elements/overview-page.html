@@ -103,7 +103,7 @@
       </div>
     </paper-header-panel>
     <expense-editor service="[[service]]" id="expenseEditor"></expense-editor>
-    <paper-toast id="saveNotification" text="Expense saved"></paper-toast>
+    <paper-toast id="saveNotification"></paper-toast>
     <about-dialog id="about"></about-dialog>
   </template>
 
@@ -170,14 +170,21 @@
           editor.open();
         },
 
-        _updateExpenses: function() {
+        _updateExpenses: function(evt) {
           this.$.expenseEditor.close();
           this.update();
+          if (evt.detail.reason === 'deleted') {
+            this.$.saveNotification.text = 'Expense was deleted';
+          } else {
+            this.$.saveNotification.text = 'Expense was saved';
+          }
           this.$.saveNotification.show();
         },
 
-        _loggedIn: function() {
-          this.update();
+        _loggedIn: function(loggedIn) {
+          if (loggedIn) {
+            this.update();
+          }
         },
 
         _logout: function() {
