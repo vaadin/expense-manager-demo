@@ -177,9 +177,12 @@
 
         _reset: function() {
           this.errorText = '';
+          this.$.preview.src = null;
+          this.$.preview.preview = null;
+
           if (this.expense.id) {
             this.heading = 'Edit Expense';
-
+            console.log(this.expense);
             if (this.expense.receipt && this.expense.receipt instanceof File) {
               this.$.preview.preview = this.expense.receipt;
             } else {
@@ -202,8 +205,6 @@
             this.$.receiptupload.removeAttribute('required');
           } else {
             this.heading = 'Add Expense';
-            this.$.preview.src = null;
-            this.$.preview.preview = null;
             this.$.merchant.value = '';
             this.$.total.value = '';
             this.$.comment.value = '';

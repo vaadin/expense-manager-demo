@@ -570,6 +570,7 @@
         _generateTestData: function() {
           var date = moment();
           var expenses = [];
+          var id = new Date().getTime();
           for (var i = 0; i < 250; i++) {
             date = date.subtract(Math.floor(Math.random() * 72), 'hours');
             var status = 'new';
@@ -579,7 +580,7 @@
               status = 'in_progress';
             }
             expenses.push({
-              id: new Date().getTime(),
+              id: id++,
               user: 'demo',
               date: date.format('YYYY-MM-DD'),
               merchant: ['Electronics', 'Rental car', 'Airline', 'Hotel', 'Restaurant', 'Taxi']
@@ -587,7 +588,14 @@
               total: Math.random() * (Math.random() * 3) * 300 + 10,
               status: status,
               comment: 'No comments, please.',
-              receipt: 'default'
+              _receipt: 'default',
+              set receipt(r) {
+                console.log('Receipt updated to ', r);
+                this._receipt = r;
+              },
+              get receipt() {
+                return this._receipt;
+              }
             });
           }
           this.expenses = expenses;

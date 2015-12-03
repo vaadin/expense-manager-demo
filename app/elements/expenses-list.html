@@ -95,11 +95,11 @@
     <vaadin-grid class="flex" id="expenses" frozen-columns="1">
       <table>
         <colgroup>
-          <col header-text="Date" name="date" width="120" sortable/>
-          <col header-text="Merchant" name="merchant" width="200" sortable/>
-          <col header-text="Total" name="total" width="150" sortable/>
-          <col header-text="Status" name="status" width="150" sortable/>
-          <col header-text="Comment" name="comment" sortable/>
+          <col name="date" width="120" sortable/>
+          <col name="merchant" width="200" sortable/>
+          <col name="total" width="150" sortable/>
+          <col name="status" width="150" sortable/>
+          <col name="comment" sortable/>
         </colgroup>
       </table>
     </vaadin-grid>
@@ -197,7 +197,7 @@
         update: function() {
           var grid = this.$.expenses;
           if (grid.items) {
-            grid.clearCache();
+            grid.refreshItems();
             grid.scrollToStart();
           } else {
             this._setDataSource();

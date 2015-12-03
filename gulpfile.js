@@ -1,12 +1,11 @@
 /*
- Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
- This code may only be used under the BSD style license found at
- http://polymer.github.io/LICENSE.txt
- The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
- The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
- Code distributed by Google as part of the polymer project is also
- subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
- */
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+*/
 
 'use strict';
 
@@ -24,7 +23,7 @@ var glob = require('glob-all');
 var historyApiFallback = require('connect-history-api-fallback');
 var packageJson = require('./package.json');
 var crypto = require('crypto');
-//var ghPages = require('gulp-gh-pages');
+// var ghPages = require('gulp-gh-pages');
 
 var AUTOPREFIXER_BROWSERS = [
   'ie >= 10',
@@ -53,7 +52,7 @@ var styleTask = function(stylesPath, srcs) {
     }))
     .pipe($.autoprefixer(AUTOPREFIXER_BROWSERS))
     .pipe(gulp.dest('.tmp/' + stylesPath))
-    .pipe($.cssmin())
+    .pipe($.minifyCss())
     .pipe(gulp.dest(dist(stylesPath)))
     .pipe($.size({
       title: stylesPath
@@ -80,7 +79,7 @@ var optimizeHtmlTask = function(src, dest) {
   return gulp.src(src)
     // Replace path for vulcanized assets
     //.pipe($.if('*.html', $.replace('elements/elements.html',
-    // 'elements/elements.vulcanized.html')))
+    //'elements/elements.vulcanized.html')))
     .pipe(assets)
     // Concatenate and minify JavaScript
     .pipe($.if('*.js', $.uglify({
@@ -88,7 +87,7 @@ var optimizeHtmlTask = function(src, dest) {
     })))
     // Concatenate and minify styles
     // In case you are still using useref build blocks
-    .pipe($.if('*.css', $.cssmin()))
+    .pipe($.if('*.css', $.minifyCss()))
     .pipe(assets.restore())
     .pipe($.useref())
     // Minify any HTML
@@ -166,7 +165,10 @@ gulp.task('copy', function() {
   var swToolbox = gulp.src(['bower_components/sw-toolbox/*.js'])
     .pipe(gulp.dest(dist('sw-toolbox')));
 
-  return merge(app, bower, elements, swBootstrap, swToolbox)
+  var vulcanized = gulp.src(['app/elements/elements.html'])
+    .pipe(gulp.dest(dist('elements')));
+
+  return merge(app, bower, elements, vulcanized, swBootstrap, swToolbox)
     .pipe($.size({
       title: 'copy'
     }));
@@ -221,12 +223,12 @@ gulp.task('cache-config', function(callback) {
   glob([
     'index.html',
     './',
-    'bower_components/webcomponentsjs/webcomponents-lite.min.js',
     'bower_components/accounting/accounting.min.js',
     'bower_components/blueimp-load-image/js/load-image.all.min.js',
     'bower_components/offline/offline.min.js',
     'bower_components/moment/moment.js',
-    '{elements,scripts,styles,images}/**/*.*'
+    'bower_components/webcomponentsjs/webcomponents-lite.min.js',
+    '{elements,scripts,styles}/**/*.*'
   ], {
     cwd: dir
   }, function(error, files) {
@@ -247,7 +249,7 @@ gulp.task('cache-config', function(callback) {
 
 // Clean output directory
 gulp.task('clean', function() {
-  return del(['.tmp', 'dist']);
+  return del(['.tmp', dist()]);
 });
 
 // Watch files for changes & reload
@@ -327,7 +329,7 @@ gulp.task('build-deploy-gh-pages', function(cb) {
 
 // Deploy to GitHub pages gh-pages branch
 gulp.task('deploy-gh-pages', function() {
-  return gulp.src('./dist/**/*')
+  return gulp.src(dist('**/*'))
     .pipe($.ghPages());
 });
 
