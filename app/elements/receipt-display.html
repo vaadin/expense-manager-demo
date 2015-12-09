@@ -1,5 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
@@ -18,6 +18,10 @@
       }
       
       .content {
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+        @apply(--layout-center);
+        @apply(--layout-center-justified);
         box-sizing: border-box;
         background: var(--light-primary-color);
         border: 2px dashed var(--accent-color);
@@ -25,7 +29,8 @@
         min-height: 64px;
         padding: 8px;
       }
-      /*Shady DOM does shady stuff, the plain .content selector overrides this without the extra .content */
+      /*Shady DOM does shady stuff, the plain .content selector overrides
+      this without the extra .content */
       
       .content.content.has-receipt {
         background: #F7F8F8;
@@ -89,7 +94,7 @@
 
     <span class="caption">Receipt</span>
 
-    <div id="content" class="content flex layout vertical center-center">
+    <div id="content" class="content">
       <paper-menu-button class="action-menu">
         <paper-icon-button icon="vaadin-icons:ellipsis-v" class="dropdown-trigger"></paper-icon-button>
         <paper-menu class="dropdown-content">
@@ -159,7 +164,7 @@
             Polymer.dom(receipt).removeChild(receipt.firstChild);
           }
 
-          if (!this.online) {
+          if (!this.online && this.src) {
             Polymer.dom(receipt).innerHTML = 'Receipt unavailable when offline';
           } else if (this.src) {
             var img = document.createElement('img');

@@ -1,6 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/vaadin-charts/vaadin-bar-chart.html">
-<link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 
@@ -10,6 +9,10 @@
       :host {
         display: block;
         background: var(--light-primary-color);
+      }
+      
+      #container {
+        @apply(--layout-vertical);
       }
       
       .total {
@@ -38,6 +41,7 @@
       }
       
       .chart {
+        @apply(--layout-flex);
         height: 400px;
       }
       
@@ -51,7 +55,9 @@
         }
         .total {
           height: 64px;
-          @apply(--layout-horizontal);
+          -ms-flex-direction: row;
+          -webkit-flex-direction: row;
+          flex-direction: row;
         }
         .total .sum {
           margin-left: 12px;
@@ -59,12 +65,12 @@
       }
     </style>
 
-    <div class="layout vertical" id="container">
+    <div id="container">
       <div class="total">
         <div>Total</div>
         <div class="sum">[[totalOwed]]</div>
       </div>
-      <div class="chart flex">
+      <div class="chart">
         <h2 class="chart-title">Last 12 months</h2>
         <vaadin-bar-chart id="barchart">
           <title>

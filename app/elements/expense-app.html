@@ -1,5 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/vaadin-icons/vaadin-icons.html">
 <link rel="import" href="../bower_components/neon-animation/neon-animated-pages.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
@@ -17,9 +17,13 @@
       :host {
         display: block;
       }
+      
+      #pages {
+        @apply(--layout-fit);
+      }
     </style>
 
-    <neon-animated-pages id="pages" class="fit" selected="[[selected]]">
+    <neon-animated-pages id="pages" selected="[[selected]]">
       <login-page service="[[service]]"></login-page>
       <overview-page id="overview" service="[[service]]" logged-in="[[loggedIn]]" online="[[online]]"></overview-page>
     </neon-animated-pages>

@@ -199,7 +199,8 @@ gulp.task('vulcanize', function() {
       inlineCss: true,
       inlineScripts: true
     }))
-    .pipe($.minifyInline())
+    // TODO: Fix when https://github.com/PolymerElements/iron-flex-layout/issues/60 is resolved
+    // .pipe($.minifyInline())
     .pipe(gulp.dest(DEST_DIR))
     .pipe($.size({
       title: 'vulcanize'

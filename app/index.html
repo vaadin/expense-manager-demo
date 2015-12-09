@@ -6,10 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <title>Expense Manager</title>
 
-  <style>
+  <style is="custom-style">
     body {
       width: 100% !important;
       overflow-y: hidden;
+      @apply(--layout-vertical);
     }
     
     body.loading {
@@ -20,11 +21,11 @@
     
     #loadingScreen {
       display: block;
-      width: 100vw;
-      height: 100vh;
       position: absolute;
       top: 0;
       left: 0;
+      bottom: 0;
+      right: 0;
       opacity: 1 !important;
       background: url(images/app-icon.svg) #37474F center center no-repeat;
       background-size: 200px 200px;

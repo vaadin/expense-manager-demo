@@ -8,11 +8,11 @@
 <link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
 <link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="../bower_components/vaadin-icons/vaadin-icons.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <dom-module id="login-page">
   <style>
     :host {
-      display: block;
       @apply(--layout-vertical);
     }
     
@@ -36,6 +36,10 @@
     .header {
       background: var(--dark-primary-color);
       height: 40%;
+      @apply(--layout-vertical);
+      @apply(--layout-flex);
+      @apply(--layout-center);
+      @apply(--layout-end-justified);
     }
     
     .header .logo {
@@ -53,6 +57,9 @@
     
     .login {
       padding-top: 30px;
+      @apply(--layout-vertical);
+      @apply(--layout-flex);
+      @apply(--layout-center);
     }
     
     @media (max-width: 600px) {
@@ -71,11 +78,11 @@
 
   <template>
     <iron-a11y-keys keys="enter" on-keys-pressed="_logIn"></iron-a11y-keys>
-    <div id="header" class="flex header layout vertical center end-justified">
+    <div id="header" class="header">
       <iron-icon class="logo" id="logo" src="../images/app-icon.svg"></iron-icon>
       <h1>Expense Manager</h1>
     </div>
-    <div class="flex login layout vertical center">
+    <div class="login">
       <paper-input value={{username}} label="USERNAME" name="username"></paper-input>
       <paper-input value="{{password}}" label="PASSWORD" name="password" type="password"></paper-input>
       <span class="error-message">[[errorMessage]]</span>
