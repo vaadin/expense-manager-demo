@@ -64,7 +64,7 @@
         },
 
         ready: function() {
-          //this.$.service.server = 'http://' + window.location.hostname + ':8080/api/v1';
+          this.$.service.server = 'http://' + window.location.hostname + ':8080/api/v1';
         },
 
         _handleLogout: function() {
@@ -85,7 +85,7 @@
             toast.text = 'Synced offline data to server.';
             this.$.overview.update();
           } else {
-            toast.text = 'Sync of offline data failed, will try again later.';
+            toast.text = 'Offline data sync failed, will try again later.';
           }
 
           toast.show();

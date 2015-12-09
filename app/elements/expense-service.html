@@ -505,10 +505,8 @@
         },
 
         _updateToCache: function(expense) {
-          var cacheSize = this.expenses.length;
           this._removeExpenseFromCache(expense.id);
           this.push('expenses', expense);
-          console.log('Updated cache, size ' + (this.expenses.length - cacheSize));
         },
 
         _serializeParams: function(params) {

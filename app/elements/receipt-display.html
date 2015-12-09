@@ -16,7 +16,7 @@
         display: block;
         @apply(--layout-vertical);
       }
-
+      
       .content {
         box-sizing: border-box;
         background: var(--light-primary-color);
@@ -25,40 +25,40 @@
         min-height: 64px;
         padding: 8px;
       }
-
       /*Shady DOM does shady stuff, the plain .content selector overrides this without the extra .content */
+      
       .content.content.has-receipt {
         background: #F7F8F8;
         border: none;
       }
-
+      
       .upload-button {
         font-weight: 400;
       }
-
+      
       .content.has-receipt .upload-button {
         display: none;
       }
-
+      
       .caption {
         text-transform: uppercase;
         display: none;
         font-weight: 600;
       }
-
+      
       #receipt {
         max-width: 100%;
         overflow-x: scroll;
       }
-
+      
       #receipt img {
         max-width: 400px;
       }
-
+      
       .content.has-receipt .caption {
         display: inline;
       }
-
+      
       .action-menu {
         position: absolute;
         top: 0;
@@ -66,11 +66,11 @@
         display: none;
         color: var(--accent-color);
       }
-
+      
       .content.has-receipt .action-menu {
         display: block;
       }
-
+      
       iron-icon {
         fill: var(--accent-color);
         margin-top: -5px;
@@ -78,7 +78,7 @@
         --iron-icon-height: 16px;
         --iron-icon-width: 16px;
       }
-
+      
       @media (min-width: 600px) {
         #receipt {
           max-height: 70vh;
@@ -91,8 +91,7 @@
 
     <div id="content" class="content flex layout vertical center-center">
       <paper-menu-button class="action-menu">
-        <paper-icon-button icon="vaadin-icons:ellipsis-v"
-                           class="dropdown-trigger"></paper-icon-button>
+        <paper-icon-button icon="vaadin-icons:ellipsis-v" class="dropdown-trigger"></paper-icon-button>
         <paper-menu class="dropdown-content">
           <paper-item on-tap="_fireUpload">Upload new receipt</paper-item>
         </paper-menu>
@@ -160,7 +159,9 @@
             Polymer.dom(receipt).removeChild(receipt.firstChild);
           }
 
-          if (this.src) {
+          if (!this.online) {
+            Polymer.dom(receipt).innerHTML = 'Receipt unavailable when offline';
+          } else if (this.src) {
             var img = document.createElement('img');
 
             img.setAttribute('src', this.src);

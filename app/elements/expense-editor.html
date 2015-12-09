@@ -121,7 +121,7 @@
           </form>
           <span id="error">{{errorText}}</span>
         </div>
-        <receipt-display id="preview" class="receipt flex-3"></receipt-display>
+        <receipt-display id="preview" class="receipt flex-3" online="[[online]]"></receipt-display>
       </div>
       <div class="layout horizontal buttons-layout">
         <paper-button raised on-tap="_save" class="save-button">Save</paper-button>
@@ -147,7 +147,8 @@
             value: {}
           },
           heading: String,
-          errorText: String
+          errorText: String,
+          online: Boolean
         },
 
         listeners: {
@@ -182,7 +183,6 @@
 
           if (this.expense.id) {
             this.heading = 'Edit Expense';
-            console.log(this.expense);
             if (this.expense.receipt && this.expense.receipt instanceof File) {
               this.$.preview.preview = this.expense.receipt;
             } else {
@@ -256,7 +256,11 @@
         },
 
         close: function() {
-          this.$.dialog.close();
+          var _this = this;
+          this.async(function() {
+            _this.$.dialog.close();
+          }, 10);
+
         },
 
         _delete: function() {

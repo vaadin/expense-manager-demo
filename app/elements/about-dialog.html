@@ -8,20 +8,20 @@
       :host {
         display: block;
       }
-
+      
       .icon-attribution {
         font-size: 70%;
       }
-
+      
       a {
         text-decoration: none;
         color: var(--accent-color);
       }
-
+      
       paper-button {
         color: var(--primary-text-color);
       }
-
+      
       #dialog {
         max-width: 500px;
       }
@@ -32,14 +32,10 @@
 
       <div class="dialog-body">
         <p>
-          Expense manager is built using <a href="https://www.polymer-project.org" target="_blank">Polymer</a> and <a
-          href="https://vaadin.com/elements" target="_blank">Vaadin Elements</a>.
-          You can find the source code and fork the project on <a href="https://github.com/vaadin-marcus/expense-app">GitHub</a>.
+          Expense manager is built using <a href="https://www.polymer-project.org" target="_blank">Polymer</a> and <a href="https://vaadin.com/elements" target="_blank">Vaadin Elements</a>. You can find the source code and fork the project on <a href="https://github.com/vaadin-marcus/expense-app">GitHub</a>.
         </p>
 
-        <p class="icon-attribution">Credit card icon by <a href="http://www.freepik.com" title="Freepik">Freepik</a>
-          from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed under <a
-            href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></p>
+        <p class="icon-attribution">Credit card icon by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed under <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></p>
       </div>
       <div class="buttons">
         <paper-button on-tap="close">Close</paper-button>
@@ -57,7 +53,10 @@
           this.$.dialog.open();
         },
         close: function() {
-          this.$.dialog.close();
+          var _this = this;
+          this.async(function() {
+            _this.$.dialog.close();
+          }, 10);
         }
       });
     })();
