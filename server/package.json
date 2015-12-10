@@ -1,0 +1,19 @@
+{
+  "name": "expense-app",
+  "main": "server.js",
+  "dependencies": {
+    "bcrypt": "^0.8.5",
+    "body-parser": "^1.14.0",
+    "cookie-parser": "^1.4.0",
+    "cors": "^2.7.1",
+    "express": "^4.13.3",
+    "jsonwebtoken": "^5.0.5",
+    "moment": "^2.10.6",
+    "mongoose": "^4.2.5",
+    "morgan": "^1.6.1",
+    "multer": "^1.0.6"
+  },
+  "devDependencies": {
+    "gulp-nodemon": "^2.0.4"
+  }
+}
