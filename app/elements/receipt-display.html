@@ -1,5 +1,4 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
@@ -14,14 +13,16 @@
     <style>
       :host {
         display: block;
-        @apply(--layout-vertical);
+        display: flex;
+        flex-direction: column;
       }
       
       .content {
-        @apply(--layout-vertical);
-        @apply(--layout-flex);
-        @apply(--layout-center);
-        @apply(--layout-center-justified);
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        align-items: center;
+        justify-content: center;
         box-sizing: border-box;
         background: var(--light-primary-color);
         border: 2px dashed var(--accent-color);

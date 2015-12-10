@@ -1,7 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
-<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <dom-module id="search-filters">
   <template>
@@ -27,19 +26,21 @@
       }
       
       .filters {
-        @apply(--layout-horizontal);
-        @apply(--layout-wrap);
-        @apply(--layout-justified);
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
       }
       
       .merchants {
-        @apply(--layout-flex);
+        flex: 1;
         min-width: 300px;
       }
       
       .total {
-        @apply(--layout-horizontal);
-        @apply(--layout-center-justified);
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
         min-width: 250px;
       }
       

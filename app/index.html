@@ -10,7 +10,10 @@
     body {
       width: 100% !important;
       overflow-y: hidden;
-      @apply(--layout-vertical);
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+      height: 100vh;
     }
     
     body.loading {
@@ -63,7 +66,7 @@
 
 </head>
 
-<body class="loading fullbleed vertical layout">
+<body class="loading">
   <div id="loadingScreen"></div>
   <span id="browser-sync-binding"></span>
   <script>

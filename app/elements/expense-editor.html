@@ -1,5 +1,4 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
@@ -29,19 +28,21 @@
       }
       
       .main-layout {
-        @apply(--layout-horizontal);
+        display: flex;
+        flex-direction: row;
       }
       
       .flex {
-        @apply(--layout-flex);
+        flex: 1;
       }
       
       .form {
-        @apply(--layout-flex-2);
+        flex: 2;
       }
       
       .buttons-layout {
-        @apply(--layout-horizontal);
+        display: flex;
+        flex-direction: row;
         margin-top: 16px;
       }
       
@@ -89,16 +90,11 @@
       }
       
       .wrapper {
-        display: -ms-flexbox;
-        display: -webkit-flex;
         display: flex;
       }
       
       @media (min-width: 900px) {
         .wrapper {
-          /** inlining styles as @apply doesn't support media queries **/
-          -ms-flex-direction: row;
-          -webkit-flex-direction: row;
           flex-direction: row;
         }
       }
@@ -108,8 +104,6 @@
           margin: 24px 0 0 0;
         }
         .wrapper {
-          -ms-flex-direction: column;
-          -webkit-flex-direction: column;
           flex-direction: column;
         }
       }

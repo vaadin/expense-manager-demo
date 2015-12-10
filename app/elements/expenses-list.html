@@ -2,7 +2,6 @@
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../scripts/accounting-js.html">
 <link rel="import" href="../scripts/moment-js.html">
 <link rel="import" href="search-filters.html">
@@ -14,7 +13,8 @@
         display: block;
         position: relative;
         overflow: hidden;
-        @apply(--layout-vertical);
+        display: flex;
+        flex-direction: column;
       }
       
       #add-button {
@@ -25,7 +25,7 @@
       }
       
       #expenses {
-        @apply(--layout-flex);
+        flex: 1;
         color: var(--primary-text-color);
         font-weight: 300;
       }

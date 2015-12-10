@@ -8,12 +8,12 @@
 <link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
 <link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="../bower_components/vaadin-icons/vaadin-icons.html">
-<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <dom-module id="login-page">
   <style>
     :host {
-      @apply(--layout-vertical);
+      display: flex;
+      flex-direction: column;
     }
     
     .login paper-input {
@@ -36,10 +36,11 @@
     .header {
       background: var(--dark-primary-color);
       height: 40%;
-      @apply(--layout-vertical);
-      @apply(--layout-flex);
-      @apply(--layout-center);
-      @apply(--layout-end-justified);
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      align-items: center;
+      justify-content: center;
     }
     
     .header .logo {
@@ -57,9 +58,10 @@
     
     .login {
       padding-top: 30px;
-      @apply(--layout-vertical);
-      @apply(--layout-flex);
-      @apply(--layout-center);
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      align-items: center;
     }
     
     @media (max-width: 600px) {

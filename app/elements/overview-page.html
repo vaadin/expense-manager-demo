@@ -2,7 +2,6 @@
 <link rel="import" href="../bower_components/paper-header-panel/paper-header-panel.html">
 <link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/neon-animation/neon-shared-element-animatable-behavior.html">
 <link rel="import" href="../bower_components/neon-animation/animations/hero-animation.html">
 <link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
@@ -33,11 +32,15 @@
       }
       
       .flex {
-        @apply(--layout-flex);
+        flex: 1;
       }
       
       .content {
-        @apply(--layout-fit);
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
       }
       
       .expenses {
@@ -58,15 +61,11 @@
       }
       
       .content {
-        display: -ms-flexbox;
-        display: -webkit-flex;
         display: flex;
       }
       
       @media (max-width: 600px) {
         .content {
-          -ms-flex-direction: column;
-          -webkit-flex-direction: column;
           flex-direction: column;
         }
         .overview {

@@ -1,6 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/vaadin-charts/vaadin-bar-chart.html">
-<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 
 <dom-module id="overview-panel">
@@ -12,7 +11,8 @@
       }
       
       #container {
-        @apply(--layout-vertical);
+        display: flex;
+        flex-direction: column;
       }
       
       .total {
@@ -24,9 +24,10 @@
         font-weight: 500;
         font-size: 18px;
         line-height: 1.4;
-        @apply(--layout-vertical);
-        @apply(--layout-center);
-        @apply(--layout-center-justified);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
       }
       
       .total .sum {
@@ -41,7 +42,7 @@
       }
       
       .chart {
-        @apply(--layout-flex);
+        flex: 1;
         height: 400px;
       }
       
