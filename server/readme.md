@@ -1,3 +1,3 @@
-Demo backend for expense app. 
+Demo server for Expense Manager.
 
-Can be used together with https://github.com/vaadin-marcus/expense-app
+Can be used together with the Expense Manager client
