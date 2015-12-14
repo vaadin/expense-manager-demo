@@ -34,7 +34,7 @@
     <expense-service id="service" service="{{service}}" logged-in="{{loggedIn}}" online="{{online}}"></expense-service>
 
     <platinum-sw-register auto-register clients-claim skip-waiting on-service-worker-installed="_cachingComplete">
-      <platinum-sw-cache default-cache-strategy="fastest" cache-config-file="cache-config.json">
+      <platinum-sw-cache default-cache-strategy="networkFirst" cache-config-file="cache-config.json">
       </platinum-sw-cache>
     </platinum-sw-register>
 
