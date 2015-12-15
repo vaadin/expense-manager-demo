@@ -65,7 +65,7 @@
         display: inline;
       }
       
-      .action-menu {
+      .update-button {
         position: absolute;
         top: 0;
         right: 0;
@@ -73,7 +73,7 @@
         color: var(--accent-color);
       }
       
-      .content.has-receipt .action-menu {
+      .content.has-receipt .update-button {
         display: block;
       }
       
@@ -96,12 +96,7 @@
     <span class="caption">Receipt</span>
 
     <div id="content" class="content">
-      <paper-menu-button class="action-menu">
-        <paper-icon-button icon="vaadin-icons:ellipsis-v" class="dropdown-trigger"></paper-icon-button>
-        <paper-menu class="dropdown-content">
-          <paper-item on-tap="_fireUpload">Upload new receipt</paper-item>
-        </paper-menu>
-      </paper-menu-button>
+      <paper-icon-button icon="cloud-upload" class="update-button" on-tap="_fireUpload"></paper-icon-button>
 
       <paper-button on-tap="_fireUpload" class="upload-button">
         <iron-icon icon="vaadin-icons:upload"></iron-icon>
