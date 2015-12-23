@@ -129,10 +129,8 @@
               _this.seriesData = overviewData.history.map(function(m) {
                 return m.total;
               });
-              _this.async(function() {
-                _this.$.barchart.chart.xAxis[0].setCategories(categories);
-                _this.$.barchart.chart.reflow();
-              }, 200);
+              _this.$.barchart.chart.xAxis[0].setCategories(categories);
+              _this.$.barchart.chart.reflow();
             })
             .catch(function(error) {
               console.log(error);
