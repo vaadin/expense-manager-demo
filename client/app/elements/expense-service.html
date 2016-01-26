@@ -300,6 +300,27 @@
         _getOverviewDataLocal: function() {
           var expenses = this._getCache();
 
+          function findMonth(rawDate, history) {
+            var date = moment(rawDate);
+            var month;
+
+            history.forEach(function(m) {
+              if (m.month === date.month() && m.year === date.year()) {
+                month = m;
+              }
+            });
+
+            if (!month) {
+              month = {
+                month: date.month(),
+                year: date.year(),
+                total: 0
+              };
+              history.push(month);
+            }
+            return month;
+          }
+
           function calculateOverviewData() {
 
             var total = expenses.filter(function(expense) {
@@ -325,27 +346,6 @@
               totalOwed: total,
               history: history
             };
-          }
-
-          function findMonth(rawDate, history) {
-            var date = moment(rawDate);
-            var month;
-
-            history.forEach(function(m) {
-              if (m.month === date.month() && m.year === date.year()) {
-                month = m;
-              }
-            });
-
-            if (!month) {
-              month = {
-                month: date.month(),
-                year: date.year(),
-                total: 0
-              };
-              history.push(month);
-            }
-            return month;
           }
 
           return new Promise(function(resolve) {
