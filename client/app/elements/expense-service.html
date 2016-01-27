@@ -585,15 +585,8 @@
                 [Math.floor(Math.random() * 6)],
               total: Math.random() * (Math.random() * 3) * 300 + 10,
               status: status,
-              comment: 'No comments, please.',
-              _receipt: 'default',
-              set receipt(r) {
-                console.log('Receipt updated to ', r);
-                this._receipt = r;
-              },
-              get receipt() {
-                return this._receipt;
-              }
+              comment: 'Expense from my business trip',
+              receipt: 'default',
             });
           }
           this.expenses = expenses;
