@@ -53,7 +53,8 @@
             getExpenses: _this.getExpenses.bind(_this),
             saveExpense: _this.saveExpense.bind(_this),
             deleteExpense: _this.deleteExpense.bind(_this),
-            getReceiptURL: _this.getReceiptURL.bind(_this)
+            getReceiptURL: _this.getReceiptURL.bind(_this),
+            getAllMerchants: _this.getAllMerchants.bind(this)
           };
         },
 
@@ -125,6 +126,14 @@
               resolve(_this._deleteExpenseLocal(id));
             }
           });
+        },
+
+        getAllMerchants: function() {
+          if (this.server && this.online) {
+            return this._getMerchantsFromServer();
+          } else {
+            return this._getMerchantsLocal();
+          }
         },
 
         getReceiptURL: function(id) {
@@ -271,6 +280,12 @@
                 });
             }
           }
+        },
+
+        _getMerchantsFromServer: function() {
+          return this._ajax({
+            url: this.server + '/merchants'
+          });
         },
 
         _updateCache: function() {
@@ -484,6 +499,24 @@
           });
         },
 
+        _getMerchantsLocal: function() {
+          console.log('Getting merchants');
+          var _this = this;
+          return new Promise(function(resolve) {
+            var expenses = _this._getCache();
+            if (expenses) {
+              var merchants = expenses.map(function(e) {
+                return e.merchant;
+              }).filter(function(val, index, self) {
+                return self.indexOf(val) === index;
+              });
+              resolve(merchants);
+            } else {
+              resolve([]);
+            }
+          });
+        },
+
         _findExpense: function(id) {
           var expense = null;
           this.expenses.forEach(function(e) {
@@ -581,12 +614,16 @@
               id: id++,
               user: 'demo',
               date: date.format('YYYY-MM-DD'),
-              merchant: ['Electronics', 'Rental car', 'Airline', 'Hotel', 'Restaurant', 'Taxi']
-                [Math.floor(Math.random() * 6)],
+              merchant: [
+                  'Office supplies', 'Electronics', 'Rental car', 'Airline',
+                  'Hotel', 'Restaurant', 'Taxi', 'Ride sharing', 'Fast food',
+                  'Parking', 'Breakfast', 'Shuttle'
+                ]
+                [Math.floor(Math.random() * 12)],
               total: Math.random() * (Math.random() * 3) * 300 + 10,
               status: status,
-              comment: 'Expense from my business trip',
-              receipt: 'default',
+              comment: 'Expense from my business trip.',
+              receipt: 'default'
             });
           }
           this.expenses = expenses;

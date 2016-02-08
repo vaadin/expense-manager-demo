@@ -90,7 +90,7 @@
     </style>
 
 
-    <search-filters filters="{{filters}}"></search-filters>
+    <search-filters filters="{{filters}}" id="filters"></search-filters>
 
     <vaadin-grid id="expenses" frozen-columns="1">
       <table>
@@ -119,7 +119,9 @@
           filters: {
             type: Object,
             value: function() {
-              return {};
+              return {
+                merchant: ''
+              };
             }
           }
         },
@@ -202,6 +204,10 @@
           } else {
             this._setDataSource();
           }
+          var _this = this;
+          this.service.getAllMerchants().then(function(merchants) {
+            _this.$.filters.merchants = merchants;
+          });
         },
 
         _showExpenseEditor: function() {
