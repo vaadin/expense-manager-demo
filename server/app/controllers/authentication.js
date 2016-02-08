@@ -4,7 +4,7 @@ let jwt = require('jsonwebtoken');
 module.exports = (app) => {
 
   return {
-    authenticate: function (req, res) {
+    authenticate: function(req, res) {
       User
         .findOne({
           name: req.body.username
@@ -37,7 +37,7 @@ module.exports = (app) => {
           throw err;
         });
     },
-    tokenMiddleware: function (req, res, next) {
+    tokenMiddleware: function(req, res, next) {
       let token = req.headers['x-access-token'] || req.body.token || req.query.token;
 
       if (token) {

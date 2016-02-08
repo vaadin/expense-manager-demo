@@ -22,7 +22,6 @@ module.exports.createUser = () => {
   });
 };
 
-
 module.exports.createExpenses = () => {
   //Expense.remove({});
   Expense.count({}).then(count => {
@@ -39,7 +38,12 @@ module.exports.createExpenses = () => {
         new Expense({
           user: 'demo',
           date: date,
-          merchant: ['Electronics', 'Rental car', 'Airline', 'Hotel', 'Restaurant', 'Taxi'][Math.floor(Math.random() * 6)],
+          merchant: [
+              'Office supplies', 'Electronics', 'Rental car', 'Airline',
+              'Hotel', 'Restaurant', 'Taxi', 'Ride sharing', 'Fast food',
+              'Parking', 'Breakfast', 'Shuttle'
+            ]
+            [Math.floor(Math.random() * 12)],
           total: Math.random() * (Math.random() * 3) * 300 + 10,
           status: status,
           comment: 'No comments, please.',

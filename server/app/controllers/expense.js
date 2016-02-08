@@ -27,17 +27,17 @@ module.exports = (routes) => {
     expense.receipt = req.file.filename;
 
     new Expense(expense).save((err, saved) => {
-      if(err){
+      if (err) {
         console.log(err);
         res.json({
           success: false,
           error: err.errors.status.message
         });
       } else {
-      res.json({
-        success: err ? false : true,
-        saved: saved
-      });
+        res.json({
+          success: err ? false : true,
+          saved: saved
+        });
       }
     });
   });
@@ -276,6 +276,12 @@ module.exports = (routes) => {
         resultset.totalOwed = totalOwed[0].total;
         res.json(resultset);
       });
+    });
+  });
+
+  routes.get('/merchants', (req, res) => {
+    Expense.distinct('merchant', {}).then(expenses => {
+      res.json(expenses);
     });
   });
 };

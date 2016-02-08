@@ -1,6 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
 
 <dom-module id="search-filters">
   <template>
@@ -30,6 +31,7 @@
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: space-between;
+        align-items: flex-end;
       }
       
       .merchants {
@@ -100,7 +102,8 @@
         </div>
         -->
         <div class="merchants">
-          <paper-input label="Merchant" value="{{filters.merchant}}"></paper-input>
+          <vaadin-combo-box label="Merchant" items="{{merchants}}" value="{{filters.merchant}}" id="merchantsSelect"></vaadin-combo-box>
+          <!-- <paper-input label="Merchant" value="{{filters.merchant}}"></paper-input> -->
         </div>
 
         <div class="total">
@@ -132,7 +135,16 @@
           filters: {
             type: Object,
             notify: true
+          },
+          merchants: {
+            type: Array,
+            observer: '_merchantsChanged'
           }
+        },
+
+        _merchantsChanged: function(merchants) {
+          console.log('Mechants changed', merchants);
+          this.$.merchantsSelect.items = merchants;
         },
 
         _updateStatus: function(evt) {
