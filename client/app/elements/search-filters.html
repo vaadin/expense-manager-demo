@@ -51,7 +51,8 @@
         margin-right: 8px;
         margin-left: 8px;
         font-size: 85%;
-        --paper-checkbox-unchecked-color: var(--accent-color);
+        /*--paper-checkbox-unchecked-color: var(--accent-color);
+        --paper-checkbox-checked-color: var(--accent-color);*/
       }
       
       .checkboxes {
@@ -144,7 +145,6 @@
         },
 
         _merchantsChanged: function(merchants) {
-          console.log('Mechants changed', merchants);
           this.$.merchantsSelect.items = merchants;
         },
 
