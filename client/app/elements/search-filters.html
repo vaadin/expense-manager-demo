@@ -2,6 +2,8 @@
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
+
 
 <dom-module id="search-filters">
   <template>
@@ -10,7 +12,7 @@
         display: block;
         padding: 0 12px;
       }
-      
+
       .status {
         width: 100%;
         height: 48px;
@@ -18,76 +20,69 @@
         padding-top: 24px;
         padding-bottom: 12px;
       }
-      
+
       paper-input,
-      vaadin-combo-box {
-        padding-top: 12px;
-        height: 48px;
+      vaadin-combo-box,
+      vaadin-date-picker {
         margin-right: 4px;
         margin-left: 4px;
       }
-      
+
       .filters {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: space-between;
-        align-items: flex-end;
+        align-items: center;
       }
-      
+
+      .date,
+      .total,
+      .merchants {
+        height: 60px;
+      }
+
       .merchants {
         flex: 1;
         min-width: 300px;
       }
-      
+
+      .date,
       .total {
         display: flex;
         flex-direction: row;
         justify-content: center;
-        min-width: 250px;
+        min-width: 300px;
       }
-      
+
       .status paper-checkbox {
         margin-right: 8px;
         margin-left: 8px;
         font-size: 85%;
-        /*--paper-checkbox-unchecked-color: var(--accent-color);
-        --paper-checkbox-checked-color: var(--accent-color);*/
       }
-      
+
       .checkboxes {
         display: inline-block;
         white-space: nowrap;
       }
-      
+
       .filters::content label,
       .status .caption {
         font-weight: bold !important;
         color: #999 !important;
       }
-      
+
       .status .caption {
         margin-right: 24px;
       }
-      
+
       @media (max-width: 600px) {
-        .merchants vaadin-combo-box {
-          padding-top: 0;
+        :host {
           padding-bottom: 24px;
         }
         .total,
         .status {
           display: none;
-        }
-        .date paper-input {
-          width: 45%;
-          padding-bottom: 36px;
-        }
-      }
-      
-      @media (max-width: 480px) {
-        :host {
-          padding: 0 16px;
         }
       }
     </style>
@@ -95,14 +90,12 @@
     <div id="content">
       <div class="filters">
 
-        <!-- Hide these until we have date picker in Vaadin Elements
-        <div class="date layout horizontal wrap center">
-          <paper-input label="After" value="{{filters.start}}" pattern="\d{4}-\d{2}-\d{2}"
-                       error-message="Value must be in YYYY-MM-DD" auto-validate></paper-input>
-          <paper-input label="Before" value="{{filters.end}}" pattern="\d{4}-\d{2}-\d{2}"
-                       error-message="Value must be in YYYY-MM-DD" auto-validate></paper-input>
+
+        <div class="date">
+          <vaadin-date-picker label="After" value="{{filters.start}}"></vaadin-date-picker>
+          <vaadin-date-picker label="Before" value="{{filters.end}}"></vaadin-date-picker>
         </div>
-        -->
+
         <div class="merchants">
           <vaadin-combo-box label="Merchant" items="{{merchants}}" value="{{filters.merchant}}" id="merchantsSelect"></vaadin-combo-box>
           <!-- <paper-input label="Merchant" value="{{filters.merchant}}"></paper-input> -->
