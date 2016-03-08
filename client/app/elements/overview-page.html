@@ -181,8 +181,7 @@
 
         _editExpense: function(evt) {
           var editor = this.$.expenseEditor;
-          editor.expense = evt.detail.expense || {};
-          editor.open();
+          editor.open(evt.detail);
         },
 
         _updateExpenses: function(evt) {

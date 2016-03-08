@@ -93,7 +93,6 @@
             if (_this.server && _this.online) {
               _this._saveExpenseToServer(id, data)
                 .then(function(response) {
-                  console.log('Saved successfully to server', response);
                   _this._updateToCache(response.saved);
                   resolve(response);
                 })
@@ -117,7 +116,7 @@
                   _this._removeExpenseFromCache(id);
                   resolve(response);
                 })
-                // If save to server is unsuccessful, save locally
+                // If delete from server is unsuccessful, save locally
                 .catch(function(e) {
                   console.log(e);
                   resolve(_this._deleteExpenseLocal(id));

@@ -152,9 +152,7 @@
             var selection = grid.selection.selected();
             if (selection.length === 1) {
               grid.getItem(selection[0], function(err, item) {
-                _this.fire('edit-expense', {
-                  expense: item
-                });
+                _this.fire('edit-expense', item);
               });
             }
           });

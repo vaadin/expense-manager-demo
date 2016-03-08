@@ -15,7 +15,7 @@
     "moment": "~2.10.6",
     "vaadin-icons": "vaadin/vaadin-icons#~1.0.0-alpha1",
     "offline": "~0.7.14",
-    "vaadin-date-picker": "^1.0.0-alpha2"
+    "vaadin-date-picker": "vaadin/vaadin-date-picker#master"
   },
   "devDependencies": {
     "web-component-tester": "*",
