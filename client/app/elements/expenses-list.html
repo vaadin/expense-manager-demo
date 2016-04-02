@@ -10,26 +10,25 @@
   <template>
     <style>
       :host {
-        display: block;
         position: relative;
         overflow: hidden;
         display: flex;
         flex-direction: column;
       }
-      
+
       #add-button {
         position: absolute;
         right: 32px;
         bottom: 32px;
         z-index: 2;
       }
-      
+
       #expenses {
         flex: 1;
         color: var(--primary-text-color);
         font-weight: 300;
       }
-      
+
       #expenses::content thead.vaadin-grid-header th,
       #expenses /deep/ thead.vaadin-grid-header th {
         background: var(--dark-primary-color);
@@ -37,27 +36,27 @@
         font-size: 1.2em;
         font-weight: 400;
       }
-      
+
       vaadin-grid::content tr.vaadin-grid-row-stripe td,
       vaadin-grid /deep/ tr.vaadin-grid-row-stripe td {
         background: #F7F8F8;
       }
-      
+
       vaadin-grid::content td.status-new,
       vaadin-grid /deep/ td.status-new {
         font-weight: bold;
       }
-      
+
       vaadin-grid::content td.status-reimbursed span,
       vaadin-grid /deep/ td.status-reimbursed span {
         opacity: 0.4;
       }
-      
+
       #expenses::content thead.vaadin-grid-header th.last-frozen,
       #expenses /deep/ thead.vaadin-grid-header th.last-frozen {
         border-right: 1px solid #2A3A42;
       }
-      
+
       #expenses::content .vaadin-grid-header.vaadin-grid .sort-asc.vaadin-grid:after,
       #expenses /deep/ .vaadin-grid-header.vaadin-grid .sort-asc.vaadin-grid:after {
         content: "\e7c3 " attr(sort-order);
@@ -72,7 +71,7 @@
         -webkit-font-smoothing: antialiased;
         color: var(--default-primary-color);
       }
-      
+
       #expenses::content .vaadin-grid-header.vaadin-grid .sort-desc.vaadin-grid:after,
       #expenses /deep/ .vaadin-grid-header.vaadin-grid .sort-desc.vaadin-grid:after {
         content: "\e7bc " attr(sort-order);
@@ -89,8 +88,6 @@
       }
     </style>
 
-
-    <search-filters filters="{{filters}}" id="filters"></search-filters>
 
     <vaadin-grid id="expenses" frozen-columns="1">
       <table>
@@ -113,23 +110,18 @@
         is: 'expenses-list',
 
         properties: {
-          service: Object,
+          expenses: Array,
           sortColumn: String,
           sortDirection: String,
-          filters: {
-            type: Object,
-            value: function() {
-              return {
-                start: '',
-                end: '',
-                merchant: ''
-              };
-            }
-          }
+          filters: Object
         },
 
         observers: [
-          '_filtersChanged(filters.*)'
+          '_update(filters, expenses)',
+          '_filtersChanged(filters.*)',
+          '_update(expenses.*)',
+          '_update(sortColumn)',
+          '_update(sortDirection)'
         ],
 
         ready: function() {
@@ -146,6 +138,7 @@
 
           grid.addEventListener('sort-order-changed', function() {
             grid.scrollToStart();
+            _this._update();
           });
 
           grid.addEventListener('selected-items-changed', function() {
@@ -166,48 +159,8 @@
           grid.columns[3].renderer = function(cell) {
             var status = cell.data.replace(/_/g, ' ');
             status = status.charAt(0).toUpperCase() + status.slice(1);
-            cell.element.innerText = status;
+            cell.element.textContent = status;
           };
-        },
-
-        _setDataSource: function() {
-          var _this = this;
-          var grid = this.$.expenses;
-          grid.items = function(params, callback) {
-            var queryParams = {
-              index: params.index,
-              count: params.count,
-              min: _this.filters.min,
-              max: _this.filters.max,
-              merchant: _this.filters.merchant,
-              start: _this.filters.start,
-              end: _this.filters.end,
-              status: _this.filters.status
-            };
-
-            if (params.sortOrder && params.sortOrder[0]) {
-              queryParams.sort = grid.columns[params.sortOrder[0].column].name;
-              queryParams.direction = params.sortOrder[0].direction;
-            }
-
-            _this.service.getExpenses(queryParams).then(function(json) {
-              callback(json.result, json.metadata.totalcount);
-            });
-          };
-        },
-
-        update: function() {
-          var grid = this.$.expenses;
-          if (grid.items) {
-            grid.refreshItems();
-            grid.scrollToStart();
-          } else {
-            this._setDataSource();
-          }
-          var _this = this;
-          this.service.getAllMerchants().then(function(merchants) {
-            _this.$.filters.merchants = merchants;
-          });
         },
 
         _showExpenseEditor: function() {
@@ -218,11 +171,87 @@
           if (this.$.expenses.items) {
             var _this = this;
             this.debounce('_filtersChanged', function() {
-              _this.update();
+              _this._update();
 
             }, 300);
           }
+        },
 
+        _update: function() {
+          if (!this.filters) {
+            return;
+          }
+          var grid = this.$.expenses;
+          var merchant = this.filters.merchant;
+          var min = this.filters.min;
+          var max = this.filters.max;
+          var status = this.filters.status;
+          var start = this.filters.start;
+          var end = this.filters.end;
+          var sort;
+          var direction;
+          if (grid.sortOrder && grid.sortOrder[0]) {
+            sort = grid.columns[grid.sortOrder[0].column].name;
+            direction = grid.sortOrder[0].direction;
+          }
+
+          // Filter
+          var result = this.expenses
+            .filter(function(expense) {
+              return !(merchant && expense.merchant
+                .toUpperCase().indexOf(merchant.toUpperCase()) < 0);
+            })
+            .filter(function(expense) {
+              return !(min && expense.total < min);
+            })
+            .filter(function(expense) {
+              return !(max && expense.total > max);
+            })
+            .filter(function(expense) {
+              if (status && status.length > 0) {
+                return status.indexOf(expense.status) >= 0;
+              } else {
+                return true;
+              }
+            })
+            .filter(function(expense) {
+              if (start) {
+                var startDate = moment(start);
+                return !!(startDate.isValid() && moment(expense.date).isAfter(startDate));
+              } else {
+                return true;
+              }
+            })
+            .filter(function(expense) {
+              if (end) {
+                var endDate = moment(end);
+                return !!(endDate.isValid() && moment(expense.date).isBefore(endDate));
+              } else {
+                return true;
+              }
+            });
+
+          // Sort
+          if (sort) {
+            var sortProperty = sort;
+            var sortDirection = direction || 'desc';
+            result.sort(function(a, b) {
+              var res;
+              if (!isNaN(a[sortProperty])) {
+                res = parseInt(a[sortProperty], 10) - parseInt(b[sortProperty], 10);
+              } else {
+                // Let's pretend everything that's not a number is a string.
+                res = a[sortProperty].localeCompare(b[sortProperty]);
+              }
+
+              if ('desc' === sortDirection) {
+                res *= -1;
+              }
+              return res;
+            });
+          }
+
+          grid.items = result;
         }
       });
     })();

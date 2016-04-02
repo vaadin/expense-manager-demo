@@ -16,7 +16,7 @@
         display: flex;
         flex-direction: column;
       }
-      
+
       .content {
         display: flex;
         flex-direction: column;
@@ -30,41 +30,42 @@
         min-height: 64px;
         padding: 8px;
       }
+
       /*Shady DOM does shady stuff, the plain .content selector overrides
       this without the extra .content */
-      
+
       .content.content.has-receipt {
         background: #F7F8F8;
         border: none;
       }
-      
+
       .upload-button {
         font-weight: 400;
       }
-      
+
       .content.has-receipt .upload-button {
         display: none;
       }
-      
+
       .caption {
         text-transform: uppercase;
         display: none;
         font-weight: 600;
       }
-      
+
       #receipt {
         max-width: 100%;
         overflow-x: scroll;
       }
-      
+
       #receipt img {
         max-width: 400px;
       }
-      
+
       .content.has-receipt .caption {
         display: inline;
       }
-      
+
       .update-button {
         position: absolute;
         top: 0;
@@ -72,11 +73,11 @@
         display: none;
         color: var(--accent-color);
       }
-      
+
       .content.has-receipt .update-button {
         display: block;
       }
-      
+
       iron-icon {
         fill: var(--accent-color);
         margin-top: -5px;
@@ -84,7 +85,7 @@
         --iron-icon-height: 16px;
         --iron-icon-width: 16px;
       }
-      
+
       @media (min-width: 600px) {
         #receipt {
           max-height: 70vh;
@@ -96,7 +97,8 @@
     <span class="caption">Receipt</span>
 
     <div id="content" class="content">
-      <paper-icon-button icon="cloud-upload" class="update-button" on-tap="_fireUpload"></paper-icon-button>
+      <paper-icon-button icon="cloud-upload" class="update-button"
+                         on-tap="_fireUpload"></paper-icon-button>
 
       <paper-button on-tap="_fireUpload" class="upload-button">
         <iron-icon icon="vaadin-icons:upload"></iron-icon>
@@ -128,9 +130,7 @@
           var receipt = this.$.receipt;
           var _this = this;
 
-          if (receipt.firstChild) {
-            Polymer.dom(receipt).removeChild(receipt.firstChild);
-          }
+          Polymer.dom(receipt).innerHTML = '';
 
           if (this.preview) {
             var options = {
@@ -156,13 +156,9 @@
 
         _updateImage: function() {
           var receipt = this.$.receipt;
-          if (receipt.firstChild) {
-            Polymer.dom(receipt).removeChild(receipt.firstChild);
-          }
+          Polymer.dom(receipt).innerHTML = '';
 
-          if (!this.online && this.src) {
-            Polymer.dom(receipt).innerHTML = 'Receipt unavailable when offline';
-          } else if (this.src) {
+          if (this.src) {
             var img = document.createElement('img');
 
             img.setAttribute('src', this.src);

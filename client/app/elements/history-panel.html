@@ -1,65 +1,47 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/vaadin-charts/vaadin-bar-chart.html">
-<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../scripts/moment-js.html">
 
-<dom-module id="overview-panel">
+<dom-module id="history-panel">
   <template>
     <style>
       :host {
         display: block;
         background: var(--light-primary-color);
       }
-      
+
       #container {
         display: flex;
         flex-direction: column;
       }
-      
-      .total {
-        background: var(--default-primary-color);
-        color: var(--text-primary-color);
-        box-sizing: border-box;
-        width: 100%;
-        height: 144px;
-        font-weight: 500;
-        font-size: 18px;
-        line-height: 1.4;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
-      
-      .total .sum {
-        font-size: 32px;
-        font-weight: 200;
-      }
-      
+
       .chart-title {
         font-weight: 500;
         text-align: center;
         font-size: 18px;
       }
-      
+
       .chart {
         flex: 1;
         height: 400px;
       }
-      
+
       #barchart::content text {
         font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
       }
-      
+
       @media (max-width: 600px) {
         .chart {
           display: none;
         }
+
         .total {
           height: 64px;
           -ms-flex-direction: row;
           -webkit-flex-direction: row;
           flex-direction: row;
         }
+
         .total .sum {
           margin-left: 12px;
         }
@@ -67,10 +49,7 @@
     </style>
 
     <div id="container">
-      <div class="total">
-        <div>Total</div>
-        <div class="sum">[[totalOwed]]</div>
-      </div>
+
       <div class="chart">
         <h2 class="chart-title">Last 12 months</h2>
         <vaadin-bar-chart id="barchart">
@@ -102,40 +81,70 @@
     (function() {
       'use strict';
       Polymer({
-        is: 'overview-panel',
+        is: 'history-panel',
 
         properties: {
-          service: {
-            type: Object
-          },
+          expenses: Array,
           seriesData: {
             type: Array,
-            value: [],
             notify: true
-          },
-          totalOwed: String
+          }
         },
 
+        observers: [
+          'update(expenses.*)'
+        ],
+
         update: function() {
-          var _this = this;
-          this.service.getOverviewData()
-            .then(function(overviewData) {
-              _this.totalOwed = accounting.formatMoney(overviewData.totalOwed);
-              var categories = overviewData.history.map(function(m, i) {
-                var label = moment().year(m.year).month(m.month);
-                var format = (i === 0 || m.month === 11) ? 'YYYY MMM' : 'MMM';
-                return label.format(format);
-              });
-              _this.seriesData = overviewData.history.map(function(m) {
-                return m.total;
-              });
-              _this.$.barchart.chart.xAxis[0].setCategories(categories);
-              _this.$.barchart.chart.reflow();
-            })
-            .catch(function(error) {
-              console.log(error);
+          var expenses = this.expenses;
+
+          function findMonth(rawDate, history) {
+            var date = moment(rawDate);
+            var month;
+
+            history.forEach(function(m) {
+              if (m.month === date.month() && m.year === date.year()) {
+                month = m;
+              }
             });
+
+            if (!month) {
+              month = {
+                month: date.month(),
+                year: date.year(),
+                total: 0
+              };
+              history.push(month);
+            }
+            return month;
+          }
+
+          function getHistoryLabel(item, index) {
+            var label = moment().year(item.year).month(item.month);
+            var format = (index === 0 || item.month === 11) ? 'YYYY MMM' : 'MMM';
+            return label.format(format);
+          }
+
+          var history = [];
+          var oneYearAgo = moment().subtract(1, 'years');
+
+          expenses.filter(function(expense) {
+            return moment(expense.date).isAfter(oneYearAgo);
+          }).forEach(function(expense) {
+            findMonth(expense.date, history).total += expense.total;
+          });
+
+          this.seriesData = history.map(function(month) {
+            return month.total;
+          });
+
+          this.async(function() {
+            this.$.barchart.chart.xAxis[0].setCategories(history.map(getHistoryLabel));
+            this.$.barchart.chart.reflow();
+          }, 50);
+
         }
+
       });
     })();
   </script>

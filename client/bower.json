@@ -8,14 +8,14 @@
     "platinum-elements": "PolymerElements/platinum-elements#^1.1.0",
     "neon-elements": "PolymerElements/neon-elements#^1.0.0",
     "vaadin-elements": "^0.3.0",
-    "vaadin-combo-box": "1.0.0-alpha6",
+    "vaadin-combo-box": "^1.0.0-beta1",
     "vaadin-charts": "^3.0.0-alpha9",
     "accounting": "~0.3.2",
     "blueimp-load-image": "~1.14.0",
     "moment": "~2.10.6",
     "vaadin-icons": "vaadin/vaadin-icons#~1.0.0-alpha1",
     "offline": "~0.7.14",
-    "vaadin-date-picker": "vaadin/vaadin-date-picker#master"
+    "vaadin-date-picker": "^1.0.0-alpha6"
   },
   "devDependencies": {
     "web-component-tester": "*",

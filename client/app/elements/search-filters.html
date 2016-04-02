@@ -10,79 +10,52 @@
     <style>
       :host {
         display: block;
-        padding: 0 12px;
+        padding: 0 16px;
       }
 
-      .status {
-        width: 100%;
-        height: 48px;
-        margin-left: 4px;
-        padding-top: 24px;
-        padding-bottom: 12px;
+      .col,
+      .date vaadin-date-picker,
+      .total paper-input {
+        display: inline-block;
+        width: 49%;
       }
 
-      paper-input,
-      vaadin-combo-box,
-      vaadin-date-picker {
-        margin-right: 4px;
-        margin-left: 4px;
+      .col {
+        box-sizing: border-box;
+      }
+
+      .row {
+        margin-bottom: 16px;
       }
 
       .filters {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        align-items: center;
+        padding-bottom: 16px;
       }
 
-      .date,
-      .total,
-      .merchants {
-        height: 60px;
-      }
-
-      .merchants {
-        flex: 1;
-        min-width: 300px;
-      }
-
-      .date,
-      .total {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        min-width: 300px;
-      }
-
-      .status paper-checkbox {
-        margin-right: 8px;
-        margin-left: 8px;
-        font-size: 85%;
+      .status .caption {
+        font-weight: 500;
       }
 
       .checkboxes {
         display: inline-block;
-        white-space: nowrap;
+        margin-left: 8px;
       }
 
-      .filters::content label,
-      .status .caption {
-        font-weight: bold !important;
-        color: #999 !important;
+      .checkboxes > paper-checkbox {
+        margin-right: 8px;
       }
 
-      .status .caption {
-        margin-right: 24px;
-      }
-
-      @media (max-width: 600px) {
-        :host {
-          padding-bottom: 24px;
+      @media (max-width: 960px) {
+        .col {
+          width: 100%
         }
-        .total,
+
+        .row {
+          margin-bottom: inherit;
+        }
+
         .status {
-          display: none;
+          margin-top: 16px;
         }
       }
     </style>
@@ -90,29 +63,36 @@
     <div id="content">
       <div class="filters">
 
+        <div class="row">
+          <div class="date col">
+            <vaadin-date-picker label="After" value="{{filters.start}}"></vaadin-date-picker>
+            <vaadin-date-picker label="Before" value="{{filters.end}}"></vaadin-date-picker>
+          </div>
 
-        <div class="date">
-          <vaadin-date-picker label="After" value="{{filters.start}}"></vaadin-date-picker>
-          <vaadin-date-picker label="Before" value="{{filters.end}}"></vaadin-date-picker>
+          <div class="merchants col">
+            <vaadin-combo-box label="Merchant" items="{{merchants}}" value="{{filters.merchant}}"
+                              id="merchantsSelect"></vaadin-combo-box>
+          </div>
         </div>
 
-        <div class="merchants">
-          <vaadin-combo-box label="Merchant" items="{{merchants}}" value="{{filters.merchant}}" id="merchantsSelect"></vaadin-combo-box>
-          <!-- <paper-input label="Merchant" value="{{filters.merchant}}"></paper-input> -->
-        </div>
+        <div class="row">
+          <div class="total col">
+            <paper-input label="Min ($)" value="{{filters.min}}" pattern="\d+" auto-validate
+                         error-message="Only numbers"></paper-input>
+            <paper-input label="Max ($)" value="{{filters.max}}" pattern="\d+" auto-validate
+                         error-message="Only numbers"></paper-input>
+          </div>
 
-        <div class="total">
-          <paper-input label="Min ($)" value="{{filters.min}}" pattern="\d+" auto-validate error-message="Only numbers"></paper-input>
-          <paper-input label="Max ($)" value="{{filters.max}}" pattern="\d+" auto-validate error-message="Only numbers"></paper-input>
-        </div>
+          <div class="status col">
+            <span class="caption">Status</span>
 
-        <div class="status">
-          <span class="caption">Status</span>
-
-          <div class="checkboxes">
-            <paper-checkbox on-change="_updateStatus" name="new">New</paper-checkbox>
-            <paper-checkbox on-change="_updateStatus" name="in_progress">In progress</paper-checkbox>
-            <paper-checkbox on-change="_updateStatus" name="reimbursed">Reimbursed</paper-checkbox>
+            <div class="checkboxes">
+              <paper-checkbox on-change="_updateStatus" name="new">New</paper-checkbox>
+              <paper-checkbox on-change="_updateStatus" name="in_progress">In progress
+              </paper-checkbox>
+              <paper-checkbox on-change="_updateStatus" name="reimbursed">Reimbursed
+              </paper-checkbox>
+            </div>
           </div>
         </div>
       </div>
@@ -153,7 +133,7 @@
 
         _addStatus: function(status) {
           var statuses = this.filters.status;
-          if (statuses && !this._contains(statuses, status)) {
+          if (statuses && statuses.indexOf(status) < 0) {
             this.push('filters.status', status);
           } else {
             this.set('filters.status', [status]);
@@ -161,18 +141,10 @@
         },
 
         _removeStatus: function(status) {
-          if (this.filters.status && this.filters.status.indexOf(status) >= 0) {
-            this.splice('filters.status', this.filters.status.indexOf(status), 1);
+          var statusIndex = this.filters.status.indexOf(status);
+          if (this.filters.status && statusIndex >= 0) {
+            this.splice('filters.status', statusIndex, 1);
           }
-        },
-
-        _contains: function(a, obj) {
-          for (var i = 0; i < a.length; i++) {
-            if (a[i] === obj) {
-              return true;
-            }
-          }
-          return false;
         }
       });
     })();
