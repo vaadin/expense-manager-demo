@@ -1,0 +1,160 @@
+<link rel="import" href="../scripts/pouchdb.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<dom-module id="pouch-db">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <paper-toast id="notification"></paper-toast>
+  </template>
+  <script>
+    Polymer({
+      is: 'pouch-db',
+      properties: {
+        dbName: String,
+        remoteURL: String,
+        data: {
+          type: Array,
+          notify: true
+        },
+        paused: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+        attachments: {
+          type: Object,
+          notify: true
+        },
+        _localDB: Object,
+        _remoteDB: Object,
+        _syncHandler: Object
+      },
+
+      ready: function(){
+        this.attachments = {
+          getAttachment: this._getAttachment.bind(this)
+        };
+
+      },
+
+      attached: function() {
+        this._localDB = new PouchDB(this.dbName);
+        if (this._remoteURL) {
+          this._setupSync();
+        }
+
+        this._update();
+        this.fire('db-initialized');
+      },
+
+      _setupSync: function() {
+        var _this = this;
+        this._remoteDB = new PouchDB(this.remoteURL + '/' + this.dbName);
+
+        this._syncHandler = this._localDB.sync(this._remoteDB, {
+          live: true,
+          retry: true
+        }).on('change', function(change) {
+          console.log(change);
+        }).on('paused', function(info) {
+          _this.paused = true;
+          _this._showNotification('Sync paused');
+          console.log(info);
+        }).on('active', function(info) {
+          _this.paused = false;
+          _this._showNotification('Sync active');
+          console.log(info);
+        }).on('error', function(err) {
+          console.log(err);
+        });
+
+        this._syncHandler.on('complete', function() {
+          console.log('DB sync successfully shut down.');
+        });
+      },
+
+      detached: function() {
+        if (this._syncHandler) {
+          this._syncHandler.cancel();
+        }
+      },
+
+      save: function(doc) {
+        var _this = this;
+        if(!doc._id){
+          doc._id = new Date().toJSON();
+        }
+
+        this._localDB.put(doc)
+          .catch(function(err) {
+            if (err.name !== 'not_found') {
+              throw err;
+            }
+            return _this.localDB.put(doc);
+          }).then(function() {
+          _this._update();
+        });
+      },
+
+      remove: function(doc) {
+        var _this = this;
+        this._localDB
+          .get(doc.id)
+          .then(function(_doc) {
+            return _this.localDB.remove(_doc);
+          }).then(function() {
+            _this._update();
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
+      },
+
+      bulkDocs: function(docs, options) {
+        var _this = this;
+        this._localDB.bulkDocs(docs, options)
+          .then(function(info) {
+            console.log(info);
+            _this._update();
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
+      },
+
+      destroy: function() {
+        this.bulkDocs(this.data.map(function(doc) {
+            doc._deleted = true;
+            return doc;
+          }
+        ));
+        this._localDB.destroy();
+      },
+
+      _getAttachment: function(docId, attachmentName){
+        return this._localDB.getAttachment(docId, attachmentName);
+      },
+
+      // Always updating entire array to keep demo code simple.
+      // You should probably not do this in a real app (especially if you have a lot of data)
+      _update: function() {
+        var _this = this;
+        this._localDB.allDocs({
+          // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+          include_docs: true,
+          descending: true
+        }).then(function(result) {
+          _this.data = result.rows.map(function(row){
+            return row.doc;
+          });
+        }).catch(function(err) {
+          console.log(err);
+        });
+      }
+    });
+  </script>
+</dom-module>

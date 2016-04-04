@@ -226,7 +226,7 @@ gulp.task('cache-config', function(callback) {
     './',
     'bower_components/accounting/accounting.min.js',
     'bower_components/blueimp-load-image/js/load-image.all.min.js',
-    'bower_components/offline/offline.min.js',
+    'bower_components/pouchdb/dist/pouchdb.min.js',
     'bower_components/moment/moment.js',
     'bower_components/webcomponentsjs/webcomponents-lite.min.js',
     '{elements,scripts,styles}/**/*.*'

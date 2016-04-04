@@ -12,6 +12,7 @@
 <link rel="import" href="content-panel.html">
 <link rel="import" href="filters-toolbar.html">
 <link rel="import" href="../scripts/moment-js.html">
+<link rel="import" href="pouch-db.html">
 
 <dom-module id="overview-page">
   <template>
@@ -64,7 +65,10 @@
       }
 
     </style>
-
+    <pouch-db db-name="expenses"
+              data="{{expenses}}"
+              id="db"
+              attachments="{{attachments}}"></pouch-db>
     <paper-header-panel>
       <paper-toolbar>
         <h1>Expense Manager</h1>
@@ -85,7 +89,7 @@
 
     </paper-header-panel>
 
-    <expense-editor id="expenseEditor"></expense-editor>
+    <expense-editor id="expenseEditor" attachments="[[attachments]]"></expense-editor>
     <paper-toast id="saveNotification"></paper-toast>
     <about-dialog id="about"></about-dialog>
   </template>
@@ -101,38 +105,10 @@
             type: String,
             notify: true
           },
-          expenses: {
-            type: Array,
-            value: function() {
-              var date = moment();
-              var expenses = [];
-              var id = 1;
-              for (var i = 0; i < 250; i++) {
-                date = date.subtract(Math.floor(Math.random() * 72), 'hours');
-                var status = 'new';
-                if (i > 30) {
-                  status = 'reimbursed';
-                } else if (i > 15) {
-                  status = 'in_progress';
-                }
-                expenses.push({
-                  id: id++,
-                  user: 'demo',
-                  date: date.format('YYYY-MM-DD'),
-                  merchant: [
-                    'Office supplies', 'Electronics', 'Rental car', 'Airline',
-                    'Hotel', 'Restaurant', 'Taxi', 'Ride sharing', 'Fast food',
-                    'Parking', 'Breakfast', 'Shuttle'
-                  ]
-                    [Math.floor(Math.random() * 12)],
-                  total: Math.random() * (Math.random() * 3) * 300 + 10,
-                  status: status,
-                  comment: 'Expense from my business trip.',
-                  receipt: 'images/default-receipt.png'
-                });
-              }
-              return expenses;
-            }
+          expenses: Array,
+          attachments: {
+            type: Object,
+            observer: 'attachmentServiceObserver'
           },
 
           filters: {
@@ -176,10 +152,16 @@
 
         listeners: {
           'edit-expense': '_editExpense',
-          'expenses-updated': '_updateExpenses',
+          'expenses-updated': '_expensesUpdated',
           'expense-saved': '_saveExpense',
           'delete-expense': '_deleteExpense'
         },
+
+        attachmentServiceObserver: function(){
+          console.log(this.attachments);
+        },
+
+        observers: ['_initDemoDB(expenses)'],
 
         behaviors: [Polymer.NeonSharedElementAnimatableBehavior],
 
@@ -190,55 +172,19 @@
 
         _saveExpense: function(evt) {
           var expense = evt.detail;
-
-          var idx = -1;
-
-          if (expense.id) {
-            for (var i = 0; i <= this.expenses.length; i++) {
-              if (this.expenses[i].id === expense.id) {
-                idx = i;
-                break;
-              }
-            }
-          } else {
-            expense.id = new Date().getTime();
+          if (!expense.status){
             expense.status = 'new';
           }
 
-          var toDelete = 1;
-
-          if (idx === -1) {
-            idx = 0;
-            toDelete = 0;
-          }
-
-          this.splice('expenses', idx, toDelete, expense);
+          this.$.db.save(expense);
           this.fire('expenses-updated');
         },
         _deleteExpense: function(evt) {
           var expense = evt.detail;
-
-          if (expense.status !== 'new') {
-            return;
-          }
-
-          var idx = -1;
-
-          if (expense.id) {
-            for (var i = 0; i <= this.expenses.length; i++) {
-              if (this.expenses[i].id === expense.id) {
-                idx = i;
-                break;
-              }
-            }
-          }
-
-          if (idx >= 0) {
-            this.splice('expenses', idx, 1);
-            this.fire('expenses-updated', {reason: 'deleted'});
-          }
+          this.$.db.remove(expense);
+          this.fire('expenses-updated', {reason: 'deleted'});
         },
-        _updateExpenses: function(evt) {
+        _expensesUpdated: function(evt) {
           this.$.expenseEditor.close();
           if (evt.detail.reason === 'deleted') {
             this.$.saveNotification.text = 'Expense was deleted';
@@ -250,10 +196,47 @@
 
         _logout: function() {
           this.token = '';
+          this.$.db.destroy();
         },
 
         _showAbout: function() {
           this.$.about.open();
+        },
+
+        _initDemoDB: function() {
+          if (this.expenses && this.expenses.length > 0) {
+            return;
+          }
+
+          var date = moment();
+          var expenses = [];
+
+          var db = this.$.db;
+
+          for (var i = 0; i < 100; i++) {
+            date = date.subtract(Math.floor(Math.random() * 168) + 1, 'hours');
+            var status = 'new';
+            if (i > 10) {
+              status = 'reimbursed';
+            } else if (i > 5) {
+              status = 'in_progress';
+            }
+            expenses.push({
+              _id: date.toJSON(),
+              user: 'demo',
+              date: date.format('YYYY-MM-DD'),
+              merchant: [
+                'Office supplies', 'Electronics', 'Rental car', 'Airline',
+                'Hotel', 'Restaurant', 'Taxi', 'Ride sharing', 'Fast food',
+                'Parking', 'Breakfast', 'Shuttle'
+              ]
+                [Math.floor(Math.random() * 12)],
+              total: Math.random() * (Math.random() * 3) * 300 + 10,
+              status: status,
+              comment: 'Expense from my business trip.'
+            });
+          }
+          db.bulkDocs(expenses);
         }
       });
     })();

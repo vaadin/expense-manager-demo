@@ -9,6 +9,7 @@
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/neon-animation/animations/slide-down-animation.html">
 <link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../bower_components/vaadin-upload/vaadin-upload.html">
 <link rel="import" href="receipt-display.html">
 <link rel="import" href="../scripts/accounting-js.html">
 <link rel="import" href="../scripts/moment-js.html">
@@ -66,9 +67,15 @@
       }
 
       .receipt {
-        @apply(--layout-flex-3);
+        flex: 3;
         margin-left: 24px;
         min-height: 64px;
+        max-width: 400px;
+      }
+
+      .receipt img {
+        max-width: 100%;
+        margin: 0 auto;
       }
 
       paper-button[hidden] {
@@ -149,12 +156,21 @@
                                 name="date"></vaadin-date-picker>
             <paper-textarea id="comment" name="comment" label="Comment"
                             value="{{expense.comment}}"></paper-textarea>
-
-            <input type="file" accept="image/jpeg" id="receiptupload" name="receipt"
-                   capture="camera" hidden>
           </form>
         </div>
-        <receipt-display id="preview" class="receipt"></receipt-display>
+        <div class="receipt">
+          <vaadin-upload id="upload"
+                         accept="image/*"
+                         max-files="1"
+                         on-upload-before="_handleUpload"
+                         required
+          >
+            <div class="file-list">
+              <img src$="[[_receiptURL]]" alt="Receipt"
+                   hidden$="[[!_showReceipt(expense._attachments.*)]]">
+            </div>
+          </vaadin-upload>
+        </div>
       </div>
       <div class="buttons-layout">
         <paper-button raised on-tap="_save" class="save-button">Save</paper-button>
@@ -186,44 +202,76 @@
             type: String,
             computed: '_getCaption(expense)'
           },
-          errorText: String
+          errorText: String,
+          attachments: Object,
+          _receiptURL: {
+            type: String,
+            notify: true,
+            value: 'images/default-receipt.png'
+          }
+        },
+
+        observers: ['_updateReceiptURL(expense._attachments.*)'],
+
+        ready: function() {
+          this.$.upload.i18n.dropFiles.one = 'Drop receipt here...';
+          this.$.upload.i18n.addFiles.one = 'Select receipt';
         },
 
         _getCaption: function(expense) {
-          if (expense.id) {
+          if (expense._id) {
             return 'Edit Expense';
           } else {
             return 'Add Expense';
           }
         },
 
-        listeners: {
-          'iron-form-invalid': '_showValidationErrors',
-          'upload-requested': '_triggerUpload'
+        _showReceipt: function() {
+          return this.expense._id ||
+            (this.expense._attachments && this.expense._attachments.receipt);
         },
 
-        showReceipt: function(evt) {
+        _updateReceiptURL: function() {
           var _this = this;
-          var input = evt.target;
-          var preview = this.$.preview;
-
-          if (input.files && input.files[0]) {
-            var receipt = input.files[0];
-            if (!receipt.type.match('image.*')) {
-              return;
+          if (this.expense._attachments && this.expense._attachments.receipt) {
+            if (this.expense._attachments.receipt.data instanceof File) {
+              console.log('found file')
+              _this._receiptURL = URL.createObjectURL(this.expense._attachments.receipt.data);
+            } else {
+              this.attachments.getAttachment(this.expense._id, 'receipt')
+                .then(function(blob) {
+                  console.log('fetched receipt from db');
+                  _this._receiptURL = URL.createObjectURL(blob);
+                })
+                .catch(function(err) {
+                  console.log(err);
+                });
             }
-            _this.receiptFile = receipt;
-            preview.preview = receipt;
-
+          } else {
+            console.log('fallback');
+            this._receiptURL = 'images/default-receipt.png';
           }
+          console.log('updated receipt url to: ' + this._receiptURL);
         },
 
-        ready: function() {
-          this.$.receiptupload.addEventListener('change', this.showReceipt.bind(this));
+        listeners: {
+          'iron-form-invalid': '_showValidationErrors'
         },
 
-        _triggerUpload: function() {
-          this.$.receiptupload.click();
+        _handleUpload: function(e) {
+          var file = e.detail.file;
+          if (file) {
+            if (!this.expense._attachments) {
+              this.expense._attachments = {};
+            }
+            this.set('expense._attachments.receipt', {
+              type: file.type,
+              data: file
+            });
+          }
+          this.$.upload.files = [];
+          e.preventDefault();
+          console.log(this.expense);
         },
 
         _save: function() {
@@ -231,9 +279,6 @@
           var form = this.$.form;
           if (form.validate()) {
             this.expense.total = parseFloat(this.expense.total);
-            if (this.receiptFile) {
-              this.expense.receipt = this.receiptFile;
-            }
             this.fire('expense-saved', this.expense);
           } else {
             this.errorText = 'Please fill all required fields';
@@ -246,22 +291,19 @@
 
         open: function(expense) {
 
+          // Create a copy of the expense to be edited so we don't automatically flush changes to db
           this.expense = JSON.parse(JSON.stringify(expense));
+          // File objects don't survive the JSON dance, so copy that over manually
+          if (expense._attachments) {
+            this.set('expense._attachments', expense._attachments);
+          }
+
+          console.log(this.expense);
+
+          this.$.upload.files = [];
 
           if (expense.total) {
             this.$.total.value = expense.total.toFixed(2);
-          }
-
-          var preview = this.$.preview;
-
-          preview.src = null;
-          preview.preview = null;
-
-          if (expense.receipt && expense.receipt instanceof File) {
-            this.expense.receipt = expense.receipt;
-            preview.preview = this.expense.receipt;
-          } else if (this.expense.receipt) {
-            preview.src = this.expense.receipt;
           }
 
           this.$.delete.hidden = !(this.expense.id && this.expense.status === 'new');
@@ -280,7 +322,8 @@
         _delete: function() {
           this.fire('delete-expense', this.expense);
         }
-      });
+      })
+      ;
     })();
   </script>
 </dom-module>

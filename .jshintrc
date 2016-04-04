@@ -1,9 +1,8 @@
 {
   "node": true,
-  "esnext": true,
+  "esnext": false,
   "browser": true,
   "bitwise": true,
-  "camelcase": true,
   "curly": true,
   "eqeqeq": true,
   "immed": true,
@@ -24,6 +23,7 @@
     "loadImage": true,
     "Promise": true,
     "Offline": true,
-    "File": true
+    "File": true,
+    "PouchDB": true
   }
 }
