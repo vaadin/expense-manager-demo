@@ -22,7 +22,7 @@
     "sizes": "384x384",
     "type": "image/png"
   }],
-  "start_url": "/",
+  "start_url": "/expense-manager-demo",
   "background_color": "#37474F",
   "display": "standalone",
   "theme_color": "#37474F"
