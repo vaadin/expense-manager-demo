@@ -1,0 +1,268 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-overlay-behavior/iron-overlay-behavior.html">
+
+<dom-module id="vaadin-license-dialog">
+    <style>
+        :host {
+            font: 300 16px/1.55 "Open Sans", sans-serif;
+            cursor: default;
+            box-sizing: border-box;
+            display: inline-block;
+            vertical-align: top;
+            text-align: left;
+            border-radius: 4px;
+            background-color: white;
+            color: #474747;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1), 0 16px 80px -6px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.09098);
+            padding: 0;
+            min-width: 148px !important;
+            min-height: 37px !important;
+            overflow: hidden !important;
+            transition: width 200ms, height 200ms;
+            margin-left: 0;
+            margin-top: 0;
+            z-index: 10000;
+            visibility: visible;
+        }
+
+        #header  {
+            line-height: 36px;
+            padding-left: 12px;
+            margin-right: 37px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #7e7e7e;
+        }
+
+        #licenseDialogClose {
+            position: absolute;
+            z-index: 3;
+            top: 0;
+            right: 0;
+            box-sizing: border-box;
+            height: 36px;
+            background-color: white;
+            line-height: 34px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 21px;
+            color: #999999;
+            width: 37px;
+            padding-right: 0;
+            border-radius: 0 4px 0 4px;
+            transition: color 140ms;
+        }
+
+        #licenseDialogExplanation {
+            max-width: 26em;
+            padding: 0 12px;
+            border: 1px solid transparent;
+        }
+
+        p {
+            margin: 12px 0;
+        }
+
+        p:first-child {
+            font-weight: 400;
+        }
+
+        #vaadin-license-dialog-input {
+            margin: 0 12px 12px 12px;
+        }
+
+        #licenseDialogInput {
+            box-sizing: border-box;
+            display: inline-block;
+            vertical-align: top;
+            text-align: left;
+            white-space: normal;
+            margin: 0;
+            font: inherit;
+            font-weight: 400;
+            line-height: normal;
+            height: 37px;
+            border-radius: 4px;
+            border: 1px solid #c5c5c5;
+            background: white;
+            color: #474747;
+            box-shadow: inset 0 1px 0 #f7f7f7, 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: box-shadow 180ms, border 180ms;
+            width: 100%;
+            padding: 4px 6em 4px 9px;
+        }
+
+        #vaadin-license-dialog-input > button {
+            box-sizing: border-box;
+            display: inline-block;
+            font: inherit;
+            line-height: 1.55;
+            text-align: center;
+            white-space: nowrap;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            cursor: pointer;
+            height: 37px;
+            padding: 0 16px;
+            color: #191919;
+            font-weight: 400;
+            border: 1px solid #c5c5c5;
+            border-bottom-color: #bcbcbc;
+            background-color: #fafafa;
+            box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
+            vertical-align: middle;
+            margin-left: -1px;
+            border-radius: 0 4px 4px 0;
+            position: absolute;
+            right: 12px;
+        }
+
+        #vaadin-license-dialog-input > button:hover {
+            background-color: rgba(186, 186, 186, 0.1);
+        }
+
+        #vaadin-license-dialog-input > button:active {
+            background-color: rgba(125, 125, 125, 0.2);
+        }
+    </style>
+    <template>
+        <div id="licenseDialogHeader">
+            <span id="header">[[header]]</span>
+            <span id="licenseDialogClose" on-click="_close">&times;</span>
+        </div>
+        <div id="licenseDialogExplanation"></div>
+        <div id="vaadin-license-dialog-input">
+            <input id="licenseDialogInput" type="text" size="38"><button on-click="_submit">Submit</button>
+        </div>
+    </template>
+
+    <script>
+        LicenseDialog = Polymer({
+            is: "vaadin-license-dialog",
+
+            behaviors: [Polymer.IronOverlayBehavior],
+
+            headers: {
+                unlicensed: "Unlicensed copy of {0}",
+                trial: "{0} trial license",
+                expired: "{0} license expired"
+            },
+
+            contents: {
+                unlicensed: '<p class="vaadin-license-dialog">To use {0} in development, each developer needs to have a valid license.<p class="vaadin-license-dialog">Please <a href="https://vaadin.com/pro/licenses" target="_blank"> get a license from vaadin.com</a>, then enter your license key here:',
+                trial: '<p class="vaadin-license-dialog">You are currently using {0} with a trial license, which will expire {1}.<p class="vaadin-license-dialog">You can <a href="https://vaadin.com/pro/licenses" target="_blank"> visit vaadin.com to get a paid license</a>, then enter your license key here:',
+                expired: '<p class="vaadin-license-dialog">Your {0} license has expired.<p class="vaadin-license-dialog">Please <a href="https://vaadin.com/pro/licenses" target="_blank">renew your license at vaadin.com</a>, then refresh the page. Alternatively, if you have a new license key, you can enter it here:'
+            },
+
+            properties: {
+                type: String,
+                productCaption: String,
+                expiryEpoch: {
+                    type: Number,
+                    value: 0
+                },
+
+                header: {
+                    type: String,
+                    computed: '_computeHeader(type, productCaption)'
+                },
+                content: {
+                    type: String,
+                    observer: '_contentChanged',
+                    computed: '_computeContent(type, productCaption, expiryEpoch)'
+                },
+
+                //override
+                withBackdrop: {
+                    type: Boolean,
+                    value: true
+                },
+                noCancelOnEscKey: {
+                    type: Boolean,
+                    value: true
+                },
+                noCancelOnOutsideClick: {
+                    type: Boolean,
+                    value: true
+                }
+            },
+
+            _contentChanged: function(value) {
+                this.$.licenseDialogExplanation.innerHTML = value;
+            },
+
+            _submit: function() {
+                this.fire('vaadin-license-dialog-submit', {
+                    licenseKey: this.$.licenseDialogInput.value
+                });
+                this.close();
+            },
+
+            _close: function() {
+                this.fire('vaadin-license-dialog-close', {
+                    type: this.type,
+                    expiryEpoch: this.expiryEpoch
+                });
+                this.close();
+            },
+
+            _computeHeader: function(type, productCaption) {
+                return this.headers[type].replace('{0}',
+                    productCaption);
+            },
+
+            _computeContent: function(type, productCaption, expiryEpoch) {
+                if (type === 'trial') {
+                    var timeToExpiry = expiryEpoch - Date.now();
+                    var hoursToExpiry = Math.round(timeToExpiry /
+                        1000 / 60 / 60);
+                    var daysToExpiry = Math.round(timeToExpiry /
+                        1000 / 60 / 60 / 24);
+                    var expiryDate = new Date(expiryEpoch);
+                    var expiryDateISOFormat = expiryDate.getFullYear() +
+                        '-' + this._padDate(expiryDate.getMonth()) +
+                        '-' + this._padDate(expiryDate.getDate());
+
+                    if (hoursToExpiry < 24) {
+                        return this._replaceArguments(this.contents[
+                                type], productCaption, 'in ' +
+                            hoursToExpiry + ' hours');
+                    } else if (daysToExpiry < 30) {
+                        return this._replaceArguments(this.contents[
+                                type], productCaption, 'in ' +
+                            daysToExpiry + ' days');
+                    } else {
+                        return this._replaceArguments(this.contents[
+                                type], productCaption, 'on ' +
+                            expiryDateISOFormat);
+                    }
+
+                } else {
+                    return this._replaceArguments(this.contents[
+                        type], productCaption);
+                }
+            },
+
+            _replaceArguments: function(string) {
+                var newString = string;
+                for (var i = 1; i < arguments.length; i++) {
+                    newString = newString.replace('{' + (i - 1) +
+                        '}', arguments[i]);
+                }
+
+                return newString;
+            },
+
+            _padDate: function(date) {
+                if (date.toString().length === 1) {
+                    return '0' + date;
+                } else {
+                    return date;
+                }
+            }
+
+        });
+    </script>
+</dom-module>

@@ -1,0 +1,18 @@
+{
+    "startDate": "2014-05-09 14:42:26",
+    "expires": "2012-09-29 00:00:00",
+    "licenseKey": "12345678-1234-abcd-1234-12345678expired",
+    "email": "john.doe@vaadin.com",
+    "licensee": "John Dee",
+    "licenseName": "cval3",
+    "product": {
+        "name": "some-product",
+        "version": 2
+    },
+    "inUse": true,
+    "nonProfit": false,
+    "type": "normal",
+    "message": "License for Vaadin some-product 2 has expired. Get a valid license at vaadin.com/pro",
+    "expiredEpoch": 1348876800000,
+    "expired": true
+}

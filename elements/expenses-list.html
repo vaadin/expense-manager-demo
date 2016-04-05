@@ -1,0 +1,259 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../scripts/accounting-js.html">
+<link rel="import" href="../scripts/moment-js.html">
+<link rel="import" href="search-filters.html">
+
+<dom-module id="expenses-list">
+  <template>
+    <style>
+      :host {
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #add-button {
+        position: absolute;
+        right: 32px;
+        bottom: 32px;
+        z-index: 2;
+      }
+
+      #expenses {
+        flex: 1;
+        color: var(--primary-text-color);
+        font-weight: 300;
+      }
+
+      #expenses::content thead.vaadin-grid-header th,
+      #expenses /deep/ thead.vaadin-grid-header th {
+        background: var(--dark-primary-color);
+        color: #ccc;
+        font-size: 1.2em;
+        font-weight: 400;
+      }
+
+      vaadin-grid::content tr.vaadin-grid-row-stripe td,
+      vaadin-grid /deep/ tr.vaadin-grid-row-stripe td {
+        background: #F7F8F8;
+      }
+
+      vaadin-grid::content td.status-new,
+      vaadin-grid /deep/ td.status-new {
+        font-weight: bold;
+      }
+
+      vaadin-grid::content td.status-reimbursed span,
+      vaadin-grid /deep/ td.status-reimbursed span {
+        opacity: 0.4;
+      }
+
+      #expenses::content thead.vaadin-grid-header th.last-frozen,
+      #expenses /deep/ thead.vaadin-grid-header th.last-frozen {
+        border-right: 1px solid #2A3A42;
+      }
+
+      #expenses::content .vaadin-grid-header.vaadin-grid .sort-asc.vaadin-grid:after,
+      #expenses /deep/ .vaadin-grid-header.vaadin-grid .sort-asc.vaadin-grid:after {
+        content: "\e7c3 " attr(sort-order);
+        font-family: Vaadin-Icons;
+        font-size: 16px;
+        speak: none;
+        font-weight: normal;
+        font-variant: normal;
+        font-style: normal;
+        text-transform: none;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        color: var(--default-primary-color);
+      }
+
+      #expenses::content .vaadin-grid-header.vaadin-grid .sort-desc.vaadin-grid:after,
+      #expenses /deep/ .vaadin-grid-header.vaadin-grid .sort-desc.vaadin-grid:after {
+        content: "\e7bc " attr(sort-order);
+        font-family: Vaadin-Icons;
+        font-size: 16px;
+        speak: none;
+        font-weight: normal;
+        font-variant: normal;
+        font-style: normal;
+        text-transform: none;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        color: var(--default-primary-color);
+      }
+    </style>
+
+
+    <vaadin-grid id="expenses" frozen-columns="1">
+      <table>
+        <colgroup>
+          <col name="date" width="120" sortable sort-direction="desc"/>
+          <col name="merchant" width="200" sortable/>
+          <col name="total" width="150" sortable/>
+          <col name="status" width="150" sortable/>
+          <col name="comment" sortable/>
+        </colgroup>
+      </table>
+    </vaadin-grid>
+    <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
+  </template>
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'expenses-list',
+
+        properties: {
+          expenses: Array,
+          sortColumn: String,
+          sortDirection: String,
+          filters: Object
+        },
+
+        observers: [
+          '_update(filters, expenses)',
+          '_filtersChanged(filters.*)',
+          '_update(expenses.*)',
+          '_update(sortColumn)',
+          '_update(sortDirection)'
+        ],
+
+        ready: function() {
+          var grid = this.$.expenses;
+          var _this = this;
+
+          grid.columns[0].renderer = function(cell) {
+            cell.element.innerHTML = moment(cell.data).format('YYYY-MM-DD');
+          };
+
+          grid.columns[2].renderer = function(cell) {
+            cell.element.innerHTML = accounting.formatMoney(cell.data);
+          };
+
+          grid.addEventListener('sort-order-changed', function() {
+            grid.scrollToStart();
+            _this._update();
+          });
+
+          grid.addEventListener('selected-items-changed', function() {
+            var selection = grid.selection.selected();
+            if (selection.length === 1) {
+              grid.getItem(selection[0], function(err, item) {
+                _this.fire('edit-expense', item);
+              });
+            }
+          });
+
+          grid.cellClassGenerator = function(cell) {
+            if (cell.columnName === 'status') {
+              return 'status-' + cell.data.replace(/ /g, '-').toLowerCase();
+            }
+          };
+
+          grid.columns[3].renderer = function(cell) {
+            var status = cell.data.replace(/_/g, ' ');
+            status = status.charAt(0).toUpperCase() + status.slice(1);
+            cell.element.textContent = status;
+          };
+        },
+
+        _showExpenseEditor: function() {
+          this.fire('edit-expense', {});
+        },
+
+        _filtersChanged: function() {
+          if (this.$.expenses.items) {
+            var _this = this;
+            this.debounce('_filtersChanged', function() {
+              _this._update();
+
+            }, 300);
+          }
+        },
+
+        _update: function() {
+          if (!this.filters) {
+            return;
+          }
+          var grid = this.$.expenses;
+          var merchant = this.filters.merchant;
+          var min = this.filters.min;
+          var max = this.filters.max;
+          var status = this.filters.status;
+          var start = this.filters.start;
+          var end = this.filters.end;
+          var sort;
+          var direction;
+          if (grid.sortOrder && grid.sortOrder[0]) {
+            sort = grid.columns[grid.sortOrder[0].column].name;
+            direction = grid.sortOrder[0].direction;
+          }
+
+          // Filter
+          var result = this.expenses
+            .filter(function(expense) {
+              return !(merchant && expense.merchant
+                .toUpperCase().indexOf(merchant.toUpperCase()) < 0);
+            })
+            .filter(function(expense) {
+              return !(min && expense.total < min);
+            })
+            .filter(function(expense) {
+              return !(max && expense.total > max);
+            })
+            .filter(function(expense) {
+              if (status && status.length > 0) {
+                return status.indexOf(expense.status) >= 0;
+              } else {
+                return true;
+              }
+            })
+            .filter(function(expense) {
+              if (start) {
+                var startDate = moment(start);
+                return !!(startDate.isValid() && moment(expense.date).isAfter(startDate));
+              } else {
+                return true;
+              }
+            })
+            .filter(function(expense) {
+              if (end) {
+                var endDate = moment(end);
+                return !!(endDate.isValid() && moment(expense.date).isBefore(endDate));
+              } else {
+                return true;
+              }
+            });
+
+          // Sort
+          if (sort) {
+            var sortProperty = sort;
+            var sortDirection = direction || 'desc';
+            result.sort(function(a, b) {
+              var res;
+              if (!isNaN(a[sortProperty])) {
+                res = parseInt(a[sortProperty], 10) - parseInt(b[sortProperty], 10);
+              } else {
+                // Let's pretend everything that's not a number is a string.
+                res = a[sortProperty].localeCompare(b[sortProperty]);
+              }
+
+              if ('desc' === sortDirection) {
+                res *= -1;
+              }
+              return res;
+            });
+          }
+
+          grid.items = result;
+        }
+      });
+    })();
+  </script>
+</dom-module>

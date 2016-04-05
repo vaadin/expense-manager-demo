@@ -1,0 +1,651 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-styles/shadow.html">
+<link rel="import" href="../paper-styles/typography.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-input/iron-input.html">
+<link rel="import" href="../paper-input/paper-input-container.html">
+<link rel="import" href="../iron-media-query/iron-media-query.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+<link rel="import" href="vaadin-month-calendar.html">
+<link rel="import" href="vaadin-infinite-scroller.html">
+
+<dom-module id="vaadin-date-picker-overlay">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+        background: var(--primary-background-color);
+        font: inherit;
+        outline: none;
+        @apply(--paper-font-common-base);
+        @apply(--shadow-elevation-2dp);
+        @apply(--vaadin-date-picker-overlay);
+      }
+
+      #toolbar {
+        display: flex;
+        justify-content: space-between;
+        padding: 14px;
+        background: var(--primary-background-color);
+        z-index: 2;
+        @apply(--paper-font-button);
+        @apply(--shadow-elevation-2dp);
+        flex-shrink: 0;
+        transform: translateZ(0);
+        color: var(--primary-color);
+        @apply(--vaadin-date-picker-toolbar);
+      }
+
+      #toolbar:not([desktop]) {
+        cursor: pointer;
+      }
+
+      #toolbar iron-icon {
+        fill: var(--primary-color);
+        padding: 0px;
+        transition: transform 200ms;
+        --iron-icon-width: 20px;
+        --iron-icon-height: 20px;
+        @apply(--vaadin-date-picker-toolbar-icon);
+      }
+
+      #toolbar iron-icon[rotate] {
+        transform: rotate(180deg);
+      }
+
+      #toolbar iron-icon[hidden] {
+        display: none;
+      }
+
+      #scrollers {
+        display: flex;
+        flex-direction: row;
+        height: 100%;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+      }
+
+      #scrollers #fade {
+        pointer-events: none;
+        display: block;
+        background: linear-gradient(90deg, var(--primary-background-color), rgba(255, 255, 255, 0));
+        width: 50px;
+        position: absolute;
+        height: 100%;
+        z-index: 1;
+        transform: translateX(-100%);
+        @apply(--vaadin-date-picker-scrollers-fade);
+      }
+
+      #scrollers[desktop] #fade {
+        display: none;
+      }
+
+      #scroller,
+      #yearScroller {
+        height: 100%;
+      }
+
+      #scroller {
+        padding: 0 8px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+
+      #scrollers[desktop] #scroller {
+        right: 50px;
+        transform: none !important;
+      }
+
+      #yearScroller {
+        text-align: center;
+        width: 50px;
+        background: var(--dark-theme-background-color);
+        color: var(--dark-theme-secondary-color);
+        cursor: pointer;
+        position: absolute;
+        right: 0;
+        transform: translateX(100%);
+        -webkit-tap-highlight-color: transparent;
+        @apply(--paper-font-menu);
+        @apply(--vaadin-date-picker-yearscroller);
+      }
+
+      #yearScroller div {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      #scrollers[desktop] #yearScroller {
+        position: absolute;
+        transform: none !important;
+      }
+
+      #yearScroller {
+        /* Center the year scroller position. */
+        --vaadin-infinite-scroller-buffer: {
+          top: 50%;
+          margin-top: -25px;
+          width: 90px;
+        }
+      }
+
+      #yearScroller:before {
+        content: '';
+        display: block;
+        background: transparent;
+        width: 0px;
+        height: 0px;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        margin-top: -6px;
+        border-width: 6px;
+        border-style: solid;
+        border-color: transparent;
+        border-left-color: var(--primary-background-color);
+        @apply(--vaadin-date-picker-yearscroller-indicator);
+      }
+
+      :host(.animate) vaadin-infinite-scroller {
+        transition: all 200ms;
+      }
+
+      :host(:not([fullscreen])) #header {
+        display: none;
+      }
+
+      #toolbar[desktop] {
+        display: none;
+      }
+
+      #header {
+        background: var(--primary-color);
+        padding: 0 14px 14px;
+        display: flex;
+        flex-shrink: 0;
+        @apply(--paper-font-subhead);
+        @apply(--shadow-elevation-2dp);
+        @apply(--vaadin-date-picker-header);
+      }
+
+      #header label,
+      #header input {
+        color: var(--dark-theme-text-color);
+      }
+
+      #header iron-icon {
+        color: var(--dark-theme-text-color);
+        cursor: pointer;
+      }
+
+      #toggle {
+        align-self: flex-end;
+      }
+
+      #header paper-input-container {
+        flex: 1;
+        margin-right: 24px;
+        padding-bottom: 0;
+        --paper-input-container-underline: {
+          display: none;
+        }
+        --paper-input-container-underline-focus: {
+          display: block;
+          background: var(--dark-theme-text-color);
+          -webkit-transform: none;
+          transform: none;
+        }
+      }
+
+      #clear {
+        display: none;
+      }
+
+      #clear[showclear] {
+        display: flex;
+      }
+
+      #footer {
+        display: flex;
+        justify-content: space-between;
+        padding: 4px;
+        @apply(--paper-font-body2);
+        background: var(--primary-background-color);
+        z-index: 2;
+        box-shadow: 0 -1px 4px 0 rgba(0, 0, 0, 0.50);
+        color: var(--primary-color);
+        flex-shrink: 0;
+        @apply(--vaadin-date-picker-footer);
+      }
+    </style>
+
+    <div id="header" on-touchend="_preventDefault">
+      <paper-input-container>
+        <label>[[label]]</label>
+        <input id="input" readonly is="iron-input" autocomplete="off" bind-value="[[_formatDisplayed(selectedDate, i18n.formatDate)]]">
+        <iron-icon id="clear" suffix on-tap="_clear" icon="clear" showclear$="[[_showClear(selectedDate)]]"></iron-icon>
+      </paper-input-container>
+      <iron-icon id="toggle" icon="event" on-tap="_close"></iron-icon>
+    </div>
+
+    <div id="toolbar" desktop$="[[_desktopMode]]" on-tap="_toggleYearScroller">
+      [[_yearAfterXMonths(_visibleMonthIndex)]]
+      <iron-icon rotate$="[[_isYearScrollerVisible(_translateX)]]" icon="chevron-right"></iron-icon>
+    </div>
+
+    <div id="scrollers" desktop$="[[_desktopMode]]">
+      <div id="fade"></div>
+      <vaadin-infinite-scroller id="scroller" on-scroll="_onMonthScroll" on-touchstart="_onMonthScroll" on-track="_track" item-height="250" buffer-size="6">
+        <template>
+          <vaadin-month-calendar i18n="[[i18n]]" month="[[_dateAfterXMonths(index)]]" selected-date="{{selectedDate}}" focused-date="[[focusedDate]]"></vaadin-month-calendar>
+        </template>
+      </vaadin-infinite-scroller>
+      <vaadin-infinite-scroller id="yearScroller" on-tap="_onYearTap" on-scroll="_onYearScroll" on-touchstart="_onYearScroll" item-height="80" buffer-size="25">
+        <template>
+          <div>[[_yearAfterXYears(index)]]</div>
+          <div style="font-size: 18px; line-height: 56px; opacity: 0.3;">•</div>
+        </template>
+      </vaadin-infinite-scroller>
+    </div>
+
+    <div id="footer" on-touchend="_preventDefault">
+      <paper-button id="todayButton" on-tap="_scrollToCurrentMonth">
+        [[i18n.today]]
+      </paper-button>
+      <paper-button id="cancelButton" on-tap="_close">
+        [[i18n.cancel]]
+      </paper-button>
+    </div>
+
+    <iron-media-query query="(min-width: 375px)" query-matches="{{_desktopMode}}"></iron-media-query>
+  </template>
+  <script>
+    Polymer({
+      is: 'vaadin-date-picker-overlay',
+
+      listeners: {
+        'keydown': '_onKeydown'
+      },
+
+      properties: {
+        /**
+         * The value for this element.
+         */
+        selectedDate: {
+          type: Date,
+          notify: true
+        },
+
+        /**
+         * Date value which is focused using keyboard.
+         */
+        focusedDate: {
+          type: Date,
+          observer: '_focusedDateChanged'
+        },
+
+        _focusedMonthDate: Number,
+
+        /**
+         * Date which should be visible when there is no value selected.
+         */
+        initialPosition: {
+          type: Date,
+          observer: '_initialPositionChanged'
+        },
+
+        _originDate: {
+          value: new Date()
+        },
+
+        _visibleMonthIndex: Number,
+
+        _desktopMode: Boolean,
+
+        _translateX: {
+          observer: '_translateXChanged'
+        },
+
+        _yearScrollerWidth: {
+          value: 50
+        },
+
+        i18n: {
+          type: Object
+        }
+      },
+
+      /**
+       * Fired when the scroller reaches the target scrolling position.
+       * @event scroll-animation-finished
+       * @param {Number} detail.position new position
+       * @param {Number} detail.oldPosition old position
+       */
+
+      attached: function() {
+        this._translateX = this._yearScrollerWidth;
+        this.toggleClass('animate', true);
+        this.setScrollDirection('y', this.$.scroller);
+      },
+
+      /**
+       * Scrolls the list to the given Date.
+       */
+      scrollToDate: function(date, animate) {
+        this._scrollToPosition(this._differenceInMonths(date, this._originDate), animate);
+      },
+
+      _focusedDateChanged: function(focusedDate, oldFocusedDate) {
+        if (focusedDate) {
+          var diff = this._differenceInMonths(focusedDate, this._originDate);
+          var scrolledAboveViewport = this.$.scroller.position > diff;
+
+          var visibleItems = this.$.scroller.clientHeight / this.$.scroller.itemHeight;
+          var scrolledBelowViewport = this.$.scroller.position + visibleItems - 1 < diff;
+
+          if (scrolledAboveViewport) {
+            this._scrollToPosition(diff, true);
+          } else if (scrolledBelowViewport) {
+            this._scrollToPosition(diff - visibleItems + 1, true);
+          }
+        }
+      },
+
+      _initialPositionChanged: function(initialPosition) {
+        this.scrollToDate(initialPosition);
+      },
+
+      _onMonthScroll: function(e) {
+        this._visibleMonthIndex = Math.floor(this.$.scroller.position);
+        this.$.yearScroller.position = this.$.scroller.position / 12;
+      },
+
+      _onYearScroll: function(e) {
+        this.$.scroller.position = this.$.yearScroller.position * 12;
+        this._visibleMonthIndex = Math.floor(this.$.scroller.position);
+      },
+
+      _formatDisplayed: function(date, formatDate) {
+        if (date) {
+          return formatDate(date);
+        }
+      },
+
+      _scrollToCurrentMonth: function() {
+        if (this.focusedDate) {
+          this.focusedDate = new Date();
+        }
+
+        this.scrollToDate(new Date(), true);
+
+        // focus for keyboard navigation.
+        this.focus();
+      },
+
+      _showClear: function(selectedDate) {
+        return selectedDate !== null;
+      },
+
+      _onYearTap: function(e) {
+        var scrollDelta = e.detail.y - (this.$.yearScroller.getBoundingClientRect().top + this.$.yearScroller.clientHeight / 2);
+        var yearDelta = scrollDelta / this.$.yearScroller.itemHeight;
+        this._scrollToPosition(this.$.scroller.position + yearDelta * 12, true);
+      },
+
+      _scrollToPosition: function(targetPosition, animate) {
+        if (this._targetPosition !== undefined) {
+          this._targetPosition = targetPosition;
+          return;
+        }
+
+        if (!animate) {
+          this.$.scroller.position = targetPosition;
+          this._targetPosition = undefined;
+          this._onMonthScroll();
+          return;
+        }
+
+        this._targetPosition = targetPosition;
+
+        // http://gizma.com/easing/
+        var easingFunction = function(t, b, c, d) {
+          t /= d / 2;
+          if (t < 1) {
+            return c / 2 * t * t + b;
+          }
+          t--;
+          return -c / 2 * (t * (t - 2) - 1) + b;
+        };
+
+        var duration = animate ? 300 : 0;
+        var start = 0;
+        var initialPosition = this.$.scroller.position;
+
+        var smoothScroll = function(timestamp) {
+          start = start || timestamp;
+          var currentTime = timestamp - start;
+
+          if (currentTime < duration) {
+            var currentPos = easingFunction(currentTime, initialPosition, this._targetPosition - initialPosition, duration);
+            this.$.scroller.position = currentPos;
+            window.requestAnimationFrame(smoothScroll);
+          } else {
+            this.fire('scroll-animation-finished', {
+              position: this._targetPosition,
+              oldPosition: initialPosition
+            });
+            this.$.scroller.position = this._targetPosition;
+            this._targetPosition = undefined;
+          }
+
+          this.async(this._onMonthScroll, 1);
+        }.bind(this);
+
+        // Start the animation.
+        window.requestAnimationFrame(smoothScroll);
+      },
+
+      _track: function(e) {
+        if (this._desktopMode) {
+          // No need to track for swipe gestures on desktop.
+          return;
+        }
+
+        switch (e.detail.state) {
+          case 'start':
+            this.toggleClass('animate', false);
+            break;
+          case 'track':
+            var newTranslateX = this._translateX + e.detail.dx / this._yearScrollerWidth * 5;
+            if (newTranslateX > this._yearScrollerWidth) {
+              this._closeYearScroller();
+            } else if (newTranslateX < 0) {
+              this._openYearScroller();
+            } else {
+              this._translateX = newTranslateX;
+            }
+            break;
+          case 'end':
+            this.toggleClass('animate', true);
+            if (this._translateX >= this._yearScrollerWidth / 2) {
+              this._closeYearScroller();
+            } else {
+              this._openYearScroller();
+            }
+            break;
+        }
+      },
+
+      _toggleYearScroller: function() {
+        this._isYearScrollerVisible() ? this._closeYearScroller() : this._openYearScroller();
+      },
+
+      _openYearScroller: function() {
+        this._translateX = 0;
+      },
+
+      _closeYearScroller: function() {
+        this._translateX = this._yearScrollerWidth;
+      },
+
+      _isYearScrollerVisible: function() {
+        return this._translateX < this._yearScrollerWidth / 2;
+      },
+
+      _translateXChanged: function(x) {
+        if (!this._desktopMode) {
+          this.transform('translateX(' + (x - this._yearScrollerWidth) + 'px)', this.$.scroller);
+          this.transform('translateX(' + x + 'px)', this.$.yearScroller);
+          this.transform('translateX(' + -x + 'px)', this.$.fade);
+        }
+      },
+
+      _yearAfterXYears: function(index) {
+        var result = new Date(this._originDate);
+        result.setFullYear(parseInt(index) + this._originDate.getFullYear());
+        return result.getFullYear();
+      },
+
+      _yearAfterXMonths: function(months) {
+        return this._dateAfterXMonths(months).getFullYear();
+      },
+
+      _dateAfterXMonths: function(months) {
+        var result = new Date(this._originDate);
+        result.setDate(1);
+        result.setMonth(parseInt(months) + this._originDate.getMonth());
+        return result;
+      },
+
+      _differenceInMonths: function(date1, date2) {
+        var months = (date1.getFullYear() - date2.getFullYear()) * 12;
+        return months - date2.getMonth() + date1.getMonth();
+      },
+
+      _differenceInYears: function(date1, date2) {
+        return this._differenceInMonths(date1, date2) / 12;
+      },
+
+      _clear: function() {
+        this.selectedDate = '';
+        this._close();
+      },
+
+      _close: function() {
+        this.fire('close');
+      },
+
+      _preventDefault: function(e) {
+        e.preventDefault();
+      },
+
+      /**
+       * Keyboard Navigation
+       */
+      _eventKey: function(e) {
+        var keys = ['down', 'up', 'right', 'left', 'enter', 'space', 'home', 'end', 'pageup', 'pagedown'];
+
+        for (var i = 0; i < keys.length; i++) {
+          var k = keys[i];
+          if (Polymer.IronA11yKeysBehavior.keyboardEventMatchesKeys(e, k)) {
+            return k;
+          }
+        }
+      },
+
+      _onKeydown: function(e) {
+        var focus = this._currentlyFocusedDate();
+
+        var eventKey = this._eventKey(e);
+        if (eventKey) {
+          e.preventDefault();
+
+          switch (eventKey) {
+            case 'down':
+              this._moveFocusByDays(7);
+              break;
+            case 'up':
+              this._moveFocusByDays(-7);
+              break;
+            case 'right':
+              this._moveFocusByDays(1);
+              break;
+            case 'left':
+              this._moveFocusByDays(-1);
+              break;
+            case 'enter':
+              if (this.focusedDate) {
+                this.selectedDate = this.focusedDate;
+              }
+              this._close();
+              break;
+            case 'space':
+              if (this._dateEquals(this.focusedDate, this.selectedDate)) {
+                this.selectedDate = '';
+              } else {
+                this.selectedDate = this.focusedDate;
+              }
+              break;
+            case 'home':
+              this.focusedDate = new Date(focus.getFullYear(), focus.getMonth(), 1);
+              break;
+            case 'end':
+              this.focusedDate = new Date(focus.getFullYear(), focus.getMonth() + 1, 0);
+              break;
+            case 'pagedown':
+              this._moveFocusByMonths(e.shiftKey ? 12 : 1);
+              break;
+            case 'pageup':
+              this._moveFocusByMonths(e.shiftKey ? -12 : -1);
+              break;
+          }
+        }
+      },
+
+      _dateEquals: function(date1, date2) {
+        if (date1 && date2) {
+          return date1.getFullYear() === date2.getFullYear() &&
+            date1.getMonth() === date2.getMonth() &&
+            date1.getDate() === date2.getDate();
+        } else {
+          return false;
+        }
+      },
+
+      _currentlyFocusedDate: function() {
+        return this.focusedDate || this.selectedDate || this.initialPosition || new Date();
+      },
+
+      _moveFocusByDays: function(days) {
+        var focus = this._currentlyFocusedDate();
+
+        this.focusedDate = new Date(focus.getFullYear(), focus.getMonth(), focus.getDate() + days);
+        this._focusedMonthDate = this.focusedDate.getDate();
+      },
+
+      _moveFocusByMonths: function(months) {
+        var focus = this._currentlyFocusedDate();
+        var dateToFocus = new Date(focus.getFullYear(), focus.getMonth() + months, 1);
+        var targetMonth = dateToFocus.getMonth();
+
+        dateToFocus.setDate(this._focusedMonthDate || (this._focusedMonthDate = focus.getDate()));
+        if (dateToFocus.getMonth() !== targetMonth) {
+          dateToFocus.setDate(0);
+        }
+        this.focusedDate = dateToFocus;
+      }
+    });
+  </script>
+</dom-module>

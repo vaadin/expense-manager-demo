@@ -1,0 +1,556 @@
+<!--
+@license
+Copyright (c) 2016 Vaadin Ltd.
+This program is available under Apache License Version 2.0, available at https://vaadin.com/license/
+-->
+
+<!--
+`<vaadin-date-picker>` is a date selection field which includes a scrollable
+month calendar view.
+```html
+<vaadin-date-picker label="Birthday"></vaadin-date-picker>
+```
+```js
+datePicker.value = '2016-03-02';
+```
+When the selected `value` is changed, a `value-changed` event is triggered.
+
+This element is also extended with the `IronFormElementBehavior` to
+enable usage within an `iron-form`.
+
+### Styling
+The following custom properties and mixins are available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--vaadin-date-picker-overlay` | Mixin applied to the overlay | `{}`
+`--vaadin-date-picker-yearscroller` | Mixin applied to the year scroller | `{}`
+`--vaadin-date-picker-yearscroller-indicator` | Mixin applied to the year scroller indicator | `{}`
+`--vaadin-date-picker-calendar-icon` | Mixin applied to the calendar icon | `{}`
+`--vaadin-date-picker-clear-icon` | Mixin applied to the clear icon | `{}`
+`--vaadin-date-picker-scrollers-fade` | Mixin applied to the scrollers fade element | `{}`
+`--vaadin-date-picker-header` | Mixin applied to the picker header | `{}`
+`--vaadin-date-picker-toolbar` | Mixin applied to the picker toolbar | `{}`
+`--vaadin-date-picker-toolbar-icon` | Mixin applied to the picker toolbar icon | `{}`
+`--vaadin-date-picker-footer` | Mixin applied to the picker footer | `{}`
+`--vaadin-date-picker-calendar` | Mixin applied to a month calendar element | `{}`
+`--vaadin-date-picker-calendar-title` | Mixin applied to a month calendar title | `{}`
+`--vaadin-date-picker-calendar-cell` | Mixin applied to a month calendar cell | `{}`
+`--vaadin-date-picker-calendar-date-cell` | Mixin applied to a month calendar date cell | `{}`
+`--vaadin-date-picker-calendar-weekday-cell` | Mixin applied to a month calendar weekday cell | `{}`
+`--vaadin-date-picker-calendar-cell-today` | Mixin applied to a month calendar today cell | `{}`
+`--vaadin-date-picker-calendar-cell-selected` | Mixin applied to a month calendar selected cell | `{}`
+`--vaadin-date-picker-calendar-cell-focused` | Mixin applied to a month calendar focused cell | `{}`
+`--vaadin-date-picker-calendar-cell-today-selected` | Mixin applied to a month calendar selected today cell | `{}`
+
+See paper-input-container documentation for styling the included input fields
+
+@element vaadin-date-picker
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-dropdown/iron-dropdown.html">
+<link rel="import" href="../paper-input/paper-input-container.html">
+<link rel="import" href="../iron-input/iron-input.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../paper-ripple/paper-ripple.html">
+<link rel="import" href="../iron-media-query/iron-media-query.html">
+<link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
+<link rel="import" href="../iron-validatable-behavior/iron-validatable-behavior.html">
+<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+<link rel="import" href="vaadin-date-picker-overlay.html">
+
+<dom-module id="vaadin-date-picker">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      #dropdown:not([fullscreen]) {
+        margin: 12px 0 10px 0;
+      }
+
+      #overlay {
+        height: 100vh;
+        width: 420px;
+      }
+
+      #inputcontainer {
+        padding-bottom: 0;
+      }
+
+      #inputcontainer,
+      #inputcontainer input {
+        cursor: pointer;
+      }
+
+      #inputcontainer:focus {
+        outline: none;
+      }
+
+      #inputcontainer:not([hideclear]) #input {
+        margin-right: -24px;
+        display: block;
+      }
+
+      paper-input-container div[suffix] {
+        position: relative;
+        width: 24px;
+        height: 24px;
+        text-align: center;
+      }
+
+      paper-input-container iron-icon {
+        fill: rgba(0, 0, 0, .26);
+        cursor: pointer;
+        --iron-icon-width: 20px;
+        --iron-icon-height: 20px;
+        margin-top: -1px;
+        transition: fill 0.2s;
+      }
+
+      paper-input-container paper-ripple {
+        color: rgba(0, 0, 0, .54);
+      }
+
+      paper-input-container[opened] {
+        --paper-input-container-underline-focus: {
+          -webkit-transform: none;
+          transform: none;
+        }
+      }
+
+      paper-input-container iron-icon:hover,
+      paper-input-container[opened] iron-icon {
+        fill: rgba(0, 0, 0, .54);
+      }
+
+      paper-input-container[opened] iron-icon:hover {
+        fill: rgba(0, 0, 0, .86);
+      }
+
+      #input {
+        pointer-events: none;
+      }
+
+      #clear {
+        right: 4px;
+      }
+
+      #clear iron-icon {
+        @apply(--vaadin-date-picker-clear-icon);
+      }
+
+      #calendar iron-icon {
+        @apply(--vaadin-date-picker-calendar-icon);
+      }
+
+      [hideclear] #clear {
+        display: none;
+      }
+    </style>
+
+    <paper-input-container id="inputcontainer" hideclear$="[[_hideClearIcon(_selectedDate, _opened, _fullscreen)]]" tabindex$="[[_getTabIndex(disabled, readonly)]]" on-touchend="_preventDefault" on-tap="open" on-keydown="_onKeydown" disabled$="[[disabled]]" opened$="[[_opened]]" auto-validate$="[[autoValidate]]">
+      <label id="label">[[label]]</label>
+      <input id="input" is="iron-input" autocomplete="off" bind-value="[[_formatDisplayed(_selectedDate, i18n.formatDate)]]" type="text" invalid="[[invalid]]" name$="[[name]]" required$="[[required]]" tabindex="-1" on-focus="_focusInputContainer" validator="[[validator]]" readonly$="[[readonly]]" disabled$="[[disabled]]">
+
+      <div suffix id="clear" on-tap="_clear">
+        <iron-icon icon="clear"></iron-icon>
+        <paper-ripple class="circle" center></paper-ripple>
+      </div>
+
+      <div suffix id="calendar" on-tap="_toggle" hidden$="[[_hideCalendarIcon(disabled, readonly)]]">
+        <iron-icon icon="event"></iron-icon>
+        <paper-ripple class="circle" center></paper-ripple>
+      </div>
+    </paper-input-container>
+
+    <iron-dropdown id="dropdown" fullscreen$=[[_fullscreen]] allow-outside-scroll on-iron-overlay-opened="_onOverlayOpened" on-iron-overlay-closed="_onOverlayClosed" on-iron-overlay-canceled="_preventCancelOnInputContainerTap" opened="{{_opened}}">
+      <vaadin-date-picker-overlay id="overlay" i18n="[[i18n]]" fullscreen$=[[_fullscreen]] label=[[label]] on-date-tap="close" selected-date="{{_selectedDate}}" class="dropdown-content" on-close="close" focused-date="[[focusedDate]]" tabindex="-1"></vaadin-date-picker-overlay>
+    </iron-dropdown>
+
+    <iron-media-query query="[[_fullscreenMediaQuery]]" query-matches="{{_fullscreen}}"></iron-media-query>
+  </template>
+  <script>
+    Polymer({
+      is: 'vaadin-date-picker',
+
+      behaviors: [
+        Polymer.IronFormElementBehavior,
+        Polymer.IronValidatableBehavior
+      ],
+
+      properties: {
+
+        /**
+         * The current selected date.
+         */
+        _selectedDate: {
+          type: Date,
+          notify: true,
+          observer: '_selectedDateChanged'
+        },
+
+        /**
+         * The value for this element.
+         *
+         * Supported date formats:
+         * - ISO 8601 `"YYYY-MM-DD"` (default)
+         * - 6-digit extended ISO 8601 `"+YYYYYY-MM-DD"`, `"-YYYYYY-MM-DD"`
+         *
+         * @type {String}
+         */
+        value: {
+          type: String,
+          value: '',
+          observer: '_valueChanged'
+        },
+
+        /**
+         * Date which should be visible when there is no value selected.
+         *
+         * The same date formats as for the `value` property are supported.
+         */
+        initialPosition: String,
+
+        /**
+         * The label for this element.
+         */
+        label: String,
+
+        _opened: Boolean,
+
+        _fullscreen: {
+          value: false,
+          observer: '_fullscreenChanged'
+        },
+
+        _fullscreenMediaQuery: {
+          value: '(max-width: 420px), (max-height: 420px)'
+        },
+
+        // An array of ancestor elements whose -webkit-overflow-scrolling is forced from value
+        // 'touch' to value 'auto' in order to prevent them from clipping the dropdown. iOS only.
+        _touchPrevented: Array,
+
+        /**
+         * The object used to localize this component.
+         * To change the default localization, replace the entire
+         * _i18n_ object or just the property you want to modify.
+         *
+         * The object has the following JSON structure and default values:
+
+      {
+        // An array with the full names of months starting
+        // with January.
+        monthNames: [
+          'January', 'February', 'March', 'April', 'May',
+          'June', 'July', 'August', 'September',
+          'October', 'November', 'December'
+        ],
+
+        // An array with the short names of days starting
+        // with Sunday.
+        weekdaysShort: [
+          'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
+        ],
+
+        // An integer indicating the first day of the week
+        // (0 = Sunday, 1 = Monday, etc.).
+        firstDayOfWeek: 0,
+
+        // Translation of the Today shortcut button text.
+        today: 'Today',
+
+        // Translation of the Cancel button text.
+        cancel: 'Cancel',
+
+        // A function to format given `Date` object as
+        // string.
+        formatDate: function(d) {
+          // returns a string representation of the given
+          // Date object in 'MM/DD/YYYY' -format
+        }
+      }
+
+         *
+         * @default {English/US}
+         */
+        i18n: {
+          type: Object,
+          value: function() {
+            return {
+              monthNames: [
+                'January', 'February', 'March', 'April', 'May',
+                'June', 'July', 'August', 'September', 'October', 'November', 'December'
+              ],
+              weekdaysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+              firstDayOfWeek: 0,
+              today: 'Today',
+              cancel: 'Cancel',
+              formatDate: function(d) {
+                return (d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear();
+              }
+            };
+          }
+        },
+
+        /**
+         * Set to true to disable this element.
+         */
+        disabled: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * Set to true to make this element read-only.
+         */
+        readonly: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      created: function() {
+        this._boundOnScroll = this._onScroll.bind(this);
+      },
+
+      /**
+       * Opens the dropdown.
+       */
+      open: function(e) {
+        this._updateAlignmentAndPosition();
+        // Prevent dropdown.open() being called when input is disabled or read-only
+        if (!this.disabled && !this.readonly) {
+          this.$.dropdown.open();
+        }
+      },
+
+      /**
+       * Closes the dropdown.
+       */
+      close: function() {
+        this.$.dropdown.close();
+      },
+
+      _parseDate: function(str) {
+        // Parsing with RegExp to ensure correct format
+        var parts = /^(\d{4}|[-+]\d{6})-(\d{2})-(\d{2})$/.exec(str);
+        if (!parts) {
+          return;
+        }
+
+        var date = new Date(0, 0); // Wrong date (1900-01-01), but with midnight in local time
+        date.setFullYear(parseInt(parts[1], 10));
+        date.setMonth(parseInt(parts[2], 10) - 1);
+        date.setDate(parseInt(parts[3], 10));
+        return date;
+      },
+
+      _formatISO: function(date) {
+        return date instanceof Date ?
+          (new Date(date.getTime() - date.getTimezoneOffset() * 60000)).toISOString().split('T')[0] :
+          '';
+      },
+
+      _formatDisplayed: function(date, formatDate) {
+        if (date) {
+          return formatDate(date);
+        }
+      },
+
+      _selectedDateChanged: function(selectedDate) {
+        this.value = this._formatISO(selectedDate);
+      },
+
+      _valueChanged: function(value, oldValue) {
+        if (!value) {
+          this._selectedDate = null;
+          return;
+        }
+
+        var date = this._parseDate(value);
+        if (!date) {
+          this.value = oldValue;
+          return;
+        }
+        if (!(this._selectedDate instanceof Date) ||
+          date.getFullYear() !== this._selectedDate.getFullYear() ||
+          date.getMonth() !== this._selectedDate.getMonth() ||
+          date.getDate() !== this._selectedDate.getDate()) {
+          this._selectedDate = date;
+        }
+      },
+
+      _updateAlignmentAndPosition: function() {
+        var viewportWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+        this.$.dropdown.verticalOffset = this._fullscreen ? 0 : this.clientHeight - 10;
+        this.$.dropdown.positionTarget = this._fullscreen ? document.documentElement : this;
+
+        var viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+        var bottomAlign = this.getBoundingClientRect().top > viewportHeight / 2;
+        var rightAlign = this.getBoundingClientRect().left + this.clientWidth / 2 > viewportWidth / 2;
+        this.$.dropdown.verticalAlign = bottomAlign ? 'bottom' : 'top';
+        this.$.dropdown.horizontalAlign = rightAlign ? 'right' : 'left';
+
+        this.$.dropdown.refit();
+      },
+
+      _fullscreenChanged: function() {
+        if (this.$.dropdown.opened) {
+          this._updateAlignmentAndPosition();
+        }
+      },
+
+      _onOverlayOpened: function() {
+        this.$.overlay.initialPosition = this._selectedDate ||
+          this.$.overlay.initialPosition || this._parseDate(this.initialPosition) || new Date();
+        this.$.overlay.scrollToDate(this.$.overlay.focusedDate || this.$.overlay.initialPosition);
+
+        window.addEventListener('scroll', this._boundOnScroll, true);
+
+        // Checking if the browser supports webkitOverflowScrolling
+        if (document.createElement('div').style.webkitOverflowScrolling === '') {
+          this._touchPrevented = this._preventWebkitOverflowScrollingTouch(this.parentElement);
+        }
+
+        // focus to enable keyboard navigation
+        this.$.overlay.focus();
+
+        this.updateStyles();
+      },
+
+      // A hack needed for iOS to prevent dropdown from being clipped in an
+      // ancestor container with -webkit-overflow-scrolling: touch;
+      _preventWebkitOverflowScrollingTouch: function(element) {
+        var result = [];
+        while (element) {
+          if (window.getComputedStyle(element).webkitOverflowScrolling === 'touch') {
+            var oldInlineValue = element.style.webkitOverflowScrolling;
+            element.style.webkitOverflowScrolling = 'auto';
+            result.push({
+              element: element,
+              oldInlineValue: oldInlineValue
+            });
+          }
+          element = element.parentElement;
+        }
+        return result;
+      },
+
+      _onOverlayClosed: function() {
+        window.removeEventListener('scroll', this._boundOnScroll, true);
+
+        this.$.inputcontainer.focus();
+
+        if (this._touchPrevented) {
+          this._touchPrevented.forEach(function(prevented) {
+            prevented.element.style.webkitOverflowScrolling = prevented.oldInlineValue;
+          });
+          this._touchPrevented = [];
+        }
+
+        this.updateStyles();
+      },
+
+      detached: function() {
+        this._onOverlayClosed();
+      },
+
+      _onScroll: function(e) {
+        if (e.target === window || !this.$.overlay.contains(e.target)) {
+          this.$.dropdown.style.bottom = 'auto';
+          this.$.dropdown.resetFit();
+          this._updateAlignmentAndPosition();
+          this.$.dropdown.fire('iron-resize');
+        }
+      },
+
+      _toggle: function(e) {
+        e.stopPropagation();
+        this[this.$.dropdown.opened ? 'close' : 'open']();
+      },
+
+      _preventCancelOnInputContainerTap: function(e) {
+        if (e.detail.type === 'tap' && e.detail.path && e.detail.path.indexOf(this.$.inputcontainer) > -1) {
+          e.preventDefault();
+        }
+      },
+
+      _hideClearIcon: function(selectedDate, opened, fullscreen) {
+        return !selectedDate || !opened || fullscreen;
+      },
+
+      _hideCalendarIcon: function(disabled, readonly) {
+        return readonly || disabled;
+      },
+
+      _clear: function(e) {
+        e.stopPropagation();
+        this.value = '';
+        this.close();
+      },
+
+      /**
+       * Validates the input element and sets an error style if needed.
+       *
+       * @return {boolean}
+       */
+      _getValidity: function() {
+        return this.$.input.validate();
+      },
+
+      _focusInputContainer: function() {
+        this.$.inputcontainer.focus();
+      },
+
+      _preventDefault: function(e) {
+        e.preventDefault();
+      },
+
+      /**
+       * Keyboard Navigation
+       */
+      _eventKey: function(e) {
+        var keys = ['down', 'up'];
+
+        for (var i = 0; i < keys.length; i++) {
+          var k = keys[i];
+          if (Polymer.IronA11yKeysBehavior.keyboardEventMatchesKeys(e, k)) {
+            return k;
+          }
+        }
+      },
+
+      _onKeydown: function(e) {
+        switch (this._eventKey(e)) {
+          case 'down':
+          case 'up':
+            // prevent scrolling the page with arrows
+            e.preventDefault();
+
+            if (!this._opened) {
+              this.open();
+            }
+            break;
+        }
+      },
+
+      _getTabIndex: function(disabled, readonly) {
+        // tabindex 0 is default. tabindex -1 means that focusing with tab is not allowed.
+        return disabled || readonly ? -1 : 0;
+      }
+    });
+
+    /**
+     * Fired when the value changes.
+     *
+     * @event value-changed
+     * @param {Object} detail
+     *  @param {String} detail.value the date value or an empty `String`.
+     */
+  </script>
+</dom-module>

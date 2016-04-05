@@ -1,0 +1,244 @@
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/iron-icons/notification-icons.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/neon-animation/neon-shared-element-animatable-behavior.html">
+<link rel="import" href="../bower_components/neon-animation/animations/hero-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="expense-editor.html">
+<link rel="import" href="about-dialog.html">
+<link rel="import" href="content-panel.html">
+<link rel="import" href="filters-toolbar.html">
+<link rel="import" href="../scripts/moment-js.html">
+<link rel="import" href="pouch-db.html">
+
+<dom-module id="overview-page">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      
+      paper-toolbar {
+        background: var(--dark-primary-color);
+      }
+      
+      paper-toolbar h1 {
+        font-weight: 300;
+      }
+      
+      paper-toolbar .logo {
+        color: var(--default-primary-color);
+        margin-left: 16px;
+      }
+      
+      .flex {
+        flex: 1;
+      }
+      
+      .content {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      #content-panel {
+        flex: 1;
+      }
+      
+      #sync {
+        margin-left: 8px;
+      }
+      
+      #sync[hidden] {
+        display: none;
+      }
+      
+      .logout-button,
+      .about-button {
+        font-size: 14px;
+        color: var(--default-primary-color);
+      }
+      
+      @media (max-width: 600px) {
+        paper-toolbar h1 {
+          font-size: 1.1em;
+        }
+      }
+    </style>
+    <!-- <pouch-db db-name="demo2" data="{{expenses}}" location="http://localhost:5984" paused="{{paused}}" id="db" attachments="{{attachments}}"></pouch-db> -->
+    <pouch-db db-name="demo" data="{{expenses}}" location="https://vaadin-expense-manager.cloudant.com" paused="{{paused}}" id="db" attachments="{{attachments}}"></pouch-db>
+
+    <paper-header-panel>
+      <paper-toolbar>
+        <h1>Expense Manager</h1>
+        <iron-icon id="logo" class="logo" src="../images/app-icon.svg"></iron-icon>
+
+        <iron-icon id="sync" icon="notification:sync" hidden$="[[paused]]"></iron-icon>
+
+        <span class="flex"></span>
+
+        <paper-button on-tap="_showAbout" class="about-button">Info</paper-button>
+        <paper-button on-tap="_logout" class="logout-button">Logout</paper-button>
+      </paper-toolbar>
+
+      <div class="content">
+        <filters-toolbar id="filters-toolbar" filters="{{filters}}" expenses="[[expenses]]"></filters-toolbar>
+        <content-panel id="content-panel" filters="{{filters}}" expenses="[[expenses]]"></content-panel>
+      </div>
+
+    </paper-header-panel>
+
+    <expense-editor id="expenseEditor" attachments="[[attachments]]"></expense-editor>
+    <paper-toast id="saveNotification"></paper-toast>
+    <about-dialog id="about"></about-dialog>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+      Polymer({
+        is: 'overview-page',
+
+        properties: {
+          token: {
+            type: String,
+            notify: true
+          },
+          paused: Boolean,
+          expenses: Array,
+          dbLocation: String,
+          attachments: Object,
+          init: {
+            type: Object,
+            value: function() {
+              return function() {
+
+                var date = moment();
+                var expenses = [];
+                for (var i = 0; i < 100; i++) {
+                  date = date.subtract(Math.floor(Math.random() * 168) + 1, 'hours');
+                  var status = 'new';
+                  if (i > 10) {
+                    status = 'reimbursed';
+                  } else if (i > 5) {
+                    status = 'in_progress';
+                  }
+                  expenses.push({
+                    _id: date.toJSON(),
+                    user: 'demo',
+                    date: date.format('YYYY-MM-DD'),
+                    merchant: [
+                        'Office supplies', 'Electronics', 'Rental car', 'Airline',
+                        'Hotel', 'Restaurant', 'Taxi', 'Ride sharing', 'Fast food',
+                        'Parking', 'Breakfast', 'Shuttle'
+                      ]
+                      [Math.floor(Math.random() * 12)],
+                    total: Math.random() * (Math.random() * 3) * 300 + 10,
+                    status: status,
+                    comment: 'Expense from my business trip.'
+                  });
+                }
+                return expenses;
+              };
+            }
+          },
+
+          filters: {
+            type: Object,
+            value: function() {
+              return {
+                start: '',
+                end: '',
+                merchant: ''
+              };
+            },
+
+            notify: true
+          },
+          animationConfig: {
+            value: function() {
+              return {
+                'entry': [{
+                  name: 'fade-in-animation',
+                  node: this
+                }, {
+                  name: 'hero-animation',
+                  id: 'hero',
+                  toPage: this
+                }],
+                'exit': {
+                  name: 'fade-out-animation',
+                  node: this
+                }
+              };
+            }
+          },
+
+          sharedElements: {
+            value: function() {
+              return {
+                'hero': this.$.logo
+              };
+            }
+          }
+        },
+
+        listeners: {
+          'edit-expense': '_editExpense',
+          'expenses-updated': '_expensesUpdated',
+          'expense-saved': '_saveExpense',
+          'delete-expense': '_deleteExpense'
+        },
+
+        behaviors: [Polymer.NeonSharedElementAnimatableBehavior],
+
+        _editExpense: function(evt) {
+          var editor = this.$.expenseEditor;
+          editor.open(evt.detail);
+        },
+
+        _saveExpense: function(evt) {
+          var expense = evt.detail;
+          if (!expense.status) {
+            expense.status = 'new';
+          }
+
+          this.$.db.save(expense);
+          this.fire('expenses-updated');
+        },
+        _deleteExpense: function(evt) {
+          var expense = evt.detail;
+          this.$.db.remove(expense);
+          this.fire('expenses-updated', {
+            reason: 'deleted'
+          });
+        },
+        _expensesUpdated: function(evt) {
+          this.$.expenseEditor.close();
+          if (evt.detail.reason === 'deleted') {
+            this.$.saveNotification.text = 'Expense was deleted';
+          } else {
+            this.$.saveNotification.text = 'Expense was saved';
+          }
+          this.$.saveNotification.show();
+        },
+
+        _logout: function() {
+          this.token = '';
+        },
+
+        _showAbout: function() {
+          this.$.about.open();
+        }
+      });
+    })();
+  </script>
+</dom-module>

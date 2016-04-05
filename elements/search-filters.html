@@ -1,0 +1,152 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
+
+
+<dom-module id="search-filters">
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 0 16px;
+      }
+
+      .col,
+      .date vaadin-date-picker,
+      .total paper-input {
+        display: inline-block;
+        width: 49%;
+      }
+
+      .col {
+        box-sizing: border-box;
+      }
+
+      .row {
+        margin-bottom: 16px;
+      }
+
+      .filters {
+        padding-bottom: 16px;
+      }
+
+      .status .caption {
+        font-weight: 500;
+      }
+
+      .checkboxes {
+        display: inline-block;
+        margin-left: 8px;
+      }
+
+      .checkboxes > paper-checkbox {
+        margin-right: 8px;
+      }
+
+      @media (max-width: 960px) {
+        .col {
+          width: 100%
+        }
+
+        .row {
+          margin-bottom: inherit;
+        }
+
+        .status {
+          margin-top: 16px;
+        }
+      }
+    </style>
+
+    <div id="content">
+      <div class="filters">
+
+        <div class="row">
+          <div class="date col">
+            <vaadin-date-picker label="After" value="{{filters.start}}"></vaadin-date-picker>
+            <vaadin-date-picker label="Before" value="{{filters.end}}"></vaadin-date-picker>
+          </div>
+
+          <div class="merchants col">
+            <vaadin-combo-box label="Merchant" items="{{merchants}}" value="{{filters.merchant}}"
+                              id="merchantsSelect"></vaadin-combo-box>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="total col">
+            <paper-input label="Min ($)" value="{{filters.min}}" pattern="\d+" auto-validate
+                         error-message="Only numbers"></paper-input>
+            <paper-input label="Max ($)" value="{{filters.max}}" pattern="\d+" auto-validate
+                         error-message="Only numbers"></paper-input>
+          </div>
+
+          <div class="status col">
+            <span class="caption">Status</span>
+
+            <div class="checkboxes">
+              <paper-checkbox on-change="_updateStatus" name="new">New</paper-checkbox>
+              <paper-checkbox on-change="_updateStatus" name="in_progress">In progress
+              </paper-checkbox>
+              <paper-checkbox on-change="_updateStatus" name="reimbursed">Reimbursed
+              </paper-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'search-filters',
+
+        properties: {
+          filters: {
+            type: Object,
+            notify: true
+          },
+          merchants: {
+            type: Array,
+            observer: '_merchantsChanged'
+          }
+        },
+
+        _merchantsChanged: function(merchants) {
+          this.$.merchantsSelect.items = merchants;
+        },
+
+        _updateStatus: function(evt) {
+          var checkbox = evt.target;
+
+          if (checkbox.checked) {
+            this._addStatus(checkbox.name);
+          } else {
+            this._removeStatus(checkbox.name);
+          }
+        },
+
+        _addStatus: function(status) {
+          var statuses = this.filters.status;
+          if (statuses && statuses.indexOf(status) < 0) {
+            this.push('filters.status', status);
+          } else {
+            this.set('filters.status', [status]);
+          }
+        },
+
+        _removeStatus: function(status) {
+          var statusIndex = this.filters.status.indexOf(status);
+          if (this.filters.status && statusIndex >= 0) {
+            this.splice('filters.status', statusIndex, 1);
+          }
+        }
+      });
+    })();
+  </script>
+</dom-module>

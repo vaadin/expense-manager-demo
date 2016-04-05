@@ -1,0 +1,18 @@
+{
+   "startDate":"2015-02-02 11:17:09",
+   "expires":"2016-02-02 11:17:09",
+   "licenseKey":"12345678-1234-abcd-1234-12345678trial",
+   "email":"john.doe@email.com",
+   "licensee":"John Doe",
+   "licenseName":"cval3",
+   "product":{
+      "name":"some-product",
+      "version":2
+   },
+   "inUse":true,
+   "nonProfit":false,
+   "type":"evaluation",
+   "message":"Evaluation license for Vaadin some-product 2 is valid until 2016-02-02. Purchase licenses at vaadin.com/pro",
+   "expiredEpoch":1454411829000,
+   "expired":false
+}
