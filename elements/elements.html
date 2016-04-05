@@ -35862,7 +35862,7 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
 
       attached: function() {
         this._localDB = new PouchDB(this.dbName, {
-          size: 500
+          size: 50
         });
         this.fire('db-initialized');
         if (this.location) {

@@ -46,7 +46,7 @@
 
       attached: function() {
         this._localDB = new PouchDB(this.dbName, {
-          size: 500
+          size: 50
         });
         this.fire('db-initialized');
         if (this.location) {
