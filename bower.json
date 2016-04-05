@@ -17,7 +17,8 @@
     "offline": "~0.7.14",
     "vaadin-date-picker": "^1.0.0-alpha6",
     "pouchdb": "^5.3.1",
-    "vaadin-upload": "^1.0.0-beta1"
+    "vaadin-upload": "^1.0.0-beta1",
+    "platinum-https-redirect": "PolymerElements/platinum-https-redirect#^1.0.2"
   },
   "devDependencies": {
     "web-component-tester": "*",

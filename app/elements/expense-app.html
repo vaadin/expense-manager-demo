@@ -3,8 +3,6 @@
 <link rel="import" href="../bower_components/neon-animation/neon-animated-pages.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
-<link rel="import" href="../bower_components/platinum-sw/platinum-sw-cache.html">
-<link rel="import" href="../bower_components/platinum-sw/platinum-sw-register.html">
 <link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
 <link rel="import" href="overview-page.html">
 <link rel="import" href="login-page.html">
@@ -15,7 +13,7 @@
       :host {
         display: block;
       }
-
+      
       #pages {
         position: absolute;
         top: 0;
@@ -30,11 +28,6 @@
       <overview-page id="overview" token="{{token}}"></overview-page>
     </neon-animated-pages>
     <iron-localstorage name="token" value="{{token}}"></iron-localstorage>
-
-    <platinum-sw-register auto-register clients-claim skip-waiting on-service-worker-installed="_cachingComplete">
-      <platinum-sw-cache default-cache-strategy="networkFirst" cache-config-file="cache-config.json">
-      </platinum-sw-cache>
-    </platinum-sw-register>
 
   </template>
 

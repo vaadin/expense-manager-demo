@@ -15,26 +15,29 @@
       is: 'pouch-db',
       properties: {
         dbName: String,
-        remoteURL: String,
+        location: String,
         data: {
           type: Array,
           notify: true
         },
         paused: {
           type: Boolean,
-          value: false,
           notify: true
         },
         attachments: {
           type: Object,
           notify: true
         },
+        /**
+         * Function that will get run on an empty DB to initialize it.
+         */
+        init: Object,
         _localDB: Object,
         _remoteDB: Object,
         _syncHandler: Object
       },
 
-      ready: function(){
+      ready: function() {
         this.attachments = {
           getAttachment: this._getAttachment.bind(this)
         };
@@ -42,32 +45,35 @@
       },
 
       attached: function() {
-        this._localDB = new PouchDB(this.dbName);
-        if (this._remoteURL) {
+        this._localDB = new PouchDB(this.dbName, {
+          size: 500
+        });
+        this.fire('db-initialized');
+        if (this.location) {
           this._setupSync();
         }
 
         this._update();
-        this.fire('db-initialized');
       },
 
       _setupSync: function() {
         var _this = this;
-        this._remoteDB = new PouchDB(this.remoteURL + '/' + this.dbName);
+        this._remoteDB = new PouchDB(this.location + '/' + this.dbName);
 
         this._syncHandler = this._localDB.sync(this._remoteDB, {
           live: true,
           retry: true
         }).on('change', function(change) {
           console.log(change);
-        }).on('paused', function(info) {
+          _this._update();
+        }).on('paused', function() {
           _this.paused = true;
-          _this._showNotification('Sync paused');
-          console.log(info);
-        }).on('active', function(info) {
+          _this.fire('sync-complete');
+          console.log('Sync paused');
+        }).on('active', function() {
           _this.paused = false;
-          _this._showNotification('Sync active');
-          console.log(info);
+          _this.fire('sync-started');
+          console.log('Sync active');
         }).on('error', function(err) {
           console.log(err);
         });
@@ -85,7 +91,7 @@
 
       save: function(doc) {
         var _this = this;
-        if(!doc._id){
+        if (!doc._id) {
           doc._id = new Date().toJSON();
         }
 
@@ -96,16 +102,17 @@
             }
             return _this.localDB.put(doc);
           }).then(function() {
-          _this._update();
-        });
+            _this._update();
+          });
       },
 
       remove: function(doc) {
         var _this = this;
-        this._localDB
-          .get(doc.id)
+        var db = this._localDB;
+
+        db.get(doc._id)
           .then(function(_doc) {
-            return _this.localDB.remove(_doc);
+            return db.remove(_doc);
           }).then(function() {
             _this._update();
           })
@@ -117,8 +124,7 @@
       bulkDocs: function(docs, options) {
         var _this = this;
         this._localDB.bulkDocs(docs, options)
-          .then(function(info) {
-            console.log(info);
+          .then(function() {
             _this._update();
           })
           .catch(function(err) {
@@ -128,32 +134,41 @@
 
       destroy: function() {
         this.bulkDocs(this.data.map(function(doc) {
-            doc._deleted = true;
-            return doc;
-          }
-        ));
+          doc._deleted = true;
+          return doc;
+        }));
         this._localDB.destroy();
       },
 
-      _getAttachment: function(docId, attachmentName){
+      _getAttachment: function(docId, attachmentName) {
         return this._localDB.getAttachment(docId, attachmentName);
       },
 
       // Always updating entire array to keep demo code simple.
       // You should probably not do this in a real app (especially if you have a lot of data)
       _update: function() {
+        // TODO: Debounce
         var _this = this;
         this._localDB.allDocs({
           // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
           include_docs: true,
           descending: true
         }).then(function(result) {
-          _this.data = result.rows.map(function(row){
-            return row.doc;
-          });
+          if (result.rows && result.rows.length > 0) {
+            _this.data = result.rows.map(function(row) {
+              return row.doc;
+            });
+          } else if (_this.init && ((!_this.location) || (_this.location && _this._remoteDB))) {
+            _this.bulkDocs(_this.init());
+          }
         }).catch(function(err) {
           console.log(err);
         });
+      },
+
+      _showNotification: function(text) {
+        this.$.notification.text = text;
+        this.$.notification.show();
       }
     });
   </script>
