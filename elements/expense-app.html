@@ -41,17 +41,16 @@
           token: {
             type: String,
             notify: true,
-            value: ''
+            observer: '_selectPage'
           },
           selected: {
             type: Number,
-            notify: true,
-            computed: '_selectPage(token)'
+            notify: true
           }
         },
 
-        _selectPage: function(token) {
-          return token ? 1 : 0;
+        _selectPage: function() {
+          this.selected = this.token ? 1 : 0;
         },
 
         _cachingComplete: function() {

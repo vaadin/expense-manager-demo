@@ -207,9 +207,6 @@
 
         _saveExpense: function(evt) {
           var expense = evt.detail;
-          if (!expense.status) {
-            expense.status = 'new';
-          }
 
           this.$.db.save(expense);
           this.fire('expenses-updated');

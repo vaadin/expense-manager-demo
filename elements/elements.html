@@ -27716,7 +27716,12 @@ value. `setMax` should move the slider to the maximum value.
       
       .receipt img {
         max-width: 100%;
-        margin: 0 auto;
+        display: block;
+        margin: 20px auto;
+      }
+      
+      .receipt img[hidden] {
+        display: none;
       }
       
       paper-button[hidden] {
@@ -27784,11 +27789,11 @@ value. `setMax` should move the slider to the maximum value.
           <form is="iron-form" id="form">
             <iron-a11y-keys keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
             <paper-input name="merchant" id="merchant" value="{{expense.merchant}}" label="Merchant" required="" error-message="Merchant name required"></paper-input>
-            <paper-input name="total" id="total" value="{{expense.total}}" type="number" label="Total">
+            <paper-input name="total" id="total" value="{{expense.total}}" type="number" label="Total" required="">
               <div prefix="">$</div>
             </paper-input>
 
-            <vaadin-date-picker label="Date" value="{{expense.date}}" id="date" name="date"></vaadin-date-picker>
+            <vaadin-date-picker label="Date" value="{{expense.date}}" id="date" name="date" required=""></vaadin-date-picker>
             <paper-textarea id="comment" name="comment" label="Comment" value="{{expense.comment}}"></paper-textarea>
           </form>
         </div>
@@ -27922,6 +27927,10 @@ value. `setMax` should move the slider to the maximum value.
           }
 
           this.$.upload.files = [];
+
+          if (!expense.status) {
+            expense.status = 'new';
+          }
 
           if (expense.total) {
             this.$.total.value = expense.total.toFixed(2);
@@ -36306,9 +36315,6 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
 
         _saveExpense: function(evt) {
           var expense = evt.detail;
-          if (!expense.status) {
-            expense.status = 'new';
-          }
 
           this.$.db.save(expense);
           this.fire('expenses-updated');
@@ -36346,12 +36352,12 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
       display: flex;
       flex-direction: column;
     }
-
+    
     .login paper-input {
       width: 300px;
       max-width: 80vw;
     }
-
+    
     #login-button {
       margin-top: 20px;
       padding-left: 30px;
@@ -36359,11 +36365,11 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
       background: var(--accent-color);
       color: var(--text-primary-color);
     }
-
+    
     .error-message {
       color: red;
     }
-
+    
     .header {
       background: var(--dark-primary-color);
       height: 40%;
@@ -36373,20 +36379,20 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
       align-items: center;
       justify-content: flex-end;
     }
-
+    
     .header .logo {
       color: var(--default-primary-color);
       --iron-icon-height: 96px;
       --iron-icon-width: 96px;
     }
-
+    
     .header h1 {
       color: var(--text-primary-color);
       font-size: 60px;
       font-weight: 100;
       margin-top: 0;
     }
-
+    
     .login {
       padding-top: 30px;
       display: flex;
@@ -36394,24 +36400,24 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
       flex: 1;
       align-items: center;
     }
-
+    
     .built-with {
       font-weight: 200;
       margin-bottom: 12px;
       text-align: center;
     }
-
+    
     .built-with a {
       color: inherit;
     }
-
+    
     .fork-me {
       position: absolute;
       top: 0;
       right: 0;
       border: 0;
     }
-
+    
     @media (max-width: 600px) {
       .login,
       .header {
@@ -36421,7 +36427,7 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
         width: 100px;
       }
     }
-
+    
     @media (max-width: 500px) {
       .header h1 {
         font-size: 40px;
@@ -36503,14 +36509,12 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
         behaviors: [Polymer.NeonSharedElementAnimatableBehavior],
 
         _logIn: function() {
-          // TODO: log in
           this.token = 'token';
         }
       });
     })();
   </script>
-</dom-module>
-<dom-module id="expense-app" assetpath="/">
+</dom-module><dom-module id="expense-app" assetpath="/">
   <template>
     <style>
       :host {
@@ -36544,17 +36548,16 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
           token: {
             type: String,
             notify: true,
-            value: ''
+            observer: '_selectPage'
           },
           selected: {
             type: Number,
-            notify: true,
-            computed: '_selectPage(token)'
+            notify: true
           }
         },
 
-        _selectPage: function(token) {
-          return token ? 1 : 0;
+        _selectPage: function() {
+          this.selected = this.token ? 1 : 0;
         },
 
         _cachingComplete: function() {

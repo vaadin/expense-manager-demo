@@ -74,7 +74,12 @@
       
       .receipt img {
         max-width: 100%;
-        margin: 0 auto;
+        display: block;
+        margin: 20px auto;
+      }
+      
+      .receipt img[hidden] {
+        display: none;
       }
       
       paper-button[hidden] {
@@ -142,11 +147,11 @@
           <form is="iron-form" id="form">
             <iron-a11y-keys keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
             <paper-input name="merchant" id="merchant" value="{{expense.merchant}}" label="Merchant" required error-message="Merchant name required"></paper-input>
-            <paper-input name="total" id="total" value="{{expense.total}}" type="number" label="Total">
+            <paper-input name="total" id="total" value="{{expense.total}}" type="number" label="Total" required>
               <div prefix>$</div>
             </paper-input>
 
-            <vaadin-date-picker label="Date" value="{{expense.date}}" id="date" name="date"></vaadin-date-picker>
+            <vaadin-date-picker label="Date" value="{{expense.date}}" id="date" name="date" required></vaadin-date-picker>
             <paper-textarea id="comment" name="comment" label="Comment" value="{{expense.comment}}"></paper-textarea>
           </form>
         </div>
@@ -280,6 +285,10 @@
           }
 
           this.$.upload.files = [];
+
+          if (!expense.status) {
+            expense.status = 'new';
+          }
 
           if (expense.total) {
             this.$.total.value = expense.total.toFixed(2);
