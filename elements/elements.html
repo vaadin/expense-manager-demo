@@ -27774,6 +27774,9 @@ value. `setMax` should move the slider to the maximum value.
         #dialog {
           overflow-y: scroll;
         }
+        .receipt .receipt-wrapper {
+          max-height: inherit;
+        }
       }
       
       @media (max-width: 600px) {
@@ -36065,7 +36068,7 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
 
         if (this.init &&
           ((!this.location && newState === 'local_connected') ||
-            (this.location && newState === 'waiting' && oldState === 'remote_connected'))) {
+            (this.location && oldState === 'remote_connected' && newState === 'waiting'))) {
           this._initDB();
         }
       },
@@ -36228,7 +36231,7 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
     
     
 
-    <pouch-db db-name="demo" data="{{expenses}}" location="https://vaadin-expense-manager.cloudant.com" paused="{{paused}}" id="db" attachments="{{attachments}}"></pouch-db>
+    <pouch-db db-name="demo" data="{{expenses}}" location="https://vaadin-expense-manager.cloudant.com" paused="{{paused}}" id="db" attachments="{{attachments}}" init="[[init]]"></pouch-db>
 
     <paper-header-panel>
       <paper-toolbar>
