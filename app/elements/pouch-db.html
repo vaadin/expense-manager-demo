@@ -105,7 +105,7 @@
 
         if (this.init &&
           ((!this.location && newState === 'local_connected') ||
-            (this.location && newState === 'waiting' && oldState === 'remote_connected'))) {
+            (this.location && oldState === 'remote_connected' && newState === 'waiting'))) {
           this._initDB();
         }
       },
