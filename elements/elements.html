@@ -27667,6 +27667,7 @@ value. `setMax` should move the slider to the maximum value.
         margin: 0;
         width: 80vw;
         background: var(--primary-background-color);
+        max-height: 100vh;
         overflow: visible;
       }
       
@@ -27714,10 +27715,16 @@ value. `setMax` should move the slider to the maximum value.
         max-width: 400px;
       }
       
-      .receipt img {
+      .receipt .receipt-wrapper {
         max-width: 100%;
         display: block;
         margin: 20px auto;
+        max-height: 400px;
+        overflow-y: scroll;
+      }
+      
+      .receipt-wrapper img {
+        width: 100%;
       }
       
       .receipt img[hidden] {
@@ -27788,8 +27795,8 @@ value. `setMax` should move the slider to the maximum value.
         <div class="form">
           <form is="iron-form" id="form">
             <iron-a11y-keys keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
-            <paper-input name="merchant" id="merchant" value="{{expense.merchant}}" label="Merchant" required="" error-message="Merchant name required"></paper-input>
-            <paper-input name="total" id="total" value="{{expense.total}}" type="number" label="Total" required="">
+            <paper-input name="merchant" id="merchant" value="{{expense.merchant}}" label="Merchant" required="" error-message="Merchant name required" autofocus=""></paper-input>
+            <paper-input name="total" id="total" value="{{expense.total}}" type="number" label="Total" required="" step="any">
               <div prefix="">$</div>
             </paper-input>
 
@@ -27800,7 +27807,9 @@ value. `setMax` should move the slider to the maximum value.
         <div class="receipt">
           <vaadin-upload id="upload" accept="image/*" max-files="1" on-upload-before="_handleUpload" required="">
             <div class="file-list">
-              <img src$="[[_receiptURL]]" alt="Receipt" hidden$="[[!_showReceipt(expense._attachments.*)]]">
+              <div class="receipt-wrapper">
+                <img src$="[[_receiptURL]]" alt="Receipt" hidden$="[[!_showReceipt(expense._attachments.*)]]">
+              </div>
             </div>
           </vaadin-upload>
         </div>
@@ -35960,6 +35969,7 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
     </style>
 
     <paper-toast id="notification"></paper-toast>
+
   </template>
   <script>
     Polymer({
@@ -35969,11 +35979,10 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
         location: String,
         data: {
           type: Array,
-          notify: true
-        },
-        paused: {
-          type: Boolean,
-          notify: true
+          notify: true,
+          value: function() {
+            return [];
+          }
         },
         attachments: {
           type: Object,
@@ -35981,25 +35990,38 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
         },
         /**
          * Function that will get run on an empty DB to initialize it.
+         * Should return an Array.
          */
         init: Object,
         _localDB: Object,
         _remoteDB: Object,
-        _syncHandler: Object
+        _syncHandler: Object,
+        /**
+         * Staus of our DB, can be one of:
+         * ['initializing', 'local_connected', 'remote_connected',
+         *  'initializing_data', 'waiting', 'syncing', 'shutdown']
+         */
+        status: {
+          type: String,
+          notify: true,
+          observer: '_stateChangeObserver'
+        }
       },
 
       ready: function() {
         this.attachments = {
           getAttachment: this._getAttachment.bind(this)
         };
-
       },
 
       attached: function() {
+        this.status = 'initializing';
+
         this._localDB = new PouchDB(this.dbName, {
-          size: 50
+          size: 50 // 50MB is max for mobile Safari
         });
-        this.fire('db-initialized');
+        this.status = 'local_connected';
+
         if (this.location) {
           this._setupSync();
         }
@@ -36010,28 +36032,42 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
       _setupSync: function() {
         var _this = this;
         this._remoteDB = new PouchDB(this.location + '/' + this.dbName);
+        this.status = 'remote_connected';
 
         this._syncHandler = this._localDB.sync(this._remoteDB, {
           live: true,
           retry: true
-        }).on('change', function(change) {
-          console.log(change);
+        }).on('change', function() {
           _this._update();
-        }).on('paused', function() {
-          _this.paused = true;
-          _this.fire('sync-complete');
-          console.log('Sync paused');
+        }).on('paused', function(err) {
+          // TODO: Figure out why PouchDB calls this several times before sync is actually finished
+          _this.debounce('sync-finished', function() {
+            _this.status = 'waiting';
+          }, 200);
+          if (err) {
+            console.log('pouch-db sync failed', err);
+          }
         }).on('active', function() {
-          _this.paused = false;
-          _this.fire('sync-started');
-          console.log('Sync active');
+          _this.status = 'syncing';
+          // console.log('Sync active');
         }).on('error', function(err) {
           console.log(err);
         });
 
         this._syncHandler.on('complete', function() {
+          _this.status = 'shutdown';
           console.log('DB sync successfully shut down.');
         });
+      },
+
+      _stateChangeObserver: function(newState, oldState) {
+        console.log('pouch-db state changed from ' + oldState + ' to ' + newState);
+
+        if (this.init &&
+          ((!this.location && newState === 'local_connected') ||
+            (this.location && newState === 'waiting' && oldState === 'remote_connected'))) {
+          this._initDB();
+        }
       },
 
       detached: function() {
@@ -36052,20 +36088,15 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
               throw err;
             }
             return _this.localDB.put(doc);
-          }).then(function() {
-            _this._update();
           });
       },
 
       remove: function(doc) {
-        var _this = this;
         var db = this._localDB;
 
         db.get(doc._id)
           .then(function(_doc) {
             return db.remove(_doc);
-          }).then(function() {
-            _this._update();
           })
           .catch(function(err) {
             console.log(err);
@@ -36098,28 +36129,38 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
       // Always updating entire array to keep demo code simple.
       // You should probably not do this in a real app (especially if you have a lot of data)
       _update: function() {
-        // TODO: Debounce
         var _this = this;
-        this._localDB.allDocs({
-          // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-          include_docs: true,
-          descending: true
-        }).then(function(result) {
-          if (result.rows && result.rows.length > 0) {
-            _this.data = result.rows.map(function(row) {
-              return row.doc;
-            });
-          } else if (_this.init && ((!_this.location) || (_this.location && _this._remoteDB))) {
-            _this.bulkDocs(_this.init());
-          }
-        }).catch(function(err) {
-          console.log(err);
-        });
+        // PouchDB sends out one change event per doc for bulk operations, wait until things
+        // settle down before updating.
+        this.debounce('update-docs', function() {
+          _this._localDB.allDocs({
+            // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+            include_docs: true,
+            descending: true
+          }).then(function(result) {
+            if (result.rows && result.rows.length > 0) {
+              _this.data = result.rows.map(function(row) {
+                return row.doc;
+              });
+            }
+          }).catch(function(err) {
+            console.log(err);
+          });
+        }, 200);
       },
 
       _showNotification: function(text) {
         this.$.notification.text = text;
         this.$.notification.show();
+      },
+
+      // Initializes database with given init function if local database is empty after syncing with
+      // remote db
+      _initDB: function() {
+        this.status = 'initializing_data';
+        if (this.init && this.data && this.data.length === 0) {
+          this.bulkDocs(this.init());
+        }
       }
     });
   </script>
@@ -36177,11 +36218,16 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
       
       @media (max-width: 600px) {
         paper-toolbar h1 {
-          font-size: 1.1em;
+          font-size: 1em;
         }
       }
     </style>
     
+    
+
+    
+    
+
     <pouch-db db-name="demo" data="{{expenses}}" location="https://vaadin-expense-manager.cloudant.com" paused="{{paused}}" id="db" attachments="{{attachments}}"></pouch-db>
 
     <paper-header-panel>
@@ -36189,7 +36235,7 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
         <h1>Expense Manager</h1>
         <iron-icon id="logo" class="logo" src="../images/app-icon.svg"></iron-icon>
 
-        <iron-icon id="sync" icon="notification:sync" hidden$="[[paused]]"></iron-icon>
+        <iron-icon id="sync" icon="notification:sync" hidden$="[[_hideSyncIcon(status)]]"></iron-icon>
 
         <span class="flex"></span>
 
@@ -36220,7 +36266,7 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
             type: String,
             notify: true
           },
-          paused: Boolean,
+          status: String,
           expenses: Array,
           dbLocation: String,
           attachments: Object,
@@ -36311,6 +36357,10 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
         _editExpense: function(evt) {
           var editor = this.$.expenseEditor;
           editor.open(evt.detail);
+        },
+
+        _hideSyncIcon: function() {
+          return this.status !== 'syncing';
         },
 
         _saveExpense: function(evt) {
