@@ -10,6 +10,7 @@
 <link rel="import" href="../bower_components/neon-animation/animations/slide-down-animation.html">
 <link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
 <link rel="import" href="../bower_components/vaadin-upload/vaadin-upload.html">
+<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../scripts/accounting-js.html">
 <link rel="import" href="../scripts/moment-js.html">
 
@@ -144,7 +145,8 @@
         }
       }
     </style>
-    <paper-dialog id="dialog" modal>
+    <iron-media-query query="(min-height: 900px)" query-matches="{{tallWindow}}"></iron-media-query>
+    <paper-dialog id="dialog" modal no-cancel-on-esc-key="false">
       <div class="main-layout">
         <h2>{{caption}}</h2>
         <span class="flex"></span>
@@ -155,7 +157,7 @@
         <div class="form">
           <form is="iron-form" id="form">
             <iron-a11y-keys keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
-            <paper-input name="merchant" id="merchant" value="{{expense.merchant}}" label="Merchant" required error-message="Merchant name required" autofocus></paper-input>
+            <paper-input name="merchant" id="merchant" value="{{expense.merchant}}" label="Merchant" required error-message="Merchant name required" autofocus="[[tallWindow]]"></paper-input>
             <paper-input name="total" id="total" value="{{expense.total}}" type="number" label="Total" required step="any">
               <div prefix>$</div>
             </paper-input>
@@ -215,6 +217,8 @@
 
         observers: ['_updateReceiptURL(expense._attachments.*)'],
 
+
+
         ready: function() {
           this.$.upload.i18n.dropFiles.one = 'Drop receipt here...';
           this.$.upload.i18n.addFiles.one = 'Select receipt';
@@ -253,9 +257,12 @@
         },
 
         listeners: {
-          'iron-form-invalid': '_showValidationErrors'
+          'iron-form-invalid': '_formInvalid'
         },
 
+        _formInvalid: function(e) {
+          console.log(e);
+        },
         _handleUpload: function(e) {
           var file = e.detail.file;
           if (file) {
@@ -278,12 +285,13 @@
             this.expense.total = parseFloat(this.expense.total);
             this.fire('expense-saved', this.expense);
           } else {
+            console.log('Form validation failed');
+            if (!this.tallWindow) {
+              // iron-form doesn't seem to have a way to get invalid fields, so just focusing first for now
+              this.$.merchant.focus();
+            }
             this.errorText = 'Please fill all required fields';
           }
-        },
-
-        _showValidationErrors: function(evt) {
-          console.log(evt);
         },
 
         open: function(expense) {
@@ -307,6 +315,12 @@
 
           this.$.delete.hidden = !(this.expense._id && this.expense.status === 'new');
           this.$.dialog.open();
+
+          // Ensure that the scroll is returned to top on mobile
+          this.async(function() {
+            this.$.dialog.scrollTop = 0;
+          });
+
         },
 
         close: function() {
