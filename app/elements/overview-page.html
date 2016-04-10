@@ -69,19 +69,22 @@
       
       @media (max-width: 600px) {
         paper-toolbar h1 {
-          font-size: 1.1em;
+          font-size: 1em;
         }
       }
     </style>
-    <!-- <pouch-db db-name="demo2" data="{{expenses}}" location="http://localhost:5984" paused="{{paused}}" id="db" attachments="{{attachments}}"></pouch-db> -->
-    <pouch-db db-name="demo" data="{{expenses}}" location="https://vaadin-expense-manager.cloudant.com" paused="{{paused}}" id="db" attachments="{{attachments}}"></pouch-db>
+    <!-- Update location and db-name to match your remote DB-->
+    <pouch-db db-name="demo" data="{{expenses}}" location="http://localhost:5984" status="{{status}}" id="db" attachments="{{attachments}}" init="[[init]]"></pouch-db>
+
+    <!-- Remove the location attribute if you do not want to sync to a remote DB-->
+    <!-- <pouch-db db-name="demo" data="{{expenses}}" paused="{{paused}}" id="db" attachments="{{attachments}}" init="[[init]]"></pouch-db> -->
 
     <paper-header-panel>
       <paper-toolbar>
         <h1>Expense Manager</h1>
         <iron-icon id="logo" class="logo" src="../images/app-icon.svg"></iron-icon>
 
-        <iron-icon id="sync" icon="notification:sync" hidden$="[[paused]]"></iron-icon>
+        <iron-icon id="sync" icon="notification:sync" hidden$="[[_hideSyncIcon(status)]]"></iron-icon>
 
         <span class="flex"></span>
 
@@ -112,7 +115,7 @@
             type: String,
             notify: true
           },
-          paused: Boolean,
+          status: String,
           expenses: Array,
           dbLocation: String,
           attachments: Object,
@@ -203,6 +206,10 @@
         _editExpense: function(evt) {
           var editor = this.$.expenseEditor;
           editor.open(evt.detail);
+        },
+
+        _hideSyncIcon: function() {
+          return this.status !== 'syncing';
         },
 
         _saveExpense: function(evt) {

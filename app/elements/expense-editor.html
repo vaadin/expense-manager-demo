@@ -25,6 +25,7 @@
         margin: 0;
         width: 80vw;
         background: var(--primary-background-color);
+        max-height: 100vh;
         overflow: visible;
       }
       
@@ -72,10 +73,16 @@
         max-width: 400px;
       }
       
-      .receipt img {
+      .receipt .receipt-wrapper {
         max-width: 100%;
         display: block;
         margin: 20px auto;
+        max-height: 400px;
+        overflow-y: scroll;
+      }
+      
+      .receipt-wrapper img {
+        width: 100%;
       }
       
       .receipt img[hidden] {
@@ -146,8 +153,8 @@
         <div class="form">
           <form is="iron-form" id="form">
             <iron-a11y-keys keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
-            <paper-input name="merchant" id="merchant" value="{{expense.merchant}}" label="Merchant" required error-message="Merchant name required"></paper-input>
-            <paper-input name="total" id="total" value="{{expense.total}}" type="number" label="Total" required>
+            <paper-input name="merchant" id="merchant" value="{{expense.merchant}}" label="Merchant" required error-message="Merchant name required" autofocus></paper-input>
+            <paper-input name="total" id="total" value="{{expense.total}}" type="number" label="Total" required step="any">
               <div prefix>$</div>
             </paper-input>
 
@@ -158,7 +165,9 @@
         <div class="receipt">
           <vaadin-upload id="upload" accept="image/*" max-files="1" on-upload-before="_handleUpload" required>
             <div class="file-list">
-              <img src$="[[_receiptURL]]" alt="Receipt" hidden$="[[!_showReceipt(expense._attachments.*)]]">
+              <div class="receipt-wrapper">
+                <img src$="[[_receiptURL]]" alt="Receipt" hidden$="[[!_showReceipt(expense._attachments.*)]]">
+              </div>
             </div>
           </vaadin-upload>
         </div>
