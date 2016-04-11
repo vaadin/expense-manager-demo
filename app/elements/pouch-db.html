@@ -80,10 +80,6 @@
         }).on('change', function() {
           _this._update();
         }).on('paused', function(err) {
-          // TODO: Figure out why PouchDB calls this several times before sync is actually finished
-          _this.debounce('sync-finished', function() {
-            _this.status = 'waiting';
-          }, 200);
           if (err) {
             console.log('pouch-db sync failed', err);
           }
@@ -104,7 +100,7 @@
         console.log('pouch-db state changed from ' + oldState + ' to ' + newState);
 
         if (this.init &&
-          ((!this.location && newState === 'local_connected') ||
+          ((!this.location && oldState === 'local_connected' && newState === 'waiting') ||
             (this.location && oldState === 'remote_connected' && newState === 'waiting'))) {
           this._initDB();
         }
@@ -122,7 +118,9 @@
           doc._id = new Date().toJSON();
         }
 
-        this._localDB.put(doc)
+        this._localDB.put(doc).then(function() {
+            _this._update();
+          })
           .catch(function(err) {
             if (err.name !== 'not_found') {
               throw err;
@@ -133,10 +131,13 @@
 
       remove: function(doc) {
         var db = this._localDB;
-
+        var _this = this;
         db.get(doc._id)
           .then(function(_doc) {
             return db.remove(_doc);
+          })
+          .then(function() {
+            _this._update();
           })
           .catch(function(err) {
             console.log(err);
@@ -182,6 +183,7 @@
               _this.data = result.rows.map(function(row) {
                 return row.doc;
               });
+              _this.status = 'waiting';
             }
           }).catch(function(err) {
             console.log(err);
