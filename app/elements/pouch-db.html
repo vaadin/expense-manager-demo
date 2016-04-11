@@ -174,7 +174,6 @@
       // Always updating entire array to keep demo code simple.
       // You should probably not do this in a real app (especially if you have a lot of data)
       _update: function() {
-        console.log('updating docs from database');
         var _this = this;
         // PouchDB sends out one change event per doc for bulk operations, wait until things
         // settle down before updating.
@@ -194,7 +193,7 @@
             _this.status = 'waiting';
             console.log(err);
           });
-        }, 200);
+        }, 500);
       },
 
       _showNotification: function(text) {
