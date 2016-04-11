@@ -36170,7 +36170,6 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
       // Always updating entire array to keep demo code simple.
       // You should probably not do this in a real app (especially if you have a lot of data)
       _update: function() {
-        console.log('updating docs from database');
         var _this = this;
         // PouchDB sends out one change event per doc for bulk operations, wait until things
         // settle down before updating.
@@ -36190,7 +36189,7 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
             _this.status = 'waiting';
             console.log(err);
           });
-        }, 200);
+        }, 500);
       },
 
       _showNotification: function(text) {
@@ -36270,7 +36269,7 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
     
 
     
-    <pouch-db db-name="demo" location="https://vaadin-expense-manager.cloudant.com" data="{{expenses}}" status="{{status}}" id="db" attachments="{{attachments}}" init="[[init]]"></pouch-db>
+    <pouch-db db-name="demo" location="https://vaadin-expense-manager.cloudant.com" data="{{expenses}}" status="{{status}}" id="db" attachments="{{attachments}}"></pouch-db>
 
     <paper-header-panel>
       <paper-toolbar>
