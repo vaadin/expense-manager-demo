@@ -35827,6 +35827,10 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         color: var(--text-primary-color);
       }
       
+      #clear-button {
+        color: var(--accent-color);
+      }
+      
       @media (max-width: 900px) {
         :host {
           flex-direction: column-reverse;
@@ -36072,10 +36076,6 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
         }).on('change', function() {
           _this._update();
         }).on('paused', function(err) {
-          // TODO: Figure out why PouchDB calls this several times before sync is actually finished
-          _this.debounce('sync-finished', function() {
-            _this.status = 'waiting';
-          }, 200);
           if (err) {
             console.log('pouch-db sync failed', err);
           }
@@ -36096,7 +36096,7 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
         console.log('pouch-db state changed from ' + oldState + ' to ' + newState);
 
         if (this.init &&
-          ((!this.location && newState === 'local_connected') ||
+          ((!this.location && oldState === 'local_connected' && newState === 'waiting') ||
             (this.location && oldState === 'remote_connected' && newState === 'waiting'))) {
           this._initDB();
         }
@@ -36114,7 +36114,9 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
           doc._id = new Date().toJSON();
         }
 
-        this._localDB.put(doc)
+        this._localDB.put(doc).then(function() {
+            _this._update();
+          })
           .catch(function(err) {
             if (err.name !== 'not_found') {
               throw err;
@@ -36125,10 +36127,13 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
 
       remove: function(doc) {
         var db = this._localDB;
-
+        var _this = this;
         db.get(doc._id)
           .then(function(_doc) {
             return db.remove(_doc);
+          })
+          .then(function() {
+            _this._update();
           })
           .catch(function(err) {
             console.log(err);
@@ -36174,6 +36179,7 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
               _this.data = result.rows.map(function(row) {
                 return row.doc;
               });
+              _this.status = 'waiting';
             }
           }).catch(function(err) {
             console.log(err);
