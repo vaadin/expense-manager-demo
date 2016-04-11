@@ -10,12 +10,12 @@
         display: flex;
         position: relative;
       }
-
+      
       #filters {
         flex: 1;
         border-right: 1px solid #ddd;
       }
-
+      
       #total {
         width: 300px;
         background: var(--default-primary-color);
@@ -29,19 +29,19 @@
         align-items: center;
         justify-content: center;
       }
-
+      
       #total .sum {
         font-size: 32px;
         font-weight: 200;
       }
-
+      
       #filters-toggle {
         position: absolute;
         top: 4px;
         right: 16px;
         display: none;
       }
-
+      
       #filters-toggle .count {
         width: 28px;
         height: 28px;
@@ -52,39 +52,39 @@
         color: var(--primary-color);
         font-weight: 600;
       }
-
+      
       #filters-caption {
         display: none;
       }
-
-      #done-button {
+      
+      #buttons {
         display: none;
+        justify-content: flex-end;
+        margin-right: 16px;
+      }
+      
+      #done-button {
         background: var(--accent-color);
         color: var(--text-primary-color);
-        width: 33%;
-        margin-right: 16px;
-        align-self: flex-end;
       }
-
+      
       @media (max-width: 900px) {
         :host {
           flex-direction: column-reverse;
         }
-
         #filters-toggle {
           display: flex;
           align-items: center;
         }
-
         :host([expanded]) #filters-toggle {
-          color: #80CBC4; /*=primary-color, @media queries don't work with variables*/
+          color: #80CBC4;
+          /*=primary-color, @media queries don't work with variables*/
         }
-
         :host([expanded]) #filters-toggle .count {
           color: #fff;
-          background: #80CBC4; /*=primary-color, @media queries don't work with variables*/
+          background: #80CBC4;
+          /*=primary-color, @media queries don't work with variables*/
         }
-
         #total {
           width: 100%;
           flex-direction: row;
@@ -92,27 +92,25 @@
           height: 48px;
           padding-left: 16px;
         }
-
         #total .sum {
           font-size: inherit;
           margin-left: 8px;
         }
-
         :host([expanded]) #total {
           display: none;
         }
-
         #filters {
           display: none;
           border: none;
         }
-
-        :host([expanded]) #filters,
-        :host([expanded]) #done-button {
+        :host([expanded]) #filters {
           display: block;
           margin-bottom: 16px;
         }
-
+        :host([expanded]) #buttons {
+          display: flex;
+          margin-bottom: 16px;
+        }
         :host([expanded]) #filters-caption {
           display: block;
           padding: 0;
@@ -121,9 +119,11 @@
           font-weight: 400;
         }
       }
-
     </style>
-    <paper-button id="done-button" on-tap="_hideFilters" raised>Done</paper-button>
+    <div id="buttons">
+      <paper-button id="clear-button" on-tap="_clearFilters">Clear filters</paper-button>
+      <paper-button id="done-button" on-tap="_hideFilters" raised>Done</paper-button>
+    </div>
     <search-filters filters="{{filters}}" merchants="[[merchants]]" id="filters"></search-filters>
 
     <div id="total">
@@ -154,12 +154,6 @@
         },
         appliedFilters: Number
       },
-      /*
-       listeners: {
-       'value-changed': '_hideFilters',
-       'iron-change': '_hideFilters'
-       },
-       */
 
       observers: [
         '_calculateTotal(expenses.*)',
@@ -170,8 +164,8 @@
       _calculateTotal: function() {
         if (this.expenses) {
           var total = this.expenses.filter(function(exp) {
-            return exp.status === 'new';
-          }).map(function(exp) {
+              return exp.status === 'new';
+            }).map(function(exp) {
               return exp.total;
             })
             .reduce(function(a, b) {
@@ -217,6 +211,14 @@
 
       _hideFilters: function() {
         this.expanded = false;
+      },
+
+      _clearFilters: function() {
+        this.set('filters.start', '');
+        this.set('filters.end', '');
+        this.set('filters.merchant', '');
+        this.set('filters.status', '');
+        this._hideFilters();
       }
     });
   </script>

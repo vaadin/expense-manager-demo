@@ -35323,48 +35323,46 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         display: block;
         padding: 0 16px;
       }
-
+      
       .col,
       .date vaadin-date-picker,
       .total paper-input {
         display: inline-block;
         width: 49%;
       }
-
+      
       .col {
         box-sizing: border-box;
       }
-
+      
       .row {
         margin-bottom: 16px;
       }
-
+      
       .filters {
         padding-bottom: 16px;
       }
-
+      
       .status .caption {
         font-weight: 500;
       }
-
+      
       .checkboxes {
         display: inline-block;
         margin-left: 8px;
       }
-
+      
       .checkboxes > paper-checkbox {
         margin-right: 8px;
       }
-
+      
       @media (max-width: 960px) {
         .col {
           width: 100%
         }
-
         .row {
           margin-bottom: inherit;
         }
-
         .status {
           margin-top: 16px;
         }
@@ -35425,6 +35423,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           }
         },
 
+        observers: ['_statusesUpdated(filters.status.*)'],
+
         _merchantsChanged: function(merchants) {
           this.$.merchantsSelect.items = merchants;
         },
@@ -35453,12 +35453,29 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           if (this.filters.status && statusIndex >= 0) {
             this.splice('filters.status', statusIndex, 1);
           }
+        },
+
+        _statusesUpdated: function() {
+          var _this = this;
+
+          function filtersContain(filter) {
+            return _this.filters &&
+              _this.filters.status &&
+              _this.filters.status.indexOf(filter) >= 0;
+          }
+
+          Polymer.dom(this.root).querySelectorAll('paper-checkbox').forEach(function(checkbox) {
+            if (filtersContain(checkbox.name)) {
+              checkbox.checked = true;
+            } else {
+              checkbox.checked = false;
+            }
+          });
         }
       });
     })();
   </script>
-</dom-module>
-<dom-module id="expenses-list" assetpath="/">
+</dom-module><dom-module id="expenses-list" assetpath="/">
   <template>
     <style>
       :host {
@@ -35752,12 +35769,12 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         display: flex;
         position: relative;
       }
-
+      
       #filters {
         flex: 1;
         border-right: 1px solid #ddd;
       }
-
+      
       #total {
         width: 300px;
         background: var(--default-primary-color);
@@ -35771,19 +35788,19 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         align-items: center;
         justify-content: center;
       }
-
+      
       #total .sum {
         font-size: 32px;
         font-weight: 200;
       }
-
+      
       #filters-toggle {
         position: absolute;
         top: 4px;
         right: 16px;
         display: none;
       }
-
+      
       #filters-toggle .count {
         width: 28px;
         height: 28px;
@@ -35794,39 +35811,39 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         color: var(--primary-color);
         font-weight: 600;
       }
-
+      
       #filters-caption {
         display: none;
       }
-
-      #done-button {
+      
+      #buttons {
         display: none;
+        justify-content: flex-end;
+        margin-right: 16px;
+      }
+      
+      #done-button {
         background: var(--accent-color);
         color: var(--text-primary-color);
-        width: 33%;
-        margin-right: 16px;
-        align-self: flex-end;
       }
-
+      
       @media (max-width: 900px) {
         :host {
           flex-direction: column-reverse;
         }
-
         #filters-toggle {
           display: flex;
           align-items: center;
         }
-
         :host([expanded]) #filters-toggle {
-          color: #80CBC4; /*=primary-color, @media queries don't work with variables*/
+          color: #80CBC4;
+          /*=primary-color, @media queries don't work with variables*/
         }
-
         :host([expanded]) #filters-toggle .count {
           color: #fff;
-          background: #80CBC4; /*=primary-color, @media queries don't work with variables*/
+          background: #80CBC4;
+          /*=primary-color, @media queries don't work with variables*/
         }
-
         #total {
           width: 100%;
           flex-direction: row;
@@ -35834,27 +35851,25 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           height: 48px;
           padding-left: 16px;
         }
-
         #total .sum {
           font-size: inherit;
           margin-left: 8px;
         }
-
         :host([expanded]) #total {
           display: none;
         }
-
         #filters {
           display: none;
           border: none;
         }
-
-        :host([expanded]) #filters,
-        :host([expanded]) #done-button {
+        :host([expanded]) #filters {
           display: block;
           margin-bottom: 16px;
         }
-
+        :host([expanded]) #buttons {
+          display: flex;
+          margin-bottom: 16px;
+        }
         :host([expanded]) #filters-caption {
           display: block;
           padding: 0;
@@ -35863,9 +35878,11 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
           font-weight: 400;
         }
       }
-
     </style>
-    <paper-button id="done-button" on-tap="_hideFilters" raised="">Done</paper-button>
+    <div id="buttons">
+      <paper-button id="clear-button" on-tap="_clearFilters">Clear filters</paper-button>
+      <paper-button id="done-button" on-tap="_hideFilters" raised="">Done</paper-button>
+    </div>
     <search-filters filters="{{filters}}" merchants="[[merchants]]" id="filters"></search-filters>
 
     <div id="total">
@@ -35896,12 +35913,6 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         },
         appliedFilters: Number
       },
-      /*
-       listeners: {
-       'value-changed': '_hideFilters',
-       'iron-change': '_hideFilters'
-       },
-       */
 
       observers: [
         '_calculateTotal(expenses.*)',
@@ -35912,8 +35923,8 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
       _calculateTotal: function() {
         if (this.expenses) {
           var total = this.expenses.filter(function(exp) {
-            return exp.status === 'new';
-          }).map(function(exp) {
+              return exp.status === 'new';
+            }).map(function(exp) {
               return exp.total;
             })
             .reduce(function(a, b) {
@@ -35959,11 +35970,18 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
 
       _hideFilters: function() {
         this.expanded = false;
+      },
+
+      _clearFilters: function() {
+        this.set('filters.start', '');
+        this.set('filters.end', '');
+        this.set('filters.merchant', '');
+        this.set('filters.status', '');
+        this._hideFilters();
       }
     });
   </script>
-</dom-module>
-<script charset="utf-8">// PouchDB 5.3.1
+</dom-module><script charset="utf-8">// PouchDB 5.3.1
 // 
 // (c) 2012-2016 Dale Harvey and the PouchDB team
 // PouchDB may be freely distributed under the Apache license, version 2.0.
