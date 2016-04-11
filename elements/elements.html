@@ -35980,7 +35980,7 @@ function TK(){return this.a._c()}function bL(){return this.a.Pc()}function cL(){
         this.set('filters.start', '');
         this.set('filters.end', '');
         this.set('filters.merchant', '');
-        this.set('filters.status', '');
+        this.set('filters.status', []);
         this._hideFilters();
       }
     });
@@ -36269,7 +36269,7 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
     
 
     
-    <pouch-db db-name="demo" location="https://vaadin-expense-manager.cloudant.com" data="{{expenses}}" status="{{status}}" id="db" attachments="{{attachments}}"></pouch-db>
+    <pouch-db db-name="demo" location="https://vaadin-expense-manager.cloudant.com" data="{{expenses}}" status="{{status}}" id="db" attachments="{{attachments}}" init="[[init]]"></pouch-db>
 
     <paper-header-panel>
       <paper-toolbar>
