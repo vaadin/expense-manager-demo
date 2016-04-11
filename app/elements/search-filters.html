@@ -12,48 +12,46 @@
         display: block;
         padding: 0 16px;
       }
-
+      
       .col,
       .date vaadin-date-picker,
       .total paper-input {
         display: inline-block;
         width: 49%;
       }
-
+      
       .col {
         box-sizing: border-box;
       }
-
+      
       .row {
         margin-bottom: 16px;
       }
-
+      
       .filters {
         padding-bottom: 16px;
       }
-
+      
       .status .caption {
         font-weight: 500;
       }
-
+      
       .checkboxes {
         display: inline-block;
         margin-left: 8px;
       }
-
+      
       .checkboxes > paper-checkbox {
         margin-right: 8px;
       }
-
+      
       @media (max-width: 960px) {
         .col {
           width: 100%
         }
-
         .row {
           margin-bottom: inherit;
         }
-
         .status {
           margin-top: 16px;
         }
@@ -70,17 +68,14 @@
           </div>
 
           <div class="merchants col">
-            <vaadin-combo-box label="Merchant" items="{{merchants}}" value="{{filters.merchant}}"
-                              id="merchantsSelect"></vaadin-combo-box>
+            <vaadin-combo-box label="Merchant" items="{{merchants}}" value="{{filters.merchant}}" id="merchantsSelect"></vaadin-combo-box>
           </div>
         </div>
 
         <div class="row">
           <div class="total col">
-            <paper-input label="Min ($)" value="{{filters.min}}" pattern="\d+" auto-validate
-                         error-message="Only numbers"></paper-input>
-            <paper-input label="Max ($)" value="{{filters.max}}" pattern="\d+" auto-validate
-                         error-message="Only numbers"></paper-input>
+            <paper-input label="Min ($)" value="{{filters.min}}" pattern="\d+" auto-validate error-message="Only numbers"></paper-input>
+            <paper-input label="Max ($)" value="{{filters.max}}" pattern="\d+" auto-validate error-message="Only numbers"></paper-input>
           </div>
 
           <div class="status col">
@@ -117,6 +112,8 @@
           }
         },
 
+        observers: ['_statusesUpdated(filters.status.*)'],
+
         _merchantsChanged: function(merchants) {
           this.$.merchantsSelect.items = merchants;
         },
@@ -145,6 +142,24 @@
           if (this.filters.status && statusIndex >= 0) {
             this.splice('filters.status', statusIndex, 1);
           }
+        },
+
+        _statusesUpdated: function() {
+          var _this = this;
+
+          function filtersContain(filter) {
+            return _this.filters &&
+              _this.filters.status &&
+              _this.filters.status.indexOf(filter) >= 0;
+          }
+
+          Polymer.dom(this.root).querySelectorAll('paper-checkbox').forEach(function(checkbox) {
+            if (filtersContain(checkbox.name)) {
+              checkbox.checked = true;
+            } else {
+              checkbox.checked = false;
+            }
+          });
         }
       });
     })();
