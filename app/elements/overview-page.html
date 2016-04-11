@@ -74,17 +74,17 @@
       }
     </style>
     <!-- Update location and db-name to match your remote DB-->
-    <pouch-db db-name="demo" data="{{expenses}}" location="http://localhost:5984" status="{{status}}" id="db" attachments="{{attachments}}" init="[[init]]"></pouch-db>
+    <!-- <pouch-db db-name="expenses-2" data="{{expenses}}" location="http://localhost:5984" status="{{status}}" id="db" attachments="{{attachments}}" init="[[init]]"></pouch-db> -->
 
     <!-- Remove the location attribute if you do not want to sync to a remote DB-->
-    <!-- <pouch-db db-name="demo" data="{{expenses}}" paused="{{paused}}" id="db" attachments="{{attachments}}" init="[[init]]"></pouch-db> -->
+    <pouch-db db-name="demo" location="https://vaadin-expense-manager.cloudant.com" data="{{expenses}}" status="{{status}}" id="db" attachments="{{attachments}}" init="[[init]]"></pouch-db>
 
     <paper-header-panel>
       <paper-toolbar>
         <h1>Expense Manager</h1>
         <iron-icon id="logo" class="logo" src="../images/app-icon.svg"></iron-icon>
 
-        <!-- <iron-icon id="sync" icon="notification:sync" hidden$="[[_hideSyncIcon(status)]]"></iron-icon> -->
+        <iron-icon id="sync" icon="notification:sync" hidden$="[[_hideSyncIcon(status)]]"></iron-icon>
 
         <span class="flex"></span>
 
