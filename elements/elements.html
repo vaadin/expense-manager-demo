@@ -27719,7 +27719,7 @@ value. `setMax` should move the slider to the maximum value.
         max-width: 100%;
         display: block;
         margin: 20px auto;
-        max-height: 400px;
+        max-height: 60vh;
         overflow-y: scroll;
       }
       
@@ -27771,23 +27771,23 @@ value. `setMax` should move the slider to the maximum value.
         .wrapper {
           flex-direction: column;
         }
-        #dialog {
-          overflow-y: scroll;
+        .receipt {
+          width: 100%;
+          margin: 40px auto;
         }
         .receipt .receipt-wrapper {
           max-height: inherit;
         }
-      }
-      
-      @media (max-width: 600px) {
         #dialog {
           width: 100vw;
           min-height: 100vh;
           padding: 0 0 60px 0;
+          overflow-y: scroll;
         }
       }
     </style>
-    <paper-dialog id="dialog" modal="">
+    <iron-media-query query="(min-height: 900px)" query-matches="{{tallWindow}}"></iron-media-query>
+    <paper-dialog id="dialog" modal="" no-cancel-on-esc-key="false">
       <div class="main-layout">
         <h2>{{caption}}</h2>
         <span class="flex"></span>
@@ -27798,7 +27798,7 @@ value. `setMax` should move the slider to the maximum value.
         <div class="form">
           <form is="iron-form" id="form">
             <iron-a11y-keys keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
-            <paper-input name="merchant" id="merchant" value="{{expense.merchant}}" label="Merchant" required="" error-message="Merchant name required" autofocus=""></paper-input>
+            <paper-input name="merchant" id="merchant" value="{{expense.merchant}}" label="Merchant" required="" error-message="Merchant name required" autofocus="[[tallWindow]]"></paper-input>
             <paper-input name="total" id="total" value="{{expense.total}}" type="number" label="Total" required="" step="any">
               <div prefix="">$</div>
             </paper-input>
@@ -27896,9 +27896,12 @@ value. `setMax` should move the slider to the maximum value.
         },
 
         listeners: {
-          'iron-form-invalid': '_showValidationErrors'
+          'iron-form-invalid': '_formInvalid'
         },
 
+        _formInvalid: function(e) {
+          console.log(e);
+        },
         _handleUpload: function(e) {
           var file = e.detail.file;
           if (file) {
@@ -27921,12 +27924,14 @@ value. `setMax` should move the slider to the maximum value.
             this.expense.total = parseFloat(this.expense.total);
             this.fire('expense-saved', this.expense);
           } else {
+            console.log('Form validation failed');
+            if (!this.tallWindow) {
+              // iron-form doesn't seem to have a way to get invalid fields,
+              // so just focusing first for now
+              this.$.merchant.focus();
+            }
             this.errorText = 'Please fill all required fields';
           }
-        },
-
-        _showValidationErrors: function(evt) {
-          console.log(evt);
         },
 
         open: function(expense) {
@@ -27941,7 +27946,7 @@ value. `setMax` should move the slider to the maximum value.
           this.$.upload.files = [];
 
           if (!expense.status) {
-            expense.status = 'new';
+            this.expense.status = 'new';
           }
 
           if (expense.total) {
@@ -27950,6 +27955,12 @@ value. `setMax` should move the slider to the maximum value.
 
           this.$.delete.hidden = !(this.expense._id && this.expense.status === 'new');
           this.$.dialog.open();
+
+          // Ensure that the scroll is returned to top on mobile
+          this.async(function() {
+            this.$.dialog.scrollTop = 0;
+          });
+
         },
 
         close: function() {
@@ -36226,19 +36237,17 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
       }
     </style>
     
-    
+    <pouch-db db-name="expenses-2" data="{{expenses}}" location="http://localhost:5984" status="{{status}}" id="db" attachments="{{attachments}}" init="[[init]]"></pouch-db>
 
     
     
-
-    <pouch-db db-name="demo" data="{{expenses}}" location="https://vaadin-expense-manager.cloudant.com" paused="{{paused}}" id="db" attachments="{{attachments}}" init="[[init]]"></pouch-db>
 
     <paper-header-panel>
       <paper-toolbar>
         <h1>Expense Manager</h1>
         <iron-icon id="logo" class="logo" src="../images/app-icon.svg"></iron-icon>
 
-        
+        <iron-icon id="sync" icon="notification:sync" hidden$="[[_hideSyncIcon(status)]]"></iron-icon>
 
         <span class="flex"></span>
 
