@@ -57,22 +57,59 @@
       attached: function() {
         this.status = 'initializing';
 
-        this._localDB = new PouchDB(this.dbName, {
-          size: 50 // 50MB is max for mobile Safari
-        });
-        this.status = 'local_connected';
+        this._setupLocalDB();
 
         if (this.location) {
-          this._setupSync();
+          this._setupRemoteDB();
         }
 
         this._update();
       },
 
+      _setupLocalDB: function() {
+        var _this = this;
+        this._localDB = new PouchDB(this.dbName, {
+          size: 50 // 50MB is max for mobile Safari
+        });
+        // If we do not have a remote DB, initialize if needed
+        if (!this.location) {
+          this._localDB.allDocs().then(function(result) {
+            if (!result.rows || result.rows.length === 0) {
+              _this._initDB();
+            }
+          });
+        }
+        this.status = 'local_connected';
+      },
+
+      _setupRemoteDB: function() {
+        var _this = this;
+
+        this._remoteDB = new PouchDB(this.location + '/' + this.dbName, {
+          // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+          skip_setup: true
+        });
+
+        // Check if remote DB exists
+        this._remoteDB.info().then(function() {
+            _this.status = 'remote_connected';
+            _this._setupSync();
+          })
+          // If not, create and init
+          .catch(function(err) {
+            console.log(err);
+            _this._remoteDB = new PouchDB(_this.location + '/' + _this.dbName);
+            _this._remoteDB.on('created', function() {
+              console.log('Remote db created');
+              _this._initDB().then(function() {
+                _this._setupSync();
+              });
+            });
+          });
+      },
+
       _setupSync: function() {
         var _this = this;
-        this._remoteDB = new PouchDB(this.location + '/' + this.dbName);
-        this.status = 'remote_connected';
 
         this._syncHandler = this._localDB.sync(this._remoteDB, {
           live: true,
@@ -89,7 +126,6 @@
           }
         }).on('active', function() {
           _this.status = 'syncing';
-          // console.log('Sync active');
         }).on('error', function(err) {
           console.log(err);
         });
@@ -106,7 +142,7 @@
         if (this.init &&
           ((!this.location && oldState === 'local_connected' && newState === 'waiting') ||
             (this.location && oldState === 'remote_connected' && newState === 'waiting'))) {
-          this._initDB();
+          //this._initDB();
         }
       },
 
@@ -193,7 +229,7 @@
             _this.status = 'waiting';
             console.log(err);
           });
-        }, 500);
+        }, 200);
       },
 
       _showNotification: function(text) {
@@ -205,9 +241,14 @@
       // remote db
       _initDB: function() {
         this.status = 'initializing_data';
-        if (this.init && this.data && this.data.length === 0) {
-          this.bulkDocs(this.init());
-        }
+        var _this = this;
+        return new Promise(function(resolve) {
+          if (_this.init) {
+            resolve(_this.bulkDocs(_this.init()));
+          } else {
+            resolve();
+          }
+        });
       }
     });
   </script>

@@ -24458,6 +24458,804 @@ value. `setMax` should move the slider to the maximum value.
    */
 
 </script>
+
+
+<script>
+  'use strict';
+
+  Polymer({
+    is: 'carbon-route',
+
+    properties: {
+      /**
+       * The URL component managed by this element.
+       */
+      route: {
+        type: Object,
+        notify: true
+      },
+
+      /**
+       * The pattern of slash-separated segments to match `path` against.
+       *
+       * For example the pattern "/foo" will match "/foo" or "/foo/bar"
+       * but not "/foobar".
+       *
+       * Path segments like `/:named` are mapped to properties on the `data` object.
+       */
+      pattern: {
+        type: String
+      },
+
+      /**
+       * The parameterized values that are extracted from the route as
+       * described by `pattern`.
+       */
+      data: {
+        type: Object,
+        value: function() {return {};},
+        notify: true
+      },
+
+      /**
+       * @type {?Object}
+       */
+      queryParams: {
+        type: Object,
+        value: function() {
+          return {};
+        },
+        notify: true
+      },
+
+      /**
+       * The part of `path` NOT consumed by `pattern`.
+       */
+      tail: {
+        type: Object,
+        value: function() {return {path: null, prefix: null, __queryParams: null};},
+        notify: true
+      },
+
+      active: {
+        type: Boolean,
+        notify: true,
+        readOnly: true
+      },
+
+      _skipMatch: {
+        type: Boolean,
+        value: false
+      },
+      /**
+       * @type {?string}
+       */
+      _matched: {
+        type: String,
+        value: ''
+      }
+    },
+
+    observers: [
+      '__tryToMatch(route.path, pattern)',
+      '__updatePathOnDataChange(data.*)',
+      '__tailPathChanged(tail.path)',
+      '__routeQueryParamsChanged(route.__queryParams)',
+      '__tailQueryParamsChanged(tail.__queryParams)',
+      '__queryParamsChanged(queryParams.*)'
+    ],
+
+    created: function() {
+      this.linkPaths('route.__queryParams', 'tail.__queryParams');
+      this.linkPaths('tail.__queryParams', 'route.__queryParams');
+    },
+
+    // IE Object.assign polyfill
+    __assign: function(target, source) {
+      if (source != null) {
+        for (var key in source) {
+          target[key] = source[key];
+        }
+      }
+
+      return target;
+    },
+
+    // Deal with the query params object being assigned to wholesale
+    __routeQueryParamsChanged: function(queryParams) {
+      if (queryParams && this.tail) {
+        this.set('tail.__queryParams', queryParams);
+
+        if (!this.active || this._skipMatch) {
+          return;
+        }
+
+        this._skipMatch = true;
+
+        var qp;
+
+        if (Object.assign) {
+          qp = Object.assign({}, queryParams);
+        } else {
+          qp = this.__assign({}, queryParams);
+        }
+
+        this.set('queryParams', qp);
+        this._skipMatch = false;
+      }
+    },
+
+    __tailQueryParamsChanged: function(queryParams) {
+      if (queryParams && this.route) {
+        this.set('route.__queryParams', queryParams);
+      }
+    },
+
+    __queryParamsChanged: function(changes) {
+      if (!this.active || this._skipMatch) {
+        return;
+      }
+
+      this.set('route.__' + changes.path, changes.value);
+    },
+
+    __resetProperties: function() {
+      this._setActive(false);
+      this._matched = null;
+      //this.tail = { path: null, prefix: null, queryParams: null };
+      //this.data = {};
+    },
+
+    __tryToMatch: function(path, pattern) {
+      if (this._skipMatch || !pattern) {
+        return;
+      }
+
+      if (!path) {
+        this.__resetProperties();
+        return;
+      }
+
+      var remainingPieces = path.split('/');
+      var patternPieces = pattern.split('/');
+
+      var matched = [];
+      var namedMatches = {};
+
+      for (var i=0; i < patternPieces.length; i++) {
+        var patternPiece = patternPieces[i];
+        if (!patternPiece && patternPiece !== '') {
+          break;
+        }
+        var pathPiece = remainingPieces.shift();
+
+        // We don't match this path.
+        if (!pathPiece && pathPiece !== '') {
+          this.__resetProperties();
+          return;
+        }
+        matched.push(pathPiece);
+
+        if (patternPiece.charAt(0) == ':') {
+          namedMatches[patternPiece.slice(1)] = pathPiece;
+        } else if (patternPiece !== pathPiece) {
+          this.__resetProperties();
+          return;
+        }
+      }
+
+      matched = matched.join('/');
+      var tailPath = remainingPieces.join('/');
+      if (remainingPieces.length > 0) {
+        tailPath = '/' + tailPath;
+      }
+
+      this._skipMatch = true;
+      this._matched = matched;
+      this.data = namedMatches;
+      var tailPrefix = this.route.prefix + matched;
+
+      if (!this.tail || this.tail.prefix !== tailPrefix || this.tail.path !== tailPath) {
+        this.tail = {
+          prefix: tailPrefix,
+          path: tailPath,
+          __queryParams: this.route.__queryParams
+        };
+      }
+      this._setActive(true);
+      this._skipMatch = false;
+    },
+
+    __tailPathChanged: function(path) {
+      if (!this.active || this._skipMatch) {
+        return;
+      }
+      var newPath = this._matched;
+      if (path) {
+        if (path.charAt(0) !== '/') {
+          path = '/' + path;
+        }
+        newPath += path;
+      }
+      this.set('route.path', newPath);
+    },
+
+    __updatePathOnDataChange: function() {
+      if (!this.route || this._skipMatch || !this.active) {
+        return;
+      }
+      this._skipMatch = true;
+      this.tail = {path: null, prefix: null, queryParams: null};
+      this.set('route.path', this.__getLink({}));
+      this._skipMatch = false;
+    },
+
+    __getLink: function(overrideValues) {
+      var values = {tail: this.tail};
+      for (var key in this.data) {
+        values[key] = this.data[key];
+      }
+      for (var key in overrideValues) {
+        values[key] = overrideValues[key];
+      }
+      var patternPieces = this.pattern.split('/');
+      var interp = patternPieces.map(function(value) {
+        if (value[0] == ':') {
+          value = values[value.slice(1)];
+        }
+        return value;
+      }, this);
+      if (values.tail && values.tail.path) {
+        interp.push(values.tail.path);
+      }
+      return interp.join('/');
+    }
+  });
+</script>
+
+<script>
+  'use strict';
+
+  Polymer({
+    is: 'iron-location',
+    properties: {
+      /**
+       * The pathname component of the URL.
+       */
+      path: {
+        type: String,
+        notify: true,
+        value: function() {
+          return window.location.pathname;
+        }
+      },
+      /**
+       * The query string portion of the URL.
+       */
+      query: {
+        type: String,
+        notify: true,
+        value: function() {
+          return window.location.search.slice(1);
+        }
+      },
+      /**
+       * The hash component of the URL.
+       */
+      hash: {
+        type: String,
+        notify: true,
+        value: function() {
+          return window.location.hash.slice(1);
+        }
+      },
+      /**
+       * If the user was on a URL for less than `dwellTime` milliseconds, it
+       * won't be added to the browser's history, but instead will be replaced
+       * by the next entry.
+       *
+       * This is to prevent large numbers of entries from clogging up the user's
+       * browser history. Disable by setting to a negative number.
+       */
+      dwellTime: {
+        type: Number,
+        value: 2000
+      },
+
+      /**
+       * A regexp that defines the set of URLs that should be considered part
+       * of this web app.
+       *
+       * Clicking on a link that matches this regex won't result in a full page
+       * navigation, but will instead just update the URL state in place.
+       *
+       * This regexp is given everything after the origin in an absolute
+       * URL. So to match just URLs that start with /search/ do:
+       *     url-space-regex="^/search/"
+       *
+       * @type {string|RegExp}
+       */
+      urlSpaceRegex: {
+        type: String,
+        value: ''
+      },
+
+      /**
+       * urlSpaceRegex, but coerced into a regexp.
+       *
+       * @type {RegExp}
+       */
+      _urlSpaceRegExp: {
+        computed: '_makeRegExp(urlSpaceRegex)'
+      },
+
+      _lastChangedAtAt: {
+        type: Number,
+        value: -Infinity
+      },
+
+      _initialized: {
+        type: Boolean,
+        value: false
+      }
+    },
+    hostAttributes: {
+      hidden: true
+    },
+    observers: [
+      '_updateUrl(path, query, hash)'
+    ],
+    attached: function() {
+      this.listen(window, 'hashchange', '_hashChanged');
+      this.listen(window, 'location-changed', '_urlChanged');
+      this.listen(window, 'popstate', '_urlChanged');
+      this.listen(/** @type {!HTMLBodyElement} */(document.body), 'click', '_globalOnClick');
+
+      this._urlChanged();
+      this._initialized = true;
+    },
+    detached: function() {
+      this.unlisten(window, 'hashchange', '_hashChanged');
+      this.unlisten(window, 'location-changed', '_urlChanged');
+      this.unlisten(window, 'popstate', '_urlChanged');
+      this.unlisten(/** @type {!HTMLBodyElement} */(document.body), 'click', '_globalOnClick');
+      this._initialized = false;
+    },
+    /**
+     * @return {number} the number of milliseconds since some point in the
+     *     past. Only useful for comparing against other results from this
+     *     function.
+     */
+    _now: function() {
+      if (window.performance && window.performance.now) {
+        return window.performance.now();
+      }
+      return new Date().getTime();
+    },
+    _hashChanged: function() {
+      this.hash = window.location.hash.substring(1);
+    },
+    _urlChanged: function() {
+      // We want to extract all info out of the updated URL before we
+      // try to write anything back into it.
+      //
+      // i.e. without _dontUpdateUrl we'd overwrite the new path with the old
+      // one when we set this.hash. Likewise for query.
+      this._dontUpdateUrl = true;
+      this._hashChanged();
+      this.path = window.location.pathname;
+      this.query = window.location.search.substring(1);
+      this._dontUpdateUrl = false;
+      this._updateUrl();
+    },
+    _getUrl: function() {
+      var url = this.path;
+      var query = this.query;
+      if (query) {
+        url += '?' + query;
+      }
+      if (this.hash) {
+        url += '#' + this.hash;
+      }
+      return url;
+    },
+    _updateUrl: function() {
+      if (this._dontUpdateUrl || !this._initialized) {
+        return;
+      }
+      var newUrl = this._getUrl();
+      var currentUrl = (
+          window.location.pathname +
+          window.location.search +
+          window.location.hash
+      );
+      if (newUrl == currentUrl) {
+        // nothing to do, the URL didn't change
+        return;
+      }
+      var now = this._now();
+      var shouldReplace =
+          this._lastChangedAt + this.dwellTime > now;
+      this._lastChangedAt = now;
+      if (shouldReplace) {
+        window.history.replaceState({}, '', newUrl);
+      } else {
+        window.history.pushState({}, '', newUrl);
+      }
+      this.fire('location-changed', {}, {node: window});
+    },
+    /**
+     * A necessary evil so that links work as expected. Does its best to
+     * bail out early if possible.
+     *
+     * @param {MouseEvent} event .
+     */
+    _globalOnClick: function(event) {
+      var href = this._getSameOriginLinkHref(event);
+      if (!href) {
+        return;
+      }
+
+      window.history.pushState({}, '', href);
+      this.fire('location-changed', {}, {node: window});
+      event.preventDefault();
+    },
+    /**
+     * Returns the absolute URL of the link (if any) that this click event
+     * is clicking on, if we can and should override the resulting full
+     * page navigation. Returns null otherwise.
+     *
+     * This method is separated away from _globalOnClick for testability,
+     * as we can't test that a clicked link should have resulted in navigating
+     * away from the test page.
+     *
+     * @param {MouseEvent} event .
+     * @return {string?} .
+     */
+    _getSameOriginLinkHref: function(event) {
+      // We only care about left-clicks.
+      if (event.button !== 0) {
+        return null;
+      }
+      // We don't want modified clicks, where the intent is to open the page
+      // in a new tab.
+      if (event.metaKey || event.ctrlKey) {
+        return null;
+      }
+      var eventPath = Polymer.dom(event).path;
+      var href = null;
+      for (var i = 0; i < eventPath.length; i++) {
+        var element = eventPath[i];
+        if (element.tagName === 'A' && element.href) {
+          href = element.href;
+          break;
+        }
+      }
+      // If there's no link there's nothing to do.
+      if (!href) {
+        return null;
+      }
+
+      // It only makes sense for us to intercept same-origin navigations.
+      // pushState/replaceState don't work with cross-origin links.
+      var url;
+      if (document.baseURI != null) {
+        url = new URL(href, /** @type {string} */(document.baseURI));
+      } else {
+        url = new URL(href);
+      }
+
+      var origin;
+
+      // IE Polyfill
+      if (window.location.origin) {
+        origin = window.location.origin;
+      } else {
+        origin = window.location.protocol + '//' + window.location.hostname;
+
+        if (window.location.port) {
+          origin += ':' + window.location.port;
+        }
+      }
+
+      if (url.origin !== origin) {
+        return null;
+      }
+      var normalizedHref = url.pathname + url.search + url.hash;
+
+      // If we've been configured not to handle this url... don't handle it!
+      if (this._urlSpaceRegExp &&
+          !this._urlSpaceRegExp.test(normalizedHref)) {
+        return null;
+      }
+
+      return normalizedHref;
+    },
+    _makeRegExp: function(urlSpaceRegex) {
+      return RegExp(urlSpaceRegex);
+    }
+  });
+</script>
+<script>
+  'use strict';
+
+  Polymer({
+    is: 'iron-query-params',
+    properties: {
+      paramsString: {
+        type: String,
+        notify: true,
+        observer: 'paramsStringChanged',
+      },
+      paramsObject: {
+        type: Object,
+        notify: true,
+        value: function() {
+          return {};
+        }
+      },
+      _dontReact: {
+        type: Boolean,
+        value: false
+      }
+    },
+    hostAttributes: {
+      hidden: true
+    },
+    observers: [
+      'paramsObjectChanged(paramsObject.*)'
+    ],
+    paramsStringChanged: function() {
+      this._dontReact = true;
+      this.paramsObject = this._decodeParams(this.paramsString);
+      this._dontReact = false;
+    },
+    paramsObjectChanged: function() {
+      if (this._dontReact) {
+        return;
+      }
+      this.paramsString = this._encodeParams(this.paramsObject);
+    },
+    _encodeParams: function(params) {
+      var encodedParams = [];
+      for (var key in params) {
+        var value = params[key];
+        if (value === '') {
+          encodedParams.push(encodeURIComponent(key));
+        } else if (value) {
+          encodedParams.push(
+              encodeURIComponent(key) +
+              '=' +
+              encodeURIComponent(value.toString())
+          );
+        }
+      }
+      return encodedParams.join('&');
+    },
+    _decodeParams: function(paramString) {
+      var params = {};
+      var paramList = (paramString || '').split('&');
+      for (var i = 0; i < paramList.length; i++) {
+        var param = paramList[i].split('=');
+        if (param[0]) {
+          params[decodeURIComponent(param[0])] =
+              decodeURIComponent(param[1] || '');
+        }
+      }
+      return params;
+    }
+  });
+</script>
+
+
+<script>
+  'use strict';
+
+  Polymer({
+    is: 'carbon-route-converter',
+
+    properties: {
+      /**
+       * A model representing the deserialized path through the route tree, as
+       * well as the current queryParams.
+       *
+       * A route object is the kernel of the routing system. It is intended to
+       * be fed into consuming elements such as `carbon-route`.
+       *
+       * @type {?Object}
+       */
+      route: {
+        type: Object,
+        value: null,
+        notify: true
+      },
+
+      /**
+       * A set of key/value pairs that are universally accessible to branches of
+       * the route tree.
+       *
+       * @type {?Object}
+       */
+      queryParams: {
+        type: Object,
+        value: null,
+        notify: true
+      },
+
+      /**
+       * The serialized path through the route tree. This corresponds to the
+       * `window.location.pathname` value, and will update to reflect changes
+       * to that value.
+       */
+      path: {
+        type: String,
+        notify: true,
+        value: ''
+      }
+    },
+
+    observers: [
+      '_locationChanged(path, queryParams)',
+      '_routeChanged(route.prefix, route.path)',
+      '_routeQueryParamsChanged(route.__queryParams)'
+    ],
+
+    created: function() {
+      this.linkPaths('route.__queryParams', 'queryParams');
+      this.linkPaths('queryParams', 'route.__queryParams');
+    },
+
+    /**
+     * Handler called when the path or queryParams change.
+     *
+     * @param  {!string} path The serialized path through the route tree.
+     * @param  {Object} queryParams A set of key/value pairs that are
+     * universally accessible to branches of the route tree.
+     */
+    _locationChanged: function(path, queryParams) {
+      this.route = {
+        prefix: '',
+        path: path,
+        __queryParams: queryParams
+      };
+    },
+
+    /**
+     * Handler called when the route prefix and route path change.
+     *
+     * @param  {!string} prefix The fragment of the pathname that precedes the
+     * path.
+     * @param  {!string} path The serialized path through the route tree.
+     */
+    _routeChanged: function(prefix, path) {
+      if (!this.route) {
+        return;
+      }
+
+      this.path = prefix + path;
+    },
+
+    /**
+     * Handler called when the route queryParams change.
+     *
+     * @param  {Object} queryParams A set of key/value pairs that are
+     * universally accessible to branches of the route tree.
+     */
+    _routeQueryParamsChanged: function(queryParams) {
+      if (!this.route) {
+        return;
+      }
+      this.queryParams = queryParams;
+    }
+  });
+</script>
+
+
+<dom-module id="carbon-location" assetpath="../bower_components/carbon-route/">
+  <template>
+    <iron-location path="{{__path}}" query="{{__query}}" hash="{{__hash}}" url-space-regex="{{urlSpaceRegex}}">
+    </iron-location>
+    <iron-query-params params-string="{{__query}}" params-object="{{__queryParams}}">
+    </iron-query-params>
+    <carbon-route-converter on-path-changed="__onPathChanged" path="[[__computeRoutePath(__path, __hash, useHashAsPath)]]" query-params="{{__queryParams}}" route="{{route}}">
+    </carbon-route-converter>
+  </template>
+  <script>
+    'use strict';
+
+    Polymer({
+      is: 'carbon-location',
+
+      properties: {
+        /**
+         * A model representing the deserialized path through the route tree, as
+         * well as the current queryParams.
+         */
+        route: {
+          type: Object,
+          notify: true
+        },
+
+        /**
+         * In many scenarios, it is convenient to treat the `hash` as a stand-in
+         * alternative to the `path`. For example, if deploying an app to a static
+         * web server (e.g., Github Pages) - where one does not have control over
+         * server-side routing - it is usually a better experience to use the hash
+         * to represent paths through one's app.
+         *
+         * When this property is set to true, the `hash` will be used in place of
+
+         * the `path` for generating a `route`.
+         */
+        useHashAsPath: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * A regexp that defines the set of URLs that should be considered part
+         * of this web app.
+         *
+         * Clicking on a link that matches this regex won't result in a full page
+         * navigation, but will instead just update the URL state in place.
+         *
+         * This regexp is given everything after the origin in an absolute
+         * URL. So to match just URLs that start with /search/ do:
+         *     url-space-regex="^/search/"
+         *
+         * @type {string|RegExp}
+         */
+        urlSpaceRegex: {
+          type: String,
+          notify: true
+        },
+
+        /**
+         * A set of key/value pairs that are universally accessible to branches
+         * of the route tree.
+         */
+        __queryParams: {
+          type: Object
+        },
+
+        /**
+         * The pathname component of the current URL.
+         */
+        __path: {
+          type: String
+        },
+
+        /**
+         * The query string portion of the current URL.
+         */
+        __query: {
+          type: String
+        },
+
+        /**
+         * The hash portion of the current URL.
+         */
+        __hash: {
+          type: String
+        }
+      },
+
+      __computeRoutePath: function(path, hash, useHashAsPath) {
+        return useHashAsPath ? hash : path;
+      },
+
+      __onPathChanged: function(event) {
+        var path = event.detail.value;
+
+        if (this.useHashAsPath) {
+          this.__hash = path;
+        } else {
+          this.__path = path;
+        }
+      }
+    });
+  </script>
+</dom-module>
 <script charset="utf-8">/*!
  * accounting.js v0.3.2, copyright 2011 Joss Crowcroft, MIT license, http://josscrowcroft.github.com/accounting.js
  */
@@ -27786,8 +28584,10 @@ value. `setMax` should move the slider to the maximum value.
         }
       }
     </style>
+    <carbon-location route="{{route}}" use-hash-as-path=""></carbon-location>
+
     <iron-media-query query="(min-height: 900px)" query-matches="{{tallWindow}}"></iron-media-query>
-    <paper-dialog id="dialog" modal="" no-cancel-on-esc-key="false">
+    <paper-dialog id="dialog" modal="" no-cancel-on-esc-key="false" opened="{{_showDialog(route.path)}}">
       <div class="main-layout">
         <h2>{{caption}}</h2>
         <span class="flex"></span>
@@ -27835,6 +28635,7 @@ value. `setMax` should move the slider to the maximum value.
         is: 'expense-editor',
 
         properties: {
+
           service: Object,
           expense: {
             type: Object,
@@ -27861,6 +28662,10 @@ value. `setMax` should move the slider to the maximum value.
         ready: function() {
           this.$.upload.i18n.dropFiles.one = 'Drop receipt here...';
           this.$.upload.i18n.addFiles.one = 'Select receipt';
+        },
+
+        _showDialog: function() {
+          return this.expense && this.route.path === '/edit';
         },
 
         _getCaption: function(expense) {
@@ -27954,21 +28759,22 @@ value. `setMax` should move the slider to the maximum value.
           }
 
           this.$.delete.hidden = !(this.expense._id && this.expense.status === 'new');
-          this.$.dialog.open();
 
           // Ensure that the scroll is returned to top on mobile
           this.async(function() {
             this.$.dialog.scrollTop = 0;
           });
 
+          this.set('route.path', '/edit');
         },
 
         close: function() {
           var _this = this;
           this.async(function() {
             // Prevent tap from leaking through to underlying page
-            _this.$.dialog.close();
-          }, 10);
+            _this.set('route.path', '');
+            _this.expense = null;
+          }, 100);
 
         },
 
@@ -36058,22 +36864,59 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
       attached: function() {
         this.status = 'initializing';
 
-        this._localDB = new PouchDB(this.dbName, {
-          size: 50 // 50MB is max for mobile Safari
-        });
-        this.status = 'local_connected';
+        this._setupLocalDB();
 
         if (this.location) {
-          this._setupSync();
+          this._setupRemoteDB();
         }
 
         this._update();
       },
 
+      _setupLocalDB: function() {
+        var _this = this;
+        this._localDB = new PouchDB(this.dbName, {
+          size: 50 // 50MB is max for mobile Safari
+        });
+        // If we do not have a remote DB, initialize if needed
+        if (!this.location) {
+          this._localDB.allDocs().then(function(result) {
+            if (!result.rows || result.rows.length === 0) {
+              _this._initDB();
+            }
+          });
+        }
+        this.status = 'local_connected';
+      },
+
+      _setupRemoteDB: function() {
+        var _this = this;
+
+        this._remoteDB = new PouchDB(this.location + '/' + this.dbName, {
+          // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+          skip_setup: true
+        });
+
+        // Check if remote DB exists
+        this._remoteDB.info().then(function() {
+            _this.status = 'remote_connected';
+            _this._setupSync();
+          })
+          // If not, create and init
+          .catch(function(err) {
+            console.log(err);
+            _this._remoteDB = new PouchDB(_this.location + '/' + _this.dbName);
+            _this._remoteDB.on('created', function() {
+              console.log('Remote db created');
+              _this._initDB().then(function() {
+                _this._setupSync();
+              });
+            });
+          });
+      },
+
       _setupSync: function() {
         var _this = this;
-        this._remoteDB = new PouchDB(this.location + '/' + this.dbName);
-        this.status = 'remote_connected';
 
         this._syncHandler = this._localDB.sync(this._remoteDB, {
           live: true,
@@ -36090,7 +36933,6 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
           }
         }).on('active', function() {
           _this.status = 'syncing';
-          // console.log('Sync active');
         }).on('error', function(err) {
           console.log(err);
         });
@@ -36107,7 +36949,7 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
         if (this.init &&
           ((!this.location && oldState === 'local_connected' && newState === 'waiting') ||
             (this.location && oldState === 'remote_connected' && newState === 'waiting'))) {
-          this._initDB();
+          //this._initDB();
         }
       },
 
@@ -36194,7 +37036,7 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
             _this.status = 'waiting';
             console.log(err);
           });
-        }, 500);
+        }, 200);
       },
 
       _showNotification: function(text) {
@@ -36206,9 +37048,14 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
       // remote db
       _initDB: function() {
         this.status = 'initializing_data';
-        if (this.init && this.data && this.data.length === 0) {
-          this.bulkDocs(this.init());
-        }
+        var _this = this;
+        return new Promise(function(resolve) {
+          if (_this.init) {
+            resolve(_this.bulkDocs(_this.init()));
+          } else {
+            resolve();
+          }
+        });
       }
     });
   </script>
@@ -36272,8 +37119,8 @@ var i=o.txn,a=i.objectStore(Ho);a.get(e).onsuccess=function(n){var r=dn(n.target
     </style>
     
     
-
     
+
     <pouch-db db-name="e6359be" location="https://vaadin-expense-manager.cloudant.com" data="{{expenses}}" status="{{status}}" id="db" attachments="{{attachments}}"></pouch-db>
 
     <paper-header-panel>
