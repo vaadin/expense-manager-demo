@@ -11,6 +11,8 @@
 <link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
 <link rel="import" href="../bower_components/vaadin-upload/vaadin-upload.html">
 <link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../bower_components/carbon-route/carbon-route.html">
+<link rel="import" href="../bower_components/carbon-route/carbon-location.html">
 <link rel="import" href="../scripts/accounting-js.html">
 <link rel="import" href="../scripts/moment-js.html">
 
@@ -145,8 +147,10 @@
         }
       }
     </style>
+    <carbon-location route="{{route}}" use-hash-as-path></carbon-location>
+
     <iron-media-query query="(min-height: 900px)" query-matches="{{tallWindow}}"></iron-media-query>
-    <paper-dialog id="dialog" modal no-cancel-on-esc-key="false">
+    <paper-dialog id="dialog" modal no-cancel-on-esc-key="false" opened="{{_showDialog(route.path)}}">
       <div class="main-layout">
         <h2>{{caption}}</h2>
         <span class="flex"></span>
@@ -194,6 +198,7 @@
         is: 'expense-editor',
 
         properties: {
+
           service: Object,
           expense: {
             type: Object,
@@ -215,11 +220,19 @@
           }
         },
 
-        observers: ['_updateReceiptURL(expense._attachments.*)'],
+        observers: ['_updateReceiptURL(expense._attachments.*), _routeChanged(route.*)'],
 
         ready: function() {
           this.$.upload.i18n.dropFiles.one = 'Drop receipt here...';
           this.$.upload.i18n.addFiles.one = 'Select receipt';
+        },
+
+        _showDialog: function() {
+          return this.expense && this.route.path === '/edit';
+        },
+
+        _routeChanged: function() {
+          console.log('route changed!', this.route);
         },
 
         _getCaption: function(expense) {
@@ -313,21 +326,22 @@
           }
 
           this.$.delete.hidden = !(this.expense._id && this.expense.status === 'new');
-          this.$.dialog.open();
 
           // Ensure that the scroll is returned to top on mobile
           this.async(function() {
             this.$.dialog.scrollTop = 0;
           });
 
+          this.set('route.path', '/edit');
         },
 
         close: function() {
           var _this = this;
           this.async(function() {
             // Prevent tap from leaking through to underlying page
-            _this.$.dialog.close();
-          }, 10);
+            _this.set('route.path', '');
+            _this.expense = null;
+          }, 100);
 
         },
 
