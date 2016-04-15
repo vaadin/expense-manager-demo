@@ -220,7 +220,7 @@
           }
         },
 
-        observers: ['_updateReceiptURL(expense._attachments.*), _routeChanged(route.*)'],
+        observers: ['_updateReceiptURL(expense._attachments.*)'],
 
         ready: function() {
           this.$.upload.i18n.dropFiles.one = 'Drop receipt here...';
@@ -229,10 +229,6 @@
 
         _showDialog: function() {
           return this.expense && this.route.path === '/edit';
-        },
-
-        _routeChanged: function() {
-          console.log('route changed!', this.route);
         },
 
         _getCaption: function(expense) {
