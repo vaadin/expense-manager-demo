@@ -15,13 +15,13 @@
       margin: 0;
       height: 100vh;
     }
-    
+
     body.loading {
       width: 100vw;
       height: 100vh;
       overflow: hidden;
     }
-    
+
     #loadingScreen {
       display: block;
       position: absolute;
@@ -34,7 +34,7 @@
       background-size: 200px 200px;
       transition: opacity 400ms;
     }
-    
+
     .ready #loadingScreen {
       opacity: 0 !important;
     }
@@ -69,10 +69,10 @@
 
   <platinum-sw-register auto-register clients-claim skip-waiting on-service-worker-installed="_cachingComplete">
     <platinum-sw-fetch path="/(.*)" handler="networkOnly" origin="https://vaadin-expense-manager\.cloudant\.com"></platinum-sw-fetch>
-    <platinum-sw-cache default-cache-strategy="networkFirst" cache-config-file="cache-config.json">
+    <platinum-sw-cache default-cache-strategy="fastest" cache-config-file="cache-config.json">
     </platinum-sw-cache>
   </platinum-sw-register>
-  <!-- <platinum-https-redirect></platinum-https-redirect> -->
+  <platinum-https-redirect></platinum-https-redirect>
 
   <span id="browser-sync-binding"></span>
   <script>
