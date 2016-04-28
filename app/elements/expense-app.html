@@ -13,7 +13,7 @@
       :host {
         display: block;
       }
-      
+
       #pages {
         position: absolute;
         top: 0;
@@ -24,10 +24,10 @@
     </style>
 
     <neon-animated-pages id="pages" selected="[[selected]]">
-      <login-page id="login" token="{{token}}"></login-page>
-      <overview-page id="overview" token="{{token}}"></overview-page>
+      <login-page id="login" logged-in="{{loggedIn}}"></login-page>
+      <overview-page id="overview" logged-in="{{loggedIn}}"></overview-page>
     </neon-animated-pages>
-    <iron-localstorage name="token" value="{{token}}"></iron-localstorage>
+    <iron-localstorage name="loggedIn" value="{{loggedIn}}"></iron-localstorage>
 
   </template>
 
@@ -38,8 +38,8 @@
       Polymer({
         is: 'expense-app',
         properties: {
-          token: {
-            type: String,
+          loggedIn: {
+            type: Boolean,
             notify: true,
             observer: '_selectPage'
           },
@@ -50,7 +50,7 @@
         },
 
         _selectPage: function() {
-          this.selected = this.token ? 1 : 0;
+          this.selected = this.loggedIn ? 1 : 0;
         },
 
         _cachingComplete: function() {

@@ -14,12 +14,12 @@
       display: flex;
       flex-direction: column;
     }
-    
+
     .login paper-input {
       width: 300px;
       max-width: 80vw;
     }
-    
+
     #login-button {
       margin-top: 20px;
       padding-left: 30px;
@@ -27,11 +27,11 @@
       background: var(--accent-color);
       color: var(--text-primary-color);
     }
-    
+
     .error-message {
       color: red;
     }
-    
+
     .header {
       background: var(--dark-primary-color);
       height: 40%;
@@ -41,20 +41,20 @@
       align-items: center;
       justify-content: flex-end;
     }
-    
+
     .header .logo {
       color: var(--default-primary-color);
       --iron-icon-height: 96px;
       --iron-icon-width: 96px;
     }
-    
+
     .header h1 {
       color: var(--text-primary-color);
       font-size: 60px;
       font-weight: 100;
       margin-top: 0;
     }
-    
+
     .login {
       padding-top: 30px;
       display: flex;
@@ -62,24 +62,24 @@
       flex: 1;
       align-items: center;
     }
-    
+
     .built-with {
       font-weight: 200;
       margin-bottom: 12px;
       text-align: center;
     }
-    
+
     .built-with a {
       color: inherit;
     }
-    
+
     .fork-me {
       position: absolute;
       top: 0;
       right: 0;
       border: 0;
     }
-    
+
     @media (max-width: 600px) {
       .login,
       .header {
@@ -89,7 +89,7 @@
         width: 100px;
       }
     }
-    
+
     @media (max-width: 500px) {
       .header h1 {
         font-size: 40px;
@@ -100,7 +100,7 @@
   <template>
     <a href="https://github.com/vaadin/expense-manager-demo">
       <img class="fork-me" src="https://camo.githubusercontent.com/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67" alt="Fork me on GitHub"
-        data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png">
+          data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png">
     </a>
     <iron-a11y-keys keys="enter" on-keys-pressed="_logIn"></iron-a11y-keys>
     <div id="header" class="header">
@@ -124,8 +124,8 @@
       Polymer({
         is: 'login-page',
         properties: {
-          token: {
-            type: String,
+          loggedIn: {
+            type: Boolean,
             notify: true
           },
           username: {
@@ -172,7 +172,7 @@
         behaviors: [Polymer.NeonSharedElementAnimatableBehavior],
 
         _logIn: function() {
-          this.token = 'token';
+          this.loggedIn = true;
         }
       });
     })();

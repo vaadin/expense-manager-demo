@@ -24,6 +24,7 @@
     "Promise": true,
     "Offline": true,
     "File": true,
-    "PouchDB": true
+    "PouchDB": true,
+    "qr": true
   }
 }

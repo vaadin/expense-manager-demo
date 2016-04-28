@@ -13,6 +13,7 @@
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="expense-editor.html">
 <link rel="import" href="about-dialog.html">
+<link rel="import" href="intro-dialog.html">
 <link rel="import" href="content-panel.html">
 <link rel="import" href="filters-toolbar.html">
 <link rel="import" href="../scripts/moment-js.html">
@@ -112,6 +113,7 @@
     <expense-editor id="expenseEditor" attachments="[[attachments]]" route="{{subroute}}"></expense-editor>
     <paper-toast id="saveNotification"></paper-toast>
     <about-dialog id="about"></about-dialog>
+    <intro-dialog id="intro"></intro-dialog>
   </template>
 
   <script>
@@ -125,8 +127,9 @@
           routeData: Object,
           dbName: String,
           dbLocation: String,
-          token: {
-            type: String,
+          _showIntro: Boolean,
+          loggedIn: {
+            type: Boolean,
             notify: true
           },
           status: String,
@@ -215,8 +218,20 @@
           'delete-expense': '_deleteExpense'
         },
 
+        observers: ['_showIntroDialog(loggedIn, _showIntro)'],
+
         attached: function() {
           this._setupRemoteDB();
+        },
+
+        _showIntroDialog: function() {
+          if (this.loggedIn && this._showIntro) {
+            var self = this;
+            this.async(function() {
+              self.$.intro.open();
+              self._showIntro = false;
+            }, 1000);
+          }
         },
 
         _setupRemoteDB: function() {
@@ -236,9 +251,10 @@
             this.dbName = response.couchdb_db_name;
             // this.dbLocation = 'https://vaadin-expense-manager.cloudant.com/';
             // this.dbName = 'e6359be';
-
             this.set('route.path', '/' + response.backend_db_id);
-            console.log('Got remote DB details. Created new DB: ' + response.new_db);
+            if (response.new_db) {
+              this._showIntro = true;
+            }
           }
         },
 
@@ -277,7 +293,7 @@
         },
 
         _logout: function() {
-          this.token = '';
+          this.loggedIn = false;
         },
 
         _showAbout: function() {
