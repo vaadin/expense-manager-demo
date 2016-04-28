@@ -7,13 +7,13 @@
       margin: 0;
       height: 100vh;
     }
-    
+
     body.loading {
       width: 100vw;
       height: 100vh;
       overflow: hidden;
     }
-    
+
     #loadingScreen {
       display: block;
       position: absolute;
@@ -26,14 +26,14 @@
       background-size: 200px 200px;
       transition: opacity 400ms;
     }
-    
+
     .ready #loadingScreen {
       opacity: 0 !important;
     }
   </style><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#37474F"><meta name="mobile-web-app-capable" content="yes"><link rel="icon" sizes="192x192" href="images/app-icon-192.png"><meta name="application-name" content="Expense Manager"><link rel="apple-touch-icon" href="images/app-icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="apple-mobile-web-app-title" content="Expense Manager"><link rel="stylesheet" href="styles/main.css"><link rel="import" id="bundle" href="elements/elements.html" async=""><script>
     window.Polymer = window.Polymer || {};
     window.Polymer.dom = 'shadow';
-  </script></head><body class="loading"><div id="loadingScreen"></div><platinum-sw-register auto-register="" clients-claim="" skip-waiting="" on-service-worker-installed="_cachingComplete"><platinum-sw-fetch path="/(.*)" handler="networkOnly" origin="https://vaadin-expense-manager\.cloudant\.com"></platinum-sw-fetch><platinum-sw-cache default-cache-strategy="networkFirst" cache-config-file="cache-config.json"></platinum-sw-cache></platinum-sw-register><span id="browser-sync-binding"></span><script>
+  </script></head><body class="loading"><div id="loadingScreen"></div><platinum-sw-register auto-register="" clients-claim="" skip-waiting="" on-service-worker-installed="_cachingComplete"><platinum-sw-fetch path="/(.*)" handler="networkOnly" origin="https://vaadin-expense-manager\.cloudant\.com"></platinum-sw-fetch><platinum-sw-cache default-cache-strategy="fastest" cache-config-file="cache-config.json"></platinum-sw-cache></platinum-sw-register><platinum-https-redirect></platinum-https-redirect><span id="browser-sync-binding"></span><script>
     function onImportLoaded() {
       var loadingScreen = document.querySelector('#loadingScreen');
       loadingScreen.addEventListener('transitionend', function() {
