@@ -8,6 +8,9 @@
 <link rel="import" href="../bower_components/neon-animation/animations/hero-animation.html">
 <link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
 <link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../bower_components/carbon-route/carbon-route.html">
+<link rel="import" href="../bower_components/carbon-route/carbon-location.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="expense-editor.html">
 <link rel="import" href="about-dialog.html">
 <link rel="import" href="content-panel.html">
@@ -21,24 +24,24 @@
       :host {
         display: block;
       }
-      
+
       paper-toolbar {
         background: var(--dark-primary-color);
       }
-      
+
       paper-toolbar h1 {
         font-weight: 300;
       }
-      
+
       paper-toolbar .logo {
         color: var(--default-primary-color);
         margin-left: 16px;
       }
-      
+
       .flex {
         flex: 1;
       }
-      
+
       .content {
         position: absolute;
         top: 0;
@@ -48,25 +51,25 @@
         display: flex;
         flex-direction: column;
       }
-      
+
       #content-panel {
         flex: 1;
       }
-      
+
       #sync {
         margin-left: 8px;
       }
-      
+
       #sync[hidden] {
         display: none;
       }
-      
+
       .logout-button,
       .about-button {
         font-size: 14px;
         color: var(--default-primary-color);
       }
-      
+
       @media (max-width: 600px) {
         paper-toolbar h1 {
           font-size: 1em;
@@ -75,9 +78,16 @@
     </style>
     <!-- Update location and db-name to match your remote DB-->
     <!-- Remove the location attribute if you do not want to sync to a remote DB-->
-    <pouch-db db-name="expenses" data="{{expenses}}" location="http://localhost:5984" status="{{status}}" id="db" attachments="{{attachments}}" init="[[init]]"></pouch-db>
+    <!-- <pouch-db db-name="expenses" data="{{expenses}}" location="http://localhost:5984" status="{{status}}" id="db" attachments="{{attachments}}" init="[[init]]"></pouch-db> -->
 
+    <carbon-location route="{{route}}" use-hash-as-path></carbon-location>
 
+    <carbon-route route="{{route}}" pattern="/:dbId" data="{{routeData}}" tail="{{subroute}}">
+    </carbon-route>
+
+    <iron-ajax id="ajax" handle-as="json" on-response="_handleBackendResponse"></iron-ajax>
+
+    <pouch-db db-name="{{dbName}}" location="{{dbLocation}}" data="{{expenses}}" status="{{status}}" id="db" attachments="{{attachments}}"></pouch-db>
 
     <paper-header-panel>
       <paper-toolbar>
@@ -99,7 +109,7 @@
 
     </paper-header-panel>
 
-    <expense-editor id="expenseEditor" attachments="[[attachments]]"></expense-editor>
+    <expense-editor id="expenseEditor" attachments="[[attachments]]" route="{{subroute}}"></expense-editor>
     <paper-toast id="saveNotification"></paper-toast>
     <about-dialog id="about"></about-dialog>
   </template>
@@ -111,13 +121,16 @@
         is: 'overview-page',
 
         properties: {
+          route: Object,
+          routeData: Object,
+          dbName: String,
+          dbLocation: String,
           token: {
             type: String,
             notify: true
           },
           status: String,
           expenses: Array,
-          dbLocation: String,
           attachments: Object,
           init: {
             type: Object,
@@ -149,6 +162,7 @@
                     comment: 'Expense from my business trip.'
                   });
                 }
+                console.log(JSON.stringify(expenses));
                 return expenses;
               };
             }
@@ -199,6 +213,33 @@
           'expenses-updated': '_expensesUpdated',
           'expense-saved': '_saveExpense',
           'delete-expense': '_deleteExpense'
+        },
+
+        attached: function() {
+          this._setupRemoteDB();
+        },
+
+        _setupRemoteDB: function() {
+          if (this.routeData && this.routeData.dbId) {
+            this.$.ajax.url = 'http://expense-manager.demo.vaadin.com/db/' + this.routeData.dbId;
+          } else {
+            this.$.ajax.url = 'http://expense-manager.demo.vaadin.com/create';
+          }
+          this.$.ajax.generateRequest();
+        },
+
+        _handleBackendResponse: function(evt) {
+          var response = evt.detail.response;
+          if (response) {
+            // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+            this.dbLocation = response.couchdb_base_url;
+            this.dbName = response.couchdb_db_name;
+            // this.dbLocation = 'https://vaadin-expense-manager.cloudant.com/';
+            // this.dbName = 'e6359be';
+
+            this.set('route.path', '/' + response.backend_db_id);
+            console.log('Got remote DB details. Created new DB: ' + response.new_db);
+          }
         },
 
         behaviors: [Polymer.NeonSharedElementAnimatableBehavior],

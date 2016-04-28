@@ -12,7 +12,6 @@
 <link rel="import" href="../bower_components/vaadin-upload/vaadin-upload.html">
 <link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../bower_components/carbon-route/carbon-route.html">
-<link rel="import" href="../bower_components/carbon-route/carbon-location.html">
 <link rel="import" href="../scripts/accounting-js.html">
 <link rel="import" href="../scripts/moment-js.html">
 
@@ -31,51 +30,51 @@
         max-height: 100vh;
         overflow: visible;
       }
-      
+
       .main-layout {
         display: flex;
         flex-direction: row;
       }
-      
+
       .flex {
         flex: 1;
       }
-      
+
       .form {
         flex: 2;
       }
-      
+
       .buttons-layout {
         display: flex;
         flex-direction: row;
         margin-top: 16px;
       }
-      
+
       .buttons-layout paper-button {
         width: 150px;
       }
-      
+
       .save-button {
         background: var(--accent-color);
         color: var(--text-primary-color);
       }
-      
+
       .cancel-button {
         color: var(--accent-color);
       }
-      
+
       h2 {
         font-size: 2em;
         font-weight: 300;
       }
-      
+
       .receipt {
         flex: 3;
         margin-left: 24px;
         min-height: 64px;
         max-width: 400px;
       }
-      
+
       .receipt .receipt-wrapper {
         max-width: 100%;
         display: block;
@@ -83,48 +82,48 @@
         max-height: 60vh;
         overflow-y: scroll;
       }
-      
+
       .receipt-wrapper img {
         width: 100%;
       }
-      
+
       .receipt img[hidden] {
         display: none;
       }
-      
+
       paper-button[hidden] {
         display: none;
       }
-      
+
       #error {
         color: red;
       }
-      
+
       :host > .wrapper {
         height: 100%;
         width: 100%;
         padding: 0;
       }
-      
+
       .close-button {
         color: var(--accent-color);
       }
-      
+
       form::content label {
         font-weight: bold !important;
         color: #999 !important;
       }
-      
+
       .wrapper {
         display: flex;
       }
-      
+
       @media (min-width: 900px) {
         .wrapper {
           flex-direction: row;
         }
       }
-      
+
       @media (max-width: 900px) {
         .receipt {
           margin: 24px 0 0 0;
@@ -147,7 +146,8 @@
         }
       }
     </style>
-    <carbon-location route="{{route}}" use-hash-as-path></carbon-location>
+
+    <carbon-route route="{{route}}" pattern="/:action" data="{{routeData}}"></carbon-route>
 
     <iron-media-query query="(min-height: 900px)" query-matches="{{tallWindow}}"></iron-media-query>
     <paper-dialog id="dialog" modal no-cancel-on-esc-key="false" opened="{{_showDialog(route.path)}}">
@@ -217,7 +217,9 @@
             type: String,
             notify: true,
             value: 'images/default-receipt.png'
-          }
+          },
+          route: Object,
+          routeData: Object
         },
 
         observers: ['_updateReceiptURL(expense._attachments.*)'],
@@ -228,7 +230,7 @@
         },
 
         _showDialog: function() {
-          return this.expense && this.route.path === '/edit';
+          return this.expense && this.route.path && this.route.path === '/edit';
         },
 
         _getCaption: function(expense) {
@@ -336,7 +338,7 @@
           this.async(function() {
             // Prevent tap from leaking through to underlying page
             _this.set('route.path', '');
-            _this.expense = null;
+            _this.expense = {};
           }, 100);
 
         },

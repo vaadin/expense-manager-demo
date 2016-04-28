@@ -48,22 +48,12 @@
         }
       },
 
+      observers: ['_setupLocalDB(dbName)', '_setupRemoteDB(dbName, location)'],
+
       ready: function() {
         this.attachments = {
           getAttachment: this._getAttachment.bind(this)
         };
-      },
-
-      attached: function() {
-        this.status = 'initializing';
-
-        this._setupLocalDB();
-
-        if (this.location) {
-          this._setupRemoteDB();
-        }
-
-        this._update();
       },
 
       _setupLocalDB: function() {
@@ -79,13 +69,15 @@
             }
           });
         }
+        this._update();
         this.status = 'local_connected';
       },
 
       _setupRemoteDB: function() {
         var _this = this;
-
-        this._remoteDB = new PouchDB(this.location + '/' + this.dbName, {
+        this.location = this.location.indexOf('/', this.location.length - 1) === -1 ?
+          this.location + '/' : this.location;
+        this._remoteDB = new PouchDB(this.location + this.dbName, {
           // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
           skip_setup: true
         });
@@ -237,8 +229,6 @@
         this.$.notification.show();
       },
 
-      // Initializes database with given init function if local database is empty after syncing with
-      // remote db
       _initDB: function() {
         this.status = 'initializing_data';
         var _this = this;
