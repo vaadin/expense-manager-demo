@@ -225,8 +225,8 @@
         observers: ['_updateReceiptURL(expense._attachments.*)'],
 
         ready: function() {
-          this.$.upload.i18n.dropFiles.one = 'Drop receipt here...';
-          this.$.upload.i18n.addFiles.one = 'Select receipt';
+          this.$.upload.set('i18n.dropFiles.one', 'Drop receipt here...');
+          this.$.upload.set('i18n.addFiles.one', 'Select receipt');
         },
 
         _showDialog: function() {

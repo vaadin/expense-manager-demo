@@ -236,9 +236,9 @@
 
         _setupRemoteDB: function() {
           if (this.routeData && this.routeData.dbId) {
-            this.$.ajax.url = 'http://expense-manager.demo.vaadin.com/db/' + this.routeData.dbId;
+            this.$.ajax.url = 'https://expense-manager2.demo.vaadin.com/api/db/' + this.routeData.dbId;
           } else {
-            this.$.ajax.url = 'http://expense-manager.demo.vaadin.com/create';
+            this.$.ajax.url = 'https://expense-manager2.demo.vaadin.com/api/create';
           }
           this.$.ajax.generateRequest();
         },
