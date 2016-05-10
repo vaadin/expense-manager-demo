@@ -10,15 +10,20 @@
         display: flex;
         position: relative;
       }
-      
+
       #filters {
         flex: 1;
         border-right: 1px solid #ddd;
       }
-      
+
+      #toolbar {
+        background: var(--default-primary-color);
+        display: flex;
+        align-items: center;
+      }
+
       #total {
         width: 300px;
-        background: var(--default-primary-color);
         color: var(--text-primary-color);
         box-sizing: border-box;
         font-weight: 500;
@@ -29,49 +34,58 @@
         align-items: center;
         justify-content: center;
       }
-      
+
       #total .sum {
         font-size: 32px;
         font-weight: 200;
       }
-      
+
       #filters-toggle {
         position: absolute;
         top: 4px;
         right: 16px;
         display: none;
       }
-      
+
       #filters-toggle .count {
-        width: 28px;
-        height: 28px;
+        width: 0;
+        height: 0;
         line-height: 28px;
+        overflow: hidden;
         text-align: center;
         border-radius: 50%;
         background: var(--dark-primary-color);
         color: var(--primary-color);
         font-weight: 600;
+        transform: scale(0);
+        transition: all 400ms;
       }
-      
+
+      #filters-toggle .count[has-filters] {
+        width: 28px;
+        height: 28px;
+        transform: scale(1);
+      }
+
       #filters-caption {
         display: none;
       }
-      
+
       #buttons {
         display: none;
         justify-content: flex-end;
         margin-right: 16px;
       }
-      
+
       #done-button {
         background: var(--accent-color);
         color: var(--text-primary-color);
       }
-      
+
       #clear-button {
         color: var(--accent-color);
       }
-      
+
       @media (max-width: 900px) {
         :host {
           flex-direction: column-reverse;
@@ -79,41 +93,34 @@
         #filters-toggle {
           display: flex;
           align-items: center;
+          cursor: pointer;
         }
-        :host([expanded]) #filters-toggle {
-          color: #80CBC4;
-          /*=primary-color, @media queries don't work with variables*/
+        #filters-toggle span {
+          margin-right: 4px;
         }
-        :host([expanded]) #filters-toggle .count {
-          color: #fff;
-          background: #80CBC4;
-          /*=primary-color, @media queries don't work with variables*/
+        #toolbar {
+          height: 48px;
+          padding: 0 16px;
+          flex-shrink: 0;
         }
         #total {
           width: 100%;
+          display: flex;
           flex-direction: row;
           justify-content: flex-start;
-          height: 48px;
-          padding-left: 16px;
+          align-items: center;
         }
         #total .sum {
           font-size: inherit;
           margin-left: 8px;
         }
-        :host([expanded]) #total {
-          display: none;
-        }
         #filters {
-          display: none;
-          border: none;
+          max-height: 0;
+          overflow: hidden;
+          transition: max-height 400ms;
         }
         :host([expanded]) #filters {
-          display: block;
-          margin-bottom: 16px;
-        }
-        :host([expanded]) #buttons {
-          display: flex;
-          margin-bottom: 16px;
+          max-height: 500px;
         }
         :host([expanded]) #filters-caption {
           display: block;
@@ -122,26 +129,31 @@
           font-size: 16px;
           font-weight: 400;
         }
+        :host([expanded]) #buttons {
+          display: flex;
+          margin-bottom: 32px;
+        }
       }
     </style>
-    <div id="buttons">
-      <paper-button id="clear-button" on-tap="_clearFilters">Clear filters</paper-button>
-      <paper-button id="done-button" on-tap="_hideFilters" raised>Done</paper-button>
+    <search-filters filters="{{filters}}" merchants="[[merchants]]" id="filters">
+      <div id="buttons">
+        <paper-button id="clear-button" on-tap="_clearFilters">Clear filters</paper-button>
+        <paper-button id="done-button" on-tap="_hideFilters" raised>Done</paper-button>
+      </div>
+    </search-filters>
+
+    <div id="toolbar">
+      <div id="total">
+        <span>Total</span>
+        <span class="sum">[[totalOwed]]</span>
+      </div>
+
+      <div id="filters-toggle" on-tap="_toggleFilters">
+        <span>Filters</span>
+        <div class="count" has-filters$="[[_hasFilters(appliedFilters)]]">[[appliedFilters]]</div>
+        <paper-icon-button icon="filter-list"></paper-icon-button>
+      </div>
     </div>
-    <search-filters filters="{{filters}}" merchants="[[merchants]]" id="filters"></search-filters>
-
-    <div id="total">
-      <div>Total</div>
-      <div class="sum">[[totalOwed]]</div>
-    </div>
-
-    <h3 id="filters-caption">Filters</h3>
-
-    <div id="filters-toggle">
-      <div class="count" hidden$="[[!appliedFilters]]">[[appliedFilters]]</div>
-      <paper-icon-button icon="filter-list" on-tap="_toggleFilters"></paper-icon-button>
-    </div>
-
   </template>
   <script>
     Polymer({
@@ -180,6 +192,10 @@
         }
       },
 
+      _hasFilters: function(appliedFilters) {
+        return appliedFilters > 0;
+      },
+
       _calculateNumFilters: function() {
         var numFilters = 0;
         for (var f in this.filters) {
@@ -191,7 +207,6 @@
               } else {
                 numFilters++;
               }
-
             }
           }
         }
@@ -214,10 +229,9 @@
       },
 
       _hideFilters: function() {
-        var _this = this;
         // add delay or tap will go through and hit grid
         this.async(function() {
-          _this.expanded = false;
+          this.expanded = false;
         }, 100);
 
       },
