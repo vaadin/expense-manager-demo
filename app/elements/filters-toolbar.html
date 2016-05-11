@@ -58,7 +58,7 @@
         color: var(--primary-color);
         font-weight: 600;
         transform: scale(0);
-        transition: all 400ms;
+        transition: all 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
       }
 
       #filters-toggle .count[has-filters] {
@@ -117,10 +117,11 @@
         #filters {
           max-height: 0;
           overflow: hidden;
-          transition: max-height 400ms;
+          transition: max-height 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
         }
-        :host([expanded]) #filters {
-          max-height: 500px;
+        #buttons {
+          display: flex;
+          margin-bottom: 32px;
         }
         :host([expanded]) #filters-caption {
           display: block;
@@ -128,10 +129,6 @@
           margin: 16px;
           font-size: 16px;
           font-weight: 400;
-        }
-        :host([expanded]) #buttons {
-          display: flex;
-          margin-bottom: 32px;
         }
       }
     </style>
@@ -239,6 +236,11 @@
 
       _toggleFilters: function() {
         this.expanded = !this.expanded;
+        if (this.expanded) {
+          this.$.filters.style.maxHeight = this.$.filters.scrollHeight + 'px';
+        } else {
+          this.$.filters.style.maxHeight = 0;
+        }
       },
 
       _hideFilters: function() {
