@@ -103,13 +103,13 @@
       </paper-toolbar>
 
       <div class="content">
-        <filters-toolbar id="filters-toolbar" filters="{{filters}}" expenses="[[expenses]]"></filters-toolbar>
+        <filters-toolbar id="filters-toolbar" merchants="[[merchants]]" filters="{{filters}}" expenses="[[expenses]]"></filters-toolbar>
         <content-panel id="content-panel" filters="{{filters}}" expenses="[[expenses]]"></content-panel>
       </div>
 
     </paper-header-panel>
 
-    <expense-editor id="expenseEditor" attachments="[[attachments]]" route="{{subroute}}"></expense-editor>
+    <expense-editor id="expenseEditor" merchants="[[merchants]]" attachments="[[attachments]]" route="{{subroute}}"></expense-editor>
     <paper-toast id="saveNotification"></paper-toast>
     <about-dialog id="about"></about-dialog>
     <intro-dialog id="intro"></intro-dialog>
@@ -133,6 +133,7 @@
           },
           status: String,
           expenses: Array,
+          merchants: Array,
           attachments: Object,
           init: {
             type: Object,
@@ -205,7 +206,10 @@
           'delete-expense': '_deleteExpense'
         },
 
-        observers: ['_showIntroDialog(loggedIn, _showIntro)'],
+        observers: [
+          '_showIntroDialog(loggedIn, _showIntro)',
+          '_getUniqueMerchants(expenses.*)',
+        ],
 
         attached: function() {
           this._setupRemoteDB();
@@ -218,6 +222,16 @@
               self.$.intro.open();
               self._showIntro = false;
             }, 1000);
+          }
+        },
+
+        _getUniqueMerchants: function() {
+          if (this.expenses) {
+            this.merchants = this.expenses.map(function(e) {
+              return e.merchant;
+            }).filter(function(val, index, self) {
+              return self.indexOf(val) === index;
+            });
           }
         },
 

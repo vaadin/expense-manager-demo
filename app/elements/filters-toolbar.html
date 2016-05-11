@@ -189,7 +189,6 @@
 
       observers: [
         '_calculateTotal(expenses.*)',
-        '_getUniqueMerchants(expenses.*)',
         '_calculateNumFilters(filters.*)'
       ],
 
@@ -228,16 +227,6 @@
         }
 
         this.appliedFilters = numFilters ? numFilters : '';
-      },
-
-      _getUniqueMerchants: function() {
-        if (this.expenses) {
-          this.merchants = this.expenses.map(function(e) {
-            return e.merchant;
-          }).filter(function(val, index, self) {
-            return self.indexOf(val) === index;
-          });
-        }
       },
 
       _toggleFilters: function() {
