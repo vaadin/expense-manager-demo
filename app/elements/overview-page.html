@@ -4,8 +4,7 @@
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/iron-icons/notification-icons.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
-<link rel="import" href="../bower_components/neon-animation/neon-shared-element-animatable-behavior.html">
-<link rel="import" href="../bower_components/neon-animation/animations/hero-animation.html">
+<link rel="import" href="../bower_components/neon-animation/neon-animatable-behavior.html">
 <link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
 <link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="../bower_components/carbon-route/carbon-route.html">
@@ -189,23 +188,11 @@
                 'entry': [{
                   name: 'fade-in-animation',
                   node: this
-                }, {
-                  name: 'hero-animation',
-                  id: 'hero',
-                  toPage: this
                 }],
                 'exit': {
                   name: 'fade-out-animation',
                   node: this
                 }
-              };
-            }
-          },
-
-          sharedElements: {
-            value: function() {
-              return {
-                'hero': this.$.logo
               };
             }
           }
@@ -258,7 +245,7 @@
           }
         },
 
-        behaviors: [Polymer.NeonSharedElementAnimatableBehavior],
+        behaviors: [Polymer.NeonAnimatableBehavior],
 
         _editExpense: function(evt) {
           var editor = this.$.expenseEditor;
