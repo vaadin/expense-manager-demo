@@ -169,10 +169,8 @@
 
         _filtersChanged: function() {
           if (this.$.expenses.items) {
-            var _this = this;
             this.debounce('_filtersChanged', function() {
-              _this._update();
-
+              this._update();
             }, 300);
           }
         },
