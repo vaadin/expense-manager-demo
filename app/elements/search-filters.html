@@ -82,11 +82,9 @@
             <span class="caption">Status</span>
 
             <div class="checkboxes">
-              <paper-checkbox on-change="_updateStatus" name="new">New</paper-checkbox>
-              <paper-checkbox on-change="_updateStatus" name="in_progress">In progress
-              </paper-checkbox>
-              <paper-checkbox on-change="_updateStatus" name="reimbursed">Reimbursed
-              </paper-checkbox>
+              <template is="dom-repeat" items="[[statusOptions]]">
+                <paper-checkbox on-change="_updateStatus" checked="[[_filtersContain(item.name, filters.*)]]" name$="[[item.name]]">[[item.label]]</paper-checkbox>
+              </template>
             </div>
           </div>
         </div>
@@ -112,10 +110,16 @@
           merchants: {
             type: Array,
             observer: '_merchantsChanged'
-          }
+          },
+          statusOptions: Array
         },
 
-        observers: ['_statusesUpdated(filters.status.*)'],
+        ready: function() {
+          // Select all status options by default.
+          this.statusOptions.forEach(function(status, i) {
+            this._addStatus(status.name);
+          }.bind(this));
+        },
 
         _merchantsChanged: function(merchants) {
           this.$.merchantsSelect.items = merchants;
@@ -147,22 +151,8 @@
           }
         },
 
-        _statusesUpdated: function() {
-          var _this = this;
-
-          function filtersContain(filter) {
-            return _this.filters &&
-              _this.filters.status &&
-              _this.filters.status.indexOf(filter) >= 0;
-          }
-
-          Polymer.dom(this.root).querySelectorAll('paper-checkbox').forEach(function(checkbox) {
-            if (filtersContain(checkbox.name)) {
-              checkbox.checked = true;
-            } else {
-              checkbox.checked = false;
-            }
-          });
+        _filtersContain: function(name, filters) {
+          return filters && filters.base.status && filters.base.status.indexOf(name) >= 0;
         }
       });
     })();

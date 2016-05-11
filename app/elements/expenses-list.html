@@ -209,7 +209,7 @@
               if (status && status.length > 0) {
                 return status.indexOf(expense.status) >= 0;
               } else {
-                return true;
+                return false;
               }
             })
             .filter(function(expense) {
