@@ -3,7 +3,7 @@
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
 <link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
-
+<link rel="import" href="../bower_components/iron-meta/iron-meta.html">
 
 <dom-module id="search-filters">
   <template>
@@ -63,8 +63,8 @@
 
         <div class="row">
           <div class="date col">
-            <vaadin-date-picker label="From" value="{{filters.start}}"></vaadin-date-picker>
-            <vaadin-date-picker label="To" value="{{filters.end}}"></vaadin-date-picker>
+            <vaadin-date-picker id="from" auto-validate label="From" value="{{filters.start}}"></vaadin-date-picker>
+            <vaadin-date-picker id="to" auto-validate label="To" value="{{filters.end}}"></vaadin-date-picker>
           </div>
 
           <div class="merchants col">
@@ -115,10 +115,36 @@
         },
 
         ready: function() {
+          this._registerValidators();
+
           // Select all status options by default.
           this.statusOptions.forEach(function(status) {
             this._addStatus(status.name);
           }.bind(this));
+        },
+
+        _registerValidators: function() {
+          // Define validators for from/to fields.
+          new Polymer.IronMeta({
+            type: 'validator',
+            key: 'from-validator',
+            value: { validate: this._validateFrom.bind(this) }
+          });
+          new Polymer.IronMeta({
+            type: 'validator',
+            key: 'to-validator',
+            value: { validate: this._validateTo.bind(this) }
+          });
+          this.$.from.validator = 'from-validator';
+          this.$.to.validator = 'to-validator';
+        },
+
+        _validateFrom: function(from) {
+          return from === '' || this.$.to.value === '' || moment(this.$.to.value).isAfter(moment(from));
+        },
+
+        _validateTo: function(to) {
+          return to === '' || this.$.from.value === '' || moment(this.$.from.value).isBefore(moment(to));
         },
 
         _merchantsChanged: function(merchants) {
