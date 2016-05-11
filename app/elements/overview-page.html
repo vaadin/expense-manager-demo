@@ -12,7 +12,7 @@
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="expense-editor.html">
 <link rel="import" href="about-dialog.html">
-<link rel="import" href="intro-dialog.html">
+<link rel="import" href="info-dialog.html">
 <link rel="import" href="content-panel.html">
 <link rel="import" href="filters-toolbar.html">
 <link rel="import" href="../scripts/moment-js.html">
@@ -111,8 +111,7 @@
 
     <expense-editor id="expenseEditor" merchants="[[merchants]]" attachments="[[attachments]]" route="{{subroute}}"></expense-editor>
     <paper-toast id="saveNotification"></paper-toast>
-    <about-dialog id="about"></about-dialog>
-    <intro-dialog id="intro"></intro-dialog>
+    <info-dialog id="info"></info-dialog>
   </template>
 
   <script>
@@ -126,7 +125,7 @@
           routeData: Object,
           dbName: String,
           dbLocation: String,
-          _showIntro: Boolean,
+          _showInfo: Boolean,
           loggedIn: {
             type: Boolean,
             notify: true
@@ -207,7 +206,7 @@
         },
 
         observers: [
-          '_showIntroDialog(loggedIn, _showIntro)',
+          '_showInfoDialog(loggedIn, _showInfo)',
           '_getUniqueMerchants(expenses.*)',
         ],
 
@@ -215,12 +214,12 @@
           this._setupRemoteDB();
         },
 
-        _showIntroDialog: function() {
-          if (this.loggedIn && this._showIntro) {
+        _showInfoDialog: function() {
+          if (this.loggedIn && this._showInfo) {
             var self = this;
             this.async(function() {
-              self.$.intro.open();
-              self._showIntro = false;
+              self.$.info.open();
+              self._showInfo = false;
             }, 1000);
           }
         },
@@ -254,7 +253,7 @@
             // this.dbName = 'e6359be';
             this.set('route.path', '/' + response.backend_db_id);
             if (response.new_db) {
-              this._showIntro = true;
+              this._showInfo = true;
             }
           }
         },
@@ -298,7 +297,7 @@
         },
 
         _showAbout: function() {
-          this.$.about.open();
+          this.$.info.open();
         }
       });
     })();
