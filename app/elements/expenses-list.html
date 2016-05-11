@@ -37,6 +37,13 @@
         font-weight: 400;
       }
 
+      vaadin-grid::content td.total,
+      vaadin-grid /deep/ td.total,
+      #expenses::content thead.vaadin-grid-header th.total,
+      #expenses /deep/ thead.vaadin-grid-header th.total {
+        flex-direction: row-reverse;
+      }
+
       vaadin-grid::content tr.vaadin-grid-row-stripe td,
       vaadin-grid /deep/ tr.vaadin-grid-row-stripe td {
         background: #F7F8F8;
@@ -86,6 +93,12 @@
         -webkit-font-smoothing: antialiased;
         color: var(--default-primary-color);
       }
+
+      #expenses::content .vaadin-grid-header [class*="sort-"]:after,
+      #expenses /deep/ .vaadin-grid-header [class*="sort-"]:after {
+        padding-right: 8px;
+      }
+
     </style>
 
 
@@ -150,9 +163,13 @@
             }
           });
 
+          grid.header.getCell(0, 2).className = 'total';
+
           grid.cellClassGenerator = function(cell) {
             if (cell.columnName === 'status') {
               return 'status-' + cell.data.replace(/ /g, '-').toLowerCase();
+            } else if (cell.columnName === 'total') {
+              return 'total';
             }
           };
 
