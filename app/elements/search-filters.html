@@ -12,39 +12,39 @@
         display: block;
         padding: 0 16px;
       }
-      
+
       .col,
       .date vaadin-date-picker,
       .total paper-input {
         display: inline-block;
         width: 49%;
       }
-      
+
       .col {
         box-sizing: border-box;
       }
-      
+
       .row {
         margin-bottom: 16px;
       }
-      
+
       .filters {
         padding-bottom: 16px;
       }
-      
+
       .status .caption {
         font-weight: 500;
       }
-      
+
       .checkboxes {
         display: inline-block;
         margin-left: 8px;
       }
-      
+
       .checkboxes > paper-checkbox {
         margin-right: 8px;
       }
-      
+
       @media (max-width: 960px) {
         .col {
           width: 100%
@@ -63,8 +63,8 @@
 
         <div class="row">
           <div class="date col">
-            <vaadin-date-picker label="After" value="{{filters.start}}"></vaadin-date-picker>
-            <vaadin-date-picker label="Before" value="{{filters.end}}"></vaadin-date-picker>
+            <vaadin-date-picker label="From" value="{{filters.start}}"></vaadin-date-picker>
+            <vaadin-date-picker label="To" value="{{filters.end}}"></vaadin-date-picker>
           </div>
 
           <div class="merchants col">
