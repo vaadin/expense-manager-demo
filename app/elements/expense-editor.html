@@ -162,7 +162,7 @@
           <form is="iron-form" id="form">
             <iron-a11y-keys keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
             <paper-input name="merchant" id="merchant" value="{{expense.merchant}}" label="Merchant" required error-message="Merchant name required" autofocus="[[tallWindow]]"></paper-input>
-            <paper-input name="total" id="total" value="{{expense.total}}" type="number" label="Total" required step="any">
+            <paper-input name="total" id="total" value="{{expense.total}}" type="number" max="10000" label="Total" required step="any">
               <div prefix>$</div>
             </paper-input>
 

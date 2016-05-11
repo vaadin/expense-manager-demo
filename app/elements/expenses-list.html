@@ -37,6 +37,13 @@
         font-weight: 400;
       }
 
+      vaadin-grid::content td.total,
+      vaadin-grid /deep/ td.total,
+      #expenses::content thead.vaadin-grid-header th.total,
+      #expenses /deep/ thead.vaadin-grid-header th.total {
+        flex-direction: row-reverse;
+      }
+
       vaadin-grid::content tr.vaadin-grid-row-stripe td,
       vaadin-grid /deep/ tr.vaadin-grid-row-stripe td {
         background: #F7F8F8;
@@ -50,6 +57,21 @@
       vaadin-grid::content td.status-reimbursed span,
       vaadin-grid /deep/ td.status-reimbursed span {
         opacity: 0.4;
+      }
+
+      vaadin-grid::content td.comment,
+      vaadin-grid /deep/ td.comment {
+        position: relative;
+      }
+
+      vaadin-grid::content td.comment span,
+      vaadin-grid /deep/ td.comment span {
+        width: 100%;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        padding-right: 35px;
+        box-sizing: border-box;
       }
 
       #expenses::content thead.vaadin-grid-header th.last-frozen,
@@ -86,6 +108,12 @@
         -webkit-font-smoothing: antialiased;
         color: var(--default-primary-color);
       }
+
+      #expenses::content .vaadin-grid-header [class*="sort-"]:after,
+      #expenses /deep/ .vaadin-grid-header [class*="sort-"]:after {
+        padding-right: 8px;
+      }
+
     </style>
 
 
@@ -96,7 +124,7 @@
           <col name="merchant" width="200" sortable/>
           <col name="total" width="150" sortable/>
           <col name="status" width="150" sortable/>
-          <col name="comment" sortable/>
+          <col name="comment" min-width="150" sortable/>
         </colgroup>
       </table>
     </vaadin-grid>
@@ -150,9 +178,15 @@
             }
           });
 
+          grid.header.getCell(0, 2).className = 'total';
+
           grid.cellClassGenerator = function(cell) {
             if (cell.columnName === 'status') {
               return 'status-' + cell.data.replace(/ /g, '-').toLowerCase();
+            } else if (cell.columnName === 'total') {
+              return 'total';
+            } else if (cell.columnName === 'comment') {
+              return 'comment';
             }
           };
 
