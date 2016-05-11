@@ -245,10 +245,11 @@
 
       _hideFilters: function() {
         // add delay or tap will go through and hit grid
-        this.async(function() {
-          this.expanded = false;
-        }, 100);
-
+        if (this.expanded) {
+          this.async(function() {
+            this._toggleFilters();
+          }, 100);
+        }
       },
 
       _clearFilters: function() {
