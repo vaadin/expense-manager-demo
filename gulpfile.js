@@ -172,7 +172,10 @@ gulp.task('html', function() {
 // Vulcanize granular configuration
 gulp.task('vulcanize', function() {
   return gulp.src('app/elements/elements.html')
-    .pipe(polybuild({maximumCrush: true, suffix: ''}))
+    .pipe(polybuild({
+      maximumCrush: true,
+      suffix: ''
+    }))
     .pipe(gulp.dest(dist('elements')))
     .pipe($.size({
       title: 'vulcanize'
