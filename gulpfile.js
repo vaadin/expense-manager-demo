@@ -28,6 +28,7 @@ var historyApiFallback = require('connect-history-api-fallback');
 var packageJson = require('./package.json');
 var crypto = require('crypto');
 var ensureFiles = require('./tasks/ensure-files.js');
+var polybuild = require('polybuild');
 
 // var ghPages = require('gulp-gh-pages');
 
@@ -171,11 +172,7 @@ gulp.task('html', function() {
 // Vulcanize granular configuration
 gulp.task('vulcanize', function() {
   return gulp.src('app/elements/elements.html')
-    .pipe($.vulcanize({
-      stripComments: true,
-      inlineCss: true,
-      inlineScripts: true
-    }))
+    .pipe(polybuild({maximumCrush: true, suffix: ''}))
     .pipe(gulp.dest(dist('elements')))
     .pipe($.size({
       title: 'vulcanize'
