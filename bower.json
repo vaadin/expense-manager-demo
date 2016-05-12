@@ -11,7 +11,6 @@
     "vaadin-combo-box": "1.0.0-rc3",
     "vaadin-charts": "3.0.0",
     "vaadin-date-picker": "1.0.0-rc3",
-    "vaadin-icons": "vaadin/vaadin-icons#1.0.0",
     "accounting": "~0.3.2",
     "blueimp-load-image": "~1.14.0",
     "moment": "~2.10.6",
