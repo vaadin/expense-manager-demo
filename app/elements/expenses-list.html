@@ -79,39 +79,28 @@
         border-right: 1px solid #2A3A42;
       }
 
-      #expenses::content .vaadin-grid-header.vaadin-grid .sort-asc.vaadin-grid:after,
-      #expenses /deep/ .vaadin-grid-header.vaadin-grid .sort-asc.vaadin-grid:after {
-        content: "\e7c3 " attr(sort-order);
-        font-family: Vaadin-Icons;
-        font-size: 16px;
-        speak: none;
-        font-weight: normal;
-        font-variant: normal;
-        font-style: normal;
-        text-transform: none;
-        line-height: 1;
-        -webkit-font-smoothing: antialiased;
-        color: var(--default-primary-color);
+      #expenses::content .vaadin-grid-header [class*="sort-"]:after,
+      #expenses /deep/ .vaadin-grid-header [class*="sort-"]:after {
+        content: "";
+        border-width: 7px 5px;
+        border-style: solid;
+        border-color: transparent;
+        width: 0;
+        padding: 0;
+        min-width: 0;
+        margin: 0 10px;
       }
 
       #expenses::content .vaadin-grid-header.vaadin-grid .sort-desc.vaadin-grid:after,
       #expenses /deep/ .vaadin-grid-header.vaadin-grid .sort-desc.vaadin-grid:after {
-        content: "\e7bc " attr(sort-order);
-        font-family: Vaadin-Icons;
-        font-size: 16px;
-        speak: none;
-        font-weight: normal;
-        font-variant: normal;
-        font-style: normal;
-        text-transform: none;
-        line-height: 1;
-        -webkit-font-smoothing: antialiased;
-        color: var(--default-primary-color);
+        border-top-color: var(--default-primary-color);
+        transform: translateY(25%);
       }
 
-      #expenses::content .vaadin-grid-header [class*="sort-"]:after,
-      #expenses /deep/ .vaadin-grid-header [class*="sort-"]:after {
-        padding-right: 8px;
+      #expenses::content .vaadin-grid-header.vaadin-grid .sort-asc.vaadin-grid:after,
+      #expenses /deep/ .vaadin-grid-header.vaadin-grid .sort-asc.vaadin-grid:after {
+        border-bottom-color: var(--default-primary-color);
+        transform: translateY(-25%);
       }
 
     </style>
