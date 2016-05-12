@@ -234,6 +234,19 @@
           this.$.upload.set('i18n.addFiles.one', 'Select receipt');
         },
 
+        attached: function() {
+          this._boundOnResize = this._onResize.bind(this);
+          window.addEventListener('resize', this._boundOnResize);
+        },
+
+        detached: function() {
+          window.removeEventListener('resize', this._boundOnResize);
+        },
+
+        _onResize: function() {
+          this.$.dialog.notifyResize();
+        },
+
         _showDialog: function() {
           return this.expense && this.route.path && this.route.path === '/edit';
         },
