@@ -256,12 +256,16 @@
           if (sort) {
             var sortProperty = sort;
             var sortDirection = direction || 'desc';
+            var datePattern = /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/;
             result.sort(function(a, b) {
               var res;
               if (!isNaN(a[sortProperty])) {
                 res = parseInt(a[sortProperty], 10) - parseInt(b[sortProperty], 10);
+              } else if (datePattern.test(a[sortProperty])) {
+                // Sort dates with moment.js.
+                res = moment(a[sortProperty]).isBefore(moment(b[sortProperty])) ? 1 : -1;
               } else {
-                // Let's pretend everything that's not a number is a string.
+                // Let's pretend everything that's not a number or date is a string.
                 res = a[sortProperty].localeCompare(b[sortProperty]);
               }
 
