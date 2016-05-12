@@ -28,7 +28,7 @@ var historyApiFallback = require('connect-history-api-fallback');
 var packageJson = require('./package.json');
 var crypto = require('crypto');
 var ensureFiles = require('./tasks/ensure-files.js');
-var polybuild = require('polybuild');
+var polyclean = require('polyclean');
 
 // var ghPages = require('gulp-gh-pages');
 
@@ -172,10 +172,15 @@ gulp.task('html', function() {
 // Vulcanize granular configuration
 gulp.task('vulcanize', function() {
   return gulp.src('app/elements/elements.html')
-    .pipe(polybuild({
-      maximumCrush: true,
-      suffix: ''
+    .pipe($.vulcanize({
+      stripComments: true,
+      inlineCss: true,
+      inlineScripts: true,
+      stripExcludes: ['app/bower_components/vaadin-license-checker/vaadin-license-checker.html']
     }))
+    .pipe(polyclean.cleanCss())
+    .pipe(polyclean.uglifyJs())
+    .pipe($.crisper())
     .pipe(gulp.dest(dist('elements')))
     .pipe($.size({
       title: 'vulcanize'
