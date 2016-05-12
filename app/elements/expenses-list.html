@@ -154,7 +154,9 @@
           };
 
           grid.addEventListener('sort-order-changed', function() {
-            grid.scrollToStart();
+            if (grid.size > 0) {
+              grid.scrollToStart();
+            }
             _this._update();
           });
 
