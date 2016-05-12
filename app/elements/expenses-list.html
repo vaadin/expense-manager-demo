@@ -146,7 +146,7 @@
           var _this = this;
 
           grid.columns[0].renderer = function(cell) {
-            cell.element.innerHTML = moment(cell.data).format('YYYY-MM-DD');
+            cell.element.innerHTML = moment(cell.data).format('MM/DD/YYYY');
           };
 
           grid.columns[2].renderer = function(cell) {
