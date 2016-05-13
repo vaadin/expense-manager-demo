@@ -31,10 +31,10 @@
 
       #expenses::content thead.vaadin-grid-header th,
       #expenses /deep/ thead.vaadin-grid-header th {
-        background: var(--dark-primary-color);
-        color: #ccc;
+        text-transform: uppercase;
         font-size: 1.2em;
-        font-weight: 400;
+        font-weight: 500;
+        color: var(--primary-text-color);
       }
 
       vaadin-grid::content td.total,
@@ -74,11 +74,6 @@
         transform: translateY(-50%);
         padding-right: 35px;
         box-sizing: border-box;
-      }
-
-      #expenses::content thead.vaadin-grid-header th.last-frozen,
-      #expenses /deep/ thead.vaadin-grid-header th.last-frozen {
-        border-right: 1px solid #2A3A42;
       }
 
       #expenses::content .vaadin-grid-header [class*="sort-"]:after,
