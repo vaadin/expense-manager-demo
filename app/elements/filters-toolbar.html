@@ -17,14 +17,12 @@
       }
 
       #toolbar {
-        background: var(--default-primary-color);
         display: flex;
         align-items: center;
       }
 
       #total {
         width: 300px;
-        color: var(--text-primary-color);
         box-sizing: border-box;
         font-weight: 500;
         font-size: 18px;
@@ -48,23 +46,28 @@
       }
 
       #filters-toggle .count {
+        position: absolute;
+        top: 6px;
+        right: 0;
+        z-index: 1;
         width: 0;
         height: 0;
-        line-height: 28px;
+        line-height: 16px;
         overflow: hidden;
         text-align: center;
         border-radius: 50%;
-        background: var(--dark-primary-color);
-        color: var(--primary-color);
-        font-weight: 600;
+        background: var(--accent-color);
+        color: var(--text-primary-color);
+        font-size: 12px;
         transform: scale(0);
         transition: all 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
       }
 
       #filters-toggle .count[has-filters] {
-        width: 28px;
-        height: 28px;
+        width: 16px;
+        height: 16px;
         transform: scale(1);
+        width: 16px;
       }
 
       #filters-caption {
@@ -73,17 +76,16 @@
 
       #buttons {
         display: none;
-        justify-content: flex-end;
-        margin-right: 16px;
+        justify-content: space-between;
       }
 
       #done-button {
-        background: var(--accent-color);
+        background: var(--primary-color);
         color: var(--text-primary-color);
       }
 
       #clear-button {
-        color: var(--accent-color);
+        color: var(--primary-color);
       }
 
       @media (min-width: 901px) {
@@ -127,7 +129,7 @@
         }
         #buttons {
           display: flex;
-          margin-bottom: 32px;
+          margin: 32px 0;
         }
         :host([expanded]) #filters-caption {
           display: block;
