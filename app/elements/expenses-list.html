@@ -51,12 +51,14 @@
 
       vaadin-grid::content td.status-new,
       vaadin-grid /deep/ td.status-new {
-        font-weight: bold;
+        color: var(--accent-color);
+        font-weight: 500;
       }
 
-      vaadin-grid::content td.status-reimbursed span,
-      vaadin-grid /deep/ td.status-reimbursed span {
-        opacity: 0.4;
+      vaadin-grid::content td.status-in_progress,
+      vaadin-grid /deep/ td.status-in_progress {
+        font-weight: 500;
+        font-style: italic;
       }
 
       vaadin-grid::content td.comment,
@@ -93,13 +95,13 @@
 
       #expenses::content .vaadin-grid-header.vaadin-grid .sort-desc.vaadin-grid:after,
       #expenses /deep/ .vaadin-grid-header.vaadin-grid .sort-desc.vaadin-grid:after {
-        border-top-color: var(--default-primary-color);
+        border-top-color: var(--accent-color);
         transform: translateY(25%);
       }
 
       #expenses::content .vaadin-grid-header.vaadin-grid .sort-asc.vaadin-grid:after,
       #expenses /deep/ .vaadin-grid-header.vaadin-grid .sort-asc.vaadin-grid:after {
-        border-bottom-color: var(--default-primary-color);
+        border-bottom-color: var(--accent-color);
         transform: translateY(-25%);
       }
 

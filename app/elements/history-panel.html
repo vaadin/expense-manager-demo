@@ -62,6 +62,9 @@
             <title>
               <style display="none"></style>
             </title>
+            <labels>
+              <chart-style>{"color": "#000"}</chart-style>
+            </labels>
           </x-axis>
           <y-axis>
             <title>
@@ -70,7 +73,7 @@
           </y-axis>
           <tooltip formatter="function() { return '$' + this.y.toFixed(2); }"></tooltip>
           <data-series name="$" data="[[seriesData]]">
-            <color>#80CBC4</color>
+            <color>#ffc13f</color>
           </data-series>
           <legend enabled="false"></legend>
         </vaadin-bar-chart>
