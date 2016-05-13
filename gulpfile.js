@@ -180,7 +180,6 @@ gulp.task('vulcanize', function() {
     }))
     .pipe(polyclean.cleanCss())
     .pipe(polyclean.uglifyJs())
-    .pipe($.crisper())
     .pipe(gulp.dest(dist('elements')))
     .pipe($.size({
       title: 'vulcanize'
