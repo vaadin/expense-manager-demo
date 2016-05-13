@@ -68,7 +68,7 @@
   <div id="loadingScreen"></div>
 
   <platinum-sw-register auto-register clients-claim skip-waiting on-service-worker-installed="_cachingComplete">
-    <platinum-sw-fetch path="/(.*)" handler="networkOnly" origin="https://vaadin-expense-manager\.cloudant\.com"></platinum-sw-fetch>
+    <platinum-sw-fetch path="/(.*)" handler="networkOnly" origin="https://expense-manager\.demo\.vaadin\.com/"></platinum-sw-fetch>
     <platinum-sw-cache default-cache-strategy="fastest" cache-config-file="cache-config.json">
     </platinum-sw-cache>
   </platinum-sw-register>
