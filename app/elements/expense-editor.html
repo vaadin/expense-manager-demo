@@ -15,6 +15,7 @@
 <link rel="import" href="../bower_components/carbon-route/carbon-route.html">
 <link rel="import" href="../scripts/accounting-js.html">
 <link rel="import" href="../scripts/moment-js.html">
+<link rel="import" href="../scripts/load-image.html">
 
 <dom-module id="expense-editor">
   <template>
@@ -265,15 +266,14 @@
         },
 
         _updateReceiptURL: function() {
-          var _this = this;
           if (this.expense._attachments && this.expense._attachments.receipt) {
-            if (this.expense._attachments.receipt.data instanceof File) {
-              _this._receiptURL = URL.createObjectURL(this.expense._attachments.receipt.data);
+            if (this.expense._attachments.receipt.data instanceof File || this.expense._attachments.receipt.data instanceof Blob) {
+              this._receiptURL = URL.createObjectURL(this.expense._attachments.receipt.data);
             } else {
               this.attachments.getAttachment(this.expense._id, 'receipt')
                 .then(function(blob) {
-                  _this._receiptURL = URL.createObjectURL(blob);
-                })
+                  this._receiptURL = URL.createObjectURL(blob);
+                }.bind(this))
                 .catch(function(err) {
                   console.log(err);
                 });
@@ -293,14 +293,35 @@
         _handleUpload: function(e) {
           var file = e.detail.file;
           if (file) {
-            if (!this.expense._attachments) {
-              this.expense._attachments = {};
-            }
-            this.set('expense._attachments.receipt', {
-              type: file.type,
-              data: file
+            var _this = this;
+
+            // Limit the image size and make sure to fix the orientation.
+            loadImage.parseMetaData(file, function(metaData) {
+              var imageFormat = 'image/jpeg';
+              var options = {
+                maxWidth: 1000,
+                maxHeight: 1000,
+                canvas: true
+              };
+              if (metaData.exif) {
+                options.orientation = metaData.exif.get('Orientation');
+              }
+
+              loadImage(file, function(imgCanvas) {
+                // Convert the resized/orientation-fixed image to a blob.
+                imgCanvas.toBlob(function(blob) {
+                  if (!_this.expense._attachments) {
+                    _this.expense._attachments = {};
+                  }
+                  _this.set('expense._attachments.receipt', {
+                    type: imageFormat,
+                    data: blob
+                  });
+                }, imageFormat);
+              }, options);
             });
           }
+
           this.$.upload.files = [];
           e.preventDefault();
         },
