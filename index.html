@@ -35,7 +35,7 @@
       dom: 'shadow',
       lazyRegister: true
     };
-  </script><link rel="import" id="bundle" href="elements/elements.html" async=""></head><body class="loading"><div id="loadingScreen"></div><platinum-sw-register auto-register="" clients-claim="" skip-waiting="" base-uri="bower_components/platinum-sw/bootstrap"><platinum-sw-fetch path="/(.*)" handler="networkOnly" origin="https://expense-manager\.demo\.vaadin\.com"></platinum-sw-fetch><platinum-sw-cache default-cache-strategy="fastest" cache-config-file="cache-config.json"></platinum-sw-cache></platinum-sw-register><span id="browser-sync-binding"></span><script>
+  </script><link rel="import" id="bundle" href="elements/elements.html" async=""></head><body class="loading"><div id="loadingScreen"></div><platinum-sw-register auto-register="" clients-claim="" skip-waiting="" base-uri="bower_components/platinum-sw/bootstrap"><platinum-sw-fetch path="/(.*)" handler="networkOnly" origin="https?://expense-manager\.demo\.vaadin\.com"></platinum-sw-fetch><platinum-sw-cache default-cache-strategy="networkFirst" cache-config-file="cache-config.json"></platinum-sw-cache></platinum-sw-register><span id="browser-sync-binding"></span><script>
     function onImportLoaded() {
       var loadingScreen = document.querySelector('#loadingScreen');
       loadingScreen.addEventListener('transitionend', function() {
