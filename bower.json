@@ -22,7 +22,8 @@
     "carbon-route": "PolymerElements/carbon-route#^0.8.4",
     "qr-js": "^1.1.4",
     "iron-meta": "^1.1.1",
-    "blueimp-canvas-to-blob": "^3.3.0"
+    "blueimp-canvas-to-blob": "^3.3.0",
+    "sw-toolbox": "^3.1.1"
   },
   "devDependencies": {
     "web-component-tester": "*",

@@ -25,6 +25,9 @@
     "Offline": true,
     "File": true,
     "PouchDB": true,
-    "qr": true
+    "qr": true,
+    "importScripts": true,
+    "toolbox": true,
+    "self": true
   }
 }

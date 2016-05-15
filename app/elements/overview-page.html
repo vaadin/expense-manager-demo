@@ -205,8 +205,9 @@
             this.dbName = 'db_' + this.routeData.dbId;
             this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/db/' + this.routeData.dbId;
           } else if (this.dbId) {
-            this.dbName = 'db_' + this.dbId;
             console.log('Using DB identifier in localstorage.');
+            this.dbName = 'db_' + this.dbId;
+            this.set('route.path', '/' + this.dbId);
             this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/db/' + this.dbId;
           } else {
             console.log('Creating new DB');
