@@ -10,12 +10,13 @@
 <link rel="import" href="../bower_components/carbon-route/carbon-route.html">
 <link rel="import" href="../bower_components/carbon-route/carbon-location.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
 <link rel="import" href="expense-editor.html">
 <link rel="import" href="info-dialog.html">
 <link rel="import" href="content-panel.html">
 <link rel="import" href="filters-toolbar.html">
-<link rel="import" href="../scripts/moment-js.html">
 <link rel="import" href="pouch-db.html">
+<link rel="import" href="../scripts/moment-js.html">
 
 <dom-module id="overview-page">
   <template>
@@ -79,6 +80,9 @@
     <!-- Remove the location attribute if you do not want to sync to a remote DB-->
     <!-- <pouch-db db-name="expenses" data="{{expenses}}" location="http://localhost:5984" status="{{status}}" id="db" attachments="{{attachments}}" init="[[init]]"></pouch-db> -->
 
+    <!--  Online demo DB -->
+    <pouch-db db-name="{{dbName}}" location="{{dbLocation}}" data="{{expenses}}" status="{{status}}" id="db" attachments="{{attachments}}"></pouch-db>
+
     <carbon-location route="{{route}}" use-hash-as-path></carbon-location>
 
     <carbon-route route="{{route}}" pattern="/:dbId" data="{{routeData}}" tail="{{subroute}}">
@@ -86,7 +90,6 @@
 
     <iron-ajax id="ajax" handle-as="json" on-response="_handleBackendResponse"></iron-ajax>
 
-    <pouch-db db-name="{{dbName}}" location="{{dbLocation}}" data="{{expenses}}" status="{{status}}" id="db" attachments="{{attachments}}"></pouch-db>
 
     <paper-header-panel>
       <paper-toolbar>
@@ -111,6 +114,7 @@
     <expense-editor id="expenseEditor" merchants="[[merchants]]" attachments="[[attachments]]" route="{{subroute}}"></expense-editor>
     <paper-toast id="saveNotification"></paper-toast>
     <info-dialog id="info"></info-dialog>
+    <iron-localstorage name="expense-manager-db-id" value="{{dbId}}" on-iron-localstorage-load="_setupRemoteDB" on-iron-localstorage-load-empty="_setupRemoteDB"></iron-localstorage>
   </template>
 
   <script>
@@ -123,52 +127,18 @@
           route: Object,
           routeData: Object,
           dbName: String,
+          dbId: String,
           dbLocation: String,
           _showInfo: Boolean,
           loggedIn: {
             type: Boolean,
-            notify: true
+            notify: true,
+            observer: '_loginStateChanged'
           },
           status: String,
           expenses: Array,
           merchants: Array,
           attachments: Object,
-          init: {
-            type: Object,
-            value: function() {
-              return function() {
-
-                var date = moment();
-                var expenses = [];
-                for (var i = 0; i < 100; i++) {
-                  date = date.subtract(Math.floor(Math.random() * 168) + 1, 'hours');
-                  var status = 'new';
-                  if (i > 10) {
-                    status = 'reimbursed';
-                  } else if (i > 5) {
-                    status = 'in_progress';
-                  }
-                  expenses.push({
-                    _id: date.toJSON(),
-                    user: 'demo',
-                    date: date.format('YYYY-MM-DD'),
-                    merchant: [
-                        'Office supplies', 'Electronics', 'Rental car', 'Airline',
-                        'Hotel', 'Restaurant', 'Taxi', 'Ride sharing', 'Fast food',
-                        'Parking', 'Breakfast', 'Shuttle'
-                      ]
-                      [Math.floor(Math.random() * 12)],
-                    total: Math.random() * (Math.random() * 3) * 300 + 10,
-                    status: status,
-                    comment: 'Expense from my business trip.'
-                  });
-                }
-                console.log(JSON.stringify(expenses));
-                return expenses;
-              };
-            }
-          },
-
           filters: {
             type: Object,
             value: function() {
@@ -209,10 +179,6 @@
           '_getUniqueMerchants(expenses.*)',
         ],
 
-        attached: function() {
-          this._setupRemoteDB();
-        },
-
         _showInfoDialog: function() {
           if (this.loggedIn && this._showInfo) {
             var self = this;
@@ -235,8 +201,15 @@
 
         _setupRemoteDB: function() {
           if (this.routeData && this.routeData.dbId) {
+            console.log('Using DB identifier in URL.');
+            this.dbName = 'db_' + this.routeData.dbId;
             this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/db/' + this.routeData.dbId;
+          } else if (this.dbId) {
+            this.dbName = 'db_' + this.dbId;
+            console.log('Using DB identifier in localstorage.');
+            this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/db/' + this.dbId;
           } else {
+            console.log('Creating new DB');
             this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/create';
           }
           this.$.ajax.generateRequest();
@@ -244,13 +217,20 @@
 
         _handleBackendResponse: function(evt) {
           var response = evt.detail.response;
+          console.log('Backend response: ', response);
           if (response) {
-            // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-            this.dbLocation = response.couchdb_base_url;
-            this.dbName = response.couchdb_db_name;
+            //jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+            if (response.couchdb_base_url !== this.dbLocation) {
+              this.dbLocation = response.couchdb_base_url;
+            }
+            if (response.couchdb_db_name !== this.dbName) {
+              this.dbName = response.couchdb_db_name;
+            }
+            this.dbId = response.backend_db_id;
+
             // this.dbLocation = 'https://vaadin-expense-manager.cloudant.com/';
             // this.dbName = 'e6359be';
-            this.set('route.path', '/' + response.backend_db_id);
+            this.set('route.path', '/' + this.dbId);
             if (response.new_db) {
               this._showInfo = true;
             }
@@ -293,10 +273,19 @@
 
         _logout: function() {
           this.loggedIn = false;
+          this.dbId = null;
+          this.dbName = null;
+          this.set('route.path', '');
         },
 
         _showAbout: function() {
           this.$.info.open();
+        },
+
+        _loginStateChanged: function(newValue, oldValue) {
+          if (!oldValue && newValue) {
+            this._setupRemoteDB();
+          }
         }
       });
     })();

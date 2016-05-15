@@ -28,14 +28,10 @@
           type: Object,
           notify: true
         },
-        /**
-         * Function that will get run on an empty DB to initialize it.
-         * Should return an Array.
-         */
-        init: Object,
         _localDB: Object,
         _remoteDB: Object,
         _syncHandler: Object,
+        _localInited: Boolean,
         /**
          * Staus of our DB, can be one of:
          * ['initializing', 'local_connected', 'remote_connected',
@@ -48,7 +44,7 @@
         }
       },
 
-      observers: ['_setupLocalDB(dbName)', '_setupRemoteDB(dbName, location)'],
+      observers: ['_setupLocalDB(dbName)', '_setupRemoteDB(dbName, location, _localInited)'],
 
       ready: function() {
         this.attachments = {
@@ -57,85 +53,65 @@
       },
 
       _setupLocalDB: function() {
-        var _this = this;
-        this._localDB = new PouchDB(this.dbName, {
-          size: 50 // 50MB is max for mobile Safari
-        });
-        // If we do not have a remote DB, initialize if needed
-        if (!this.location) {
-          this._localDB.allDocs().then(function(result) {
-            if (!result.rows || result.rows.length === 0) {
-              _this._initDB();
-            }
+        // May get initialized to null from localstorage
+        if (this.dbName) {
+          console.log('Setting up local db ' + this.dbName);
+          this._localDB = new PouchDB(this.dbName, {
+            size: 25 // 50MB is max for mobile Safari
           });
+          this._localDB.on('created', function() {
+            this._localInited = true;
+          }.bind(this));
+          this._update();
+          this.status = 'local_connected';
         }
-        this._update();
-        this.status = 'local_connected';
       },
 
       _setupRemoteDB: function() {
-        var _this = this;
-        this.location = this.location.indexOf('/', this.location.length - 1) === -1 ?
-          this.location + '/' : this.location;
-        this._remoteDB = new PouchDB(this.location + this.dbName, {
-          // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-          skip_setup: true
-        });
+        if (this.dbName) {
+          console.log('Setting up remote db. dbName: ' + this.dbName + ', location: ' + this.location + ', local initialized:' + this._localInited);
+          this.location = this.location.indexOf('/', this.location.length - 1) === -1 ?
+            this.location + '/' : this.location;
 
-        // Check if remote DB exists
-        this._remoteDB.info().then(function() {
-            _this.status = 'remote_connected';
-            _this._setupSync();
-          })
-          // If not, create and init
-          .catch(function(err) {
-            console.log(err);
-            _this._remoteDB = new PouchDB(_this.location + '/' + _this.dbName);
-            _this._remoteDB.on('created', function() {
-              console.log('Remote db created');
-              _this._initDB().then(function() {
-                _this._setupSync();
-              });
-            });
-          });
+          var dbURL = this.location + this.dbName;
+          console.log('DB URL: ' + dbURL);
+          this._remoteDB = new PouchDB(dbURL);
+          this._remoteDB.on('created', function() {
+            console.log('Connected to remote DB.');
+            this._setupSync();
+          }.bind(this));
+        }
       },
 
       _setupSync: function() {
-        var _this = this;
-
+        console.log('Setting up sync.');
         this._syncHandler = this._localDB.sync(this._remoteDB, {
           live: true,
           retry: true
         }).on('change', function() {
-          _this._update();
-        }).on('paused', function(err) {
+          this._update();
+        }.bind(this)).on('paused', function(err) {
           // TODO: Figure out why PouchDB calls this several times before sync is actually finished
-          _this.debounce('sync-finished', function() {
-            _this.status = 'waiting';
-          }, 200);
+          this.debounce('sync-finished', function() {
+            this.status = 'waiting';
+          }.bind(this), 200);
           if (err) {
             console.log('pouch-db sync failed', err);
           }
-        }).on('active', function() {
-          _this.status = 'syncing';
-        }).on('error', function(err) {
+        }.bind(this)).on('active', function() {
+          this.status = 'syncing';
+        }.bind(this)).on('error', function(err) {
           console.log(err);
         });
 
         this._syncHandler.on('complete', function() {
-          _this.status = 'shutdown';
+          this.status = 'shutdown';
           console.log('DB sync successfully shut down.');
-        });
+        }.bind(this));
       },
 
       _stateChangeObserver: function(newState, oldState) {
         console.log('pouch-db state changed from ' + oldState + ' to ' + newState);
-
-        if (this.init &&
-          ((!this.location && oldState === 'local_connected' && newState === 'waiting') ||
-            (this.location && oldState === 'remote_connected' && newState === 'waiting'))) {
-          //this._initDB();
-        }
       },
 
       detached: function() {
@@ -145,54 +121,33 @@
       },
 
       save: function(doc) {
-        var _this = this;
         if (!doc._id) {
           doc._id = new Date().toJSON();
         }
 
         this._localDB.put(doc).then(function() {
-            _this._update();
-          })
+            this._update();
+          }.bind(this))
           .catch(function(err) {
             if (err.name !== 'not_found') {
               throw err;
             }
-            return _this.localDB.put(doc);
-          });
+            return this.localDB.put(doc);
+          }.bind(this));
       },
 
       remove: function(doc) {
         var db = this._localDB;
-        var _this = this;
         db.get(doc._id)
           .then(function(_doc) {
             return db.remove(_doc);
           })
           .then(function() {
-            _this._update();
-          })
+            this._update();
+          }.bind(this))
           .catch(function(err) {
             console.log(err);
           });
-      },
-
-      bulkDocs: function(docs, options) {
-        var _this = this;
-        this._localDB.bulkDocs(docs, options)
-          .then(function() {
-            _this._update();
-          })
-          .catch(function(err) {
-            console.log(err);
-          });
-      },
-
-      destroy: function() {
-        this.bulkDocs(this.data.map(function(doc) {
-          doc._deleted = true;
-          return doc;
-        }));
-        this._localDB.destroy();
       },
 
       _getAttachment: function(docId, attachmentName) {
@@ -202,43 +157,30 @@
       // Always updating entire array to keep demo code simple.
       // You should probably not do this in a real app (especially if you have a lot of data)
       _update: function() {
-        var _this = this;
         // PouchDB sends out one change event per doc for bulk operations, wait until things
         // settle down before updating.
         this.debounce('update-docs', function() {
-          _this._localDB.allDocs({
+          this._localDB.allDocs({
             // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
             include_docs: true,
             descending: true
           }).then(function(result) {
             if (result.rows && result.rows.length > 0) {
-              _this.data = result.rows.map(function(row) {
+              this.data = result.rows.map(function(row) {
                 return row.doc;
               });
             }
-            _this.status = 'waiting';
-          }).catch(function(err) {
-            _this.status = 'waiting';
+            this.status = 'waiting';
+          }.bind(this)).catch(function(err) {
+            this.status = 'waiting';
             console.log(err);
-          });
-        }, 200);
+          }.bind(this));
+        }.bind(this), 200);
       },
 
       _showNotification: function(text) {
         this.$.notification.text = text;
         this.$.notification.show();
-      },
-
-      _initDB: function() {
-        this.status = 'initializing_data';
-        var _this = this;
-        return new Promise(function(resolve) {
-          if (_this.init) {
-            resolve(_this.bulkDocs(_this.init()));
-          } else {
-            resolve();
-          }
-        });
       }
     });
   </script>

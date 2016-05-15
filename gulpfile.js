@@ -176,7 +176,9 @@ gulp.task('vulcanize', function() {
       stripComments: true,
       inlineCss: true,
       inlineScripts: true,
-      stripExcludes: ['app/bower_components/vaadin-license-checker/vaadin-license-checker.html']
+      stripExcludes: [
+        'app/bower_components/vaadin-license-checker/vaadin-license-checker.html'
+      ]
     }))
     .pipe(polyclean.cleanCss())
     .pipe(polyclean.uglifyJs())
@@ -290,7 +292,7 @@ gulp.task('default', ['clean'], function(cb) {
   // Uncomment 'cache-config' if you are going to use service workers.
   runSequence(
     ['ensureFiles', 'copy', 'styles'], ['images', 'fonts', 'html'],
-    'vulcanize', // 'cache-config',
+    'vulcanize', 'cache-config',
     cb);
 });
 
