@@ -201,16 +201,13 @@
 
         _setupRemoteDB: function() {
           if (this.routeData && this.routeData.dbId) {
-            console.log('Using DB identifier in URL.');
             this.dbName = 'db_' + this.routeData.dbId;
             this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/db/' + this.routeData.dbId;
           } else if (this.dbId) {
-            console.log('Using DB identifier in localstorage.');
             this.dbName = 'db_' + this.dbId;
             this.set('route.path', '/' + this.dbId);
             this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/db/' + this.dbId;
           } else {
-            console.log('Creating new DB');
             this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/create';
           }
           this.$.ajax.generateRequest();
@@ -218,7 +215,6 @@
 
         _handleBackendResponse: function(evt) {
           var response = evt.detail.response;
-          console.log('Backend response: ', response);
           if (response) {
             //jscs:disable requireCamelCaseOrUpperCaseIdentifiers
             if (response.couchdb_base_url !== this.dbLocation) {

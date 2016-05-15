@@ -55,7 +55,7 @@
       _setupLocalDB: function() {
         // May get initialized to null from localstorage
         if (this.dbName) {
-          console.log('Setting up local db ' + this.dbName);
+          console.log('Setting up local database.');
           this._localDB = new PouchDB(this.dbName, {
             size: 25 // 50MB is max for mobile Safari
           });
@@ -69,22 +69,20 @@
 
       _setupRemoteDB: function() {
         if (this.dbName) {
-          console.log('Setting up remote db. dbName: ' + this.dbName + ', location: ' + this.location + ', local initialized:' + this._localInited);
           this.location = this.location.indexOf('/', this.location.length - 1) === -1 ?
             this.location + '/' : this.location;
 
           var dbURL = this.location + this.dbName;
-          console.log('DB URL: ' + dbURL);
           this._remoteDB = new PouchDB(dbURL);
           this._remoteDB.on('created', function() {
-            console.log('Connected to remote DB.');
+            console.log('Connected to remote database.');
             this._setupSync();
           }.bind(this));
         }
       },
 
       _setupSync: function() {
-        console.log('Setting up sync.');
+        console.log('Starting sync.');
         this._syncHandler = this._localDB.sync(this._remoteDB, {
           live: true,
           retry: true
