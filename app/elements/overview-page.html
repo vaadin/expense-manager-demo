@@ -283,7 +283,7 @@
         },
 
         _loginStateChanged: function(newValue, oldValue) {
-          if (!oldValue && newValue) {
+          if (oldValue === false && newValue === true) {
             this._setupRemoteDB();
           }
         }
