@@ -14,7 +14,10 @@
         padding: 0 16px;
       }
 
-      .col,
+      .col {
+        width: 100%;
+      }
+
       .date vaadin-date-picker,
       .total paper-input {
         display: inline-block;
@@ -34,6 +37,7 @@
       }
 
       .status .caption {
+        display: block;
         font-weight: 500;
       }
 
@@ -46,20 +50,35 @@
         margin-right: 8px;
       }
 
-      @media (max-width: 960px) {
-        .col {
-          width: 100%
+      @media (min-width: 900px) {
+        .checkboxes,
+        .checkboxes > paper-checkbox {
+          display: block;
         }
-        .col.date,
-        .col.total {
-          display: flex;
-          justify-content: space-between;
+
+        .checkboxes > paper-checkbox {
+          margin-bottom: 8px;
         }
-        .row {
-          margin-bottom: inherit;
+
+        .date vaadin-date-picker {
+          width: 100%;
+          display: block;
         }
-        .status {
-          margin-top: 16px;
+
+        :host {
+          height: 0;
+        }
+
+        .filters {
+          padding: 0 20px;
+          position: absolute;
+          left: -290px;
+          bottom: 0;
+          top: 0;
+          width: 250px;
+          background: #f8f9f9;
+          height: 100vh;
+          box-shadow: inset -4px 0 16px -9px rgba(0, 0, 0, 0.5);
         }
       }
     </style>
@@ -72,21 +91,26 @@
             <vaadin-date-picker id="from" auto-validate label="From" value="{{filters.start}}"></vaadin-date-picker>
             <vaadin-date-picker id="to" auto-validate label="To" value="{{filters.end}}"></vaadin-date-picker>
           </div>
+        </div>
 
+        <div class="row">
+          <div class="total col">
+            <paper-input label="Min" value="{{filters.min}}" pattern="\d+" auto-validate error-message="Only numbers">
+              <div prefix>$</div>
+            </paper-input>
+            <paper-input label="Max" value="{{filters.max}}" pattern="\d+" auto-validate error-message="Only numbers"></paper-input>
+          </div>
+        </div>
+
+        <div class="row">
           <div class="merchants col">
             <vaadin-combo-box label="Merchant" items="{{merchants}}" value="{{filters.merchant}}" id="merchantsSelect"></vaadin-combo-box>
           </div>
         </div>
 
         <div class="row">
-          <div class="total col">
-            <paper-input label="Min ($)" value="{{filters.min}}" pattern="\d+" auto-validate error-message="Only numbers"></paper-input>
-            <paper-input label="Max ($)" value="{{filters.max}}" pattern="\d+" auto-validate error-message="Only numbers"></paper-input>
-          </div>
-
           <div class="status col">
             <span class="caption">Status</span>
-
             <div class="checkboxes">
               <template is="dom-repeat" items="[[statusOptions]]">
                 <paper-checkbox on-change="_updateStatus" checked="[[_filtersContain(item.name, filters.*)]]" name$="[[item.name]]">[[item.label]]</paper-checkbox>
@@ -94,6 +118,7 @@
             </div>
           </div>
         </div>
+
       </div>
     </div>
     <div id="footer">

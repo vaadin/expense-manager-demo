@@ -52,6 +52,18 @@
         flex-direction: column;
       }
 
+      @media (min-width: 900px) {
+        .content {
+          /* Make room for filters panel on the left. */
+          padding-left: 290px;
+          overflow: hidden;
+        }
+
+        content-panel {
+          margin-top: -69px;
+        }
+      }
+
       #content-panel {
         flex: 1;
       }
