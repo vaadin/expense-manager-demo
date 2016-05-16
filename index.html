@@ -14,28 +14,43 @@
       overflow: hidden;
     }
 
+    body.loading.login {
+      background: #33383a;
+    }
+
     #loadingScreen {
-      display: block;
+      height: 64px;
+      width: 100vw;
+      background: #33383a;
+    }
+
+    @media (max-width: 600px) {
+      #loadingScreen {
+        height: 56px;
+      }
+    }
+
+    body.loading.login #loadingScreen {
       position: absolute;
-      top: 0;
-      left: 0;
       bottom: 0;
-      right: 0;
-      opacity: 1 !important;
-      background: url(images/app-icon.svg) #37474F center center no-repeat;
-      background-size: 200px 200px;
-      transition: opacity 400ms;
+      height: 47px;
+      background: #3d4446;
     }
 
     .ready #loadingScreen {
-      opacity: 0 !important;
+      display: none;
     }
-  </style><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#37474F"><meta name="mobile-web-app-capable" content="yes"><link rel="icon" sizes="192x192" href="images/app-icon-192.png"><meta name="application-name" content="Expense Manager"><link rel="apple-touch-icon" href="images/app-icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="apple-mobile-web-app-title" content="Expense Manager"><link rel="stylesheet" href="styles/main.css"><script>
+  </style><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#33383a"><meta name="mobile-web-app-capable" content="yes"><link rel="icon" sizes="192x192" href="images/app-icon-192.png"><meta name="application-name" content="Expense Manager"><link rel="apple-touch-icon" href="images/app-icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="apple-mobile-web-app-title" content="Expense Manager"><link rel="stylesheet" href="styles/main.css"><script>
     window.Polymer = {
       dom: 'shadow',
       lazyRegister: true
     };
   </script><link rel="import" id="bundle" href="elements/elements.html" async=""></head><body class="loading"><div id="loadingScreen"></div><script>
+    var loggedIn = window.localStorage.getItem('loggedIn');
+    if (!loggedIn || loggedIn === 'false') {
+      document.querySelector('body').classList.add('login');
+    }
+
     function onImportLoaded() {
       var loadingScreen = document.querySelector('#loadingScreen');
       loadingScreen.addEventListener('transitionend', function() {
@@ -72,7 +87,8 @@
       finishLazyLoading();
     }
 
-    // Borrowed from sw-precache
+    // From sw-precache
+    // https://github.com/GoogleChrome/sw-precache/blob/master/demo/app/js/service-worker-registration.js
     if ('serviceWorker' in navigator) {
       // Your service-worker.js *must* be located at the top-level directory relative to your site.
       // It won't be able to control pages unless it's located at the same level or higher than them.
