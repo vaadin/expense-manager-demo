@@ -58,9 +58,11 @@
           padding-left: 290px;
           overflow: hidden;
         }
+      }
 
+      @media (min-width: 1124px) {
         content-panel {
-          margin-top: -69px;
+          margin-top: -130px;
         }
       }
 
@@ -115,8 +117,8 @@
       </paper-toolbar>
 
       <div class="content">
-        <filters-toolbar id="filters-toolbar" merchants="[[merchants]]" filters="{{filters}}" expenses="[[expenses]]"></filters-toolbar>
-        <content-panel id="content-panel" filters="{{filters}}" expenses="[[expenses]]"></content-panel>
+        <filters-toolbar id="filters-toolbar" total-owed="[[totalOwed]]" merchants="[[merchants]]" filters="{{filters}}" expenses="[[expenses]]"></filters-toolbar>
+        <content-panel id="content-panel" filters="{{filters}}" total-owed="[[totalOwed]]" expenses="[[expenses]]"></content-panel>
       </div>
 
     </paper-header-panel>
@@ -147,6 +149,7 @@
           },
           status: String,
           expenses: Array,
+          totalOwed: Number,
           merchants: Array,
           attachments: Object,
           filters: {
@@ -187,7 +190,23 @@
         observers: [
           '_showInfoDialog(loggedIn, _showInfo)',
           '_getUniqueMerchants(expenses.*)',
+          '_calculateTotal(expenses.*)'
         ],
+
+        _calculateTotal: function() {
+          if (this.expenses) {
+            var total = this.expenses.filter(function(exp) {
+                return exp.status === 'new';
+              }).map(function(exp) {
+                return exp.total;
+              })
+              .reduce(function(a, b) {
+                return a + b;
+              }, 0);
+
+            this.totalOwed = accounting.formatMoney(total);
+          }
+        },
 
         _showInfoDialog: function() {
           if (this.loggedIn && this._showInfo) {
