@@ -11,7 +11,7 @@ The application uses a [ServiceWorker](https://github.com/slightlyoff/ServiceWor
 Data is maintained in a local PouchDB database on the client, which can be synchronized to a [CouchDB](http://couchdb.apache.org/) server. The app remains fully functional regardless of connection status.
 
 ## Live Demo
-[Try the live demo of the Progressive Web Application](http://vaadin.github.io/expense-manager-demo/).
+[Try the live demo of the Progressive Web Application](http://demo.vaadin.com/expense-manager).
 
 ## Running locally
 
