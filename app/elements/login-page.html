@@ -10,17 +10,16 @@
 <dom-module id="login-page">
   <style>
     :host {
-      display: flex;
-      flex-direction: column;
+      background: var(--dark-primary-color);
     }
 
     .login paper-input {
-      width: 300px;
-      max-width: 80vw;
+      width: 100%;
+      --paper-input-container-input-color: var(--text-primary-color);
     }
 
     #login-button {
-      margin-top: 20px;
+      margin: 20px 0 0 0;
       padding-left: 30px;
       padding-right: 30px;
       background: var(--primary-color);
@@ -32,89 +31,67 @@
     }
 
     .header {
-      background: var(--dark-primary-color);
       height: 40%;
       display: flex;
       flex-direction: column;
       flex: 1;
       align-items: center;
       justify-content: flex-end;
-    }
-
-    .header .logo {
-      color: var(--default-primary-color);
-      --iron-icon-height: 96px;
-      --iron-icon-width: 96px;
+      border-bottom: 2px solid var(--accent-color);
     }
 
     .header h1 {
       color: var(--text-primary-color);
-      font-size: 60px;
+      font-size: 20px;
       font-weight: 100;
-      margin-top: 0;
+      margin: 0 auto 16px;
+      width: 300px;
     }
 
     .login {
-      padding-top: 30px;
+      width: 300px;
+      margin: 16px auto;
+    }
+
+    #footer {
+      font-size: 14px;
+      background: #3d4446;
+      padding: 14px 26px;
+      width: 100%;
       display: flex;
-      flex-direction: column;
-      flex: 1;
+      justify-content: space-between;
+      box-sizing: border-box;
       align-items: center;
-    }
-
-    .built-with {
-      font-weight: 200;
-      margin-bottom: 12px;
-      text-align: center;
-    }
-
-    .built-with a {
-      color: inherit;
-    }
-
-    .fork-me {
       position: absolute;
-      top: 0;
-      right: 0;
-      border: 0;
+      bottom: 0;
+      color: var(--text-primary-color);
     }
 
-    @media (max-width: 600px) {
-      .login,
-      .header {
-        height: 50%;
-      }
-      .fork-me {
-        width: 100px;
-      }
-    }
-
-    @media (max-width: 500px) {
-      .header h1 {
-        font-size: 40px;
-      }
+    #footer a {
+      text-decoration: none;
+      color: var(--primary-color);
     }
   </style>
 
   <template>
-    <a href="https://github.com/vaadin/expense-manager-demo">
-      <img class="fork-me" src="https://camo.githubusercontent.com/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67" alt="Fork me on GitHub"
-          data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png">
-    </a>
     <iron-a11y-keys keys="enter" on-keys-pressed="_logIn"></iron-a11y-keys>
     <div id="header" class="header">
-      <iron-icon class="logo" id="logo" src="../images/app-icon.svg"></iron-icon>
       <h1>Expense Manager</h1>
     </div>
     <div class="login">
-      <paper-input value={{username}} label="USERNAME" name="username"></paper-input>
-      <paper-input value="{{password}}" label="PASSWORD" name="password" type="password"></paper-input>
+      <paper-input value={{username}} label="Username" name="username"></paper-input>
+      <paper-input value="{{password}}" label="Password" name="password" type="password"></paper-input>
       <span class="error-message">[[errorMessage]]</span>
       <paper-button id="login-button" on-tap="_logIn" raised>Login</paper-button>
     </div>
-    <span class="built-with">
-      Built with <a href="https://vaadin.com/elements">Vaadin Elements</a>
-    </span>
+    <div id="footer">
+      <span class="fork-me">
+        Fork me on <a href="https://github.com/vaadin/expense-manager-demo">GitHub</a>
+      </span>
+      <span class="built-with">
+        Built with <a href="https://vaadin.com/elements">Vaadin Elements</a>
+      </span>
+    </div>
   </template>
 
   <script>
