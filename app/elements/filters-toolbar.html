@@ -22,18 +22,6 @@
         background: #f8f9f9;
       }
 
-      #total {
-        width: 300px;
-        box-sizing: border-box;
-        font-weight: 500;
-        font-size: 18px;
-        line-height: 1.4;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
-
       #total .sum {
         font-size: 32px;
         font-weight: 200;
@@ -85,6 +73,12 @@
 
       #clear-button {
         color: var(--primary-color);
+      }
+
+      @media (max-width: 1124px) {
+        #total {
+          display: none;
+        }
       }
 
       @media (min-width: 901px) {
@@ -139,6 +133,25 @@
           font-weight: 400;
         }
       }
+
+      @media (min-width: 1125px) {
+        #total > span:first-child {
+          @apply(--section-title);
+        }
+
+        #total {
+          width: 250px;
+          font-weight: 500;
+          font-size: 18px;
+          line-height: 1.4;
+          padding: 20px;
+        }
+
+        #total .sum {
+          display: block;
+          text-align: center;
+        }
+      }
     </style>
     <search-filters filters="{{filters}}" status-options="[[_statusOptions]]" merchants="[[merchants]]" id="filters">
       <div id="buttons">
@@ -190,24 +203,8 @@
       },
 
       observers: [
-        '_calculateTotal(expenses.*)',
         '_calculateNumFilters(filters.*)'
       ],
-
-      _calculateTotal: function() {
-        if (this.expenses) {
-          var total = this.expenses.filter(function(exp) {
-              return exp.status === 'new';
-            }).map(function(exp) {
-              return exp.total;
-            })
-            .reduce(function(a, b) {
-              return a + b;
-            }, 0);
-
-          this.totalOwed = accounting.formatMoney(total);
-        }
-      },
 
       _hasFilters: function(appliedFilters) {
         return appliedFilters > 0;

@@ -9,28 +9,49 @@
 
       #list {
         flex: 1;
-        /*box-shadow: 0 0 6px 0 rgba(150, 150, 150, 0.9);*/
       }
 
       #history-panel {
         border-left: 1px solid #ddd;
-        width: 300px;
+        width: 250px;
+      }
+
+      @media (max-width: 1124px) {
+        #history-panel {
+          width: auto;
+          position: absolute;
+          bottom: 0;
+          left: 290px;
+          right: 0;
+          border: none;
+          height: 250px;
+          padding: 20px;
+        }
+
+        #list {
+          margin-bottom: 290px;
+        }
       }
 
       @media (max-width: 900px) {
         #history-panel {
           display: none;
         }
+        #list {
+          margin-bottom: 0;
+        }
       }
+
     </style>
     <expenses-list id="list" expenses="[[expenses]]" filters="[[filters]]"></expenses-list>
-    <history-panel id="history-panel" expenses="[[expenses]]"></history-panel>
+    <history-panel id="history-panel" total-owed="[[totalOwed]]" expenses="[[expenses]]"></history-panel>
   </template>
   <script>
     Polymer({
       is: 'content-panel',
       properties: {
         expenses: Array,
+        totalOwed: Number,
         filters: Object
       }
     });
