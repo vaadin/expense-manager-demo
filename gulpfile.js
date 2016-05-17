@@ -175,7 +175,6 @@ gulp.task('vulcanize', function() {
         'app/bower_components/vaadin-license-checker/vaadin-license-checker.html'
       ]
     }))
-    .pipe(polyclean.cleanCss())
     .pipe(polyclean.uglifyJs())
     .pipe(gulp.dest(dist('elements')))
     .pipe($.size({
