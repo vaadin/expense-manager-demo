@@ -160,12 +160,17 @@
           var grid = this.$.expenses;
           var _this = this;
 
+          grid.columns = [{}, {}, {}, {}];
           grid.columns[0].renderer = function(cell) {
             cell.element.innerHTML = moment(cell.data).format('MM/DD/YYYY');
           };
-
           grid.columns[2].renderer = function(cell) {
             cell.element.innerHTML = accounting.formatMoney(cell.data);
+          };
+          grid.columns[3].renderer = function(cell) {
+            var status = cell.data.replace(/_/g, ' ');
+            status = status.charAt(0).toUpperCase() + status.slice(1);
+            cell.element.textContent = status;
           };
 
           grid.addEventListener('sort-order-changed', function() {
@@ -196,11 +201,6 @@
             }
           };
 
-          grid.columns[3].renderer = function(cell) {
-            var status = cell.data.replace(/_/g, ' ');
-            status = status.charAt(0).toUpperCase() + status.slice(1);
-            cell.element.textContent = status;
-          };
         },
 
         _showExpenseEditor: function() {
