@@ -276,7 +276,8 @@
 
         _updateReceiptURL: function() {
           if (this.expense._attachments && this.expense._attachments.receipt) {
-            if (this.expense._attachments.receipt.data instanceof File || this.expense._attachments.receipt.data instanceof Blob) {
+            if (this.expense._attachments.receipt.data instanceof File ||  
+              this.expense._attachments.receipt.data instanceof Blob) {
               this._receiptURL = URL.createObjectURL(this.expense._attachments.receipt.data);
             } else {
               this.attachments.getAttachment(this.expense._id, 'receipt')
@@ -296,9 +297,6 @@
           'iron-form-invalid': '_formInvalid'
         },
 
-        _formInvalid: function(e) {
-          console.log(e);
-        },
         _handleUpload: function(e) {
           var file = e.detail.file;
           if (file) {
@@ -343,11 +341,7 @@
             this.fire('expense-saved', this.expense);
           } else {
             console.log('Form validation failed');
-            if (!this.tallWindow) {
-              // iron-form doesn't seem to have a way to get invalid fields,
-              // so just focusing first for now
-              this.$.merchant.focus();
-            }
+            this.$.dialog.scrollTop = 0;
             this.errorText = 'Please fill all required fields';
           }
         },
