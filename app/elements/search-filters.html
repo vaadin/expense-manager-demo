@@ -16,16 +16,34 @@
 
       .col {
         width: 100%;
-      }
-
-      .date vaadin-date-picker,
-      .total paper-input {
-        display: inline-block;
-        width: 49%;
-      }
-
-      .col {
         box-sizing: border-box;
+      }
+
+      .col.total,
+      .col.date {
+        display: flex;
+        align-items: flex-end;
+      }
+
+      .col.total span {
+        padding: 8px;
+      }
+
+      .date span {
+        padding: 8px 8px 0 8px;
+      }
+
+      .date vaadin-date-picker {
+        display: block;
+        flex: 1;
+      }
+
+      .col.total div[prefix] {
+        margin-right: 6px;
+      }
+
+      .col.total paper-input {
+        flex: 1;
       }
 
       .row {
@@ -38,7 +56,9 @@
 
       .status .caption {
         display: block;
-        font-weight: 500;
+        font-size: 13px;
+        font-weight: 300;
+        margin-bottom: 14px;
       }
 
       .checkboxes {
@@ -50,23 +70,32 @@
         margin-right: 8px;
       }
 
+      .title {
+        display: none;
+      }
+
       @media (min-width: 900px) {
+        .title {
+          display: block;
+          padding: 14px 0;
+          @apply(--section-title);
+        }
+
         .checkboxes,
         .checkboxes > paper-checkbox {
           display: block;
         }
 
         .checkboxes > paper-checkbox {
-          margin-bottom: 8px;
+          margin-bottom: 16px;
         }
 
-        .date vaadin-date-picker {
-          width: 100%;
+        .col.date {
           display: block;
         }
 
-        :host {
-          height: 0;
+        .date span {
+          display: none;
         }
 
         .filters {
@@ -85,10 +114,12 @@
 
     <div id="content">
       <div class="filters">
+        <div class="title">Filter Expenses</div>
 
         <div class="row">
           <div class="date col">
             <vaadin-date-picker id="from" auto-validate label="From" value="{{filters.start}}"></vaadin-date-picker>
+            <span>–</span>
             <vaadin-date-picker id="to" auto-validate label="To" value="{{filters.end}}"></vaadin-date-picker>
           </div>
         </div>
@@ -98,6 +129,7 @@
             <paper-input label="Min" value="{{filters.min}}" pattern="\d+" auto-validate error-message="Only numbers">
               <div prefix>$</div>
             </paper-input>
+            <span>–</span>
             <paper-input label="Max" value="{{filters.max}}" pattern="\d+" auto-validate error-message="Only numbers"></paper-input>
           </div>
         </div>
