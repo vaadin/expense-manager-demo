@@ -80,24 +80,19 @@
           padding: 14px 0;
           @apply(--section-title);
         }
-
         .checkboxes,
         .checkboxes > paper-checkbox {
           display: block;
         }
-
         .checkboxes > paper-checkbox {
           margin-bottom: 16px;
         }
-
         .col.date {
           display: block;
         }
-
         .date span {
           display: none;
         }
-
         .filters {
           padding: 0 20px;
           position: absolute;
@@ -124,11 +119,11 @@
 
         <div class="row">
           <div class="total col">
-            <paper-input label="Min" value="{{filters.min}}" pattern="\d+" auto-validate error-message="Only numbers">
+            <paper-input label="Min" value="{{filters.min}}" type="number" required step="any">
               <div prefix>$</div>
             </paper-input>
             <span>–</span>
-            <paper-input label="Max" value="{{filters.max}}" pattern="\d+" auto-validate error-message="Only numbers"></paper-input>
+            <paper-input label="Max" value="{{filters.max}}" type="number" required step="any"></paper-input>
           </div>
         </div>
 
@@ -189,23 +184,27 @@
           new Polymer.IronMeta({
             type: 'validator',
             key: 'from-validator',
-            value: { validate: this._validateFrom.bind(this) }
+            value: {
+              validate: this._validateFrom.bind(this)
+            }
           });
           new Polymer.IronMeta({
             type: 'validator',
             key: 'to-validator',
-            value: { validate: this._validateTo.bind(this) }
+            value: {
+              validate: this._validateTo.bind(this)
+            }
           });
           this.$.from.validator = 'from-validator';
           this.$.to.validator = 'to-validator';
         },
 
         _validateFrom: function(from) {
-          return from === '' || this.$.to.value === '' || moment(this.$.to.value).isAfter(moment(from));
+          return from === '' ||  this.$.to.value === '' || moment(this.$.to.value).isAfter(moment(from));
         },
 
         _validateTo: function(to) {
-          return to === '' || this.$.from.value === '' || moment(this.$.from.value).isBefore(moment(to));
+          return to === '' ||  this.$.from.value === '' || moment(this.$.from.value).isBefore(moment(to));
         },
 
         _merchantsChanged: function(merchants) {
