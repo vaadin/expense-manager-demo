@@ -11,7 +11,6 @@
     <style>
       :host {
         position: relative;
-        overflow: hidden;
         display: flex;
         flex-direction: column;
       }
@@ -21,6 +20,25 @@
         right: 32px;
         bottom: 32px;
         z-index: 2;
+      }
+
+      @media (max-width: 1124px) {
+        #add-button {
+          bottom: -28px;
+        }
+      }
+
+      @media (min-width: 1125px) {
+        #add-button {
+          bottom: auto;
+          top: -29px;
+        }
+      }
+
+      @media (max-width: 900px) {
+        #add-button {
+          bottom: 32px;
+        }
       }
 
       #expenses {
