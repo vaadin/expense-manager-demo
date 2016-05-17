@@ -117,14 +117,13 @@
         border-bottom-color: var(--accent-color);
         transform: translateY(-25%);
       }
-
     </style>
 
 
     <vaadin-grid id="expenses" frozen-columns="1">
       <table>
         <colgroup>
-          <col name="date" width="120" sortable sort-direction="desc"/>
+          <col name="date" width="120" sortable sort-direction="desc" />
           <col name="merchant" width="200" sortable/>
           <col name="total" width="150" sortable/>
           <col name="status" width="150" sortable/>
@@ -160,7 +159,6 @@
           var grid = this.$.expenses;
           var _this = this;
 
-          grid.columns = [{}, {}, {}, {}];
           grid.columns[0].renderer = function(cell) {
             cell.element.innerHTML = moment(cell.data).format('MM/DD/YYYY');
           };
