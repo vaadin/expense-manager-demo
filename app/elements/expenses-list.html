@@ -157,37 +157,22 @@
 
         ready: function() {
           var grid = this.$.expenses;
-          var _this = this;
-
-          grid.columns[0].renderer = function(cell) {
-            cell.element.innerHTML = moment(cell.data).format('MM/DD/YYYY');
-          };
-          grid.columns[2].renderer = function(cell) {
-            cell.element.innerHTML = accounting.formatMoney(cell.data);
-          };
-          grid.columns[3].renderer = function(cell) {
-            var status = cell.data.replace(/_/g, ' ');
-            status = status.charAt(0).toUpperCase() + status.slice(1);
-            cell.element.textContent = status;
-          };
 
           grid.addEventListener('sort-order-changed', function() {
             if (grid.size > 0) {
               grid.scrollToStart();
             }
-            _this._update();
-          });
+            this._update();
+          }.bind(this));
 
           grid.addEventListener('selected-items-changed', function() {
             var selection = grid.selection.selected();
             if (selection.length === 1) {
               grid.getItem(selection[0], function(err, item) {
-                _this.fire('edit-expense', item);
-              });
+                this.fire('edit-expense', item);
+              }.bind(this));
             }
-          });
-
-          grid.header.getCell(0, 2).className = 'total';
+          }.bind(this));
 
           grid.cellClassGenerator = function(cell) {
             if (cell.columnName === 'status') {
@@ -199,6 +184,21 @@
             }
           };
 
+          grid.then(function() {
+            grid.columns[0].renderer = function(cell) {
+              cell.element.innerHTML = moment(cell.data).format('MM/DD/YYYY');
+            };
+            grid.columns[2].renderer = function(cell) {
+              cell.element.innerHTML = accounting.formatMoney(cell.data);
+            };
+            grid.columns[3].renderer = function(cell) {
+              var status = cell.data.replace(/_/g, ' ');
+              status = status.charAt(0).toUpperCase() + status.slice(1);
+              cell.element.textContent = status;
+            };
+
+            grid.header.getCell(0, 2).className = 'total';
+          });
         },
 
         _showExpenseEditor: function() {

@@ -200,11 +200,13 @@
         },
 
         _validateFrom: function(from) {
-          return from === '' ||  this.$.to.value === '' || moment(this.$.to.value).isAfter(moment(from));
+          return from === '' ||  this.$.to.value === '' ||
+            moment(this.$.to.value).isAfter(moment(from));
         },
 
         _validateTo: function(to) {
-          return to === '' ||  this.$.from.value === '' || moment(this.$.from.value).isBefore(moment(to));
+          return to === '' ||  this.$.from.value === '' ||
+            moment(this.$.from.value).isBefore(moment(to));
         },
 
         _merchantsChanged: function(merchants) {
