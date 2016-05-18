@@ -11,11 +11,12 @@
 <link rel="import" href="../bower_components/carbon-route/carbon-location.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../bower_components/vaadin-pouchdb/vaadin-pouchdb.html">
+
 <link rel="import" href="expense-editor.html">
 <link rel="import" href="info-dialog.html">
 <link rel="import" href="content-panel.html">
 <link rel="import" href="filters-toolbar.html">
-<link rel="import" href="pouch-db.html">
 <link rel="import" href="../scripts/moment-js.html">
 
 <dom-module id="overview-page">
@@ -90,12 +91,13 @@
         }
       }
     </style>
-    <!-- Update location and db-name to match your remote DB-->
-    <!-- Remove the location attribute if you do not want to sync to a remote DB-->
-    <!-- <pouch-db db-name="expenses" data="{{expenses}}" location="http://localhost:5984" status="{{status}}" id="db" attachments="{{attachments}}" init="[[init]]"></pouch-db> -->
 
-    <!--  Online demo DB -->
-    <pouch-db db-name="{{dbName}}" location="{{dbLocation}}" data="{{expenses}}" status="{{status}}" id="db" attachments="{{attachments}}"></pouch-db>
+    <vaadin-pouchdb id="db"
+      dbname="{{dbLocal}}"
+      remote="{{dbRemote}}"
+      data="{{expenses}}"
+      status="{{status}}"
+     ></vaadin-pouchdb>
 
     <carbon-location route="{{route}}" use-hash-as-path></carbon-location>
 
@@ -123,10 +125,10 @@
 
     </paper-header-panel>
 
-    <expense-editor id="expenseEditor" merchants="[[merchants]]" attachments="[[attachments]]" route="{{subroute}}"></expense-editor>
+    <expense-editor id="expenseEditor" merchants="[[merchants]]" db="[[_db]]" route="{{subroute}}"></expense-editor>
     <paper-toast id="saveNotification"></paper-toast>
     <info-dialog id="info"></info-dialog>
-    <iron-localstorage name="expense-manager-db-id" value="{{dbId}}" on-iron-localstorage-load="_setupRemoteDB" on-iron-localstorage-load-empty="_setupRemoteDB"></iron-localstorage>
+    <iron-localstorage name="expense-manager-db-id" value="{{dbId}}" on-iron-localstorage-load="_setupDB" on-iron-localstorage-load-empty="_setupDB"></iron-localstorage>
   </template>
 
   <script>
@@ -136,11 +138,12 @@
         is: 'overview-page',
 
         properties: {
+          _db: Object,
           route: Object,
           routeData: Object,
-          dbName: String,
+          dbLocal: String,
+          dbRemote: String,
           dbId: String,
-          dbLocation: String,
           _showInfo: Boolean,
           loggedIn: {
             type: Boolean,
@@ -193,6 +196,10 @@
           '_calculateTotal(expenses.*)'
         ],
 
+        ready: function() {
+          this._db = this.$.db;
+        },
+
         _calculateTotal: function() {
           if (this.expenses) {
             var total = this.expenses.filter(function(exp) {
@@ -203,7 +210,6 @@
               .reduce(function(a, b) {
                 return a + b;
               }, 0);
-
             this.totalOwed = accounting.formatMoney(total);
           }
         },
@@ -228,12 +234,12 @@
           }
         },
 
-        _setupRemoteDB: function() {
+        _setupDB: function() {
           if (this.routeData && this.routeData.dbId) {
-            this.dbName = 'db_' + this.routeData.dbId;
-            this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/db/' + this.routeData.dbId;
-          } else if (this.dbId) {
-            this.dbName = 'db_' + this.dbId;
+            this.dbId = this.routeData.dbId;
+          }
+          if (this.dbId) {
+            this.dbLocal = 'db_' + this.dbId;
             this.set('route.path', '/' + this.dbId);
             this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/db/' + this.dbId;
           } else {
@@ -243,23 +249,26 @@
         },
 
         _handleBackendResponse: function(evt) {
-          var response = evt.detail.response;
-          if (response) {
-            //jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-            if (response.couchdb_base_url !== this.dbLocation) {
-              this.dbLocation = response.couchdb_base_url;
-            }
-            if (response.couchdb_db_name !== this.dbName) {
-              this.dbName = response.couchdb_db_name;
-            }
-            this.dbId = response.backend_db_id;
-
-            // this.dbLocation = 'https://vaadin-expense-manager.cloudant.com/';
-            // this.dbName = 'e6359be';
+          var rsp = evt.detail.response;
+          if (rsp && rsp.backend_db_id) {
+            this.dbId = rsp.backend_db_id;
             this.set('route.path', '/' + this.dbId);
-            if (response.new_db) {
+
+            this.dbLocal = 'db_' + this.dbId;
+            this.dbRemote = rsp.couchdb_db_url;
+
+            this._db.query();
+            this._db.changes(function() {
+              this._db.query();
+            }.bind(this));
+
+            if (rsp.new_db) {
               this._showInfo = true;
             }
+          } else {
+            this.dbId = null;
+            this.set('route.path', '');
+            _setupDB();
           }
         },
 
@@ -276,13 +285,12 @@
 
         _saveExpense: function(evt) {
           var expense = evt.detail;
-
-          this.$.db.save(expense);
+          this._db.save(expense);
           this.fire('expenses-updated');
         },
         _deleteExpense: function(evt) {
           var expense = evt.detail;
-          this.$.db.remove(expense);
+          this._db.remove(expense);
           this.fire('expenses-updated', {
             reason: 'deleted'
           });
@@ -300,7 +308,7 @@
         _logout: function() {
           this.loggedIn = false;
           this.dbId = null;
-          this.dbName = null;
+          this.dbLocal = null;
           this.set('route.path', '');
         },
 
@@ -310,7 +318,7 @@
 
         _loginStateChanged: function(newValue, oldValue) {
           if (oldValue === false && newValue === true) {
-            this._setupRemoteDB();
+            this._setupDB();
           }
         }
       });

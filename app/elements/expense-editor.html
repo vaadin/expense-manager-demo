@@ -227,7 +227,7 @@
             computed: '_getCaption(expense)'
           },
           errorText: String,
-          attachments: Object,
+          db: Object,
           _receiptURL: {
             type: String,
             notify: true,
@@ -280,7 +280,7 @@
               this.expense._attachments.receipt.data instanceof Blob) {
               this._receiptURL = URL.createObjectURL(this.expense._attachments.receipt.data);
             } else {
-              this.attachments.getAttachment(this.expense._id, 'receipt')
+              this.db.getAttachment(this.expense._id, 'receipt')
                 .then(function(blob) {
                   this._receiptURL = URL.createObjectURL(blob);
                 }.bind(this))
