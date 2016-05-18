@@ -56,12 +56,13 @@
         .content {
           /* Make room for filters panel on the left. */
           padding-left: 290px;
+          padding-right: 290px;
         }
       }
 
-      @media (min-width: 1124px) {
-        content-panel {
-          margin-top: -130px;
+      @media (max-width: 1124px) {
+        .content {
+          padding-right: 0;
         }
       }
 

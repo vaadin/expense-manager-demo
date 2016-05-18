@@ -88,6 +88,10 @@
       }
 
       @media (min-width: 901px) {
+        :host {
+          height: 0;
+        }
+
         #filters {
           max-height: none !important;
         }
@@ -146,6 +150,7 @@
           @apply(--section-title);
         }
         #total {
+          position: absolute;
           width: 250px;
           font-weight: 500;
           font-size: 18px;
