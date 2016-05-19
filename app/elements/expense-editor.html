@@ -270,6 +270,7 @@
         },
 
         _showReceipt: function() {
+          console.log("_showReceipt", this.expense);
           return this.expense._id ||
             (this.expense._attachments && this.expense._attachments.receipt);
         },
