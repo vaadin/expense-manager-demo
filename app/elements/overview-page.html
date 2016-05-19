@@ -276,7 +276,6 @@
 
             // We update the entire UI on any change for simplicity.
             this._db.changes(function() {
-              console.log("changes");
               this._update();
             }.bind(this));
             // First hit
