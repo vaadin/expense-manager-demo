@@ -15,7 +15,6 @@
 <link rel="import" href="../bower_components/carbon-route/carbon-route.html">
 <link rel="import" href="../scripts/accounting-js.html">
 <link rel="import" href="../scripts/moment-js.html">
-<link rel="import" href="../scripts/load-image.html">
 
 <dom-module id="expense-editor">
   <template>
@@ -270,7 +269,7 @@
         },
 
         _showReceipt: function() {
-          return this.expense._id ||
+          return this.expense.status != 'new' ||
             (this.expense._attachments && this.expense._attachments.receipt);
         },
 
@@ -297,37 +296,47 @@
           'iron-form-invalid': '_formInvalid'
         },
 
+        // Read a file and return a Blob. If it's an image it converts and
+        // resizes using a canvas.
+        // TODO: move this to vaadin-upload as a utility method
+        _resizeImage: function(file, callback, mimeType, maxWidth, maxHeight) {
+          var img = document.createElement("img");
+          var reader = new FileReader();
+          reader.onload = function() {
+            if (!/^image/.test(file.type)) {
+              callback(reader.result);
+            } else if (file.type == mimeType && (!maxWidth || !maxWidth)) {
+              callback(reader.result);
+            } else {
+              img.src = reader.result;
+              var canvas = document.createElement("canvas");
+              var ctx = canvas.getContext("2d");
+              if (img.width > img.height && img.width > maxWidth) {
+                canvas.width = maxWidth;
+                canvas.height = img.height * maxWidth / img.width;
+              } else if (img.height > img.width && img.height > maxHeight) {
+                canvas.height = maxHeight;
+                canvas.width = img.width * maxHeight / img.height;
+              } else {
+                canvas.height = img.height;
+                canvas.width = img.width;
+              }
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              canvas.toBlob(callback, mimeType, 0.9);
+            }
+          }.bind(this);
+          reader.readAsDataURL(file);
+        },
+
         _handleUpload: function(e) {
           var file = e.detail.file;
-          if (file) {
-            var _this = this;
-
-            // Limit the image size and make sure to fix the orientation.
-            loadImage.parseMetaData(file, function(metaData) {
-              var imageFormat = 'image/jpeg';
-              var options = {
-                maxWidth: 1000,
-                maxHeight: 1000,
-                canvas: true
-              };
-              if (metaData.exif) {
-                options.orientation = metaData.exif.get('Orientation');
-              }
-
-              loadImage(file, function(imgCanvas) {
-                // Convert the resized/orientation-fixed image to a blob.
-                imgCanvas.toBlob(function(blob) {
-                  if (!_this.expense._attachments) {
-                    _this.expense._attachments = {};
-                  }
-                  _this.set('expense._attachments.receipt', {
-                    type: imageFormat,
-                    data: blob
-                  });
-                }, imageFormat);
-              }, options);
+          this._resizeImage(file, function(data) {
+            this.expense._attachments = this.expense._attachments || {};
+            this.set('expense._attachments.receipt', {
+              type: 'image/jpeg',
+              data: data
             });
-          }
+          }.bind(this), 'image/jpeg', 1000, 1000);
 
           this.$.upload.files = [];
           e.preventDefault();
