@@ -236,7 +236,6 @@
         },
 
         _teardownDB: function() {
-          this._db && this._db.close(true);
           this.dbId = this.dbLocal = this.dbRemote = null;
           this.set('route.path', '');
         },
