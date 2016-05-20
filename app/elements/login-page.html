@@ -11,11 +11,15 @@
   <style>
     :host {
       background: var(--dark-primary-color);
+      min-height: 400px;
     }
 
     .login paper-input {
       width: 100%;
       --paper-input-container-input-color: var(--text-primary-color);
+      --paper-input-container-underline: {
+        background: rgba(255,255,255,0.2);
+      }
     }
 
     #login-button {
@@ -31,19 +35,27 @@
     }
 
     .header {
-      height: 40%;
+      height: 36%;
       display: flex;
       flex-direction: column;
       flex: 1;
-      align-items: center;
       justify-content: flex-end;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .header::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      top: 36%;
       border-bottom: 2px solid var(--accent-color);
     }
 
     .header h1 {
       color: var(--text-primary-color);
-      font-size: 20px;
-      font-weight: 100;
+      font-size: 24px;
+      font-weight: 300;
       margin: 0 auto 16px;
       width: 300px;
     }

@@ -13,6 +13,7 @@
         position: relative;
         display: flex;
         flex-direction: column;
+        background: #fff;
       }
 
       #add-button {
@@ -44,47 +45,45 @@
       #expenses {
         flex: 1;
         color: var(--primary-text-color);
-        font-weight: 300;
       }
 
-      #expenses::content thead.vaadin-grid-header th,
+      @media (max-width: 1124px) {
+        #expenses {
+          font-size: 15px;
+        }
+      }
+
+      #expenses /deep/ thead.vaadin-grid-header {
+        box-shadow: 0 -9px 2px 10px rgba(0,0,0,0.1),
+                    0 -8px 3px 10px rgba(204,204,204,0.20);
+      }
+
       #expenses /deep/ thead.vaadin-grid-header th {
         text-transform: uppercase;
-        font-size: 1.2em;
+        font-size: 12px;
         font-weight: 500;
         color: var(--primary-text-color);
       }
 
-      vaadin-grid::content td.total,
-      vaadin-grid /deep/ td.total,
-      #expenses::content thead.vaadin-grid-header th.total,
-      #expenses /deep/ thead.vaadin-grid-header th.total {
+      vaadin-grid /deep/ .total {
         flex-direction: row-reverse;
       }
 
-      vaadin-grid::content tr.vaadin-grid-row-stripe td,
-      vaadin-grid /deep/ tr.vaadin-grid-row-stripe td {
-        background: #F7F8F8;
-      }
-
-      vaadin-grid::content td.status-new,
       vaadin-grid /deep/ td.status-new {
         color: var(--accent-color);
         font-weight: 500;
       }
 
-      vaadin-grid::content td.status-in_progress,
       vaadin-grid /deep/ td.status-in_progress {
         font-weight: 500;
         font-style: italic;
+        text-transform: capitalize;
       }
 
-      vaadin-grid::content td.comment,
       vaadin-grid /deep/ td.comment {
         position: relative;
       }
 
-      vaadin-grid::content td.comment span,
       vaadin-grid /deep/ td.comment span {
         width: 100%;
         position: absolute;
@@ -94,10 +93,9 @@
         box-sizing: border-box;
       }
 
-      #expenses::content .vaadin-grid-header [class*="sort-"]:after,
       #expenses /deep/ .vaadin-grid-header [class*="sort-"]:after {
         content: "";
-        border-width: 7px 5px;
+        border-width: 5px;
         border-style: solid;
         border-color: transparent;
         width: 0;
@@ -106,13 +104,11 @@
         margin: 0 10px;
       }
 
-      #expenses::content .vaadin-grid-header.vaadin-grid .sort-desc.vaadin-grid:after,
       #expenses /deep/ .vaadin-grid-header.vaadin-grid .sort-desc.vaadin-grid:after {
         border-top-color: var(--accent-color);
         transform: translateY(25%);
       }
 
-      #expenses::content .vaadin-grid-header.vaadin-grid .sort-asc.vaadin-grid:after,
       #expenses /deep/ .vaadin-grid-header.vaadin-grid .sort-asc.vaadin-grid:after {
         border-bottom-color: var(--accent-color);
         transform: translateY(-25%);
@@ -124,10 +120,10 @@
       <table>
         <colgroup>
           <col name="date" width="120" sortable sort-direction="desc" />
-          <col name="merchant" width="200" sortable/>
-          <col name="total" width="150" sortable/>
-          <col name="status" width="150" sortable/>
-          <col name="comment" min-width="150" sortable/>
+          <col name="merchant" flex="1" min-width="145" sortable/>
+          <col name="total" width="90" sortable/>
+          <col name="status" width="120" sortable/>
+          <col name="comment" flex="2" min-width="260" sortable/>
         </colgroup>
       </table>
     </vaadin-grid>

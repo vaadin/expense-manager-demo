@@ -10,6 +10,10 @@
         display: flex;
         position: relative;
         z-index: 10;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
       }
 
       #filters {
@@ -29,7 +33,7 @@
 
       #total .sum {
         font-size: 32px;
-        font-weight: 200;
+        font-weight: 300;
       }
 
       #filters-toggle {
@@ -68,7 +72,6 @@
       }
 
       #buttons {
-        display: none;
         justify-content: space-between;
       }
 
@@ -94,6 +97,24 @@
 
         #filters {
           max-height: none !important;
+        }
+
+        #buttons {
+          position: absolute;
+          left: -248px;
+          width: 234px;
+          text-align: right;
+          padding: 11px 0;
+        }
+
+        #done-button {
+          display: none;
+        }
+
+        #clear-button {
+          font-size: 13px;
+          text-transform: none;
+
         }
       }
 
@@ -136,6 +157,9 @@
           display: flex;
           margin: 32px 0;
         }
+        #done-button {
+          display: block;
+        }
         :host([expanded]) #filters-caption {
           display: block;
           padding: 0;
@@ -155,17 +179,18 @@
           font-weight: 500;
           font-size: 18px;
           line-height: 1.4;
-          padding: 20px;
+          padding: 12px 24px;
         }
         #total .sum {
           display: block;
           text-align: center;
+          padding: 40px 0;
         }
       }
     </style>
     <search-filters filters="{{filters}}" status-options="[[_statusOptions]]" merchants="[[merchants]]" id="filters">
       <div id="buttons">
-        <paper-button id="clear-button" on-tap="_clearFilters">Clear filters</paper-button>
+        <paper-button id="clear-button" on-tap="_clearFilters">Clear Filters</paper-button>
         <paper-button id="done-button" on-tap="_hideFilters" raised>Done</paper-button>
       </div>
     </search-filters>
@@ -204,7 +229,7 @@
             label: 'New'
           }, {
             name: 'in_progress',
-            label: 'In progress'
+            label: 'In Progress'
           }, {
             name: 'reimbursed',
             label: 'Reimbursed'

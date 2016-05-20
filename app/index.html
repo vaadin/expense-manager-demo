@@ -7,6 +7,10 @@
   <title>Expense Manager</title>
 
   <style is="custom-style">
+    :root {
+      --accent-color: #ff3a39;
+    }
+
     body {
       width: 100% !important;
       overflow-y: hidden;
@@ -16,37 +20,84 @@
       height: 100%;
     }
 
-    body.loading {
+    .loading {
       width: 100vw;
       height: 100vh;
       overflow: hidden;
     }
 
-    body.loading.login {
+    .login {
       background: #33383a;
     }
 
-    #loadingScreen {
+    body:not(.login) #loadingScreen {
       height: 64px;
       width: 100vw;
       background: #33383a;
+      position: absolute;
+    }
+
+    body:not(.login) #loadingScreen span {
+      position: absolute;
+      top: 45vh;
+      text-align: center;
+      left: 0;
+      right: 0;
+      color: rgba(0,0,0,0.54);
     }
 
     @media (max-width: 600px) {
-      #loadingScreen {
+      :not(.login) #loadingScreen {
         height: 56px;
       }
     }
 
-    body.loading.login #loadingScreen {
+    .login #loadingScreen {
       position: absolute;
-      bottom: 0;
-      height: 47px;
-      background: #3d4446;
+      width: 100%;
+      top: 36%;
+      color: rgba(255,255,255,0.56);
+      text-align: center;
+      line-height: 4;
+      font-weight: 400;
+      /* avoid flash of styled text when the bundle loads */
+      font-family: arial, sans-serif;
+      overflow: hidden;
     }
 
-    .ready #loadingScreen {
-      display: none;
+    #loadingScreen::before {
+      content: "";
+      position: absolute;
+      height: 2px;
+      background: var(--accent-color);
+      top: 0;
+      left: 0;
+      width: 200%;
+      animation: 1.2s loading infinite;
+    }
+
+    body:not(.login) #loadingScreen::before {
+      top: auto;
+      bottom: -2px;
+    }
+
+    @keyframes loading {
+      0% {
+        transform: translatex(-100%);
+      }
+      100% {
+        transform: translatex(50%);
+      }
+    }
+
+    .ready expense-app {
+      animation: fade-in 300ms 500ms backwards;
+    }
+
+    @keyframes fade-in {
+      0% {
+        opacity: 0;
+      }
     }
   </style>
   <link rel="manifest" href="manifest.json">
@@ -77,7 +128,7 @@
 </head>
 
 <body class="loading">
-  <div id="loadingScreen"></div>
+  <div id="loadingScreen"><span>Loading&hellip;</span></div>
 
   <!-- build:remove -->
   <span id="browser-sync-binding"></span> <span id="browser-sync-binding"></span>
@@ -90,14 +141,9 @@
     }
 
     function onImportLoaded() {
-      var loadingScreen = document.querySelector('#loadingScreen');
-      loadingScreen.addEventListener('transitionend', function() {
-        // Remove the loading screen from DOM after CSS transition.
-        document.body.removeChild(loadingScreen);
-      });
-
       document.body.classList.remove('loading');
       document.body.classList.add('ready');
+      document.querySelector("#loadingScreen").innerHTML = "";
       var appElement = document.createElement('expense-app');
       document.body.appendChild(appElement);
     }
