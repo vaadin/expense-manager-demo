@@ -25,12 +25,12 @@
         align-items: flex-end;
       }
 
-      .col span {
+      .col span:not(.caption) {
         padding: 0 4px 12px;
         color: rgba(0,0,0,0.3);
       }
 
-      .date span {
+      .date span:not(.caption) {
         padding: 0 4px 4px;
       }
 
@@ -57,9 +57,9 @@
 
       .status .caption {
         display: block;
-        font-size: 13px;
-        font-weight: 300;
-        margin-bottom: 14px;
+        font-size: 12px;
+        margin: 32px 0 14px;
+        color: rgba(0,0,0,0.54);
       }
 
       .checkboxes {
