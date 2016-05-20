@@ -25,12 +25,13 @@
         align-items: flex-end;
       }
 
-      .col.total span {
-        padding: 8px;
+      .col span:not(.caption) {
+        padding: 0 4px 12px;
+        color: rgba(0,0,0,0.3);
       }
 
-      .date span {
-        padding: 8px 8px 0 8px;
+      .date span:not(.caption) {
+        padding: 0 4px 4px;
       }
 
       .date vaadin-date-picker {
@@ -56,9 +57,9 @@
 
       .status .caption {
         display: block;
-        font-size: 13px;
-        font-weight: 300;
-        margin-bottom: 14px;
+        font-size: 12px;
+        margin: 32px 0 14px;
+        color: rgba(0,0,0,0.54);
       }
 
       .checkboxes {
@@ -87,17 +88,11 @@
         .checkboxes > paper-checkbox {
           margin-bottom: 16px;
         }
-        .col.date {
-          display: block;
-        }
-        .date span {
-          display: none;
-        }
         .filters {
-          padding: 0 20px;
+          padding: 0 24px;
           position: absolute;
-          left: -290px;
-          width: 250px;
+          left: -308px;
+          width: 260px;
           background: #f8f9f9;
           height: calc(100vh - 64px);
           box-shadow: inset -4px 0 16px -9px rgba(0, 0, 0, 0.5);
