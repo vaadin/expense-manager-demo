@@ -23,7 +23,6 @@
         display: block;
         padding: 0 8px;
         border-top: 3px solid var(--accent-color);
-        position: absolute;
         margin: 0;
         width: 60vw;
         background: var(--primary-background-color);
@@ -301,9 +300,13 @@
         _canvasToBlob: function(canvas) {
           var reg = new RegExp('^data:(.*);.*,(.*)');
           var arr = reg.exec(canvas.toDataURL());
-          var bstr = atob(arr[2]), n = bstr.length, u8arr = new Uint8Array(n);
-          while(n--) u8arr[n] = bstr.charCodeAt(n);
-          return new Blob([u8arr], {type:arr[1]});
+          var bstr = atob(arr[2]),
+            n = bstr.length,
+            u8arr = new Uint8Array(n);
+          while (n--) u8arr[n] = bstr.charCodeAt(n);
+          return new Blob([u8arr], {
+            type: arr[1]
+          });
         },
 
         _resizeImage: function(file, callback, mimeType, maxWidth, maxHeight) {
