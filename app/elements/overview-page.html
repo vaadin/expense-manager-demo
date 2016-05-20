@@ -28,10 +28,15 @@
 
       paper-toolbar {
         background: var(--dark-primary-color);
+
+        --paper-toolbar-content: {
+          padding: 0 24px;
+        }
       }
 
       paper-toolbar h1 {
         font-weight: 300;
+        font-size: 24px;
       }
 
       paper-toolbar .logo {
@@ -56,8 +61,8 @@
       @media (min-width: 900px) {
         .content {
           /* Make room for filters panel on the left. */
-          padding-left: 290px;
-          padding-right: 290px;
+          padding-left: 308px;
+          padding-right: 298px;
         }
       }
 
@@ -73,10 +78,18 @@
 
       #sync {
         margin-left: 8px;
+        animation: spin 0.8s linear infinite;
       }
 
       #sync[hidden] {
         display: none;
+        animation: none;
+      }
+
+      @keyframes spin {
+        100% {
+          transform: rotate(-360deg);
+        }
       }
 
       .logout-button,
@@ -86,8 +99,13 @@
       }
 
       @media (max-width: 600px) {
+        paper-toolbar {
+          --paper-toolbar-content: {
+            padding: 0 6px 0 16px;
+          }
+        }
         paper-toolbar h1 {
-          font-size: 1em;
+          font-size: 20px;
         }
       }
     </style>
@@ -110,7 +128,7 @@
     <paper-header-panel>
       <paper-toolbar>
         <h1>Expense Manager</h1>
-        <iron-icon id="sync" icon="notification:sync" hidden$="[[_hideSyncIcon(status)]]"></iron-icon>
+        <iron-icon id="sync" icon="notification:sync" hidden$="[[_hideSyncIcon(status)]]" title="Syncing…"></iron-icon>
 
         <span class="flex"></span>
 

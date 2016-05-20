@@ -21,12 +21,10 @@
     <style>
       #dialog {
         display: block;
-        padding: 16px 32px 64px 32px;
-        border: 1px solid #ccc;
-        position: absolute;
-        top: 0;
+        padding: 0 8px;
+        border-top: 3px solid var(--accent-color);
         margin: 0;
-        width: 80vw;
+        width: 60vw;
         background: var(--primary-background-color);
         max-height: 100vh;
         overflow: auto;
@@ -299,6 +297,18 @@
         // Read a file and return a Blob. If it's an image it converts and
         // resizes using a canvas.
         // TODO: move this to vaadin-upload as a utility method
+        _canvasToBlob: function(canvas) {
+          var reg = new RegExp('^data:(.*);.*,(.*)');
+          var arr = reg.exec(canvas.toDataURL());
+          var bstr = atob(arr[2]),
+            n = bstr.length,
+            u8arr = new Uint8Array(n);
+          while (n--) u8arr[n] = bstr.charCodeAt(n);
+          return new Blob([u8arr], {
+            type: arr[1]
+          });
+        },
+
         _resizeImage: function(file, callback, mimeType, maxWidth, maxHeight) {
           var img = document.createElement("img");
           var reader = new FileReader();
@@ -322,7 +332,11 @@
                 canvas.width = img.width;
               }
               ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-              canvas.toBlob(callback, mimeType, 0.9);
+              if (canvas.toBlob) {
+                canvas.toBlob(callback, mimeType, 0.9);
+              } else {
+                this._canvasToBlob(canvas);
+              }
             }
           }.bind(this);
           reader.readAsDataURL(file);

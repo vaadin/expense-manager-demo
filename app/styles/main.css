@@ -1,6 +1,6 @@
 body {
-  background: #fafafa;
+  background: #fff;
   font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  color: #333;
-  font-weight: 300;
+  color: rgba(0,0,0,0.86);
+  -webkit-tap-highlight-color: transparent;
 }
