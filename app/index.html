@@ -52,9 +52,12 @@
       }
     }
 
+    #loadingScreen {
+      width: 100%;
+    }
+
     .login #loadingScreen {
       position: absolute;
-      width: 100%;
       top: 36%;
       color: rgba(255,255,255,0.56);
       text-align: center;
@@ -62,7 +65,6 @@
       font-weight: 400;
       /* avoid flash of styled text when the bundle loads */
       font-family: arial, sans-serif;
-      overflow: hidden;
     }
 
     #loadingScreen::before {
@@ -88,6 +90,11 @@
       100% {
         transform: translatex(50%);
       }
+    }
+
+    .ready #loadingScreen::before {
+      animation: none;
+      width: 100%;
     }
 
     .ready expense-app {
