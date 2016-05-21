@@ -7,21 +7,20 @@
   <title>Expense Manager</title>
 
   <style is="custom-style">
-    :root {
-      --accent-color: #ff3a39;
-    }
-
     html {
       height: 100%;
     }
 
     body {
-      width: 100% !important;
-      overflow-y: hidden;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
       margin: 0;
       height: 100%;
+
+      background: #fff;
+      font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .loading {
@@ -48,6 +47,7 @@
       left: 0;
       right: 0;
       color: rgba(0,0,0,0.54);
+      transition: opacity 300ms;
     }
 
     @media (max-width: 600px) {
@@ -63,9 +63,10 @@
     .login #loadingScreen {
       position: absolute;
       top: 36%;
+      left: 0;
       color: rgba(255,255,255,0.56);
       text-align: center;
-      line-height: 4;
+      line-height: 10;
       font-weight: 400;
       /* avoid flash of styled text when the bundle loads */
       font-family: arial, sans-serif;
@@ -75,11 +76,12 @@
       content: "";
       position: absolute;
       height: 2px;
-      background: var(--accent-color);
+      background: #ff3a39;
       top: 0;
       left: 0;
-      width: 200%;
+      width: 100%;
       animation: 1.2s loading infinite;
+      transform-origin: 100% 0;
     }
 
     body:not(.login) #loadingScreen::before {
@@ -88,21 +90,24 @@
     }
 
     @keyframes loading {
-      0% {
-        transform: translatex(-100%);
+      50% {
+        transform: scalex(0);
       }
-      100% {
-        transform: translatex(50%);
+      51% {
+        transform: translatex(-100%);
       }
     }
 
-    .ready #loadingScreen::before {
-      animation: none;
-      width: 100%;
+    #loadingScreen.animation-stop::before {
+      animation-name: none;
+    }
+
+    #loadingScreen.animation-stop span {
+      opacity: 0;
     }
 
     .ready expense-app {
-      animation: fade-in 300ms 500ms backwards;
+      animation: fade-in 0.6s;
     }
 
     @keyframes fade-in {
@@ -124,9 +129,6 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <meta name="apple-mobile-web-app-title" content="Expense Manager">
 
-  <!-- build:css styles/main.css -->
-  <link rel="stylesheet" href="styles/main.css" async>
-  <!-- endbuild-->
   <script>
     window.Polymer = {
       dom: 'shadow',
@@ -152,11 +154,14 @@
     }
 
     function onImportLoaded() {
-      document.body.classList.remove('loading');
-      document.body.classList.add('ready');
-      document.querySelector("#loadingScreen").innerHTML = "";
-      var appElement = document.createElement('expense-app');
-      document.body.appendChild(appElement);
+        document.body.classList.remove('loading');
+        document.body.classList.add('ready');
+
+        document.querySelector('#loadingScreen').addEventListener('animationiteration', function() {
+          this.classList.add('animation-stop');
+          var appElement = document.createElement('expense-app');
+          document.body.appendChild(appElement);
+        });
     }
 
     function finishLazyLoading() {
