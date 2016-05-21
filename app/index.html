@@ -17,7 +17,6 @@
       flex-direction: column;
       margin: 0;
       height: 100%;
-
       background: #fff;
       font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
       -webkit-tap-highlight-color: transparent;
@@ -40,13 +39,13 @@
       position: absolute;
     }
 
-    body:not(.login) #loadingScreen span {
+    body:not(.login) #loadingScreen .text {
       position: absolute;
       top: 45vh;
       text-align: center;
       left: 0;
       right: 0;
-      color: rgba(0,0,0,0.54);
+      color: rgba(0, 0, 0, 0.54);
       transition: opacity 300ms;
     }
 
@@ -64,7 +63,7 @@
       position: absolute;
       top: 36%;
       left: 0;
-      color: rgba(255,255,255,0.56);
+      color: rgba(255, 255, 255, 0.56);
       text-align: center;
       line-height: 10;
       font-weight: 400;
@@ -72,7 +71,7 @@
       font-family: arial, sans-serif;
     }
 
-    #loadingScreen::before {
+    #loadingScreen .spinner {
       content: "";
       position: absolute;
       height: 2px;
@@ -84,7 +83,7 @@
       transform-origin: 100% 0;
     }
 
-    body:not(.login) #loadingScreen::before {
+    body:not(.login) #loadingScreen .spinner {
       top: auto;
       bottom: -2px;
     }
@@ -94,15 +93,15 @@
         transform: scalex(0);
       }
       51% {
-        transform: translatex(-100%);
+        transform: translatex(-100vw);
       }
     }
 
-    #loadingScreen.animation-stop::before {
+    #loadingScreen.animation-stop .spinner {
       animation-name: none;
     }
 
-    #loadingScreen.animation-stop span {
+    #loadingScreen.animation-stop .text {
       opacity: 0;
     }
 
@@ -141,7 +140,10 @@
 </head>
 
 <body class="loading">
-  <div id="loadingScreen"><span>Loading&hellip;</span></div>
+  <div id="loadingScreen">
+    <div class="spinner"></div>
+    <p class="text">Loading&hellip;</p>
+  </div>
 
   <!-- build:remove -->
   <span id="browser-sync-binding"></span> <span id="browser-sync-binding"></span>
@@ -154,14 +156,14 @@
     }
 
     function onImportLoaded() {
-        document.body.classList.remove('loading');
-        document.body.classList.add('ready');
+      document.body.classList.remove('loading');
+      document.body.classList.add('ready');
 
-        document.querySelector('#loadingScreen').addEventListener('animationiteration', function() {
-          this.classList.add('animation-stop');
-          var appElement = document.createElement('expense-app');
-          document.body.appendChild(appElement);
-        });
+      document.querySelector('#loadingScreen').addEventListener('animationiteration', function(e) {
+        this.classList.add('animation-stop');
+        var appElement = document.createElement('expense-app');
+        document.body.appendChild(appElement);
+      });
     }
 
     function finishLazyLoading() {
