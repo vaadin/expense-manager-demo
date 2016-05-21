@@ -267,8 +267,8 @@
         },
 
         _showReceipt: function() {
-          return this.expense.status != 'new' ||
-            (this.expense._attachments && this.expense._attachments.receipt);
+          return this.expense._id && this.expense.status != 'new' ||
+            this.expense._attachments && this.expense._attachments.receipt;
         },
 
         _updateReceiptURL: function() {
@@ -294,9 +294,8 @@
           'iron-form-invalid': '_formInvalid'
         },
 
-        // Read a file and return a Blob. If it's an image it converts and
-        // resizes using a canvas.
-        // TODO: move this to vaadin-upload as a utility method
+        // Read canvas content and returns a Blob.
+        // For browsers not supporting canvas.toBlob
         _canvasToBlob: function(canvas) {
           var reg = new RegExp('^data:(.*);.*,(.*)');
           var arr = reg.exec(canvas.toDataURL());
@@ -309,6 +308,9 @@
           });
         },
 
+        // Read a file and return a Blob. If it's an image it converts and
+        // resizes using a canvas.
+        // TODO: move this to vaadin-upload as a utility method
         _resizeImage: function(file, callback, mimeType, maxWidth, maxHeight) {
           var img = document.createElement("img");
           var reader = new FileReader();
@@ -318,25 +320,27 @@
             } else if (file.type == mimeType && (!maxWidth || !maxWidth)) {
               callback(reader.result);
             } else {
+              img.addEventListener('load', function() {
+                var canvas = document.createElement("canvas");
+                var ctx = canvas.getContext("2d");
+                if (img.width > img.height && img.width > maxWidth) {
+                  canvas.width = maxWidth;
+                  canvas.height = img.height * maxWidth / img.width;
+                } else if (img.height > img.width && img.height > maxHeight) {
+                  canvas.height = maxHeight;
+                  canvas.width = img.width * maxHeight / img.height;
+                } else {
+                  canvas.height = img.height;
+                  canvas.width = img.width;
+                }
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                if (canvas.toBlob) {
+                  canvas.toBlob(callback, mimeType, 0.9);
+                } else {
+                  callback(this._canvasToBlob(canvas));
+                }
+              }.bind(this));
               img.src = reader.result;
-              var canvas = document.createElement("canvas");
-              var ctx = canvas.getContext("2d");
-              if (img.width > img.height && img.width > maxWidth) {
-                canvas.width = maxWidth;
-                canvas.height = img.height * maxWidth / img.width;
-              } else if (img.height > img.width && img.height > maxHeight) {
-                canvas.height = maxHeight;
-                canvas.width = img.width * maxHeight / img.height;
-              } else {
-                canvas.height = img.height;
-                canvas.width = img.width;
-              }
-              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-              if (canvas.toBlob) {
-                canvas.toBlob(callback, mimeType, 0.9);
-              } else {
-                this._canvasToBlob(canvas);
-              }
             }
           }.bind(this);
           reader.readAsDataURL(file);
@@ -405,7 +409,6 @@
             _this.set('route.path', '');
             _this.expense = {};
           }, 100);
-
         },
 
         _delete: function() {
