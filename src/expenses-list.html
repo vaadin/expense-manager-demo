@@ -2,9 +2,8 @@
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../scripts/accounting-js.html">
-<link rel="import" href="../scripts/moment-js.html">
-<link rel="import" href="search-filters.html">
+<link rel="import" href="accounting-js.html">
+<link rel="import" href="moment-js.html">
 
 <dom-module id="expenses-list">
   <template>
@@ -54,8 +53,7 @@
       }
 
       #expenses /deep/ thead.vaadin-grid-header {
-        box-shadow: 0 -9px 2px 10px rgba(0,0,0,0.1),
-                    0 -8px 3px 10px rgba(204,204,204,0.20);
+        box-shadow: 0 -9px 2px 10px rgba(0, 0, 0, 0.1), 0 -8px 3px 10px rgba(204, 204, 204, 0.20);
       }
 
       #expenses /deep/ thead.vaadin-grid-header th {
@@ -157,8 +155,8 @@
           grid.addEventListener('sort-order-changed', function() {
             if (grid.size > 0) {
               grid.scrollToStart();
+              this._update();
             }
-            this._update();
           }.bind(this));
 
           grid.addEventListener('selected-items-changed', function() {

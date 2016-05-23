@@ -20,13 +20,14 @@ If you want to work on the same data in several browsers, you can install a loca
 Once installed, make sure that the `location` attribute is correct on the `<pouch-db>` element in `overview-page.html`. **Note** If you do not use a database to sync with, omit the `location` attribute.
 
 ## Install dependencies
-Run `npm install && bower install`
+You need polymer-cli installed to build the app `npm install -g polymer-cli`
 
 ## Run development server
-`gulp serve` runs the app locally with browser sync.
+`polymer serve` will run the application locally
 
 ## Other build targets
-The app is based on [Polymer Starter Kit](https://developers.google.com/web/tools/polymer-starter-kit/), so you can use all the same targets like `serve:dist` etc.
+You can build the app with `polymer build`. Other options are listed in the [Polymer CLI](https://www.polymer-project.org/1.0/docs/tools/polymer-cli) documentation.
+
 
 ## Note
 The demo uses [Vaadin Charts](https://vaadin.com/charts), which will ask for a license. You can close the window to try out the app without a license.

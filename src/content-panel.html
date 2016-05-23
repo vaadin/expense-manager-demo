@@ -1,3 +1,4 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="history-panel.html">
 <link rel="import" href="expenses-list.html">
 <dom-module id="content-panel">
@@ -30,7 +31,6 @@
           padding: 20px;
           box-shadow: rgba(0, 0, 0, 0.2) 0px 6px 16px -10px inset;
         }
-
         #list {
           margin-bottom: 290px;
         }
@@ -53,7 +53,6 @@
           margin-bottom: 0;
         }
       }
-
     </style>
     <expenses-list id="list" expenses="[[expenses]]" filters="[[filters]]"></expenses-list>
     <history-panel id="history-panel" total-owed="[[totalOwed]]" expenses="[[expenses]]"></history-panel>

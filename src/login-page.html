@@ -3,9 +3,6 @@
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
-<link rel="import" href="../bower_components/neon-animation/neon-animatable-behavior.html">
-<link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
-<link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
 
 <dom-module id="login-page">
   <style>
@@ -18,7 +15,7 @@
       width: 100%;
       --paper-input-container-input-color: var(--text-primary-color);
       --paper-input-container-underline: {
-        background: rgba(255,255,255,0.2);
+        background: rgba(255, 255, 255, 0.2);
       }
     }
 
@@ -124,25 +121,8 @@
             type: String,
             value: 'demo'
           },
-          errorMessage: String,
-
-          animationConfig: {
-            value: function() {
-              return {
-                'entry': {
-                  name: 'fade-in-animation',
-                  node: this
-                },
-                'exit': [{
-                  name: 'fade-out-animation',
-                  node: this
-                }]
-              };
-            }
-          },
+          errorMessage: String
         },
-
-        behaviors: [Polymer.NeonAnimatableBehavior],
 
         _logIn: function() {
           this.loggedIn = true;
