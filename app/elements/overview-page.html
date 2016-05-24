@@ -28,7 +28,6 @@
 
       paper-toolbar {
         background: var(--dark-primary-color);
-
         --paper-toolbar-content: {
           padding: 0 24px;
         }
@@ -110,19 +109,14 @@
       }
     </style>
 
-    <vaadin-pouchdb id="db"
-      dbname="{{dbLocal}}"
-      remote="{{dbRemote}}"
-      data="{{expenses}}"
-      status="{{status}}"
-     ></vaadin-pouchdb>
+    <vaadin-pouchdb id="db" dbname="{{dbLocal}}" remote="{{dbRemote}}" data="{{expenses}}" status="{{status}}"></vaadin-pouchdb>
 
     <carbon-location route="{{route}}" use-hash-as-path></carbon-location>
 
     <carbon-route route="{{route}}" pattern="/:dbId" data="{{routeData}}" tail="{{subroute}}">
     </carbon-route>
 
-    <iron-ajax id="ajax" handle-as="json" on-response="_handleBackendResponse"></iron-ajax>
+    <iron-ajax id="ajax" handle-as="json" on-response="_handleBackendResponse" on-error="_handleBackendError"></iron-ajax>
 
 
     <paper-header-panel>
@@ -301,8 +295,13 @@
           } else {
             this.dbId = null;
             this.set('route.path', '');
-            _setupDB();
+            this._setupDB();
           }
+        },
+
+        _handleBackendError: function() {
+          // Make sure we at least populate from our local DB if the backend is unavailable
+          this._update();
         },
 
         behaviors: [Polymer.NeonAnimatableBehavior],
