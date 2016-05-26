@@ -14,7 +14,7 @@
     "vaadin-combo-box": "^1.1.0",
     "vaadin-date-picker": "^1.1.0",
     "vaadin-upload": "^1.1.0",
-    "vaadin-charts": "^3.1.0",
+    "vaadin-charts": "vaadin/vaadin-charts#task/CHARTS-499",
     "vaadin-pouchdb": "manolo/vaadin-pouchdb",
     "accounting": "~0.3.2",
     "moment": "~2.10.6",

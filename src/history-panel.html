@@ -85,7 +85,7 @@
 
       <div class="chart">
         <h2 class="chart-title section-title">Last 12 Months in Total</h2>
-        <!-- <vaadin-bar-chart id="barchart">
+        <vaadin-bar-chart id="barchart">
           <title>
             <style display="none"></style>
           </title>
@@ -109,12 +109,12 @@
             <color>#ffc13f</color>
           </data-series>
           <legend enabled="false"></legend>
-        </vaadin-bar-chart> -->
+        </vaadin-bar-chart>
 
         <div id="horizontal">
           <div>
             <h2 class="chart-title section-title">Last 12 Months in Total</h2>
-            <!-- <vaadin-column-chart id="columnchart">
+            <vaadin-column-chart id="columnchart">
               <title>
                 <style display="none"></style>
               </title>
@@ -138,7 +138,7 @@
                 <color>#ffc13f</color>
               </data-series>
               <legend enabled="false"></legend>
-            </vaadin-column-chart> -->
+            </vaadin-column-chart>
           </div>
           <div id="total">
             <span>To be reimbursed</span>
@@ -209,12 +209,12 @@
             return month.total;
           });
 
-          // this.async(function() {
-          //   this.$.barchart.chart.xAxis[0].setCategories(history.map(getHistoryLabel));
-          //   this.$.barchart.chart.reflow();
-          //   this.$.columnchart.chart.xAxis[0].setCategories(history.map(getHistoryLabel));
-          //   this.$.columnchart.chart.reflow();
-          // }, 50);
+          this.async(function() {
+            this.$.barchart.chart.xAxis[0].setCategories(history.map(getHistoryLabel));
+            this.$.barchart.chart.reflow();
+            this.$.columnchart.chart.xAxis[0].setCategories(history.map(getHistoryLabel));
+            this.$.columnchart.chart.reflow();
+          }, 50);
 
         }
 
