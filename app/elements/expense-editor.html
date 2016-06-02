@@ -27,7 +27,8 @@
         width: 60vw;
         background: var(--primary-background-color);
         max-height: 100vh;
-        overflow: auto;
+        /* Keep overflow visible so vaadin-date-picker dropdown won't clip */
+        overflow: visible;
       }
 
       .main-layout {
@@ -132,8 +133,14 @@
       }
 
       @media (min-width: 900px) {
+        #dialog {
+          display: flex;
+          flex-direction: column;
+        }
+
         .wrapper {
           flex-direction: row;
+          overflow: auto;
         }
       }
 
