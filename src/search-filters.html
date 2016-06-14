@@ -23,7 +23,7 @@
         display: flex;
         align-items: flex-end;
       }
-      
+
       .col span:not(.caption) {
         padding: 0 4px 12px;
         color: rgba(0, 0, 0, 0.3);
@@ -195,12 +195,12 @@
 
         _validateFrom: function(from) {
           return from === '' ||  this.$.to.value === '' ||
-            moment(this.$.to.value).isAfter(moment(from));
+            moment(this.$.to.value, 'YYYY-MM-DD').isAfter(moment(from, 'YYYY-MM-DD'));
         },
 
         _validateTo: function(to) {
           return to === '' ||  this.$.from.value === '' ||
-            moment(this.$.from.value).isBefore(moment(to));
+            moment(this.$.from.value, 'YYYY-MM-DD').isBefore(moment(to, 'YYYY-MM-DD'));
         },
 
         _merchantsChanged: function(merchants) {
