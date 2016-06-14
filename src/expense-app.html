@@ -1,7 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/neon-animation/neon-animated-pages.html">
-<link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
-<link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
 <dom-module id="expense-app">
   <template>
@@ -10,7 +8,8 @@
         display: block;
       }
 
-      #pages {
+      #pages,
+      #pages> * {
         position: absolute;
         top: 0;
         right: 0;
@@ -66,10 +65,10 @@
       }
     </style>
 
-    <neon-animated-pages id="pages" selected="[[selected]]" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+    <iron-pages id="pages" selected="[[selected]]">
       <login-page id="login" logged-in="{{loggedIn}}"></login-page>
       <overview-page id="overview" logged-in="{{loggedIn}}"></overview-page>
-    </neon-animated-pages>
+    </iron-pages>
     <iron-localstorage name="loggedIn" value="{{loggedIn}}"></iron-localstorage>
 
   </template>
