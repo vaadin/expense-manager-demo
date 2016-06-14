@@ -7,12 +7,30 @@
 
   <title>Expense Manager</title>
 
-  <link rel="shortcut icon" sizes="32x32" href="/images/app-icon-32.png">
+  <link rel="shortcut icon" sizes="32x32" href="images/app-icon-32.png">
 
-  <meta name="theme-color" content="#fff">
-  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#33383a">
+  <link rel="manifest" href="manifest.json">
 
   <script>
+    // HTTPS redirect is borrowed from
+    // https://github.com/PolymerElements/platinum-https-redirect/
+    // blob/master/platinum-https-redirect.html
+    // With license: http://polymer.github.io/LICENSE.txt
+    function _isLocalhost(hostname) {
+      // !! coerces the logical expression to evaluate to the values true or false.
+      return !!(hostname === 'localhost' ||
+        // [::1] is the IPv6 localhost address.
+        hostname === '[::1]' ||
+        // 127.0.0.1/8 is considered localhost for IPv4.
+        hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/));
+    }
+
+    if (window.location.protocol === 'http:' && !_isLocalhost(window.location.hostname)) {
+      // Redirect to https: if we're currently using http: and we're not on localhost.
+      window.location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
+    }
+
     // setup Polymer options
     window.Polymer = {
       lazyRegister: true,
@@ -21,12 +39,14 @@
 
     // load webcomponents polyfills
     (function() {
-      if ('registerElement' in document && 'import' in document.createElement('link') && 'content' in document.createElement('template')) {
+      if ('registerElement' in document &&
+        'import' in document.createElement('link') &&
+        'content' in document.createElement('template')) {
         // browser has web components
       } else {
         // polyfill web components
         var e = document.createElement('script');
-        e.src = '/bower_components/webcomponentsjs/webcomponents-lite.min.js';
+        e.src = 'bower_components/webcomponentsjs/webcomponents-lite.min.js';
         document.head.appendChild(e);
       }
     })();
@@ -34,12 +54,12 @@
     // load pre-caching service worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/service-worker.js');
+        navigator.serviceWorker.register('service-worker.js');
       });
     }
   </script>
 
-  <link rel="import" href="/src/expense-app.html">
+  <link rel="import" href="src/expense-app.html">
 
   <style>
     body {
