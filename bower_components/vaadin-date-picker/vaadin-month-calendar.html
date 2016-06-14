@@ -1,0 +1,20 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-styles/typography.html">
+
+</head><body><dom-module id="vaadin-month-calendar">
+  <template>
+    <style>:host{display:block;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;font:inherit;@apply (--paper-font-common-base);@apply (--vaadin-date-picker-calendar);}#title{color:var(--primary-text-color);text-align:center;padding:6px 0;@apply (--paper-font-subhead);@apply (--vaadin-date-picker-calendar-title);}#monthGrid{display:flex;flex-wrap:wrap;}#monthGrid div{text-align:center;width:14.285714286%;box-sizing:border-box;padding:6px 0;@apply (--paper-font-body1);@apply (--vaadin-date-picker-calendar-cell);}#monthGrid div:not(:empty){cursor:pointer;color:var(--primary-text-color);@apply (--vaadin-date-picker-calendar-date-cell);}#monthGrid div.weekday{text-transform:uppercase;color:var(--secondary-text-color);cursor:default;padding:8px 0;@apply (--paper-font-caption);@apply (--vaadin-date-picker-calendar-weekday-cell);}#monthGrid div[today]{position:relative;color:var(--primary-color);@apply (--vaadin-date-picker-calendar-cell-today);}#monthGrid div[today][selected]{color:var(--dark-theme-text-color);@apply (--vaadin-date-picker-calendar-cell-today-selected);}#monthGrid div[focused]{background:var(--light-primary-color);box-sizing:border-box;border-radius:2px;@apply (--vaadin-date-picker-calendar-cell-focused);}#monthGrid div[selected]{color:var(--light-primary-color);background:var(--primary-color);box-sizing:border-box;border-radius:2px;@apply (--vaadin-date-picker-calendar-cell-selected);}</style>
+
+    <div id="title">[[_getTitle(month, i18n.monthNames)]]</div>
+    <div id="monthGrid" on-tap="_handleTap" on-touchend="_preventDefault" on-touchstart="_onMonthGridTouchStart">
+      <template is="dom-repeat" items="[[_getWeekDayNames(i18n.weekdaysShort, i18n.firstDayOfWeek)]]">
+        <div class="weekday">[[item]]</div>
+      </template>
+      <template is="dom-repeat" items="[[_getDays(month, i18n.firstDayOfWeek)]]">
+        <div today$="[[_isToday(item)]]" selected$="[[_dateEquals(item, selectedDate)]]" focused$="[[_dateEquals(item, focusedDate)]]" date="[[item]]">[[_getDate(item)]]</div>
+      </template>
+    </div>
+  </template>
+  <script>Polymer({is:"vaadin-month-calendar",properties:{month:{type:Date,value:new Date},selectedDate:{type:Date,notify:!0},focusedDate:Date,i18n:{type:Object},ignoreTaps:Boolean,_notTapping:Boolean},_getTitle:function(t,e){return this.i18n.formatTitle(e[t.getMonth()],t.getFullYear())},_dateEquals:function(t,e){return t&&e?t.getFullYear()===e.getFullYear()&&t.getMonth()===e.getMonth()&&t.getDate()===e.getDate():!1},_onMonthGridTouchStart:function(){this._notTapping=!1,this.async(function(){this._notTapping=!0},300)},_dateAdd:function(t,e){t.setDate(t.getDate()+e)},_getWeekDayNames:function(t,e){return t.slice(e).concat(t.slice(0,e))},_getDate:function(t){return t?t.getDate():""},_isToday:function(t){return this._dateEquals(new Date,t)},_getDays:function(){var t=new Date(0,0);for(t.setFullYear(this.month.getFullYear()),t.setMonth(this.month.getMonth()),t.setDate(1);t.getDay()!==this.i18n.firstDayOfWeek;)this._dateAdd(t,-1);for(var e=[],n=t.getMonth(),a=this.month.getMonth();t.getMonth()===a||t.getMonth()===n;)e.push(t.getMonth()===a?new Date(t.getTime()):null),this._dateAdd(t,1);return e},_handleTap:function(t){this.ignoreTaps||this._notTapping||!t.target.date||(this.selectedDate=t.target.date,this.fire("date-tap"))},_preventDefault:function(t){t.preventDefault()}});</script>
+</dom-module>
+</body></html>

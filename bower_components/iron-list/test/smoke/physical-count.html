@@ -1,0 +1,49 @@
+<!DOCTYPE html><html><head>
+
+  <title>physical count</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <link rel="import" href="../../../polymer/polymer.html">
+  <link rel="import" href="../../../paper-button/paper-button.html">
+
+  <link rel="import" href="../../iron-list.html">
+
+  <style is="custom-style">body{@apply (--layout-fullbleed);}.item{background-color:green;border-bottom:1px solid white;overflow:hidden;}.wrapper{position:relative;margin:10px;}.wrapper .count{background-color:red;position:absolute;top:0;right:0;z-index:1;}.wrapper .stats{background-color:red;position:absolute;top:20px;right:0;z-index:1;}.wrapper iron-list{position:absolute;top:0;left:0;right:0;bottom:0;}.group{float:left;}</style>
+
+</head>
+<body unresolved="">
+
+  <template is="dom-bind">
+
+    <h1>Physical count</h1>
+    <p>In red you can see the last physical count values</p>
+    <div class="group">
+      <p>100 items, 50px tall</p>
+      <div class="wrapper" style="width: 300px; height: 300px">
+        <iron-list id="list1" as="item">
+          <template>
+            <div class="item" style$="[[_getStyle(item)]]"><span>[[index]]</span> height: <span>[[item]]</span>
+            <div>
+              <paper-button raised="">Test</paper-button>
+              <paper-button raised="">Test</paper-button>
+              <paper-button raised="">Test</paper-button>
+              <paper-button raised="">Test</paper-button>
+            </div>
+            </div>
+          </template>
+        </iron-list>
+      </div>
+    </div>
+
+</template>
+
+  <script>HTMLImports.whenReady(function(){function e(e){var t,n=document.createElement("div"),o=document.createElement("div"),r=[];n.classList.add("count"),o.classList.add("stats"),Object.observe(e,function(a){e._physicalCount;a.forEach(function(a){"_physicalCount"===a.name?(r.pop(),r.push(a.oldValue),r.push(e._physicalCount),n.innerText=r.join(" -> ")):"_lastPage"===a.name&&(0===e._lastPage?t=Date.now():1===e._lastPage?o.innerText="First paint: "+(Date.now()-t)+"ms":e._lastPage===e._maxPages&&(o.innerText=o.innerText+" total: "+(Date.now()-t)+"ms"))})}),r.push(e._physicalCount),n.innerText=e._physicalCount,o.innerText="Waiting for stats...",Polymer.dom(e.parentNode).appendChild(n),Polymer.dom(e.parentNode).appendChild(o)}function t(e,t){return new Array(e).fill(t,0,e)}function n(e,t,n){for(var o=[];o.length<e;)o.push(parseInt(Math.random()*(n-t+1))+t);return o}document.querySelector("template[is=dom-bind]")._getStyle=function(e){return"height:"+e+"px; "},setTimeout(function(){var o=document.querySelector("#list1");document.querySelector("#list2"),document.querySelector("#list3"),document.querySelector("#list4"),document.querySelector("#list5"),document.querySelector("#list6"),document.querySelector("#list7"),document.querySelector("#list8"),n(100,1,200);o.items=t(100,50),e(o)},0)});</script>
+
+
+</body></html>

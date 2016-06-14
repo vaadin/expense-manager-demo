@@ -1,0 +1,25 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>iron-list test</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="helpers.html">
+  <link rel="import" href="x-list.html">
+
+</head>
+<body>
+
+  <test-fixture id="trivialList">
+    <template>
+      <x-list hidden=""></x-list>
+    </template>
+  </test-fixture>
+
+  <script>suite("hidden list",function(){var t,e;setup(function(){e=fixture("trivialList"),t=e.list}),test("list size",function(e){t.items=buildDataSet(100),flush(function(){assert.equal(t.offsetWidth,0),assert.equal(t.offsetHeight,0),e()})}),test("iron-resize",function(i){t.items=buildDataSet(100),t.fire("iron-resize"),assert.notEqual(getFirstItemFromList(t).textContent,"0"),Polymer.RenderStatus.whenReady(function(){e.removeAttribute("hidden"),assert.notEqual(getFirstItemFromList(t).textContent,"0"),t.fire("iron-resize"),flush(function(){assert.isTrue(t.isAttached),assert.equal(getFirstItemFromList(t).textContent,"0"),i()})})})});</script>
+
+
+
+</body></html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html><html><head>
+  <title>iron-location</title>
+
+  <script src="../../webcomponentsjs/webcomponents.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../../polymer/polymer.html">
+  <link rel="import" href="../../promise-polyfill/promise-polyfill.html">
+  <link rel="import" href="../iron-query-params.html">
+</head>
+<body>
+
+  <test-fixture id="BasicQueryParams">
+    <template>
+      <iron-query-params></iron-query-params>
+    </template>
+  </test-fixture>
+
+  <script>"use strict";suite("<iron-query-params>",function(){var e;setup(function(){e=fixture("BasicQueryParams")}),test("basic functionality with ?key=value params",function(){expect(e.paramsString).to.be.eq(""),expect(e.paramsObject).to.deep.eq({}),e.paramsString="greeting=hello&target=world",expect(e.paramsObject).to.deep.equal({greeting:"hello",target:"world"}),e.set("paramsObject.another","key"),expect(e.paramsString).to.be.equal("greeting=hello&target=world&another=key")}),test("encoding of params",function(){var t=[{string:"a=b",object:{a:"b"}},{string:"debug&ok",object:{debug:"",ok:""}},{string:"monster%20kid%3A=%F0%9F%98%BF",object:{"monster kid:":"😿"}},{string:"yes%2C%20ok%3F%20what%20is%20up%20with%20%CB%9Athiiis%CB%9A=%E2%98%83",object:{"yes, ok? what is up with ˚thiiis˚":"☃"}}];t.forEach(function(t){e.paramsObject={},expect(e.paramsString).to.be.equal(""),e.paramsString=t.string,expect(e.paramsObject).to.deep.equal(t.object),e.paramsObject={},expect(e.paramsString).to.be.equal(""),e.paramsObject=t.object,expect(e.paramsString).to.be.equal(t.string)})})});</script>
+
+</body></html>

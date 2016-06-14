@@ -1,0 +1,35 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+<link rel="import" href="../iron-behaviors/iron-button-state.html">
+<link rel="import" href="../iron-behaviors/iron-control-state.html">
+<link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
+<link rel="import" href="../iron-validatable-behavior/iron-validatable-behavior.html">
+<link rel="import" href="../paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../paper-behaviors/paper-ripple-behavior.html">
+<link rel="import" href="../paper-styles/default-theme.html">
+
+<link rel="import" href="paper-dropdown-menu-icons.html">
+<link rel="import" href="paper-dropdown-menu-shared-styles.html">
+
+
+
+</head><body><dom-module id="paper-dropdown-menu-light">
+  <template>
+    <style include="paper-dropdown-menu-shared-styles">.dropdown-trigger{box-sizing:border-box;position:relative;width:100%;padding:16px 0 8px 0;}:host([disabled]) .dropdown-trigger{pointer-events:none;opacity:var(--paper-dropdown-menu-disabled-opacity, 0.33);}:host([no-label-float]) .dropdown-trigger{padding-top:8px;}#input{@apply (--paper-font-subhead);@apply (--paper-font-common-nowrap);border-bottom:1px solid var(--paper-dropdown-menu-color, --secondary-text-color);color:var(--paper-dropdown-menu-color, --primary-text-color);width:200px;min-height:24px;box-sizing:border-box;padding:12px 20px 0 0;outline:none;@apply (--paper-dropdown-menu-input);}:host-context([dir="rtl"]) #input{padding-right:0px;padding-left:20px;}:host([disabled]) #input{border-bottom:1px dashed var(--paper-dropdown-menu-color, --secondary-text-color);}:host([invalid]) #input{border-bottom:2px solid var(--paper-dropdown-error-color, --error-color);}:host([no-label-float]) #input{padding-top:0;}label{@apply (--paper-font-subhead);@apply (--paper-font-common-nowrap);display:block;position:absolute;bottom:0;left:0;right:0;top:28px;box-sizing:border-box;width:100%;padding-right:20px;text-align:left;transition-duration:.2s;transition-timing-function:cubic-bezier(.4,0,.2,1);color:var(--paper-dropdown-menu-color, --secondary-text-color);@apply (--paper-dropdown-menu-label);}:host-context([dir="rtl"]) label{padding-right:0px;padding-left:20px;}:host([no-label-float]) label{top:8px;}label.label-is-floating{font-size:12px;top:8px;}label.label-is-hidden{display:none;}:host([focused]) label.label-is-floating{color:var(--paper-dropdown-menu-focus-color, --primary-color);}:host([invalid]) label.label-is-floating{color:var(--paper-dropdown-error-color, --error-color);}label:after{background-color:var(--paper-dropdown-menu-focus-color, --primary-color);bottom:8px;content:'';height:2px;left:45%;position:absolute;transition-duration:.2s;transition-timing-function:cubic-bezier(.4,0,.2,1);visibility:hidden;width:8px;z-index:10;}:host([invalid]) label:after{background-color:var(--paper-dropdown-error-color, --error-color);}:host([no-label-float]) label:after{bottom:8px;}:host([focused]:not([disabled])) label:after{left:0;visibility:visible;width:100%;}iron-icon{position:absolute;right:0px;bottom:8px;@apply (--paper-font-subhead);margin-top:12px;color:var(--disabled-text-color);@apply (--paper-dropdown-menu-icon);}:host-context([dir="rtl"]) iron-icon{left:0;right:auto;}:host([no-label-float]) iron-icon{margin-top:0px;}.error{display:inline-block;visibility:hidden;color:var(--paper-dropdown-error-color, --error-color);@apply (--paper-font-caption);position:absolute;left:0;right:0;bottom:-12px;}:host([invalid]) .error{visibility:visible;}</style>
+
+    
+    <div role="button"></div>
+    <paper-menu-button id="menuButton" vertical-align="[[verticalAlign]]" horizontal-align="[[horizontalAlign]]" vertical-offset="[[_computeMenuVerticalOffset(noLabelFloat)]]" disabled="[[disabled]]" no-animations="[[noAnimations]]" on-iron-select="_onIronSelect" on-iron-deselect="_onIronDeselect" opened="{{opened}}">
+      <div class="dropdown-trigger">
+        <label hidden$="[[!label]]" class$="[[_computeLabelClass(noLabelFloat,alwaysFloatLabel,hasContent)]]">[[label]]</label>
+        <div id="input" tabindex="-1">&nbsp;</div>
+        <iron-icon icon="paper-dropdown-menu:arrow-drop-down"></iron-icon>
+        <span class="error">[[errorMessage]]</span>
+      </div>
+      <content id="content" select=".dropdown-content"></content>
+    </paper-menu-button>
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"paper-dropdown-menu-light",behaviors:[Polymer.IronButtonState,Polymer.IronControlState,Polymer.PaperRippleBehavior,Polymer.IronFormElementBehavior,Polymer.IronValidatableBehavior],properties:{selectedItemLabel:{type:String,notify:!0,readOnly:!0},selectedItem:{type:Object,notify:!0,readOnly:!0},value:{type:String,notify:!0,readOnly:!0,observer:"_valueChanged"},label:{type:String},placeholder:{type:String},opened:{type:Boolean,notify:!0,value:!1,observer:"_openedChanged"},noLabelFloat:{type:Boolean,value:!1,reflectToAttribute:!0},alwaysFloatLabel:{type:Boolean,value:!1},noAnimations:{type:Boolean,value:!1},horizontalAlign:{type:String,value:"right"},verticalAlign:{type:String,value:"top"},hasContent:{type:Boolean,readOnly:!0}},listeners:{tap:"_onTap"},keyBindings:{"up down":"open",esc:"close"},hostAttributes:{role:"combobox","aria-autocomplete":"none","aria-haspopup":"true"},observers:["_selectedItemChanged(selectedItem)"],attached:function(){var e=this.contentElement;e&&e.selectedItem&&this._setSelectedItem(e.selectedItem)},get contentElement(){return Polymer.dom(this.$.content).getDistributedNodes()[0]},open:function(){this.$.menuButton.open()},close:function(){this.$.menuButton.close()},_onIronSelect:function(e){this._setSelectedItem(e.detail.item)},_onIronDeselect:function(e){this._setSelectedItem(null)},_onTap:function(e){Polymer.Gestures.findOriginalTarget(e)===this&&this.open()},_selectedItemChanged:function(e){var t="";t=e?e.label||e.textContent.trim():"",this._setValue(t),this._setSelectedItemLabel(t)},_computeMenuVerticalOffset:function(e){return e?-4:8},_getValidity:function(e){return this.disabled||!this.required||this.required&&!!this.value},_openedChanged:function(){var e=this.opened?"true":"false",t=this.contentElement;t&&t.setAttribute("aria-expanded",e)},_computeLabelClass:function(e,t,n){var o="";return e===!0?n?"label-is-hidden":"":((n||t===!0)&&(o+=" label-is-floating"),o)},_valueChanged:function(){this.$.input&&this.$.input.textContent!==this.value&&(this.$.input.textContent=this.value),this._setHasContent(!!this.value)}})}();</script>
+</dom-module>
+</body></html>

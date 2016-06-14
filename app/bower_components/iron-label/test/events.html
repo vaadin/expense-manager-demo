@@ -1,0 +1,44 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>iron-label event tests</title>
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../test-fixture/test-fixture-mocha.js"></script>
+    <link rel="import" href="../../test-fixture/test-fixture.html">
+    <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html">
+
+    <link rel="import" href="../iron-label.html">
+  </head>
+  <body>
+
+    <test-fixture id="Inside">
+      <template>
+        <iron-label id="inside">
+          TEXT <input type="checkbox">
+        </iron-label>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="Outside">
+      <template>
+        <iron-label id="outside" for="outside-checkbox">
+          TEXT
+        </iron-label>
+        <input id="outside-checkbox" type="checkbox">
+      </template>
+    </test-fixture>
+
+    <test-fixture id="Reordered">
+      <template>
+        <iron-label id="reordered">
+          <span>TEXT</span>
+          <input iron-label-target="" type="checkbox">
+        </iron-label>
+      </template>
+    </test-fixture>
+
+    <script>suite("event handling",function(){suite("target inside",function(){var t,e;setup(function(){t=fixture("Inside"),e=t.firstElementChild}),test("target has aria-labelledby",function(){var t=e.getAttribute("aria-labelledby");assert.equal(t,"inside")}),test("tap on label goes to the target",function(){var a=0;Polymer.Gestures.add(e,"tap",function(){a++}),MockInteractions.tap(t),assert.equal(a,1)}),test("tap on target does not recurse",function(){var t=0;Polymer.Gestures.add(e,"tap",function(){t++}),MockInteractions.tap(e),assert.equal(t,1)}),test('tap on label will "activate" target',function(){e.checked=!1,MockInteractions.tap(t),assert.equal(e.checked,!0)})}),suite("target outside",function(){var t,e;setup(function(){var a=fixture("Outside");t=a[0],e=a[1]}),test("target has aria-labelledby",function(){var t=e.getAttribute("aria-labelledby");assert.equal(t,"outside")}),test("tap on label goes to the target",function(){var a=0;Polymer.Gestures.add(e,"tap",function(){a++}),MockInteractions.tap(t),assert.equal(a,1)}),test('tap on label will "activate" target',function(){e.checked=!1,MockInteractions.tap(t),assert.equal(e.checked,!0)})}),suite("target by reordered",function(){var t,e;setup(function(){t=fixture("Reordered"),e=Polymer.dom(t).querySelector("[iron-label-target]")}),test("target has aria-labelledby",function(){var t=e.getAttribute("aria-labelledby");assert.equal(t,"reordered")}),test("tap on label goes to the target",function(){var a=0;Polymer.Gestures.add(e,"tap",function(){a++}),MockInteractions.tap(t),assert.equal(a,1)}),test('tap on label will "activate" target',function(){e.checked=!1,MockInteractions.tap(t),assert.equal(e.checked,!0)})})});</script>
+
+  
+
+</body></html>

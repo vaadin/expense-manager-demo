@@ -1,0 +1,30 @@
+<html><head><link rel="import" href="../../iron-resizable-behavior.html">
+
+</head><body><dom-module id="x-puck">
+
+  <style>:host{display:inline-block;border:3px solid lightblue;}</style>
+
+  <template>
+
+    <b>I'm a resize-aware, thirdifying puck at (<span>{{x}}</span> x <span>{{y}}</span>).</b>
+
+  </template>
+
+</dom-module>
+
+<script>Polymer({is:"x-puck",behaviors:[Polymer.IronResizableBehavior],properties:{x:{type:Number,value:0},y:{type:Number,value:0}},listeners:{"iron-resize":"_onIronResize"},attached:function(){this.async(this.notifyResize,1)},get parent(){return this.parentNode.nodeType===Node.DOCUMENT_FRAGMENT_NODE?this.parentNode.host:this.parentNode},_onIronResize:function(){var e=this.x=Math.floor(this.parent.offsetWidth/3),t=this.y=Math.floor(this.parent.offsetHeight/3);this.translate3d(e+"px",t+"px",0)}});</script>
+
+<dom-module id="x-app">
+
+  <style>:host{display:block;position:absolute;top:0;right:0;bottom:0;left:0;}</style>
+
+  <template>
+
+    <x-puck></x-puck>
+
+  </template>
+
+</dom-module>
+
+<script>Polymer({is:"x-app",behaviors:[Polymer.IronResizableBehavior]});</script>
+</body></html>

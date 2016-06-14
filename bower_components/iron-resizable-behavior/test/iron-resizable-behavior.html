@@ -1,0 +1,26 @@
+<!DOCTYPE html><html><head>
+
+  <title>iron-resizable-behavior tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+  <link rel="import" href="../iron-resizable-behavior.html">
+  <link rel="import" href="test-elements.html">
+
+</head>
+<body>
+ 
+  <test-fixture id="ResizableAndShadowBoundaries">
+    <template>
+      <x-light-resizable></x-light-resizable>
+    </template>
+  </test-fixture>
+
+  <script>suite("iron-resizable-behavior",function(){var e;suite("events across shadow boundaries",function(){setup(function(){e=fixture("ResizableAndShadowBoundaries")}),suite("ancestor's iron-resize",function(){test("only fires once for a notifying shadow descendent",function(){e.$.childResizable1.notifyResize(),expect(e.ironResizeCount).to.be.equal(2)}),test("only fires once when notifying descendent observables",function(){e.notifyResize(),expect(e.ironResizeCount).to.be.equal(2)})}),suite("descendant's iron-resize",function(){test("only fires once for a notifying shadow root",function(){e.notifyResize(),expect(e.$.childResizable1.ironResizeCount).to.be.equal(2),expect(e.$.childResizable2.ironResizeCount).to.be.equal(2)}),test("only fires once for a notifying descendent observable",function(){e.$.childResizable1.notifyResize(),expect(e.$.childResizable1.ironResizeCount).to.be.equal(2)})}),suite("window's resize",function(){test("causes all iron-resize events to fire once",function(){window.dispatchEvent(new CustomEvent("resize")),Polymer.dom.flush(),expect(e.ironResizeCount).to.be.equal(2),expect(e.$.childResizable1.ironResizeCount).to.be.equal(2),expect(e.$.childResizable2.ironResizeCount).to.be.equal(2)})})})});</script>
+
+
+</body></html>

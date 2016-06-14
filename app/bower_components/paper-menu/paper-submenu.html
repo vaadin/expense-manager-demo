@@ -1,0 +1,26 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-menu-behavior/iron-menu-behavior.html">
+<link rel="import" href="../iron-behaviors/iron-control-state.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../paper-styles/default-theme.html">
+<link rel="import" href="../paper-styles/color.html">
+<link rel="import" href="paper-menu-shared-styles.html">
+
+
+
+</head><body><dom-module id="paper-submenu">
+  <template>
+    <style include="paper-menu-shared-styles"></style>
+
+    <div class="selectable-content" on-tap="_onTap">
+      <content id="trigger" select=".menu-trigger"></content>
+    </div>
+    <iron-collapse id="collapse" opened="{{opened}}">
+      <content id="content" select=".menu-content"></content>
+    </iron-collapse>
+  </template>
+
+  <script>!function(){Polymer({is:"paper-submenu",properties:{opened:{type:Boolean,value:!1,notify:!0,observer:"_openedChanged"}},behaviors:[Polymer.IronControlState],listeners:{focus:"_onFocus"},get __parent(){return Polymer.dom(this).parentNode},get __trigger(){return Polymer.dom(this.$.trigger).getDistributedNodes()[0]},get __content(){return Polymer.dom(this.$.content).getDistributedNodes()[0]},attached:function(){this.listen(this.__parent,"iron-activate","_onParentIronActivate")},dettached:function(){this.unlisten(this.__parent,"iron-activate","_onParentIronActivate")},open:function(){this.disabled||this._active||(this.$.collapse.show(),this._active=!0,this.__trigger&&this.__trigger.classList.add("iron-selected"),this.__content&&this.__content.focus())},close:function(){this._active&&(this.$.collapse.hide(),this._active=!1,this.__trigger&&this.__trigger.classList.remove("iron-selected"))},toggle:function(){this._active?this.close():this.open()},_onTap:function(t){this.disabled||this.toggle()},_openedChanged:function(t,e){t?this.fire("paper-submenu-open"):null!=e&&this.fire("paper-submenu-close")},_onParentIronActivate:function(t){var e=this.__parent;Polymer.dom(t).localTarget===e&&(t.detail.item===this||e.multi||this.close())},_disabledChanged:function(t){Polymer.IronControlState._disabledChanged.apply(this,arguments),t&&this._active&&this.close()},_onFocus:function(t){this.__trigger&&this.__trigger.focus()}})}();</script>
+</dom-module>
+</body></html>

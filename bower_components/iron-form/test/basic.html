@@ -1,0 +1,155 @@
+<!DOCTYPE html><html><head>
+  <title>iron-form</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../../polymer/polymer.html">
+  <link rel="import" href="../../paper-input/paper-input.html">
+  <link rel="import" href="../../paper-input/paper-textarea.html">
+  <link rel="import" href="../iron-form.html">
+  <link rel="import" href="simple-element.html">
+  <link rel="import" href="element-with-nested-form-element.html">
+  <link rel="import" href="element-with-nested-input.html">
+
+</head>
+<body>
+
+  <test-fixture id="Basic">
+    <template>
+      <form is="iron-form">
+        <simple-element name="zig" value="zag"></simple-element>
+        <input name="foo" value="bar">
+      </form>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="Dupes">
+    <template>
+      <form is="iron-form">
+        <input name="foo" value="bar">
+        <input name="foo" value="barbar">
+        <simple-element name="zig" value="zig"></simple-element>
+        <simple-element name="zig" value="zag"></simple-element>
+        <simple-element name="zig" value="zug"></simple-element>
+      </form>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="NestedDupes">
+    <template>
+      <form is="iron-form">
+        <element-with-nested-form-element name="foo" value="bar"></element-with-nested-form-element>
+        <element-with-nested-input name="zig" value="zag"></element-with-nested-input>
+      </form>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="NestedSubmittable">
+    <template>
+      <form is="iron-form">
+        <element-with-nested-form-element>
+          <simple-element name="foo" value="bar"></simple-element>
+        </element-with-nested-form-element>
+      </form>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="CheckedStates">
+    <template>
+      <form is="iron-form">
+        <input type="checkbox" name="foo" value="bar1" checked="">
+        <input type="checkbox" name="foo" value="bar2">
+        <input type="checkbox" name="foo" value="bar3" checked="">
+        <input type="checkbox" name="foo" value="bar4">
+      </form>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="Disabled">
+    <template>
+      <form is="iron-form">
+        <input name="foo" value="bar1">
+        <input name="foo" value="bar2" disabled="">
+        <input type="checkbox" name="zig" value="zag" disabled="" checked="">
+      </form>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="FormGet">
+    <template>
+      <form is="iron-form" action="/responds_with_json" method="get">
+        <simple-element name="zig" value="zag"></simple-element>
+      </form>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="FormPost">
+    <template>
+      <form is="iron-form" action="/responds_with_json" method="post">
+        <simple-element name="zig" value="zag"></simple-element>
+      </form>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="InvalidForm">
+    <template>
+      <form is="iron-form" action="/responds_with_json" method="post">
+        <simple-element name="zig"></simple-element>
+        <input name="foo" required="">
+      </form>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="FormWithRequiredCustomElements">
+    <template>
+      <form is="iron-form" action="/responds_with_json" method="post">
+        <simple-element required=""></simple-element>
+      </form>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="FormWithRequiredElements">
+    <template>
+      <form is="iron-form" action="/responds_with_json" method="post">
+        <input required="">
+      </form>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="FormForResetting">
+    <template>
+      <form is="iron-form">
+        <simple-element name="zig" value="zag"></simple-element>
+        <paper-input name="zig" value="zug"></paper-input>
+        <paper-textarea name="zig" value="zog"></paper-textarea>
+        <input name="foo" value="bar">
+        <input type="checkbox" name="foo" value="bar1" checked="">
+        <input type="checkbox" name="foo" value="bar2">
+      </form>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="NativeSelect">
+    <template>
+      <form is="iron-form">
+        <select name="numbers" multiple="">
+          <option value="one" selected="">one</option>
+          <option value="two">two</option>
+          <option value="three" selected="">three</option>
+          <option value="four">four</option>
+        </select>
+
+        <select name="cheese">
+          <option value="yes" selected="">yes</option>
+          <option value="no">no</option>
+        </select>
+      </form>
+    </template>
+  </test-fixture>
+
+  <script>suite("registration",function(){var e;test("elements can be registered",function(){e=fixture("Basic"),assert.equal(e._customElements.length,1),assert.equal(e.elements.length,1)}),test("elements can be unregistered",function(t){e=fixture("Basic");var s=e.querySelector("simple-element");assert.equal(e._customElements.length,1),assert.equal(e.elements.length,1),e.removeChild(s),setTimeout(function(){assert.equal(e._customElements.length,0),assert.equal(e.elements.length,1),t()},200)})}),suite("validation",function(){test("custom elements are validated if they don't have a name",function(){var e=fixture("FormWithRequiredCustomElements");assert.equal(e._customElements.length,1);var t=e._customElements[0];assert.isFalse(!!t.name),assert.isFalse(e.validate()),assert.isTrue(t.invalid),t.value="batman",assert.isTrue(e.validate()),assert.isFalse(t.invalid);var s=e.serialize();assert.equal(Object.keys(s).length,0)}),test("native elements are validated if they don't have a name",function(){var e=fixture("FormWithRequiredElements");assert.equal(e.elements.length,1);var t=e.elements[0];assert.isFalse(!!t.name),assert.isFalse(e.validate()),assert.isFalse(t.validity.valid),t.value="robin",assert.isTrue(e.validate()),assert.isTrue(t.validity.valid);var s=e.serialize();assert.equal(Object.keys(s).length,0)}),test("custom elements are validated if they have a name",function(){var e=fixture("FormWithRequiredCustomElements");assert.equal(e._customElements.length,1);var t=e._customElements[0];t.name="zig",assert.isFalse(e.validate()),assert.isTrue(t.invalid),t.value="batman",assert.isTrue(e.validate()),assert.isFalse(t.invalid);var s=e.serialize();assert.equal(Object.keys(s).length,1)}),test("native elements are validated if they have a name",function(){var e=fixture("FormWithRequiredElements");assert.equal(e.elements.length,1);var t=e.elements[0];t.name="zag",assert.isFalse(e.validate()),assert.isFalse(t.validity.valid),t.value="robin",assert.isTrue(e.validate()),assert.isTrue(t.validity.valid);var s=e.serialize();assert.equal(Object.keys(s).length,1)})}),suite("serializing",function(){var e;test("serializes both custom and native elements",function(){e=fixture("Basic"),assert.equal(e._customElements.length,1),assert.equal(e.elements.length,1);var t=e.serialize();assert.equal(Object.keys(t).length,2),assert.equal(t.zig,"zag"),assert.equal(t.foo,"bar")}),test("serializes elements with duplicate names",function(){e=fixture("Dupes"),assert.equal(e._customElements.length,3),assert.equal(e.elements.length,2);var t=e.serialize();assert.equal(Object.keys(t).length,2),assert.equal(t.foo.length,2),assert.equal(t.foo[0],"bar"),assert.equal(t.foo[1],"barbar"),assert.equal(t.zig.length,3),assert.equal(t.zig[0],"zig"),assert.equal(t.zig[1],"zag"),assert.equal(t.zig[2],"zug")}),test("serializes elements with checked states",function(){e=fixture("CheckedStates"),assert.equal(e._customElements.length,0),assert.equal(e.elements.length,4);var t=e.serialize();assert.equal(Object.keys(t).length,1),assert.equal(t.foo.length,2),assert.equal(t.foo[0],"bar1"),assert.equal(t.foo[1],"bar3")}),test("serializes a native select element with or without multiple selection",function(){e=fixture("NativeSelect"),assert.equal(e._customElements.length,0),assert.equal(e.elements.length,2);var t=e.serialize();assert.equal(Object.keys(t).length,2),assert.equal(t.cheese,"yes"),assert.equal(t.numbers.length,2),assert.equal(t.numbers[0],"one"),assert.equal(t.numbers[1],"three")}),test("does not serialize disabled elements",function(){e=fixture("Disabled"),assert.equal(e._customElements.length,0),assert.equal(e.elements.length,3);var t=e.serialize();assert.equal(Object.keys(t).length,1),assert.equal(t.foo,"bar1")}),test("nested elements are only serialized once",function(){e=fixture("NestedDupes"),assert.equal(e._customElements.length,3);var t=e.serialize();assert.equal(Object.keys(t).length,2),assert.equal(t.foo,"bar"),assert.equal(t.zig,"zag")}),test("nested elements can be submitted if parents aren't submittable",function(){e=fixture("NestedSubmittable");var t=e.serialize();assert.equal(Object.keys(t).length,1),assert.equal(t.foo,"bar")})}),suite("resetting",function(){test("form restores the default values if changes were made",function(e){var t=fixture("FormForResetting"),s=t.querySelector("simple-element"),a=t.querySelector('input[name="foo"]'),r=t.querySelectorAll('input[type="checkbox"]')[0],n=t.querySelectorAll('input[type="checkbox"]')[1],l=t.querySelector("paper-input"),i=t.querySelector("paper-textarea");assert.equal(s.value,"zag"),assert.equal(a.value,"bar"),assert.isTrue(r.checked),assert.isFalse(n.checked),assert.equal(l.value,"zug"),assert.equal(l.inputElement.value,"zug"),assert.equal(i.value,"zog"),assert.equal(i.inputElement.textarea.value,"zog"),s.value="not zag",a.value="not bar",r.checked=!1,n.checked=!0,l.value="not zug",i.value="not zog",assert.equal(s.value,"not zag"),assert.equal(a.value,"not bar"),assert.isFalse(r.checked),assert.isTrue(n.checked),assert.equal(l.value,"not zug"),assert.equal(l.inputElement.value,"not zug"),assert.equal(i.value,"not zog"),assert.equal(i.inputElement.textarea.value,"not zog"),t.addEventListener("iron-form-reset",function(t){assert.equal(s.value,"zag"),assert.equal(a.value,"bar"),assert.isTrue(r.checked),assert.isFalse(n.checked),assert.equal(l.value,"zug"),assert.equal(l.inputElement.value,"zug"),assert.equal(i.value,"zog"),assert.equal(i.inputElement.textarea.value,"zog"),e()}),t.reset()}),test("form restores the default values if no changes were made",function(e){var t=fixture("FormForResetting"),s=t.querySelector("simple-element"),a=t.querySelector('input[name="foo"]'),r=t.querySelectorAll('input[type="checkbox"]')[0],n=t.querySelectorAll('input[type="checkbox"]')[1],l=t.querySelector("paper-input"),i=t.querySelector("paper-textarea");assert.equal(s.value,"zag"),assert.equal(a.value,"bar"),assert.isTrue(r.checked),assert.isFalse(n.checked),assert.equal(l.value,"zug"),assert.equal(l.inputElement.value,"zug"),assert.equal(i.value,"zog"),assert.equal(i.inputElement.textarea.value,"zog"),t.addEventListener("iron-form-reset",function(t){assert.equal(s.value,"zag"),assert.equal(a.value,"bar"),assert.isTrue(r.checked),assert.isFalse(n.checked),assert.equal(l.value,"zug"),assert.equal(l.inputElement.value,"zug"),assert.equal(i.value,"zog"),assert.equal(i.inputElement.textarea.value,"zog"),e()}),t.reset()}),test("validation messages are cleared",function(e){var t=fixture("FormWithRequiredCustomElements");assert.equal(t._customElements.length,1);var s=t.querySelector("simple-element");assert.isFalse(t.validate()),assert.isTrue(s.invalid),t.addEventListener("iron-form-reset",function(t){assert.isFalse(s.invalid),e()}),t.reset()})}),suite("submitting",function(){var e,t;setup(function(){e=sinon.fakeServer.create(),e.respondWith("GET",/\/responds_with_json.*/,[200,'{"Content-Type":"application/json"}','{"success":true}']),e.respondWith("POST",/\/responds_with_json.*/,[200,'{"Content-Type":"application/json"}','{"success":true}']),e.respondWith("GET",/\/responds_with_error.*/,[404,'{"Content-Type":"application/text"}','{"success":false}'])}),teardown(function(){e.restore()}),test("does not submit forms with invalid native elements",function(s){t=fixture("InvalidForm");var a=t.querySelector("input"),r=t.querySelector("simple-element");r.value="foo";var n=!1;t.addEventListener("iron-form-submit",function(){n=!0}),t.addEventListener("iron-form-invalid",function(){expect(n).to.be.equal(!1),expect(a.validity.valid).to.be.equal(!1),expect(r.invalid).to.be.equal(!1),s()}),t.submit(),e.respond()}),test("can modify the request in the presubmit",function(s){t=fixture("FormGet");var a=!1,r=!1;t.addEventListener("iron-form-submit",function(){a=!0}),t.addEventListener("iron-form-presubmit",function(){r=!0,this.request.params={batman:!0}}),t.addEventListener("iron-form-response",function(e){expect(a).to.be.equal(!0),expect(r).to.be.equal(!0),expect(e.detail.url).to.contain("batman=true");var t=e.detail.response;expect(t).to.be.ok,expect(t).to.be.an("object"),expect(t.success).to.be.equal(!0),s()}),t.submit(),e.respond()}),test("can do a custom submission in the presubmit",function(e){t=fixture("FormGet");var s=!1,a=sinon.spy();t.addEventListener("iron-form-response",a);var r=sinon.spy();t.addEventListener("iron-form-submit",r),t.addEventListener("iron-form-presubmit",function(e){s=!0,e.preventDefault(),this.fire("custom-form-submit")}),t.addEventListener("custom-form-submit",function(t){expect(s).to.be.equal(!0),expect(a.callCount).to.be.equal(0),expect(r.callCount).to.be.equal(0),e()}),t.submit()}),test("can submit with method=get",function(s){t=fixture("FormGet");var a=!1;t.addEventListener("iron-form-submit",function(){a=!0}),t.addEventListener("iron-form-response",function(e){expect(a).to.be.equal(!0),expect(e.detail.url).to.contain("zig=zag");var t=e.detail.response;expect(t).to.be.ok,expect(t).to.be.an("object"),expect(t.success).to.be.equal(!0),s()}),t.submit(),e.respond()}),test("can submit with method=post",function(s){t=fixture("FormPost");var a=!1;t.addEventListener("iron-form-submit",function(){a=!0}),t.addEventListener("iron-form-response",function(e){expect(a).to.be.equal(!0);var t=e.detail.response;expect(t).to.be.ok,expect(t).to.be.an("object"),expect(t.success).to.be.equal(!0),s()}),t.submit(),e.respond()}),test("can relay errors",function(s){t=fixture("FormPost"),t.action="/responds_with_error",t.addEventListener("iron-form-error",function(e){var t=e.detail;expect(t).to.be.ok,expect(t).to.be.an("object"),expect(t.error).to.be.ok,s()}),t.submit(),e.respond()})});</script>
+
+
+
+</body></html>

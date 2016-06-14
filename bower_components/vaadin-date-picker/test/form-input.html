@@ -1,0 +1,33 @@
+<!DOCTYPE html><html><head>
+  <meta charset="utf-8">
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="common.js"></script>
+
+  <link rel="import" href="../../iron-form/iron-form.html">
+  <link rel="import" href="../../iron-meta/iron-meta.html">
+  <link rel="import" href="../vaadin-date-picker.html">
+</head>
+
+<body>
+  <script>document.addEventListener("WebComponentsReady",function(){new Polymer.IronMeta({type:"validator",key:"year-2016-validator",value:{validate:function(e){return 2016===new Date(e).getFullYear()}}})});</script>
+
+  <test-fixture id="datepicker">
+    <template>
+      <vaadin-date-picker></vaadin-date-picker>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="datepicker-in-form">
+    <template is="dom-template">
+      <form is="iron-form">
+        <vaadin-date-picker name="[[name]]" required="[[required]]"></vaadin-date-picker>
+      </form>
+    </template>
+  </test-fixture>
+
+  <script>describe("using as a field in html form",function(){var e;beforeEach(function(){e=fixture("datepicker")}),it("should have the given name",function(){e.name="foo",expect(e.$$("input").getAttribute("name")).to.equal("foo")}),it("should have no name",function(){expect(e.$$("input").getAttribute("name")).to.equal(null)}),it("should be required",function(){e.required=!0,expect(e.$$("input").getAttribute("required")).to.equal("")}),it("should not be required",function(){expect(e.$$("input").getAttribute("required")).to.equal(null)}),it("should validate correctly",function(){e.name="foo",e.required=!0,expect(e.validate()).to.equal(!1),expect(e.invalid).to.be.equal(!0),e.value="2016-02-24",expect(e.validate()).to.equal(!0),expect(e.invalid).to.be.equal(!1)}),it("should validate correctly with custom validator",function(){e.validator="year-2016-validator",e.value="2014-01-01",expect(e.validate()).to.equal(!1),expect(e.invalid).to.equal(!0),e.value="2016-01-01",expect(e.validate()).to.equal(!0),expect(e.invalid).to.equal(!1)}),it("should validate correctly with auto-validate",function(){e.validator="year-2016-validator",e.autoValidate=!0,e.value="2014-01-01",expect(e.invalid).to.be["true"],e.value="2016-01-01",expect(e.invalid).to.be["false"]}),it("should be possible to force invalid status",function(){e.invalid=!0,expect(e.$.inputcontainer.invalid).to.be["true"]}),it("should serialize correctly",function(){var t=fixture("datepicker-in-form",{name:"foo"});e=t.querySelector("vaadin-date-picker"),e.value="2016-02-24",expect(t.serialize().foo).to.equal("2016-02-24")}),it("should not-submit iron-form with invalid value",function(){var e=fixture("datepicker-in-form",{name:"foo",required:!0}),t=sinon.spy();e.addEventListener("iron-form-invalid",t),e.submit(),expect(t).to.have.been.called}),it("should show error indicator",function(){var e=fixture("datepicker-in-form",{name:"foo",required:!0});e.submit();var t=e.querySelector("vaadin-date-picker").$.inputcontainer.$$(".underline");expect(t.getAttribute("class")).to.contain("is-invalid")}),it("should have disabled paper-input-container",function(){e.disabled=!0,expect(e.$.inputcontainer.getAttribute("disabled")).to.equal(""),expect(e.$.input.disabled).to.equal(!0)}),it("should have readonly paper-input-container",function(){e.readonly=!0,expect(e.$.input.readOnly).to.equal(!0)})});</script>
+
+
+
+
+</body></html>

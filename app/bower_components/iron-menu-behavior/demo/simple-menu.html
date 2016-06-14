@@ -1,0 +1,20 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../iron-menu-behavior.html">
+<link rel="import" href="../../paper-styles/color.html">
+
+</head><body><dom-module id="simple-menu">
+
+  <style>.content ::content > .iron-selected{color:white;background-color:var(--google-blue-500);}</style>
+
+  <template>
+
+    <div class="content">
+      <content></content>
+    </div>
+
+  </template>
+
+</dom-module>
+
+<script>!function(){Polymer({is:"simple-menu",behaviors:[Polymer.IronMenuBehavior]})}();</script>
+</body></html>

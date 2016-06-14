@@ -1,0 +1,20 @@
+<!DOCTYPE html><html><head>
+  <title>app-route-converter</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../../polymer/polymer.html">
+  <link rel="import" href="../app-route-converter.html">
+</head>
+<body>
+  <test-fixture id="BasicRouteConversion">
+    <template>
+      <app-route-converter>
+      </app-route-converter>
+    </template>
+  </test-fixture>
+
+  <script>"use strict";suite("<app-route-converter>",function(){test("it bidirectionally maps path and queryParams to route",function(){var e=fixture("BasicRouteConversion"),t={x:"10"};e.path="/a/b/c",e.queryParams=t,expect(e.route).to.be.deep.equal({prefix:"",path:"/a/b/c",__queryParams:t}),e.set("route.path","/d/e/f"),expect(e.path).to.be.equal("/d/e/f"),t={y:"11"},e.set("route.__queryParams",t),expect(e.queryParams).to.be.deep.equal(t),t.z="12",expect(e.queryParams).to.be.deep.equal(t)})});</script>
+
+</body></html>

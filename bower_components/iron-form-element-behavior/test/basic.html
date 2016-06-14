@@ -1,0 +1,24 @@
+<!DOCTYPE html><html><head>
+  <title>iron-form-element-behavior</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../../polymer/polymer.html">
+  <link rel="import" href="../iron-form-element-behavior.html">
+  <link rel="import" href="simple-element.html">
+  <link rel="import" href="simple-form.html">
+</head>
+<body>
+
+  <test-fixture id="basic">
+    <template>
+      <form is="simple-form"></form>
+    </template>
+  </test-fixture>
+
+  <script>suite("basic",function(){var e;setup(function(){e=fixture("basic")}),test("elements fire an event when attached",function(n){var t=document.createElement("input","simple-element"),i=sinon.spy();e.addEventListener("iron-form-element-register",i),e.appendChild(t),Polymer.Base.async(function(){expect(i.callCount).to.be.equal(1),n()},1)}),test("elements fire an event when detached",function(n){var t=document.createElement("input","simple-element");e.appendChild(t),t._parentForm=e;var i=sinon.spy();e.addEventListener("iron-form-element-unregister",i),e.removeChild(t),Polymer.Base.async(function(){expect(i.callCount).to.be.equal(1),n()},1)})});</script>
+
+
+
+</body></html>

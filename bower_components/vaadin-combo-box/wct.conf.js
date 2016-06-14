@@ -1,0 +1,1 @@
+var args=require("yargs").argv;module.exports={extraScripts:"shadow"===args.dom?["test/enable-shadow-dom.js"]:[]};

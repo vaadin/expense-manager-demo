@@ -1,0 +1,27 @@
+<html><head>
+  <meta charset="utf-8">
+  <title>SW Toolbox Tests</title>
+  <link href="/node_modules/mocha/mocha.css" rel="stylesheet">
+
+  
+  <style>iframe{width:0;height:0;}</style>
+</head>
+<body>
+  <div id="mocha"></div>
+
+  <script src="/node_modules/chai/chai.js"></script>
+  <script src="/node_modules/mocha/mocha.js"></script>
+
+  
+  <script src="/test/libs/helper-functions.js"></script>
+
+  
+  <script>mocha.setup({ui:"bdd",timeout:5e3});</script>
+
+  
+  <script src="/test/browser-tests/precache/precache.js"></script>
+
+  <script>!function(){function t(t){return{title:t.title,state:t.state}}function n(){window.swtoolbox={testResults:{passed:e,failed:o}}}var e=[],o=[];if(!("serviceWorker"in navigator))return void n();window.chai.should(),beforeEach(function(){return testHelper.cleanState()}),after(function(){return testHelper.cleanState()});var i=mocha.run();i.on("pass",function(n){e.push(t(n))}).on("fail",function(n){o.push(t(n))}).on("end",function(){n()})}();</script>
+
+
+</body></html>

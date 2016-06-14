@@ -1,0 +1,27 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>iron-validator-behavior basic tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+  <link href="../../test-fixture/test-fixture.html" rel="import">
+  <link href="../../iron-meta/iron-meta.html" rel="import">
+  <link href="simple-validator.html" rel="import">
+
+</head>
+<body>
+
+  <test-fixture id="basic">
+    <template>
+      <simple-validator></simple-validator>
+    </template>
+  </test-fixture>
+
+  <script>suite("basic",function(){test("registered in <iron-meta>",function(){fixture("basic"),assert.ok(new Polymer.IronMeta({type:"validator"}).byKey("simple-validator"),"simple-validator found in <iron-meta>")})});</script>
+
+
+
+</body></html>

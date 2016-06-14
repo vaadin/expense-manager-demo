@@ -1,0 +1,16 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../app-location.html">
+<link rel="import" href="../app-route.html">
+
+
+
+</head><body><dom-module id="redirect-app-route">
+  <template>
+    <app-location route="{{route}}">
+    </app-location>
+    <app-route route="{{route}}" pattern="/:page" data="{{data}}" tail="{{tail}}">
+    </app-route>
+  </template>
+  <script>Polymer({is:"redirect-app-route",properties:{route:{notify:!0},data:{type:Object,notify:!0},tail:{notify:!0}}});</script>
+</dom-module>
+</body></html>

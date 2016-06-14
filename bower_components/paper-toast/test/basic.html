@@ -1,0 +1,41 @@
+<!DOCTYPE html><html><head>
+
+  <title>paper-toast-basic</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../paper-toast.html">
+
+  <style>body{margin:0;padding:0;}</style>
+</head>
+
+<body>
+
+  <test-fixture id="basic">
+    <template>
+      <paper-toast></paper-toast>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="show">
+    <template>
+      <paper-toast opened=""></paper-toast>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="contained">
+    <template>
+      <paper-toast class="fit-bottom"></paper-toast>
+      <div style="margin: 50px; width: 100px; height: 100px; background-color: orange"></div>
+    </template>
+  </test-fixture>
+
+  <script>suite("basic",function(){var e;test("is hidden",function(){e=fixture("basic"),assert.isFalse(e.opened,"`opened` is false")}),test("is visible",function(){e=fixture("show"),assert.isTrue(e.opened,"`opened` is true")}),test("show() will open toast",function(){e=fixture("basic"),e.show(),assert.isTrue(e.opened,"`opened` is true")}),test("hide() will close toast",function(){e=fixture("show"),e.hide(),assert.isFalse(e.opened,"`opened` is false")}),test("toast auto-close after 10ms",function(t){e=fixture("basic"),e.duration=10,e.show(),setTimeout(function(){assert.isFalse(e.opened,"`opened` is false"),t()},12)}),test("toast fires opened event",function(t){e=fixture("show"),e.addEventListener("iron-overlay-opened",function(){t()})}),test("toast does not get focused",function(t){e=fixture("show");var s=sinon.spy(e,"focus");assert.isTrue(e.noAutoFocus,"no-auto-focus is true"),e.addEventListener("iron-overlay-opened",function(){assert.isFalse(s.called,"toast is not focused"),t()})}),test("toast fires closed event",function(t){e=fixture("basic"),e.show({duration:350}),e.addEventListener("iron-overlay-closed",function(){t()})}),test("show() accepts valid properties",function(){e=fixture("basic"),e.show({text:"hello world",duration:20}),assert.isTrue(e.opened,"`opened` is true"),assert.equal(e.text,"hello world","`text` is correct"),assert.equal(e.duration,20,"`duration` is correct")}),test("show() does not accept invalid properties",function(){e=fixture("basic"),e.show({foo:"bar"}),assert.isUndefined(e.foo,"`foo` is not a valid property and will not be set"),assert.isTrue(e.opened,"`opened` is true")}),test("show() does not accept private properties",function(){e=fixture("basic");var t=e._manager;e.show({_manager:"bar"}),assert.equal(e._manager,t,"`_manager` is a private property and will not be set"),assert.isTrue(e.opened,"`opened` is true")}),test("show() accepts a string argument as the text parameter",function(){e=fixture("basic"),e.show("hello world 2"),assert.equal(e.text,"hello world 2","`text is correct`")}),suite("disable auto-close",function(){var t;setup(function(){e=fixture("basic"),t=sinon.spy(e,"async")}),test("duration = Infinity",function(){e.duration=1/0,e.show(),assert.isFalse(t.calledWith(e.close),"`async` was not called with `close()`"),assert.isFalse(t.calledWith(e.hide),"`async` was not called with `hide()`")}),test("duration = 0",function(){e.duration=0,e.show(),assert.isFalse(t.calledWith(e.close),"`async` was not called with `close()`"),assert.isFalse(t.calledWith(e.hide),"`async` was not called with `hide()`")}),test("duration = -10",function(){e.duration=-10,e.show(),assert.isFalse(t.calledWith(e.close),"`async` was not called with `close()`"),assert.isFalse(t.calledWith(e.hide),"`async` was not called with `hide()`")})}),test("there is only 1 toast opened",function(){var e=fixture("basic"),t=fixture("show");t.open(),e.open(),assert.isTrue(e.opened,"toast1 is opened"),assert.isFalse(t.opened,"toast2 is not opened"),t.open(),assert.isFalse(e.opened,"toast1 is now not opened"),assert.isTrue(t.opened,"toast2 is now opened")}),test("auto-close is correctly reset",function(t){e=fixture("basic"),e.duration=10,e.show(),setTimeout(function(){e.hide(),e.duration=0,e.show(),setTimeout(function(){assert.isTrue(e.opened,"toast is still open"),t()},10)},5)}),test("toast is positioned according at the bottom left of its fitInto",function(e){var t=fixture("contained"),s=t[0],o=t[1];s.fitInto=o,s.open(),s.addEventListener("iron-overlay-opened",function(){var t=s.getBoundingClientRect();assert.equal(t.left,50,"left ok"),assert.equal(t.bottom,150,"bottom"),e()})}),suite("a11y",function(){test("show() will announce text",function(){e=fixture("basic");var t=sinon.spy(e,"fire");e.text="announce!",e.show(),assert.isTrue(t.calledWith("iron-announce",{text:"announce!"}),"text announced")}),test("hide() will not announce text",function(){e=fixture("show");var t=sinon.spy(e,"fire");e.hide(),assert.isFalse(t.calledWith("iron-announce"),"text not announced")})})});</script>
+
+
+
+
+</body></html>

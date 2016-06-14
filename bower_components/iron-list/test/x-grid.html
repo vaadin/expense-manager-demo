@@ -1,0 +1,22 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-list.html">
+
+</head><body><dom-module id="x-grid">
+
+  <style>:host{@apply (--layout-fit);@apply (--layout-vertical);display:block;}iron-list{overflow:hidden;}</style>
+
+  <template>
+    <iron-list style$="[[_computedListSize(listSize)]]" items="[[data]]" as="item" id="list" grid="">
+      <template>
+        <div class="item">
+          <div style$="[[_computeItemSize(item)]]">[[item.index]]</div>
+        </div>
+      </template>
+    </iron-list>
+  </template>
+
+</dom-module>
+
+<script>Polymer({is:"x-grid",properties:{data:{type:Array},itemSize:{type:Number,value:100},listSize:{type:Number,value:300},pre:{type:Boolean}},get list(){return this.$.list},_computeItemSize:function(e){var t=this.pre?"white-space:pre;":"";return t+="height: "+this.itemSize+"px;",t+="width: "+this.itemSize+"px;"},_computedListSize:function(e){return"height: "+e+"px;width: "+e+"px;"}});</script>
+</body></html>

@@ -1,0 +1,16 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-styles/shadow.html">
+<link rel="import" href="paper-material-shared-styles.html">
+
+
+
+</head><body><dom-module id="paper-material">
+  <template>
+    <style include="paper-material-shared-styles"></style>
+    <style>:host([animated]){@apply (--shadow-transition);}</style>
+
+    <content></content>
+  </template>
+</dom-module>
+<script>Polymer({is:"paper-material",properties:{elevation:{type:Number,reflectToAttribute:!0,value:1},animated:{type:Boolean,reflectToAttribute:!0,value:!1}}});</script>
+</body></html>

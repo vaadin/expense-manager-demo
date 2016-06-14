@@ -1,0 +1,5 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="hydrolysis.html">
+
+<script>!function(){var e=require("hydrolysis");Polymer({is:"hydrolysis-analyzer",properties:{src:{type:String},transitive:{type:Boolean},clean:{type:Boolean},analyzer:{type:Object,readOnly:!0,notify:!0},loading:{type:Boolean,readOnly:!0,notify:!0},resolver:{type:String,value:"xhr"}},ready:function(){this.analyze()},analyze:function(){if(this.src){if(this.loading)return void console.error("Analyzer is already loading a document:",this);this._setLoading(!0);var t={clean:this.clean,filter:this.transitive?function(){return!1}:null,attachAst:!0,resolver:this.resolver},n=this.ownerDocument.baseURI,i=new URL(this.src,n).toString();e.Analyzer.analyze(i,t).then(function(e){this._setLoading(!1),this._setAnalyzer(e)}.bind(this))["catch"](function(e){console.error("Failed to load source at:",this.src,e),console.error(e.stack),this._setLoading(!1),this._setAnalyzer(null)}.bind(this))}}})}();</script>
+</head><body></body></html>

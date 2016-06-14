@@ -1,0 +1,21 @@
+<html><head><link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../neon-shared-element-animatable-behavior.html">
+
+</head><body><dom-module id="circles-page">
+  <template>
+    <style>:host{@apply (--layout-horizontal);@apply (--layout-center-center);}.circle{display:inline-block;box-sizing:border-box;width:100px;height:100px;margin:16px;border-radius:50%;background:var(--color-one);}</style>
+
+    <div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+    </div>
+
+  </template>
+
+</dom-module>
+
+<script>Polymer({is:"circles-page",behaviors:[Polymer.NeonSharedElementAnimatableBehavior],properties:{animationConfig:{value:function(){var e=Polymer.dom(this.root).querySelectorAll(".circle"),i=Array.prototype.slice.call(e);return{entry:[{name:"cascaded-animation",animation:"scale-up-animation",nodes:i}],exit:[{name:"hero-animation",id:"hero",fromPage:this},{name:"cascaded-animation",animation:"scale-down-animation"}]}}}},listeners:{click:"_onClick"},_onClick:function(e){var i=e.target;if(i.classList.contains("circle")){this.sharedElements={hero:i};for(var a,o=[],n=Polymer.dom(this.root).querySelectorAll(".circle"),r=0;a=n[r];r++)a!==e.target&&o.push(a);this.animationConfig.exit[1].nodes=o,this.fire("circle-click")}}});</script>
+</body></html>

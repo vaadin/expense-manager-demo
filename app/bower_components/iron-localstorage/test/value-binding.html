@@ -1,0 +1,32 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>iron-localstorage-value-binding</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <link rel="import" href="../iron-localstorage.html">
+
+</head>
+<body>
+
+  <dom-module id="x-foo">
+    <template>
+      <div>{{value.foo}}</div>
+    </template>
+  </dom-module>
+
+  <dom-module id="x-test">
+    <template>
+      <x-foo value="{{value}}"></x-foo>
+      <iron-localstorage id="localstorage" name="iron-localstorage-test" value="{{value}}"></iron-localstorage>
+    </template>
+  </dom-module>
+
+  <x-test></x-test>
+
+  <script>window.localStorage.setItem("iron-localstorage-test",'{"foo":"bar"}');var xtest;suite("basic",function(){suiteSetup(function(){Polymer({is:"x-foo",properties:{value:{type:Object,notify:!0}}}),Polymer({is:"x-test",properties:{value:{type:Object,notify:!0}}}),window.localStorage.setItem("iron-localstorage-test",'{"foo":"bar"}'),xtest=document.querySelector("x-test"),xtest.$.localstorage.reload()}),suiteTeardown(function(){window.localStorage.removeItem("iron-localstorage-test")}),test("initial value",function(){assert.isNotNull(xtest.value),assert.equal(xtest.value.foo,"bar")}),test("set value",function(){var e={foo:"zot"};xtest.value=e,xtest.$.localstorage.flushDebouncer("save");var t=window.localStorage.getItem(xtest.$.localstorage.name);t=JSON.parse(t),assert.equal(t.foo,e.foo)}),test("save",function(){xtest.value.foo="quux",xtest.$.localstorage.save();var e=window.localStorage.getItem(xtest.$.localstorage.name);e=JSON.parse(e),assert.equal(e.foo,"quux")})});</script>
+
+
+
+</body></html>

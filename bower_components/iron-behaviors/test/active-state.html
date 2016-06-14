@@ -1,0 +1,38 @@
+<!DOCTYPE html><html><head>
+  <title>active-state</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+  <link rel="import" href="test-elements.html">
+  <link rel="import" href="../../paper-input/paper-input.html">
+</head>
+<body>
+  <test-fixture id="TrivialActiveState">
+    <template>
+      <test-button></test-button>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="ToggleActiveState">
+    <template>
+      <test-button toggles=""></test-button>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="ButtonWithNativeInput">
+    <template>
+      <test-light-dom><input id="input"></test-light-dom>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="ButtonWithPaperInput">
+    <template>
+      <test-light-dom><paper-input id="input"></paper-input></test-light-dom>
+    </template>
+  </test-fixture>
+
+  <script>suite("active-state",function(){var t;setup(function(){t=fixture("TrivialActiveState")}),suite("active state with toggles attribute",function(){setup(function(){t=fixture("ToggleActiveState")}),suite("when down",function(){test("is pressed",function(){MockInteractions.down(t),expect(t.hasAttribute("pressed")).to.be.eql(!0)})}),suite("when clicked",function(){test("is activated",function(e){MockInteractions.downAndUp(t,function(){try{expect(t.hasAttribute("active")).to.be.eql(!0),expect(t.hasAttribute("aria-pressed")).to.be.eql(!0),expect(t.getAttribute("aria-pressed")).to.be.eql("true"),e()}catch(n){e(n)}})}),test("is deactivated by a subsequent click",function(e){MockInteractions.downAndUp(t,function(){MockInteractions.downAndUp(t,function(){try{expect(t.hasAttribute("active")).to.be.eql(!1),expect(t.hasAttribute("aria-pressed")).to.be.eql(!0),expect(t.getAttribute("aria-pressed")).to.be.eql("false"),e()}catch(n){e(n)}})})}),test("the correct aria attribute is set",function(e){t.ariaActiveAttribute="aria-checked",MockInteractions.downAndUp(t,function(){try{expect(t.hasAttribute("active")).to.be.eql(!0),expect(t.hasAttribute("aria-checked")).to.be.eql(!0),expect(t.getAttribute("aria-checked")).to.be.eql("true"),e()}catch(n){e(n)}})}),test("the aria attribute is updated correctly",function(e){t.ariaActiveAttribute="aria-checked",MockInteractions.downAndUp(t,function(){try{expect(t.hasAttribute("active")).to.be.eql(!0),expect(t.hasAttribute("aria-checked")).to.be.eql(!0),expect(t.getAttribute("aria-checked")).to.be.eql("true"),t.ariaActiveAttribute="aria-pressed",expect(t.hasAttribute("aria-checked")).to.be.eql(!1),expect(t.hasAttribute("aria-pressed")).to.be.eql(!0),expect(t.getAttribute("aria-pressed")).to.be.eql("true"),e()}catch(n){e(n)}})})})}),suite("without toggles attribute",function(){suite("when mouse is down",function(){test("does not get an active attribute",function(){expect(t.hasAttribute("active")).to.be.eql(!1),MockInteractions.down(t),expect(t.hasAttribute("active")).to.be.eql(!1)})}),suite("when mouse is up",function(){test("does not get an active attribute",function(){MockInteractions.down(t),expect(t.hasAttribute("active")).to.be.eql(!1),MockInteractions.up(t),expect(t.hasAttribute("active")).to.be.eql(!1)})})}),suite("when space is pressed",function(){test("triggers a click event",function(e){t.addEventListener("click",function(){e()}),MockInteractions.pressSpace(t)}),test("only triggers click after the key is released",function(e){var n=!1;t.addEventListener("keyup",function(){n=!0}),t.addEventListener("click",function(){try{expect(n).to.be.eql(!0),e()}catch(t){e(t)}}),MockInteractions.pressSpace(t)})}),suite("when enter is pressed",function(){test("triggers a click event",function(e){t.addEventListener("click",function(){e()}),MockInteractions.pressEnter(t)}),test("only triggers click before the key is released",function(e){var n=!1;t.addEventListener("keyup",function(){n=!0}),t.addEventListener("click",function(){try{expect(n).to.be.eql(!1),e()}catch(t){e(t)}}),MockInteractions.pressEnter(t)})}),suite("nested native input inside button",function(){test("space in light child input does not trigger a button click event",function(t){var e=fixture("ButtonWithNativeInput"),n=e.querySelector("#input"),i=sinon.spy();e.addEventListener("click",i),n.focus(),MockInteractions.pressSpace(n),Polymer.Base.async(function(){expect(i.callCount).to.be.equal(0),t()},1)}),test("space in button triggers a button click event",function(t){var e=fixture("ButtonWithNativeInput"),n=(e.querySelector("#input"),sinon.spy());e.addEventListener("click",n),MockInteractions.pressSpace(e),Polymer.Base.async(function(){Polymer.Base.async(function(){expect(n.callCount).to.be.equal(1),t()},1)},1)})}),suite("nested paper-input inside button",function(){test("space in light child input does not trigger a button click event",function(t){var e=fixture("ButtonWithPaperInput"),n=e.querySelector("#input"),i=sinon.spy();e.addEventListener("click",i),n.focus(),MockInteractions.pressSpace(n),Polymer.Base.async(function(){expect(i.callCount).to.be.equal(0),t()},1)}),test("space in button triggers a button click event",function(t){var e=fixture("ButtonWithPaperInput"),n=(e.querySelector("#input"),sinon.spy());e.addEventListener("click",n),MockInteractions.pressSpace(e),Polymer.Base.async(function(){Polymer.Base.async(function(){expect(n.callCount).to.be.equal(1),t()},1)},1)})})});</script>
+
+
+</body></html>

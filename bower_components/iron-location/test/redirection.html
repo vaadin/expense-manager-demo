@@ -1,0 +1,21 @@
+<html><head></head><body><dom-module id="redirect-hash">
+  <template>
+    <iron-location hash="{{hash}}"></iron-location>
+  </template>
+  <script>Polymer({is:"redirect-hash",properties:{hash:{value:"",observer:"hashChanged"}},hashChanged:function(e){this.hash="redirectedTo"}});</script>
+</dom-module>
+
+<dom-module id="redirect-path">
+  <template>
+    <iron-location path="{{path}}"></iron-location>
+  </template>
+  <script>Polymer({is:"redirect-path",properties:{path:{value:"",observer:"pathChanged"}},pathChanged:function(e){this.path="/redirectedTo"}});</script>
+</dom-module>
+
+<dom-module id="redirect-query">
+  <template>
+    <iron-location query="{{query}}"></iron-location>
+  </template>
+  <script>Polymer({is:"redirect-query",properties:{query:{value:"",observer:"queryChanged"}},queryChanged:function(e){this.query="redirectedTo"}});</script>
+</dom-module>
+</body></html>

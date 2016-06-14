@@ -1,0 +1,39 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>demo-snippet tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <link rel="import" href="../demo-snippet.html">
+  <script src="../../iron-test-helpers/test-helpers.js"></script>
+  <link rel="import" href="../../paper-checkbox/paper-checkbox.html">
+
+</head>
+<body>
+  
+
+  <demo-snippet id="emptyDemo"></demo-snippet>
+
+  <demo-snippet id="nativeDemo">
+    <template>
+      <input disabled="">
+    </template>
+  </demo-snippet>
+
+  <demo-snippet id="customDemo">
+    <template>
+      <paper-checkbox disabled=""></paper-checkbox>
+    </template>
+  </demo-snippet>
+
+  <demo-snippet id="demoWithAttributes">
+    <template>
+      <input disabled="" type="date">
+    </template>
+  </demo-snippet>
+
+  <script>suite("display",function(){var e;setup(function(){var t=document.getElementById("emptyDemo");e=t.getBoundingClientRect().height}),test("can render native elements",function(){var t=document.getElementById("nativeDemo");Polymer.dom.flush();var n=t.getBoundingClientRect();expect(n.height).to.be.greaterThan(e);var o=Polymer.dom(t).querySelector("input");expect(o).to.be.ok,expect(o.disabled).to.be["true"],expect(o.checked).to.be["false"];var r=t.$.marked;expect(r.markdown).to.be.equal("```\n\n<input disabled>\n\n```")}),test("can render custom elements",function(){var t=document.getElementById("customDemo");Polymer.dom.flush();var n=t.getBoundingClientRect();expect(n.height).to.be.greaterThan(e);var o=Polymer.dom(t).querySelector("paper-checkbox");expect(o).to.be.ok,expect(o.disabled).to.be["true"],expect(o.checked).to.be["false"];var r=t.$.marked;expect(r.markdown).to.be.equal("```\n\n<paper-checkbox disabled></paper-checkbox>\n\n```")})}),suite("parsing",function(){test("preserves attributes",function(){var e=document.getElementById("demoWithAttributes");Polymer.dom.flush();var t=e.$.marked;expect(t.markdown).to.be.equal('```\n\n<input disabled type="date">\n\n```')})});</script>
+
+
+</body></html>

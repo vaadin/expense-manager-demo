@@ -1,0 +1,43 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../paper-styles/typography.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-progress/paper-progress.html">
+
+</head><body><dom-module id="vaadin-upload-file">
+  <template>
+    <style>:host{@apply (--layout-vertical);margin:4px 0 0;padding:6px 0 4px;@apply (--vaadin-upload-file);}#row{@apply (--layout-horizontal);@apply (--layout-center);height:36px;@apply (--vaadin-upload-file-row);}iron-icon{width:24px;height:24px;padding:8px;color:var(--primary-text-color, #000);opacity:0;margin-right:-40px;transition:margin-right 0.3s 0.1s, opacity 0.3s;@apply (--vaadin-upload-file-status-icon);}iron-icon[icon="warning"]{color:var(--error-color, #f40303);}iron-icon[complete],
+      iron-icon[error]{margin-right:0;opacity:1;transition:margin-right 0.3s, opacity 0.3s 0.1s;}iron-icon[complete]{@apply (--vaadin-upload-file-status-icon-complete);}iron-icon[error]{@apply (--vaadin-upload-file-status-icon-error);}#meta{@apply (--layout-vertical);@apply (--layout-flex);height:32px;transition:height 0.1s;width:1px;color:var(--disabled-text-color, gray);@apply (--vaadin-upload-file-meta);}#meta[complete]{height:16px;color:var(--primary-text-color, #000);@apply (--vaadin-upload-file-meta-complete);}#meta[error]{color:var(--error-color, #f40303);@apply (--vaadin-upload-file-meta-error);}#name,
+      #status,
+      #error{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;line-height:16px !important;}#name{@apply (--paper-font-body2);@apply (--vaadin-upload-file-name);}#status{@apply (--paper-font-caption);color:var(--disabled-text-color, gray);@apply (--vaadin-upload-file-status);}#error{@apply (--paper-font-caption);color:var(--error-color, #f40303);@apply (--vaadin-upload-file-error);}#commands{@apply (--layout-horizontal);@apply (--vaadin-upload-file-commands);}#commands [icon]{color:var(--primary-text-color, #000);}#commands [icon="refresh"],
+      #commands [icon="clear"]{color:var(--primary-color, #00B4F0);}paper-progress{--paper-progress-active-color:var(--primary-color, #00B4F0);width:100%;height:2px;@apply (--vaadin-upload-file-progress);}paper-progress[error]{--paper-progress-container-color:var(--error-color, #f40303);--paper-progress-active-color:var(--error-color, #f40303);@apply (--vaadin-upload-file-progress-error);}paper-progress[indeterminate]{--paper-progress-container-color:var(--primary-color, #00B4F0);--paper-progress-active-color:rgba(1, 97, 155, 0.5);@apply (--vaadin-upload-file-progress-indeterminate);}paper-progress[uploading][indeterminate]{--paper-progress-container-color:var(--divider-color, #e0e0e0);--paper-progress-active-color:var(--disabled-text-color, gray);@apply (--vaadin-upload-file-progress-uploading-indeterminate);}paper-progress[complete]{@apply (--vaadin-upload-file-progress-complete);}:host(.fade-out){animation-name:fade-out;animation-duration:0.6s;@apply (--vaadin-upload-file-canceled);}@keyframes fade-out{0%{max-height:38px;}33%{max-height:38px;margin:4px 0 0;padding:6px 0 4px;opacity:0.25;}67%{opacity:0;}100%{max-height:0px;margin:0;padding:0;opacity:0;}}</style>
+
+    <div id="row">
+
+      <iron-icon icon="done" complete$="[[file.complete]]"></iron-icon>
+      <iron-icon icon="warning" error$="[[file.error]]"></iron-icon>
+
+      <div id="meta" complete$="[[file.complete]]" error$="[[file.error]]">
+        <div id="name">[[file.name]]</div>
+        <div id="status" hidden$="[[!file.status]]">[[file.status]]</div>
+        <div id="error" hidden$="[[!file.error]]">[[file.error]]</div>
+      </div>
+
+      <div id="commands">
+        <paper-icon-button icon="refresh" file-event="file-retry" on-tap="_fireFileEvent" hidden$="[[!file.error]]"></paper-icon-button>
+        <paper-icon-button icon="clear" file-event="file-abort" on-tap="_fireFileEvent"></paper-icon-button>
+      </div>
+
+    </div>
+
+    <paper-progress id="progress" value$="[[file.progress]]" error$="[[file.error]]" indeterminate$="[[file.indeterminate]]" uploading$="[[file.uploading]]" complete$="[[file.complete]]">
+    </paper-progress>
+
+  </template>
+</dom-module>
+
+<script>Polymer({is:"vaadin-upload-file",properties:{file:Object},observers:["_fileChanged(file.*)","_fileAborted(file.abort)"],_fileChanged:function(){this.$.progress.updateStyles()},_fileAborted:function(e){if(e){this.toggleClass("fade-out",!0);var i=window.getComputedStyle(this).animationName;i&&"none"!==i?this.addEventListener("animationend",function(){this.fire("file-remove",{file:this.file})}.bind(this)):this.fire("file-remove",{file:this.file})}},_fireFileEvent:function(e){e.preventDefault();var i=Polymer.dom(e).localTarget;return this.fire(i.getAttribute("file-event"),{file:this.file})}});</script>
+</body></html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>vaadin-combo basic tests</title>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="common.html">
+  <script src="common.js"></script>
+</head>
+
+<body>
+
+<test-fixture id="combobox">
+  <template>
+    <vaadin-combo-box></vaadin-combo-box>
+  </template>
+</test-fixture>
+
+
+<script>describe("selecting a value",function(){var e,o,t,n;beforeEach(function(){e=fixture("combobox"),e.items=["foo","bar"],o=e.$$("input"),t=e.$.overlay.$.selector,n=sinon.spy(),e.addEventListener("value-changed",n)}),it("should select by using the selector",function(){t.selectedItem="foo",expect(e.value).to.equal("foo"),expect(o.bindValue).to.equal("foo")}),it("should select by using JS api",function(){e.value="foo",e.open(),expect(t.selectedItem).to.equal("foo"),expect(o.bindValue).to.equal("foo")}),it("should close the dropdown on selection",function(){e.open(),e.value="foo",expect(e.opened).to.equal(!1)}),it("should fire exactly one value change event",function(){e.value="foo",expect(n.callCount).to.equal(1)}),it("should close the dropdown when reselecting the current value",function(){e.value="foo",e.open(),e.$.overlay.$.selector.toggleSelectionForItem("foo"),expect(e.opened).to.be["false"]}),it("should not fire an event when reselecting the current value",function(){e.value="foo",n.reset(),e.$.overlay.$.selector.toggleSelectionForItem("foo"),expect(n.callCount).to.equal(0)})}),describe("clearing a selection",function(){var e,o;beforeEach(function(){e=fixture("combobox"),e.items=["foo","bar"],e.value="foo",o=e.$.clearIcon}),it("should show the clearing icon only when dropdown is open",function(){expect(window.getComputedStyle(o).display).to.eql("none"),e.open(),expect(window.getComputedStyle(o).display).to.eql("block")}),it("should not show clearing icon when nothing is selected",function(){e.open(),e.value="",expect(window.getComputedStyle(o).display).to.eql("none")}),it("should clear the selection when tapping on the icon",function(){e.open(),Polymer.Base.fire("tap",{},{bubbles:!0,node:o}),expect(e.value).to.eql(""),expect(e.$.overlay.$.selector.selectedItem).to.be["null"]}),it("should close the dropdown after clearing a selection",function(){e.open(),Polymer.Base.fire("tap",{},{bubbles:!0,node:o}),expect(e.opened).to.eql(!1)})}),describe("selecting a custom value",function(){var e;beforeEach(function(){e=fixture("combobox"),e.allowCustomValue=!0,e.items=["foo","bar","barbar"],e.open()}),it("should select a value when closing when having a single exact match",function(){e.$.input.bindValue="barbar",e.$.input.fire("input"),e.close(),expect(e.value).to.eql("barbar")}),it("should select a value when closing when having multiple matches",function(){e.$.input.bindValue="BAR",e.$.input.fire("input"),e.close(),expect(e.value).to.eql("bar")}),it("should clear the selection when closing the overlay and input is cleared",function(){e.value="foo",e.$.input.bindValue="",e.$.input.fire("input"),e.close(),expect(e.value).to.be.empty,expect(e.$.overlay.$.selector.selectedItem).to.be["null"]})});</script>
+
+
+
+
+</body></html>

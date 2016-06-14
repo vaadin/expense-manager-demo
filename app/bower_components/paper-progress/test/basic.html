@@ -1,0 +1,32 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>paper-progress test</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../paper-progress.html">
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+</head>
+<body>
+
+
+  <test-fixture id="trivialProgress">
+    <template>
+      <paper-progress></paper-progress>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="transitingProgress">
+    <template>
+      <paper-progress class="transiting"></paper-progress>
+    </template>
+  </test-fixture>
+
+  <script>suite("basic features",function(){var t;setup(function(){t=fixture("trivialProgress")}),test("check default",function(){assert.equal(t.min,0),assert.equal(t.max,100),assert.equal(t.value,0)}),test("set value",function(s){t.value=50,asyncPlatformFlush(function(){assert.equal(t.value,50),t.value=60.1,asyncPlatformFlush(function(){assert.equal(t.value,60),s()})})}),test("set max",function(s){t.max=10,t.value=11,asyncPlatformFlush(function(){assert.equal(t.value,t.max),s()})}),test("test ratio",function(s){t.max=10,t.value=5,asyncPlatformFlush(function(){assert.equal(t.ratio,50),s()})}),test("test secondary ratio",function(s){t.max=10,t.secondaryProgress=5,asyncPlatformFlush(function(){assert.equal(t.secondaryRatio,50),s()})}),test("set min",function(s){t.min=10,t.max=50,t.value=30,asyncPlatformFlush(function(){assert.equal(t.ratio,50),t.value=0,asyncPlatformFlush(function(){assert.equal(t.value,t.min),s()})})}),test("set step",function(s){t.min=0,t.max=10,t.value=5.1,asyncPlatformFlush(function(){assert.equal(t.value,5),t.step=.1,t.value=5.1,asyncPlatformFlush(function(){assert.equal(t.value,5.1),s()})})})}),suite("transiting class",function(){var t;setup(function(){t=fixture("transitingProgress")}),test("progress bars",function(){var s=window.getComputedStyle(t.$.primaryProgress),a=window.getComputedStyle(t.$.secondaryProgress),e=s["transition-property"];assert.isTrue("transform"===e||"-webkit-transform"===e),assert.equal(s["transition-duration"],"0.08s"),e=a["transition-property"],assert.isTrue("transform"===e||"-webkit-transform"===e),assert.equal(a["transition-duration"],"0.08s")})});</script>
+
+
+
+</body></html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html><html><head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1">
+<meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+
+<script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+<script src="../../web-component-tester/browser.js"></script>
+<script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+<link rel="import" href="../../test-fixture/test-fixture.html">
+<link rel="import" href="../../neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../neon-animation/neon-animation-behavior.html">
+<link rel="import" href="../../iron-selector/iron-selector.html">
+
+</head>
+<body>
+
+<test-fixture id="descendant-selection">
+  <template>
+    <neon-animated-pages entry-animation="test-animation" animate-initial-selection="">
+      <iron-selector selected="0" id="selector">
+        <div>1</div>
+        <div id="target">2</div>
+      </iron-selector>
+    </neon-animated-pages>
+  </template>
+</test-fixture>
+
+<test-fixture id="selecting-item">
+  <template>
+    <neon-animated-pages entry-animation="test-animation" animate-initial-selection="">
+      <x-selecting-element></x-selecting-element>
+      <div id="target"></div>
+    </neon-animated-pages>
+  </template>
+</test-fixture>
+
+<dom-module id="x-selecting-element">
+  <template>
+    <iron-selector selected="0" id="selector">
+      <div>1</div>
+      <div id="target">2</div>
+    </iron-selector>
+  </template>
+</dom-module>
+
+<dom-module id="test-element">
+  <template>
+    <neon-animated-pages entry-animation="test-animation" animate-initial-selection="">
+      <content></content>
+    </neon-animated-pages>
+  </template>
+</dom-module>
+
+<script>HTMLImports.whenReady(function(){Polymer({is:"x-selecting-element"}),Polymer({is:"test-element"}),Polymer({is:"test-animation",behaviors:[Polymer.NeonAnimationBehavior],configure:function(e){e.node.animated=!0}})});</script>
+
+<test-fixture id="distributed-children">
+  <template>
+    <test-element>
+      <div>1</div>
+      <div id="target">2</div>
+    </test-element>
+  </template>
+</test-fixture>
+
+<script>suite("descendant selection",function(){test("descendents of other selectors are not animated",function(){var e=fixture("descendant-selection"),t=Polymer.dom(e).querySelector("#selector"),r=Polymer.dom(e).querySelector("#target");Polymer.dom(t).setAttribute("selected","1"),assert(!r.animated)}),test("elements distributed as children are animated",function(){var e=fixture("distributed-children"),t=Polymer.dom(e).querySelector("#target"),r=Polymer.dom(e.root).querySelector("neon-animated-pages");Polymer.dom(r).setAttribute("selected","1"),assert(t.animated)}),test("ignores selection from shadow descendants of its items",function(){var e=fixture("selecting-item"),t=Polymer.dom(e).querySelector("#target"),r=Polymer.dom(e).querySelector("x-selecting-element");r.$.selector.selected=1,assert(!t.animated)})});</script>
+
+
+
+</body></html>

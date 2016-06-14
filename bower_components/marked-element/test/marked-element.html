@@ -1,0 +1,82 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>marked-element basic tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+  <link rel="import" href="../../polymer/polymer.html">
+  <link rel="import" href="../marked-element.html">
+</head>
+<body>
+
+  <test-fixture id="SmartyPants">
+    <template>
+      <marked-element smartypants="">
+        <div id="output" class="markdown-html"></div>
+        <script type="text/markdown">
+        # foo
+        ...
+        </script>
+      </marked-element>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="CamelCaseHTML">
+    <template>
+      <marked-element>
+        <div id="output" class="markdown-html"></div>
+        <script type="text/markdown">
+```html
+<div camelCase></div>
+```
+        </script>
+      </marked-element>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="BadHTML">
+    <template>
+      <marked-element>
+        <div id="output" class="markdown-html"></div>
+        <script type="text/markdown">
+```html
+<p><div></p></div>
+```
+        </script>
+      </marked-element>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="CamelCaseHTMLWithoutChild">
+    <template>
+      <marked-element>
+        <script type="text/markdown">
+```html
+<div camelCase></div>
+```
+        </script>
+      </marked-element>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="BadHTMLWithoutChild">
+    <template>
+      <marked-element>
+        <script type="text/markdown">
+```html
+<p><div></p></div>
+```
+        </script>
+      </marked-element>
+    </template>
+  </test-fixture>
+
+  <script>"use strict";function isHidden(e){var t=e.getBoundingClientRect();return 0==t.width&&0==t.height}function escapeHTML(e){var t=document.createElement("span");return t.textContent=e,t.innerHTML}suite("<marked-element> has some options of marked available",function(){var e,t;setup(function(){e=fixture("SmartyPants"),t=document.getElementById("output")}),test("has sanitize",function(){expect(e.sanitize).to.equal(!1)}),test("has pedantic",function(){expect(e.sanitize).to.equal(!1)}),test("has smartypants",function(){expect(e.sanitize).to.equal(!1),console.log(t.innerHTML)})}),suite("<marked-element> with .markdown-html child",function(){suite("respects camelCased HTML",function(){var e,t,n;setup(function(){e=fixture("CamelCaseHTML"),t=document.createElement("div"),n=document.getElementById("output")}),test("in code blocks",function(){t.innerHTML="<div camelCase></div>",expect(n).to.equal(e.outputElement),expect(isHidden(e.$.content)).to.be["true"],expect(t.innerHTML).to.eql('<div camelcase=""></div>'),expect(n.innerHTML).to.include(escapeHTML("<div camelCase>"))})}),suite("respects bad HTML",function(){var e,t,n;setup(function(){e=fixture("BadHTML"),t=document.createElement("div"),n=document.getElementById("output")}),test("in code blocks",function(){t.innerHTML="<p><div></p></div>",expect(n).to.equal(e.outputElement),expect(isHidden(e.$.content)).to.be["true"];var i="<p><div><p></p></div>"===t.innerHTML||"<p></p><div><p></p></div>"===t.innerHTML;expect(i).be["true"],expect(n.innerHTML).to.include(escapeHTML("<p><div></p></div>"))})})}),suite("<marked-element> without .markdown-html child",function(){suite("respects camelCased HTML",function(){var e,t;setup(function(){e=fixture("CamelCaseHTMLWithoutChild"),t=document.createElement("div")}),test("in code blocks",function(){t.innerHTML="<div camelCase></div>",expect(e.$.content).to.equal(e.outputElement),expect(isHidden(e.$.content)).to.be["false"],expect(t.innerHTML).to.eql('<div camelcase=""></div>'),expect(e.$.content.innerHTML).to.include(escapeHTML("<div camelCase>"))})}),suite("respects bad HTML",function(){var e,t;setup(function(){e=fixture("BadHTMLWithoutChild"),t=document.createElement("div")}),test("in code blocks",function(){t.innerHTML="<p><div></p></div>",expect(e.$.content).to.equal(e.outputElement),expect(isHidden(e.$.content)).to.be["false"];var n="<p><div><p></p></div>"===t.innerHTML||"<p></p><div><p></p></div>"===t.innerHTML;expect(n).be["true"],expect(e.$.content.innerHTML).to.include(escapeHTML("<p><div></p></div>"))})})}),suite("events",function(){var e,t;setup(function(){e=fixture("CamelCaseHTML"),t=document.getElementById("output")}),test("render() fires marked-render-complete",function(n){e.addEventListener("marked-render-complete",function(){expect(t.innerHTML).to.not.equal(""),n()}),e.render()})});</script>
+
+
+
+</body></html>

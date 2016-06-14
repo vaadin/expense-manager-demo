@@ -1,0 +1,39 @@
+<html><head><link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../../iron-icons/iron-icons.html">
+<link rel="import" href="../../../iron-icon/iron-icon.html">
+<link rel="import" href="../../../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../paper-item/paper-item.html">
+<link rel="import" href="../../../paper-item/paper-item-body.html">
+<link rel="import" href="../../../paper-styles/color.html">
+<link rel="import" href="../../neon-animatable-behavior.html">
+
+</head><body><dom-module id="list-view">
+  <template>
+    <style>:host{@apply (--layout-vertical);}.main{@apply (--layout-flex);@apply (--layout-scroll);}iron-icon{color:var(--google-grey-500);}</style>
+    <paper-toolbar class="medium-tall">
+      <paper-icon-button id="button" icon="arrow-back"></paper-icon-button>
+    </paper-toolbar>
+
+    <div class="main">
+
+        <template is="dom-repeat" items="[[data]]">
+
+          <paper-item>
+            <paper-item-body two-line="">
+              <div>[[item.fileName]]</div>
+              <div secondary="">[[item.modifiedDate]]</div>
+            </paper-item-body>
+            <iron-icon icon="info"></iron-icon>
+          </paper-item>
+
+        </template>
+
+    </div>
+
+  </template>
+
+</dom-module>
+
+<script>Polymer({is:"list-view",behaviors:[Polymer.NeonAnimatableBehavior],listeners:{click:"_onClick"},properties:{data:{type:Array,value:function(){return[]}},animationConfig:{type:Object,value:function(){return{entry:[{name:"fade-in-animation",node:this.$.button}],exit:[{name:"fade-out-animation",node:this.$.button},{name:"hero-animation",id:"hero",fromPage:this}]}}}},_onClick:function(e){for(var t=e.target;t!==this&&!t._templateInstance;)t=t.parentNode;this.sharedElements={hero:t},this.fire("item-click",{item:t})}});</script>
+</body></html>

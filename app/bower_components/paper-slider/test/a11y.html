@@ -1,0 +1,24 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>paper-slider a11y test</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../paper-slider.html">
+</head>
+<body>
+
+  <test-fixture id="trivialSlider">
+    <template>
+      <paper-slider value="50"></paper-slider>
+    </template>
+  </test-fixture>
+
+  <script>suite("a11y",function(){var e;setup(function(){e=fixture("trivialSlider")}),test('has aria role "slider"',function(t){flush(function(){assert.equal(e.getAttribute("role"),"slider"),assert.equal(e.getAttribute("aria-valuemin"),e.min),assert.equal(e.getAttribute("aria-valuemax"),e.max),assert.equal(e.getAttribute("aria-valuenow"),e.value),t()})}),test("ripple is added after keyboard event on knob",function(){assert.isFalse(e.hasRipple()),MockInteractions.down(e.$.sliderKnob),assert.isTrue(e.hasRipple())}),test("interacting without keyboard causes no ripple",function(){MockInteractions.focus(e),MockInteractions.down(e.$.sliderKnob);var t=e.getRipple();assert.equal(t.offsetHeight,0),assert.equal(t.offsetWidth,0)}),test("interacting with keyboard causes ripple",function(){MockInteractions.focus(e),MockInteractions.pressSpace(e.$.sliderKnob);var t=e.getRipple();assert.isAbove(t.offsetHeight,0),assert.isAbove(t.offsetWidth,0)}),test('slider has focus after click event on bar"',function(){var t=sinon.spy(e,"focus");MockInteractions.down(e.$.sliderBar),assert.isTrue(t.called)}),a11ySuite("trivialSlider")});</script>
+
+
+
+</body></html>

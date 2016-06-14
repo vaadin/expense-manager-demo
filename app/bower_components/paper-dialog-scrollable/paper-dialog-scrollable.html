@@ -1,0 +1,21 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../paper-dialog-behavior/paper-dialog-behavior.html">
+<link rel="import" href="../paper-styles/default-theme.html">
+
+
+
+</head><body><dom-module id="paper-dialog-scrollable">
+
+  <style>:host{display:block;@apply (--layout-relative);}:host(.is-scrolled:not(:first-child))::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--divider-color);}:host(.can-scroll:not(.scrolled-to-bottom):not(:last-child))::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--divider-color);}.scrollable{padding:0 24px;@apply (--layout-scroll);@apply (--paper-dialog-scrollable);}.fit{@apply (--layout-fit);}</style>
+
+  <template>
+    <div id="scrollable" class="scrollable">
+      <content></content>
+    </div>
+  </template>
+
+</dom-module>
+
+<script>Polymer({is:"paper-dialog-scrollable",properties:{dialogElement:{type:Object}},listeners:{"scrollable.scroll":"_scroll"},get scrollTarget(){return this.$.scrollable},ready:function(){this._ensureTarget()},attached:function(){this.classList.add("no-padding"),this._ensureTarget(),requestAnimationFrame(this._scroll.bind(this))},_scroll:function(){this.toggleClass("is-scrolled",this.scrollTarget.scrollTop>0),this.toggleClass("can-scroll",this.scrollTarget.offsetHeight<this.scrollTarget.scrollHeight),this.toggleClass("scrolled-to-bottom",this.scrollTarget.scrollTop+this.scrollTarget.offsetHeight>=this.scrollTarget.scrollHeight)},_ensureTarget:function(){this.dialogElement=this.dialogElement||Polymer.dom(this).parentNode,this.dialogElement&&this.dialogElement.behaviors&&this.dialogElement.behaviors.indexOf(Polymer.PaperDialogBehaviorImpl)>=0?(this.dialogElement.sizingTarget=this.scrollTarget,this.scrollTarget.classList.remove("fit")):this.dialogElement&&this.scrollTarget.classList.add("fit")}});</script>
+</body></html>

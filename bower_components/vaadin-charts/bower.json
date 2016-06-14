@@ -1,0 +1,49 @@
+{
+  "name": "vaadin-charts",
+  "version": "3.1.0-beta2",
+  "description": "Vaadin Charts Web Components",
+  "authors": [
+    "Vaadin Ltd"
+  ],
+  "keywords": [
+    "web-component",
+    "web-components",
+    "polymer",
+    "vaadin",
+    "charts",
+    "highcharts"
+  ],
+  "main": "vaadin-charts.html",
+  "license": "https://github.com/vaadin/vaadin-charts/LICENSE.md",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:vaadin/vaadin-charts.git"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "framework-test",
+    "test",
+    "demo",
+    "index.html"
+  ],
+  "dependencies": {
+    "highcharts": "highcharts/highcharts-dist#v4.2.1",
+    "polymer": "Polymer/polymer#^1.1.0",
+    "vaadin-license-checker": "vaadin/license-checker#0.9.3"
+  },
+  "devDependencies": {
+    "vaadin-grid": "^1.0.0",
+    "google-code-prettify": "*",
+    "iron-selector": "PolymerElements/iron-selector#v1.0.7",
+    "iron-ajax": "PolymerElements/iron-ajax#^1.0.0",
+    "iron-doc-viewer": "PolymerElements/iron-doc-viewer#^1.0.0",
+    "iron-menu-behavior": "PolymerElements/iron-menu-behavior#^1.0.0",
+    "iron-pages": "PolymerElements/iron-pages#^1.0.0",
+    "paper-tabs": "PolymerElements/paper-tabs#^1.0.0",
+    "web-component-tester": "*",
+    "angular": "^1.5.1",
+    "jquery": "^2.2.2"
+  }
+}

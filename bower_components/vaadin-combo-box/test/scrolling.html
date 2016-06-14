@@ -1,0 +1,24 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>vaadin-combo basic tests</title>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="common.html">
+  <script src="common.js"></script>
+</head>
+
+<body>
+
+  <test-fixture id="combobox">
+    <template>
+      <vaadin-combo-box></vaadin-combo-box>
+    </template>
+  </test-fixture>
+
+
+  <script>describe("scrolling",function(){var e;beforeEach(function(){e=fixture("combobox")}),describeIf(touchDevice,"touch devices",function(){it("should blur input on scroll",function(){e.open(),e.$.overlay.fire("down");var o=Polymer.dom(e.root).querySelector("input:focus");expect(o).not.to.equal(e.$.input)})}),describeIf(ios,"iOS",function(){it("should have momentum scrolling enabled",function(){e.open();var o=e.$.overlay._unwrapIfNeeded(e.$.overlay.$.scroller);expect(getComputedStyle(o).WebkitOverflowScrolling).to.equal("touch")})}),describe("scrolling position",function(){function o(){var o=Polymer.dom(e.$.overlay.$.selector).querySelector("[selected]");expect(o).to.be.ok;var t=o.getBoundingClientRect(),l=e.$.overlay.getBoundingClientRect();expect(t.left).to.be.at.least(l.left),expect(t.top).to.be.at.least(l.top),expect(t.right).to.be.at.most(l.right),expect(t.bottom).to.be.at.most(l.bottom)}beforeEach(function(){for(var o=[],t=0;100>t;t++)o.push(t.toString());e.items=o}),it("should be zero when no items are selected",function(){e.open(),expect(e.$.overlay.$.scroller.scrollTop).to.equal(0)}),it("should be zero when the first item is selected",function(){e.value=e.items[0],e.open(),expect(e.$.overlay.$.scroller.scrollTop).to.equal(0)}),it("should make selected item visible after open",function(){e.value=e.items[50],e.open(),o()}),it("should make selected item visible after reopen",function(){e.open(),e.value=e.items[50],e.close(),e.open(),o()})})});</script>
+
+
+
+
+</body></html>

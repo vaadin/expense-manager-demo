@@ -1,0 +1,51 @@
+<!DOCTYPE html><html><head>
+  <title>paper-ripple-behavior</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../../polymer/polymer.html">
+  <link rel="import" href="../../iron-behaviors/iron-button-state.html">
+  <link rel="import" href="../paper-ripple-behavior.html">
+  <link rel="import" href="shadowed-ripple.html">
+</head>
+<body>
+
+  <dom-module id="test-ripple">
+    <template>
+    </template>
+    <script>HTMLImports.whenReady(function(){Polymer({is:"test-ripple",behaviors:[Polymer.IronButtonState,Polymer.IronControlState,Polymer.PaperRippleBehavior]})});</script>
+  </dom-module>
+
+  <test-fixture id="basic">
+    <template>
+      <test-ripple></test-ripple>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="ShadowBasic">
+    <template>
+      <sd-ripple></sd-ripple>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="ShadowText">
+    <template>
+      <sd-ripple>Howdy!</sd-ripple>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="ShadowElement">
+    <template>
+      <sd-ripple>
+        <div id="source">source!</div>
+      </sd-ripple>
+    </template>
+  </test-fixture>
+
+  <script>suite("PaperRippleBehavior",function(){var t;setup(function(){t=fixture("basic")}),test("no ripple at startup",function(){assert.isFalse(t.hasRipple())}),test("calling getRipple returns ripple",function(){assert.ok(t.getRipple())}),test("focus generates ripple",function(){MockInteractions.focus(t),assert.ok(t.hasRipple())}),test("down generates ripple",function(){MockInteractions.down(t),assert.ok(t.hasRipple()),MockInteractions.up(t)}),suite("Correct Targeting",function(){function e(t,e,p,r){var a=t.getRipple();Polymer.dom.flush(),MockInteractions.down(e),assert.equal(a.ripples.length>0,p,r),MockInteractions.up(e)}function p(t,e,p,r,a){var n=t.getRipple();Polymer.dom.flush(),MockInteractions.down(e,p),assert.equal(n.ripples.length>0,r,a),MockInteractions.up(e)}suite("basic",function(){suite("container = host",function(){setup(function(){t=fixture("ShadowBasic")}),test("tap host",function(){e(t,t,!0,"ripple")}),test("tap #wrapper",function(){e(t,t.$.wrapper,!0,"#wrapper")}),test("tap #separate",function(){e(t,t.$.separate,!0,"#separate")})}),suite("container = wrapper",function(){setup(function(){t=fixture("ShadowBasic"),t._rippleContainer=t.$.wrapper}),test("tap host",function(){e(t,t,!1,"ripple")}),test("tap #wrapper",function(){e(t,t.$.wrapper,!0,"#wrapper")}),test("tap #separate",function(){e(t,t.$.separate,!1,"#separate")})}),suite("container = separate",function(p){setup(function(){t=fixture("ShadowBasic"),t._rippleContainer=t.$.separate}),test("tap host",function(){e(t,t,!1,"ripple")}),test("tap wrapper",function(){e(t,t.$.wrapper,!1,"#wrapper")}),test("tap separate",function(){e(t,t.$.separate,!0,"#separate")})})}),suite("distributed text",function(){function r(t){var e=document.createRange();return e.selectNode(Polymer.dom(t.$.content).getDistributedNodes()[0]),MockInteractions.middleOfNode(e)}var a;suite("container = host",function(){setup(function(){t=fixture("ShadowText"),a=r(t)}),test("tap host",function(){e(t,t,!0,"ripple")}),test("tap wrapper",function(){e(t,t.$.wrapper,!0,"#wrapper")}),test("tap separate",function(){e(t,t.$.separate,!0,"#separate")}),test("tap text",function(){p(t,t.$.wrapper,a,!0,"text")})}),suite("container = wrapper",function(){setup(function(){t=fixture("ShadowText"),t._rippleContainer=t.$.wrapper,a=r(t)}),test("tap host",function(){e(t,t,!1,"ripple")}),test("tap wrapper",function(){e(t,t.$.wrapper,!0,"#wrapper")}),test("tap separate",function(){e(t,t.$.separate,!1,"#separate")}),test("tap text",function(){p(t,t.$.wrapper,a,!0,"text")})}),suite("container = separate",function(){setup(function(){t=fixture("ShadowText"),t._rippleContainer=t.$.separate,a=r(t)}),test("tap host",function(){e(t,t,!1,"ripple")}),test("tap wrapper",function(){e(t,t.$.wrapper,!1,"#wrapper")}),test("tap separate",function(){e(t,t.$.separate,!0,"#separate")}),test("tap text",function(){p(t,t.$.wrapper,a,!1,"text")})})}),suite("distributed element",function(){var p;suite("container = host",function(){setup(function(){t=fixture("ShadowElement"),p=Polymer.dom(t).querySelector("#source")}),test("tap host",function(){e(t,t,!0,"ripple")}),test("tap wrapper",function(){e(t,t.$.wrapper,!0,"#wrapper")}),test("tap separate",function(){e(t,t.$.separate,!0,"#separate")}),test("tap source",function(){e(t,p,!0,"#source")})}),suite("container = wrapper",function(){setup(function(){t=fixture("ShadowElement"),t._rippleContainer=t.$.wrapper,p=Polymer.dom(t).querySelector("#source")}),test("tap host",function(){e(t,t,!1,"ripple")}),test("tap wrapper",function(){e(t,t.$.wrapper,!0,"#wrapper")}),test("tap separate",function(){e(t,t.$.separate,!1,"#separate")}),test("tap source",function(){e(t,p,!0,"#source")})}),suite("container = separate",function(){setup(function(){t=fixture("ShadowElement"),t._rippleContainer=t.$.separate,p=Polymer.dom(t).querySelector("#source")}),test("tap host",function(){e(t,t,!1,"ripple")}),test("tap wrapper",function(){e(t,t.$.wrapper,!1,"#wrapper")}),test("tap separate",function(){e(t,t.$.separate,!0,"#separate")}),test("tap source",function(){e(t,p,!1,"#source")})})})})});</script>
+
+
+
+</body></html>

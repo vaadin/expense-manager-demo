@@ -1,0 +1,5 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../neon-animation/neon-animation-behavior.html">
+
+<script>Polymer({is:"expand-animation",behaviors:[Polymer.NeonAnimationBehavior],configure:function(e){var i=e.node,n=i.getBoundingClientRect().height;return this._effect=new KeyframeEffect(i,[{height:n/2+"px"},{height:n+"px"}],this.timingFromConfig(e)),this._effect}});</script>
+</head><body></body></html>

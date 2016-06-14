@@ -1,0 +1,8 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../neon-shared-element-animation-behavior.html">
+<link rel="import" href="../web-animations.html">
+
+
+
+<script>Polymer({is:"ripple-animation",behaviors:[Polymer.NeonSharedElementAnimationBehavior],configure:function(t){var e=this.findSharedElements(t);if(!e)return null;var i,r,s=e.to.getBoundingClientRect();if(t.gesture)i=t.gesture.x-(s.left+s.width/2),r=t.gesture.y-(s.top+s.height/2);else{var h=e.from.getBoundingClientRect();i=h.left+h.width/2-(s.left+s.width/2),r=h.top+h.height/2-(s.top+s.height/2)}var n="translate("+i+"px,"+r+"px)",o=Math.max(s.width+2*Math.abs(i),s.height+2*Math.abs(r)),a=Math.sqrt(2*o*o),f=a/s.width,l=a/s.height,d="scale("+f+","+l+")";return this._effect=new KeyframeEffect(e.to,[{transform:n+" scale(0)"},{transform:n+" "+d}],this.timingFromConfig(t)),this.setPrefixedProperty(e.to,"transformOrigin","50% 50%"),e.to.style.borderRadius="50%",this._effect},complete:function(){this.sharedElements&&(this.setPrefixedProperty(this.sharedElements.to,"transformOrigin",""),this.sharedElements.to.style.borderRadius="")}});</script>
+</head><body></body></html>

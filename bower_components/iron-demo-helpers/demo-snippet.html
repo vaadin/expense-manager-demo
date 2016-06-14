@@ -1,0 +1,33 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../marked-element/marked-element.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-styles/color.html">
+<link rel="import" href="../paper-styles/shadow.html">
+<link rel="import" href="../prism-element/prism-highlighter.html">
+
+
+
+</head><body><dom-module id="demo-snippet">
+  <template>
+    <style>:host{display:block;@apply (--shadow-elevation-2dp);@apply (--demo-snippet);}.demo{border-bottom:1px solid var(--google-grey-300);background-color:white;margin:0;padding:20px;@apply (--demo-snippet-demo);}.code{padding:20px;margin:0;background-color:var(--google-grey-100);font-size:13px;overflow:auto;@apply (--demo-snippet-code);}.code > pre{margin:0;padding:0 0 10px 0;}.code-container{position:relative;}paper-icon-button{position:absolute;top:0;right:0px;}</style>
+
+    <prism-highlighter></prism-highlighter>
+
+    <div class="demo">
+      <content id="content"></content>
+    </div>
+
+    <div class="code-container">
+      <marked-element markdown="[[_markdown]]" id="marked">
+        <div class="markdown-html code" id="code"></div>
+      </marked-element>
+      <paper-icon-button id="copyButton" icon="content-copy" title="copy to clipboard" on-tap="_copyToClipboard">
+      </paper-icon-button>
+    </div>
+  </template>
+
+  <script>"use strict";Polymer({is:"demo-snippet",properties:{_markdown:{type:String,value:""}},attached:function(){var e=Polymer.dom(this).queryDistributedElements("template")[0];if(!e)return void(this._markdown="```\n```");var t=this.$.marked.unindent(e.innerHTML);t=t.replace(/=""/g,""),this._markdown="```\n"+t+"\n```",Polymer.dom(this).appendChild(document.importNode(e.content,!0))},_copyToClipboard:function(){var e=document.createRange();e.selectNodeContents(this.$.code);var t=window.getSelection();t.removeAllRanges(),t.addRange(e);var o=!1;try{o=document.execCommand("copy"),this.$.copyButton.icon="done"}catch(n){console.error(n),this.$.copyButton.icon="error"}return setTimeout(this._resetCopyButtonState.bind(this),1e3),t.removeAllRanges(),o},_resetCopyButtonState:function(){this.$.copyButton.icon="content-copy"}});</script>
+
+</dom-module>
+</body></html>

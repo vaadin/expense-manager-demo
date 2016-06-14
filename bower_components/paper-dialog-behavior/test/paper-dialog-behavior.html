@@ -1,0 +1,137 @@
+<!DOCTYPE html><html><head>
+
+    <title>paper-dialog-behavior tests</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
+    <link rel="import" href="../../iron-icons/iron-icons.html">
+    <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html">
+    <link rel="import" href="test-dialog.html">
+    <link rel="import" href="test-buttons.html">
+
+  </head>
+
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <test-dialog>
+          <p>Dialog</p>
+          <div class="buttons">
+            <button extra="">extra</button>
+            <button dialog-dismiss="">dismiss</button>
+            <button dialog-confirm="">confirm</button>
+          </div>
+        </test-dialog>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="buttons">
+      <template>
+        <test-dialog>
+          <p>Dialog with test-buttons</p>
+          <test-buttons class="buttons"></test-buttons>
+        </test-dialog>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="custom-element-button">
+      <template>
+        <test-dialog>
+          <p>Dialog</p>
+          <div class="buttons">
+            <paper-icon-button icon="cancel" dialog-dismiss=""></paper-icon-button>
+            <paper-icon-button icon="add-circle" dialog-confirm=""></paper-icon-button>
+            <paper-icon-button icon="favorite"></paper-icon-button>
+          </div>
+        </test-dialog>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="modal">
+      <template>
+        <test-dialog modal="">
+          <p>Dialog</p>
+          <div class="buttons">
+            <button dialog-dismiss="">dismiss</button>
+            <button dialog-confirm="" autofocus="">confirm</button>
+          </div>
+        </test-dialog>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="like-modal">
+      <template>
+        <test-dialog no-cancel-on-esc-key="" no-cancel-on-outside-click="" with-backdrop="">
+          <p>Dialog</p>
+        </test-dialog>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="header">
+      <template>
+        <test-dialog>
+          <h2>Dialog</h2>
+          <div class="buttons">
+            <button dialog-dismiss="">dismiss</button>
+            <button dialog-confirm="" autofocus="">confirm</button>
+          </div>
+        </test-dialog>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="header-with-id">
+      <template>
+        <test-dialog>
+          <h2 id="header">Dialog</h2>
+          <div class="buttons">
+            <button dialog-dismiss="">dismiss</button>
+            <button dialog-confirm="" autofocus="">confirm</button>
+          </div>
+        </test-dialog>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="multiple">
+      <template>
+        <test-dialog modal="" id="dialog1">
+          <p>Dialog 1</p>
+        </test-dialog>
+        <test-dialog modal="" id="dialog2">
+          <p>Dialog 2</p>
+        </test-dialog>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="nestedmodals">
+      <template>
+        <test-dialog modal="" opened="">
+          <p>Dialog 1</p>
+          <div class="buttons">
+            <button dialog-dismiss="">dismiss</button>
+            <button dialog-confirm="" autofocus="">confirm</button>
+          </div>
+
+          <test-dialog modal="" opened="">
+            <p>Dialog 2</p>
+            <div class="buttons">
+              <button dialog-dismiss="">dismiss</button>
+              <button dialog-confirm="" autofocus="">confirm</button>
+            </div>
+          </test-dialog>
+        </test-dialog>
+      </template>
+    </test-fixture>
+
+    <script>function runAfterOpen(e,t){e.addEventListener("iron-overlay-opened",t),e.open()}suite("basic",function(){test("clicking dialog does not cancel the dialog",function(e){var t=fixture("basic");runAfterOpen(t,function(){t.addEventListener("iron-overlay-closed",function(){assert("dialog should not close")}),MockInteractions.tap(t),setTimeout(function(){e()},100)})}),test("clicking dialog-dismiss button closes the dialog without confirmation",function(e){var t=fixture("basic");runAfterOpen(t,function(){t.addEventListener("iron-overlay-closed",function(t){assert.isFalse(t.detail.canceled,"dialog is not canceled"),assert.isFalse(t.detail.confirmed,"dialog is not confirmed"),e()}),MockInteractions.tap(Polymer.dom(t).querySelector("[dialog-dismiss]"))})}),test("dialog-dismiss on a custom element is handled",function(e){var t=fixture("custom-element-button");runAfterOpen(t,function(){t.addEventListener("iron-overlay-closed",function(t){assert.isFalse(t.detail.canceled,"dialog is not canceled"),assert.isFalse(t.detail.confirmed,"dialog is not confirmed"),e()}),MockInteractions.tap(Polymer.dom(t).querySelector("[dialog-dismiss]"))})}),test("dialog-dismiss button inside a custom element is handled",function(e){var t=fixture("buttons");runAfterOpen(t,function(){t.addEventListener("iron-overlay-closed",function(t){assert.isFalse(t.detail.canceled,"dialog is not canceled"),assert.isFalse(t.detail.confirmed,"dialog is not confirmed"),e()}),MockInteractions.tap(Polymer.dom(t).querySelector("test-buttons").$.dismiss)})}),test("clicking dialog-confirm button closes the dialog with confirmation",function(e){var t=fixture("basic");runAfterOpen(t,function(){t.addEventListener("iron-overlay-closed",function(t){assert.isFalse(t.detail.canceled,"dialog is not canceled"),assert.isTrue(t.detail.confirmed,"dialog is confirmed"),e()}),MockInteractions.tap(Polymer.dom(t).querySelector("[dialog-confirm]"))})}),test("dialog-confirm on a custom element handled",function(e){var t=fixture("custom-element-button");runAfterOpen(t,function(){t.addEventListener("iron-overlay-closed",function(t){assert.isFalse(t.detail.canceled,"dialog is not canceled"),assert.isTrue(t.detail.confirmed,"dialog is confirmed"),e()}),MockInteractions.tap(Polymer.dom(t).querySelector("[dialog-confirm]"))})}),test("dialog-confirm button inside a custom element is handled",function(e){var t=fixture("buttons");runAfterOpen(t,function(){t.addEventListener("iron-overlay-closed",function(t){assert.isFalse(t.detail.canceled,"dialog is not canceled"),assert.isTrue(t.detail.confirmed,"dialog is confirmed"),e()}),MockInteractions.tap(Polymer.dom(t).querySelector("test-buttons").$.confirm)})}),test("clicking dialog-dismiss button closes only the dialog where is contained",function(e){var t=fixture("nestedmodals"),o=Polymer.dom(t).querySelector("test-dialog");MockInteractions.tap(Polymer.dom(o).querySelector("[dialog-dismiss]")),setTimeout(function(){assert.isFalse(o.opened,"inner dialog is closed"),assert.isTrue(t.opened,"dialog is still open"),e()},10)}),test("clicking dialog-confirm button closes only the dialog where is contained",function(e){var t=fixture("nestedmodals"),o=Polymer.dom(t).querySelector("test-dialog");MockInteractions.tap(Polymer.dom(o).querySelector("[dialog-confirm]")),setTimeout(function(){assert.isFalse(o.opened,"inner dialog is closed"),assert.isTrue(t.opened,"dialog is still open"),e()},10)});var e=["noCancelOnEscKey","noCancelOnOutsideClick","withBackdrop"];e.forEach(function(e){test("modal sets "+e+" to true",function(){var t=fixture("modal");assert.isTrue(t[e],e)}),test("modal toggling keeps current value of "+e,function(){var t=fixture("modal");t[e]=!1,t.modal=!1,assert.isFalse(t[e],e+" is false")}),test("modal toggling keeps previous value of "+e,function(){var t=fixture("basic");t[e]=!0,t.modal=!0,t.modal=!1,assert.isTrue(t[e],e+" is still true")}),test("default modal does not override "+e+" (attribute)",function(){var t=fixture("like-modal");assert.isTrue(t[e],e+" is true")}),test("modal toggling keeps previous value of "+e+" (attribute)",function(){var t=fixture("like-modal");t.modal=!0,t.modal=!1,assert.isTrue(t[e],e+" is still true")})}),test("clicking outside a modal dialog does not move focus from dialog",function(e){var t=fixture("modal");runAfterOpen(t,function(){MockInteractions.tap(document.body),setTimeout(function(){assert.equal(document.activeElement,Polymer.dom(t).querySelector("[autofocus]"),"document.activeElement is the autofocused button"),e()},10)})}),test("removing a child element on click does not cause an exception",function(e){var t=fixture("basic");runAfterOpen(t,function(){var o=Polymer.dom(t).querySelector("[extra]");o.addEventListener("click",function(t){Polymer.dom(t.target.parentNode).removeChild(t.target),e()}),MockInteractions.tap(o)})}),test("multiple modal dialogs opened, handle focus change",function(e){var t=fixture("multiple");runAfterOpen(t[0],function(){runAfterOpen(t[1],function(){Polymer.Base.async(function(){e()},50)})})}),test("multiple modal dialogs opened, handle outside click",function(e){var t=fixture("multiple");runAfterOpen(t[0],function(){runAfterOpen(t[1],function(){MockInteractions.tap(document.body),Polymer.Base.async(function(){e()},50)})})}),test("focus is given to the autofocus element when clicking on backdrop",function(e){function t(){i.removeEventListener("iron-overlay-opened",t),i.addEventListener("iron-overlay-closed",o),MockInteractions.focus(Polymer.dom(i).querySelector("[dialog-dismiss]")),i.close()}function o(){i.removeEventListener("iron-overlay-closed",o),i.addEventListener("iron-overlay-opened",n),i.open()}function n(){MockInteractions.tap(document.body),setTimeout(function(){assert.equal(document.activeElement,Polymer.dom(i).querySelector("[autofocus]"),"document.activeElement is the autofocused button"),e()},10)}var i=fixture("modal");i.addEventListener("iron-overlay-opened",t),i.open()})}),suite("a11y",function(){test('dialog has role="dialog"',function(){var e=fixture("basic");assert.equal(e.getAttribute("role"),"dialog",'has role="dialog"')}),test("dialog has aria-modal=false",function(){var e=fixture("basic");assert.equal(e.getAttribute("aria-modal"),"false",'has aria-modal="false"')}),test("modal dialog has aria-modal=true",function(){var e=fixture("modal");assert.equal(e.getAttribute("aria-modal"),"true",'has aria-modal="true"')})});</script>
+
+  
+
+
+</body></html>

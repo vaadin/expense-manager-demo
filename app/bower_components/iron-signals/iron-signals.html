@@ -1,0 +1,4 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+
+<script>!function(){function n(n,t){var a=new CustomEvent("iron-signal-"+n,{bubbles:!1,detail:t});i.forEach(function(n){n.dispatchEvent(a)})}Polymer({is:"iron-signals",attached:function(){i.push(this)},detached:function(){var n=i.indexOf(this);n>=0&&i.splice(n,1)}});var i=[];document.addEventListener("iron-signal",function(i){n(i.detail.name,i.detail.data)})}();</script>
+</head><body></body></html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html><html><head>
+    <meta charset="UTF-8">
+    <title>paper-toggle-button basic tests</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../test-fixture/test-fixture-mocha.js"></script>
+    <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+    <link rel="import" href="../../test-fixture/test-fixture.html">
+    <link rel="import" href="../paper-toggle-button.html">
+
+  </head>
+  <body>
+
+    <test-fixture id="Basic">
+      <template>
+        <paper-toggle-button id="button"></paper-toggle-button>
+      </template>
+    </test-fixture>
+
+    <script>suite("defaults",function(){var t;setup(function(){t=fixture("Basic")}),test("check button via click",function(e){t.addEventListener("click",function(){assert.isTrue("true"==t.getAttribute("aria-pressed")),assert.isTrue(t.checked),e()}),MockInteractions.tap(t)}),test("toggle button via click",function(e){t.checked=!0,t.addEventListener("click",function(){assert.isFalse("true"==t.getAttribute("aria-pressed")),assert.isFalse(t.checked),e()}),MockInteractions.tap(t)}),test("disabled button cannot be clicked",function(e){t.disabled=!0,t.checked=!0,MockInteractions.tap(t),setTimeout(function(){assert.isTrue("true"==t.getAttribute("aria-pressed")),assert.isTrue(t.checked),e()},1)})}),suite("a11y",function(){var t;setup(function(){t=fixture("Basic")}),test('has aria role "button"',function(){console.log(t.getAttribute("role")),assert.isTrue("button"==t.getAttribute("role"))}),a11ySuite("Basic")});</script>
+  
+
+</body></html>

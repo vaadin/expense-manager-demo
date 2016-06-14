@@ -1,0 +1,26 @@
+<!DOCTYPE html><html><head>
+  <title>disabled-state</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <link rel="import" href="test-elements.html">
+</head>
+<body>
+
+  <test-fixture id="TrivialDisabledState">
+    <template>
+      <test-control></test-control>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="InitiallyDisabledState">
+    <template>
+      <test-control disabled=""></test-control>
+    </template>
+  </test-fixture>
+
+  <script>suite("disabled-state",function(){var t;suite("a trivial disabled state",function(){setup(function(){t=fixture("TrivialDisabledState")}),suite("when disabled is true",function(){test("receives a disabled attribute",function(){t.disabled=!0,expect(t.hasAttribute("disabled")).to.be.eql(!0)}),test("receives an appropriate aria attribute",function(){t.disabled=!0,expect(t.getAttribute("aria-disabled")).to.be.eql("true")})}),suite("when disabled is false",function(){test("loses the disabled attribute",function(){t.disabled=!0,expect(t.hasAttribute("disabled")).to.be.eql(!0),t.disabled=!1,expect(t.hasAttribute("disabled")).to.be.eql(!1)})})}),suite("a state with an initially disabled target",function(){setup(function(){t=fixture("InitiallyDisabledState")}),test("preserves the disabled attribute on target",function(){expect(t.hasAttribute("disabled")).to.be.eql(!0),expect(t.disabled).to.be.eql(!0)}),test("adds `aria-disabled` to the target",function(){expect(t.getAttribute("aria-disabled")).to.be.eql("true")})})});</script>
+
+
+
+</body></html>

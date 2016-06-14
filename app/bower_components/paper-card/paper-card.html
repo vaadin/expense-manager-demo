@@ -1,0 +1,23 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-image/iron-image.html">
+<link rel="import" href="../paper-material/paper-material.html">
+<link rel="import" href="../paper-styles/default-theme.html">
+
+
+
+</head><body><dom-module id="paper-card">
+  <template>
+    <style include="paper-material">:host{display:inline-block;position:relative;box-sizing:border-box;background-color:var(--paper-card-background-color, --primary-background-color);border-radius:2px;@apply (--paper-font-common-base);@apply (--paper-card);}[hidden]{display:none !important;}.header{position:relative;border-top-left-radius:inherit;border-top-right-radius:inherit;overflow:hidden;@apply (--paper-card-header);}.header iron-image{width:100%;--iron-image-width:100%;pointer-events:none;@apply (--paper-card-header-image);}.header .title-text{padding:16px;font-size:24px;font-weight:400;color:var(--paper-card-header-color, #000);@apply (--paper-card-header-text);}.header .title-text.over-image{position:absolute;bottom:0px;@apply (--paper-card-header-image-text);}:host ::content .card-content{padding:16px;position:relative;@apply (--paper-card-content);}:host ::content .card-actions{border-top:1px solid #e8e8e8;padding:5px 16px;position:relative;@apply (--paper-card-actions);}</style>
+
+    <div class="header">
+      <iron-image hidden$="[[!image]]" src="[[image]]" preload$="[[preloadImage]]" fade$="[[fadeImage]]"></iron-image>
+      <div hidden$="[[!heading]]" class$="[[_computeHeadingClass(image)]]">[[heading]]</div>
+    </div>
+
+    <content></content>
+  </template>
+
+  <script>Polymer({is:"paper-card",properties:{heading:{type:String,value:"",observer:"_headingChanged"},image:{type:String,value:""},preloadImage:{type:Boolean,value:!1},fadeImage:{type:Boolean,value:!1},elevation:{type:Number,value:1,reflectToAttribute:!0},animatedShadow:{type:Boolean,value:!1},animated:{type:Boolean,reflectToAttribute:!0,readOnly:!0,computed:"_computeAnimated(animatedShadow)"}},_headingChanged:function(e){this.getAttribute("aria-label");this.setAttribute("aria-label",e)},_computeHeadingClass:function(e){var t="title-text";return e&&(t+=" over-image"),t},_computeAnimated:function(e){return e}});</script>
+</dom-module>
+</body></html>

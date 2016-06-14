@@ -1,0 +1,21 @@
+<!DOCTYPE html><html><head>
+  <meta charset="utf-8">
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="common.js"></script>
+
+  <link rel="import" href="../vaadin-infinite-scroller.html">
+</head>
+
+<body>
+
+  
+  <vaadin-infinite-scroller id="scroller" item-height="30" buffer-size="80">
+    <template>[[index]]</template>
+  </vaadin-infinite-scroller>
+
+  <script>describe("vaadin-infinite-scroller",function(){function e(){var e=getFirstVisibleItem(t);expect(Math.abs(parseInt(e.textContent)-t.position)).to.be.below(1);var i=e.getBoundingClientRect().top-t.getBoundingClientRect().top,o=i/t.itemHeight,n=t.position%1;expect(Math.abs(n+o)-1).to.be.below(.1)}var t;beforeEach(function(e){t=document.querySelector("#scroller"),Polymer.Base.async(e,1)}),it("should default to position 0",function(){expect(t.position).to.equal(0)}),it("should have correct item height",function(){expect(getFirstVisibleItem(t).clientHeight).to.equal(30)}),it("should have correct buffer count",function(){expect(t.$$(".buffer").children).to.have.length(80)}),it("should reflect currently visible item index as position scrolling down",function(i){function o(){e(),t.position>1.5*t.bufferSize?i():(t.$.scroller.scrollTop+=3.7*t.itemHeight,t.async(o,20))}o()}),it("should reflect currently visible item index as position scrolling up",function(i){function o(){e(),t.position<1.5*-t.bufferSize?i():(t.$.scroller.scrollTop-=3.7*t.itemHeight,t.async(o,20))}o()}),it("should reflect position as currently visible item index",function(){for(t.position=-5;t.position<5;)t.position+=1.1,e()}),it("should fire scroll events",function(e){t.addEventListener("scroll",function(){e()}),t.$.scroller.scrollTop+=10}),it("should not fire scroll events",function(e){var i=sinon.spy();t.addEventListener("scroll",i),t.$.scroller.addEventListener("scroll",function(){expect(i.called).to.be["false"],e()}),t.position=10})});</script>
+
+
+
+
+</body></html>

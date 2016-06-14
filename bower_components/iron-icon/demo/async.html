@@ -1,0 +1,30 @@
+<!DOCTYPE html><html><head>
+  <title>iron-icon demo</title>
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../iron-icon.html">
+  <link rel="import" href="../../paper-styles/demo-pages.html">
+
+  <style is="custom-style">#loading_message{color:#444;margin-bottom:16px;}.vertical-section h4{border-left:3px solid var(--paper-grey-300);padding-left:10px;}.vertical-section h4:hover{border-left-color:var(--google-blue-700);}</style>
+</head>
+<body>
+  <div class="vertical-section-container centered">
+    <h4>
+      This demo is for an &lt;iron-icon&gt; with an asynchronously loaded
+      iconset.
+    </h4>
+
+    <div id="loading_message">Waiting to load iconset...</div>
+
+    <div class="vertical-section">
+      
+      <iron-iconset name="example" icons="location" src="location.png" size="24" width="24"></iron-iconset>
+
+      <h4>&lt;iron-icon icon="example:location"&gt;</h4>
+      <iron-icon icon="example:location"></iron-icon>
+
+    </div>
+  </div>
+  <script>setTimeout(function(){var e=document.createElement("link");e.setAttribute("rel","import"),e.setAttribute("href","../../iron-iconset/iron-iconset.html"),document.head.appendChild(e),document.querySelector("#loading_message").innerText="Iconset Loaded."},1e3);</script>
+
+
+</body></html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>paper-checkbox basic tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../paper-checkbox.html">
+
+  <style is="custom-style">paper-checkbox.no-label-spacing{--paper-checkbox-label-spacing:0;}paper-checkbox.giant{--paper-checkbox-size:50px;}paper-checkbox.tiny{--paper-checkbox-size:5px;}paper-checkbox.large-line-height{line-height:3;}paper-checkbox.small-line-height{line-height:0.25;}</style>
+</head>
+<body>
+
+  <test-fixture id="NoLabel">
+    <template>
+      <paper-checkbox id="check1"></paper-checkbox>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="WithLabel">
+    <template>
+      <paper-checkbox id="check2">Batman</paper-checkbox>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="AriaLabel">
+    <template>
+      <paper-checkbox id="check3" aria-label="Batman">Robin</paper-checkbox>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="WithDifferentSizes">
+    <template>
+      <paper-checkbox class="no-label-spacing"></paper-checkbox>
+      <paper-checkbox class="no-label-spacing giant"></paper-checkbox>
+      <paper-checkbox class="no-label-spacing tiny"></paper-checkbox>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="WithLineHeight">
+    <template>
+      <paper-checkbox class="large-line-height">Checkbox</paper-checkbox>
+      <paper-checkbox class="small-line-height">Checkbox</paper-checkbox>
+    </template>
+  </test-fixture>
+
+  <script>suite("defaults",function(){var e;setup(function(){e=fixture("NoLabel")}),test("check checkbox via click",function(t){e.addEventListener("click",function(){assert.isTrue("true"==e.getAttribute("aria-checked")),assert.isTrue(e.checked),t()}),MockInteractions.tap(e)}),test("toggle checkbox via click",function(t){e.checked=!0,e.addEventListener("click",function(){assert.isFalse("false"!=e.getAttribute("aria-checked")),assert.isFalse(e.checked),t()}),MockInteractions.tap(e)}),test("disabled checkbox cannot be clicked",function(t){e.disabled=!0,e.checked=!0,MockInteractions.tap(e),setTimeout(function(){assert.isTrue("true"==e.getAttribute("aria-checked")),assert.isTrue(e.checked),t()},1)}),test("checkbox can be validated",function(){e.required=!0,assert.isFalse(e.validate()),e.checked=!0,assert.isTrue(e.validate())}),test("disabled checkbox is always valid",function(){e.disabled=!0,e.required=!0,assert.isTrue(e.validate()),e.checked=!0,assert.isTrue(e.validate())}),test("checkbox can check sizes",function(){var e=fixture("WithDifferentSizes"),t=e[0].getBoundingClientRect(),i=e[1].getBoundingClientRect(),s=e[2].getBoundingClientRect();assert.isTrue(5===s.height),assert.isTrue(s.height<t.height),assert.isTrue(t.height<i.height),assert.isTrue(i.height<=50),assert.isTrue(5===s.width),assert.isTrue(s.width<t.width),assert.isTrue(t.width<i.width),assert.isTrue(50===i.width)}),suite("checkbox line-height",function(){var e,t;setup(function(){var i=fixture("WithLineHeight");e=i[0],t=i[1]}),test("checkboxes with >1 line-height have an equal height",function(){var t=e.getBoundingClientRect(),i=getComputedStyle(e);assert.isTrue(t.height===3*parseFloat(i.fontSize))}),test("checkbox with <1 line-height are at least 1em tall",function(){var e=t.getBoundingClientRect(),i=getComputedStyle(t);assert.isTrue(e.height>=1*parseFloat(i.fontSize))})})}),suite("a11y",function(){var e,t;setup(function(){e=fixture("NoLabel"),t=fixture("WithLabel")}),test('has aria role "checkbox"',function(){assert.isTrue("checkbox"==e.getAttribute("role")),assert.isTrue("checkbox"==t.getAttribute("role"))}),test("checkbox with no label has no aria label",function(){assert.isTrue(!e.getAttribute("aria-label"))}),test("checkbox respects the user set aria-label",function(){var e=fixture("AriaLabel");assert.isTrue("Batman"==e.getAttribute("aria-label"))}),a11ySuite("NoLabel"),a11ySuite("WithLabel"),a11ySuite("AriaLabel")});</script>
+
+
+</body></html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html><html><head>
+
+    <title>paper-item tests</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+    <link rel="import" href="../../paper-input/paper-input.html">
+    <link rel="import" href="../paper-item.html">
+    <link rel="import" href="../paper-icon-item.html">
+
+  </head>
+  <body>
+
+    <test-fixture id="item">
+      <template>
+        <div role="listbox">
+          <paper-item>item</paper-item>
+        </div>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="button">
+      <template>
+        <div role="listbox">
+          <button class="paper-item" role="option">item</button>
+        </div>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="iconItem">
+      <template>
+        <div role="listbox">
+          <paper-icon-item>item</paper-icon-item>
+        </div>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="item-with-input">
+      <template>
+        <div role="list">
+          <paper-item><input></paper-item>
+        </div>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="item-with-paper-input">
+      <template>
+        <div role="list">
+          <paper-item><paper-input></paper-input></paper-item>
+        </div>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="iconItem-with-input">
+      <template>
+        <div role="list">
+          <paper-icon-item><input></paper-icon-item>
+        </div>
+      </template>
+    </test-fixture>
+
+    <script>suite("paper-item basic",function(){var e,t;setup(function(){e=fixture("item").querySelector("paper-item"),t=sinon.spy(),e.addEventListener("click",t)}),test("space triggers a click event",function(n){MockInteractions.pressSpace(e),Polymer.Base.async(function(){Polymer.Base.async(function(){expect(t.callCount).to.be.equal(1),n()},1)},1)}),test("enter triggers a click event",function(n){MockInteractions.pressEnter(e),Polymer.Base.async(function(){Polymer.Base.async(function(){expect(t.callCount).to.be.equal(1),n()},1)},1)})}),suite("paper-icon-item basic",function(){var e,t;setup(function(){e=fixture("iconItem").querySelector("paper-icon-item"),t=sinon.spy(),e.addEventListener("click",t)}),test("space triggers a click event",function(n){MockInteractions.pressSpace(e),Polymer.Base.async(function(){Polymer.Base.async(function(){expect(t.callCount).to.be.equal(1),n()},1)},1)}),test("click triggers a click event",function(n){MockInteractions.tap(e),Polymer.Base.async(function(){expect(t.callCount).to.be.equal(1),n()},1)})}),suite("clickable element inside item",function(){test("paper-item: space in child native input does not trigger a click event",function(e){var t=fixture("item-with-input"),n=t.querySelector("paper-item"),i=t.querySelector("input"),c=sinon.spy();n.addEventListener("click",c),i.focus(),MockInteractions.pressSpace(i),Polymer.Base.async(function(){expect(c.callCount).to.be.equal(0),e()},1)}),test("paper-item: space in child paper-input does not trigger a click event",function(e){var t=fixture("item-with-paper-input"),n=t.querySelector("paper-item"),i=t.querySelector("paper-input"),c=sinon.spy();n.addEventListener("click",c),i.focus(),MockInteractions.pressSpace(i),Polymer.Base.async(function(){expect(c.callCount).to.be.equal(0),e()},1)}),test("paper-icon-item: space in child input does not trigger a click event",function(e){var t=fixture("iconItem-with-input"),n=t.querySelector("paper-icon-item"),i=t.querySelector("input"),c=sinon.spy();n.addEventListener("click",c),MockInteractions.pressSpace(i),Polymer.Base.async(function(){expect(c.callCount).to.be.equal(0),e()},1)})}),suite("item a11y tests",function(){var e,t;setup(function(){e=fixture("item").querySelector("paper-item"),t=fixture("iconItem").querySelector("paper-icon-item")}),test('item has role="listitem"',function(){assert.equal(e.getAttribute("role"),"option",'has role="option"')}),test('icon item has role="listitem"',function(){assert.equal(t.getAttribute("role"),"option",'has role="option"')}),a11ySuite("item"),a11ySuite("button"),a11ySuite("iconItem")});</script>
+
+  
+
+</body></html>

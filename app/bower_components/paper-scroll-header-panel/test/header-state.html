@@ -1,0 +1,32 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>paper-scroll-header-panel test</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../paper-scroll-header-panel.html">
+  <link rel="import" href="../demo/sample-content.html">
+  <link rel="import" href="../../paper-toolbar/paper-toolbar.html">
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+</head>
+<body>
+
+  <test-fixture id="trivialProgress">
+    <template>
+      <paper-scroll-header-panel condenses="">
+        <paper-toolbar class="tall"></paper-toolbar>
+        <div class="content">
+        <sample-content size="100"></sample-content>
+        </div>
+      </paper-scroll-header-panel>
+    </template>
+  </test-fixture>
+
+  <script>suite("`headerState`",function(){var e,r;setup(function(){e=fixture("trivialProgress"),r=Polymer.dom(e).querySelector("paper-toolbar"),e.measureHeaderHeight(),e.scroll(0)}),test("HEADER_STATE_EXPANDED",function(r){assert.equal(e.headerState,Polymer.PaperScrollHeaderPanel.HEADER_STATE_EXPANDED),e.scroll(1),flush(function(){assert.notEqual(e.headerState,Polymer.PaperScrollHeaderPanel.HEADER_STATE_EXPANDED),r()})}),test("HEADER_STATE_HIDDEN",function(t){e.scroll(r.offsetHeight+1),assert.equal(e.headerState,Polymer.PaperScrollHeaderPanel.HEADER_STATE_HIDDEN),t()}),test("HEADER_STATE_CONDENSED",function(t){e.scroll(r.offsetHeight-e.condensedHeaderHeight),setTimeout(function(){assert.equal(e.headerState,Polymer.PaperScrollHeaderPanel.HEADER_STATE_CONDENSED),t()},100)}),test("HEADER_STATE_INTERPOLATED",function(r){e.scroll(1),flush(function(){assert.equal(e.headerState,Polymer.PaperScrollHeaderPanel.HEADER_STATE_INTERPOLATED),r()})})});</script>
+
+
+
+</body></html>

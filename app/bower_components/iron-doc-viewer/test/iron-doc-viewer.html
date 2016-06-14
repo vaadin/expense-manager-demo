@@ -1,0 +1,62 @@
+<!DOCTYPE html><html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+    <title>Tests</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+    <link rel="import" href="../../polymer/polymer.html">
+    <link rel="import" href="../../test-fixture/test-fixture.html">
+
+    <link rel="import" href="../iron-doc-viewer.html">
+  </head>
+  <body>
+
+    <iron-doc-viewer>
+      {
+        "is": "awesome-sauce",
+        "properties": [
+          {"name": "isAwesome", "type": "boolean", "desc": "Is it awesome?"}
+        ]
+      }
+    </iron-doc-viewer>
+
+    <test-fixture id="bound">
+      <template is="dom-template">
+        <iron-doc-viewer descriptor="{{descriptor}}" bound=""></iron-doc-viewer>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="json">
+      <template is="dom-template">
+        <iron-doc-viewer json="">
+          {
+            "is": "awesome-sauce",
+            "properties": [
+              {"name": "isAwesome", "type": "boolean", "desc": "Is it awesome?"}
+            ]
+          }
+        </iron-doc-viewer>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="json-and-bound">
+      <template is="dom-template">
+        <iron-doc-viewer descriptor="{{descriptor}}" jsonbound="">
+          {
+            "is": "awesome-sauce",
+            "properties": [
+              {"name": "isAwesome", "type": "boolean", "desc": "Is it awesome?"}
+            ]
+          }
+        </iron-doc-viewer>
+      </template>
+    </test-fixture>
+
+    <script>var ELEMENT={is:"awesome-sauce",properties:[{name:"isAwesome",type:"boolean",desc:"Is it awesome?"}]};describe("<iron-doc-viewer>",function(){var e;afterEach(function(){e=null}),describe("with a bound descriptor",function(){beforeEach(function(){e=fixture("bound",{descriptor:ELEMENT})}),it("loads the descriptor",function(){expect(e.descriptor.is).to.eq("awesome-sauce"),expect(e.descriptor.properties.length).to.eq(1)})}),describe("with a JSON descriptor",function(){beforeEach(function(){e=fixture("json")}),it("loads the descriptor",function(){expect(e.descriptor.is).to.eq("awesome-sauce"),expect(e.descriptor.properties.length).to.eq(1)})}),describe("edge cases",function(){})});</script>
+
+  
+
+</body></html>

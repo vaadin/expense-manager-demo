@@ -1,0 +1,34 @@
+<!DOCTYPE html><html><head>
+    <title>neon-animation demo: basic</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="my-animatable.html">
+    <link rel="import" href="my-dialog.html">
+
+  <style>my-animatable{margin-top:50px;}</style></head>
+  
+  <body>
+
+    <template is="dom-bind">
+
+      <button on-click="_onCircleButtonClick">toggle circle</button>
+      <button on-click="_onDialogButtonClick">toggle dialog</button>
+
+      <div style="text-align: center">
+        <my-dialog>Hello World!</my-dialog>
+      </div>
+
+      <my-animatable></my-animatable>
+
+    </template>
+
+    <script>var scope=document.querySelector('template[is="dom-bind"]');scope._onCircleButtonClick=function(e){var o=document.querySelector("my-animatable");o&&o.animate()},scope._onDialogButtonClick=function(e){var o=document.querySelector("my-dialog");o&&(o.opened?o.hide():o.show())};</script>
+
+  
+
+</body></html>

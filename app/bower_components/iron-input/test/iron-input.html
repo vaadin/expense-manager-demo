@@ -1,0 +1,100 @@
+<!DOCTYPE html><html><head>
+
+  <title>iron-input tests</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <link rel="import" href="../iron-input.html">
+  <link rel="import" href="letters-only.html">
+  <link rel="import" href="disabled-input.html">
+
+</head>
+<body>
+
+  <test-fixture id="basic">
+    <template>
+      <input is="iron-input">
+    </template>
+  </test-fixture>
+
+  <test-fixture id="has-value">
+    <template>
+      <input is="iron-input" value="foobar">
+    </template>
+  </test-fixture>
+
+  <test-fixture id="has-bind-value">
+    <template>
+      <input is="iron-input" bind-value="foobar">
+    </template>
+  </test-fixture>
+
+  <test-fixture id="prevent-invalid-input">
+    <template>
+      <input is="iron-input" prevent-invalid-input="" allowed-pattern="[0-9]">
+    </template>
+  </test-fixture>
+
+  <test-fixture id="prevent-invalid-input-with-pattern">
+    <template>
+      <input is="iron-input" prevent-invalid-input="" pattern="[a-zA-Z]{3}[0-9]*">
+    </template>
+  </test-fixture>
+
+  <test-fixture id="prevent-invalid-input-has-value">
+    <template>
+      <input is="iron-input" prevent-invalid-input="" allowed-pattern="[0-9]" value="foobar">
+    </template>
+  </test-fixture>
+
+  <test-fixture id="prevent-invalid-input-has-bind-value">
+    <template>
+      <input is="iron-input" prevent-invalid-input="" allowed-pattern="[0-9]" bind-value="foobar">
+    </template>
+  </test-fixture>
+
+  <test-fixture id="automatically-prevent-invalid-input-if-allowed-pattern">
+    <template>
+      <input is="iron-input" allowed-pattern="[0-9]">
+    </template>
+  </test-fixture>
+
+  <test-fixture id="no-validator">
+    <template>
+      <input is="iron-input" pattern="[a-zA-Z]{3}[0-9]*">
+    </template>
+  </test-fixture>
+
+  <test-fixture id="has-validator">
+    <template>
+      <letters-only></letters-only>
+      <input is="iron-input" validator="letters-only" pattern="[0-9]*">
+    </template>
+  </test-fixture>
+
+  <test-fixture id="native-and-custom-validator">
+    <template>
+      <letters-only></letters-only>
+      <input is="iron-input" validator="letters-only" pattern="[a-c]*">
+    </template>
+  </test-fixture>
+
+  <template is="dom-bind" id="bind-to-object">
+    <input is="iron-input" id="input" bind-value="{{foo}}">
+  </template>
+
+  <test-fixture id="disabled-input">
+    <template>
+      <disabled-input></disabled-input>
+    </template>
+  </test-fixture>
+
+  <script>suite("basic",function(){test("setting bindValue sets value",function(){var a=fixture("basic");a.bindValue="foobar",assert.equal(a.value,a.bindValue,"value equals to bindValue")}),test("changing the input triggers an event",function(a){var e=fixture("basic");e.addEventListener("bind-value-changed",function(t){assert.equal(e.value,e.bindValue,"value equals to bindValue"),a()}),e.value="foo",e._onInput()}),test("default value sets bindValue",function(){var a=fixture("has-value");assert.equal(a.bindValue,a.value,"bindValue equals value")}),test("default bindValue sets value",function(){var a=fixture("has-bind-value");assert.equal(a.value,a.bindValue,"value equals to bindValue")}),test("set bindValue to undefined",function(){var a=document.getElementById("bind-to-object");a.foo=void 0,assert.ok(!a.$.input.bindValue,"bindValue is falsy"),assert.ok(!a.$.input.value,"value is falsy")}),test("can validate using a complex regex",function(){var a=fixture("no-validator");a.value="123",a.validate(),assert.isTrue(a.invalid,"input is invalid"),a.value="foo",a.validate(),assert.isFalse(a.invalid,"input is valid"),a.value="foo123",a.validate(),assert.isFalse(a.invalid,"input is valid")}),test("set bindValue to false",function(){var a=document.getElementById("bind-to-object");a.foo=!1,assert.isFalse(a.$.input.bindValue),assert.equal(a.$.input.value,"false")}),test("validator used instead of constraints api if provided",function(){var a=fixture("has-validator")[1];a.value="123",a.validate(),assert.isTrue(a.invalid,"input is invalid")}),test("prevent invalid input works in _onInput",function(){var a=fixture("prevent-invalid-input");a.value="123",a._onInput(),assert.equal(a.bindValue,"123"),a.value="123foo",a._onInput(),assert.equal(a.bindValue,"123")}),test("inputs can be validated",function(){var a=fixture("prevent-invalid-input-with-pattern");a.value="123",a._onInput(),assert.equal(a.bindValue,"123"),a.validate(),assert.isTrue(a.invalid,"input is invalid"),a.value="foo",a._onInput(),assert.equal(a.bindValue,"foo"),a.validate(),assert.isFalse(a.invalid,"input is valid"),a.value="foo123",a._onInput(),assert.equal(a.bindValue,"foo123"),a.validate(),assert.isFalse(a.invalid,"input is valid")}),test("prevent invalid input works automatically when allowed pattern is set",function(){var a=fixture("automatically-prevent-invalid-input-if-allowed-pattern");a.value="123",a._onInput(),assert.equal(a.bindValue,"123"),a.value="123foo",a._onInput(),assert.equal(a.bindValue,"123"),a.allowedPattern="",a.value="#123foo BAR!",a._onInput(),assert.equal(a.bindValue,"#123foo BAR!"),a.allowedPattern="[a-zA-Z]",a.value="foo",a._onInput(),a.value="bar123",a._onInput(),assert.equal(a.bindValue,"foo")}),test("disabled input doesn't throw on Firefox",function(){var a=fixture("disabled-input"),e=a.$.input;assert.equal(e.bindValue,"foo"),assert.isFalse(a.myInvalid),assert.isTrue(e.disabled)}),test("browser validation beats custom validation",function(){var a=fixture("native-and-custom-validator")[1];a.value="aaaa",a.validate(),assert.isFalse(a.invalid,"input is valid"),a.value="zzz",a.validate(),assert.isTrue(a.invalid,"input is invalid")})}),suite("a11y",function(){test("announces invalid characters when _onInput is called",function(){var a=fixture("prevent-invalid-input");a.addEventListener("iron-announce",function(a){assert.equal(a.detail.text,"Invalid string of characters not entered.")}),a.value="foo",a._onInput()}),test("announces invalid characters on keypress",function(){var a=fixture("prevent-invalid-input");a.addEventListener("iron-announce",function(a){assert.equal(a.detail.text,"Invalid character a not entered.")});var e=new CustomEvent("keypress",{bubbles:!0,cancelable:!0});e.charCode=97,a.dispatchEvent(e)})});</script>
+
+
+
+</body></html>

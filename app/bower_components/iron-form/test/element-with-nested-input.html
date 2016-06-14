@@ -1,0 +1,11 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-form-element-behavior/iron-form-element-behavior.html">
+
+</head><body><dom-module id="element-with-nested-input">
+  <template>
+    <input name$="[[name]]">
+  </template>
+</dom-module>
+
+<script>Polymer({is:"element-with-nested-input",behaviors:[Polymer.IronFormElementBehavior]});</script>
+</body></html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html><html><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+  <title>Expense Manager</title>
+
+  <style is="custom-style">html{height:100%;}body{overflow:hidden;display:flex;flex-direction:column;margin:0;height:100%;background:#fff;font-family:'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;-webkit-tap-highlight-color:transparent;}.loading{width:100vw;height:100vh;overflow:hidden;}.login{background:#33383a;}body:not(.login) #loadingScreen{height:64px;width:100vw;background:#33383a;position:absolute;}body:not(.login) #loadingScreen .text{position:absolute;top:45vh;text-align:center;left:0;right:0;color:rgba(0, 0, 0, 0.54);transition:opacity 300ms;}@media (max-width: 600px){:not(.login) #loadingScreen{height:56px;}}#loadingScreen{width:100%;}.login #loadingScreen{position:absolute;top:36%;left:0;color:rgba(255, 255, 255, 0.56);text-align:center;line-height:10;font-weight:400;font-family:arial, sans-serif;}#loadingScreen .spinner{content:"";position:absolute;height:2px;background:#ff3a39;top:0;left:0;width:100%;animation:1.2s loading infinite;transform-origin:100% 0;}body:not(.login) #loadingScreen .spinner{top:auto;bottom:-2px;}@keyframes loading{50%{transform:scalex(0);}51%{transform:translatex(-100vw);}}#loadingScreen.animation-stop .spinner{animation-name:none;}#loadingScreen.animation-stop .text{opacity:0;}.ready expense-app{animation:fade-in 0.6s;}@keyframes fade-in{0%{opacity:0;}}</style>
+  <link rel="manifest" href="manifest.json">
+
+  <meta name="theme-color" content="#33383a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="icon" sizes="192x192" href="images/app-icon-192.png">
+  <meta name="application-name" content="Expense Manager">
+
+  
+  <link rel="apple-touch-icon" href="images/app-icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Expense Manager">
+
+  <script>window.Polymer={dom:"shadow",lazyRegister:!0};</script>
+
+  <link rel="import" id="bundle" href="elements/elements.html" async="">
+
+</head>
+
+<body class="loading">
+  <div id="loadingScreen">
+    <div class="spinner"></div>
+    <p class="text">Loading…</p>
+  </div>
+
+  
+  <span id="browser-sync-binding"></span> <span id="browser-sync-binding"></span>
+  
+
+  <script>function onImportLoaded(){document.body.classList.remove("loading"),document.body.classList.add("ready"),document.querySelector("#loadingScreen").addEventListener("animationiteration",function(e){this.classList.add("animation-stop");var n=document.createElement("expense-app");document.body.appendChild(n)})}function finishLazyLoading(){var e=document.querySelector("#bundle");e["import"]&&"complete"===e["import"].readyState?onImportLoaded():e.addEventListener("load",onImportLoaded)}var loggedIn=window.localStorage.getItem("loggedIn");loggedIn&&"false"!==loggedIn||document.querySelector("body").classList.add("login");var webComponentsSupported="registerElement"in document&&"import"in document.createElement("link")&&"content"in document.createElement("template");if(webComponentsSupported)finishLazyLoading();else{var script=document.createElement("script");script.async=!0,script.src="bower_components/webcomponentsjs/webcomponents-lite.min.js",script.onload=finishLazyLoading,document.head.appendChild(script)}var registerServiceWorker=function(){"serviceWorker"in navigator&&navigator.serviceWorker.register("service-worker.js").then(function(e){e.onupdatefound=function(){var n=e.installing;n.onstatechange=function(){switch(n.state){case"installed":navigator.serviceWorker.controller?console.log("New or updated content is available."):console.log("Content is now available offline!");break;case"redundant":console.error("The installing service worker became redundant.")}}}})["catch"](function(e){console.error("Error during service worker registration:",e)}),window.addEventListener("load",registerServiceWorker)};</script>
+
+
+
+</body></html>

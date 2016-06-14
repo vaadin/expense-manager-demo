@@ -1,0 +1,19 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
+
+
+
+</head><body><dom-module id="iron-collapse">
+
+  <style>:host{display:block;transition-duration:300ms;overflow:visible;}:host(.iron-collapse-closed){display:none;}:host(:not(.iron-collapse-opened)){overflow:hidden;}</style>
+
+  <template>
+
+    <content></content>
+
+  </template>
+
+</dom-module>
+
+<script>Polymer({is:"iron-collapse",behaviors:[Polymer.IronResizableBehavior],properties:{horizontal:{type:Boolean,value:!1,observer:"_horizontalChanged"},opened:{type:Boolean,value:!1,notify:!0,observer:"_openedChanged"},noAnimation:{type:Boolean}},get dimension(){return this.horizontal?"width":"height"},hostAttributes:{role:"group","aria-hidden":"true","aria-expanded":"false"},listeners:{transitionend:"_transitionEnd"},attached:function(){this._transitionEnd()},toggle:function(){this.opened=!this.opened},show:function(){this.opened=!0},hide:function(){this.opened=!1},updateSize:function(i,t){if(this.style[this.dimension]!==i){if(this._updateTransition(!1),t&&!this.noAnimation&&this._isDisplayed){var e=this._calcSize();"auto"===i&&(this.style[this.dimension]=i,i=this._calcSize()),this.style[this.dimension]=e,this.offsetHeight=this.offsetHeight,this._updateTransition(!0)}this.style[this.dimension]=i}},enableTransition:function(i){console.warn("`enableTransition()` is deprecated, use `noAnimation` instead."),this.noAnimation=!i},_updateTransition:function(i){this.style.transitionDuration=i&&!this.noAnimation?"":"0s"},_horizontalChanged:function(){this.style.transitionProperty=this.dimension;var i="width"===this.dimension?"height":"width";this.style[i]="",this.updateSize(this.opened?"auto":"0px",!1)},_openedChanged:function(){this.setAttribute("aria-expanded",this.opened),this.setAttribute("aria-hidden",!this.opened),this.toggleClass("iron-collapse-closed",!1),this.toggleClass("iron-collapse-opened",!1),this.updateSize(this.opened?"auto":"0px",!0),this.opened&&this.focus(),this.noAnimation&&this._transitionEnd()},_transitionEnd:function(){this.opened&&(this.style[this.dimension]="auto"),this.toggleClass("iron-collapse-closed",!this.opened),this.toggleClass("iron-collapse-opened",this.opened),this._updateTransition(!1),this.notifyResize()},get _isDisplayed(){var i=this.getBoundingClientRect();for(var t in i)if(0!==i[t])return!0;return!1},_calcSize:function(){return this.getBoundingClientRect()[this.dimension]+"px"}});</script>
+</body></html>

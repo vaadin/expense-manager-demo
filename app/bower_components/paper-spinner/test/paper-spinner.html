@@ -1,0 +1,33 @@
+<!DOCTYPE html><html><head>
+
+    <meta charset="UTF-8">
+    <title>paper-spinner basic tests</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+    <script src="../../webcomponentsjs/webcomponents.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+    <link href="../../test-fixture/test-fixture.html" rel="import">
+    <link href="../paper-spinner.html" rel="import">
+
+  </head>
+  <body>
+
+    <test-fixture id="PaperSpinner">
+      <template>
+        <paper-spinner></paper-spinner>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="ActivePaperSpinner">
+      <template>
+        <paper-spinner active=""></paper-spinner>
+      </template>
+    </test-fixture>
+
+    <script>"use strict";suite("<paper-spinner>",function(){suite("an accessible paper spinner",function(){var e,t;setup(function(){e=fixture("PaperSpinner"),t=fixture("ActivePaperSpinner")}),test("adds an ARIA label when `alt` is supplied",function(){var t="Loading the next gif...";e.alt=t,expect(e.getAttribute("aria-label")).to.be.eql(t)}),test("hides from ARIA when inactive",function(){e.active=!1,expect(e.getAttribute("aria-hidden")).to.be.eql("true")}),test("toggle during cooldown",function(e){t.active=!1,setTimeout(function(){t.active=!0,setTimeout(function(){expect(t.active).to.equal(!0),e()},500)},100)})})});</script>
+
+  
+
+</body></html>

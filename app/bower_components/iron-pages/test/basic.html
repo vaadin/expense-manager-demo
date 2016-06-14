@@ -1,0 +1,29 @@
+<!DOCTYPE html><html><head>
+
+    <title>iron-pages-basic</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <link rel="import" href="../iron-pages.html">
+    
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <iron-pages>
+          <div id="page0">Page 0</div>
+          <div id="page1">Page 1</div>
+          <div id="page2">Page 2</div>
+          <div id="page3">Page 3</div>
+        </iron-pages>
+      </template>
+    </test-fixture>
+
+    <script>suite("basic",function(){var e;suite("defaults",function(){setup(function(){e=fixture("basic")}),test("to nothing selected",function(){assert.equal(e.selected,void 0)}),test("null activateEvent",function(){assert.equal(e.activateEvent,null)}),test("to iron-selected as selectedClass",function(){assert.equal(e.selectedClass,"iron-selected")}),test("as many items as children",function(){assert.equal(e.items.length,4)}),test("all pages are display:none",function(){e.items.forEach(function(e){assert.equal(getComputedStyle(e).display,"none")})})}),suite("set the selected attribute",function(){setup(function(){e=fixture("basic"),e.selected=0}),test("selected value",function(){assert.equal(e.selected,"0")}),test("selected item",function(){assert.equal(e.selectedItem,e.items[0])}),test("selected item is display:block and all others are display:none",function(){e.items.forEach(function(t){assert.equal(getComputedStyle(t).display,t==e.selectedItem?"block":"none")})})})});</script>
+
+  
+
+</body></html>

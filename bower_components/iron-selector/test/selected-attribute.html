@@ -1,0 +1,55 @@
+<!DOCTYPE html><html><head>
+
+  <title>iron-selector-selected-attribute</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+  <link rel="import" href="../iron-selector.html">
+
+  <style>.iron-selected{background:#ccc;}</style>
+
+</head>
+<body>
+
+  <test-fixture id="test">
+    <template>
+      <iron-selector id="selector">
+        <div>Item 0</div>
+        <div>Item 1</div>
+        <div>Item 2</div>
+        <div>Item 3</div>
+        <div>Item 4</div>
+      </iron-selector>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="test-attr-change">
+    <template>
+      <iron-selector id="selector" attr-for-selected="data-x" selected="x-1">
+        <div data-x="x-1" data-y="y-1">1</div>
+        <div data-x="x-2" data-y="y-2">2</div>
+        <div data-x="x-3" data-y="y-3">3</div>
+      </iron-selector>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="test-attr-change-multi">
+    <template>
+      <iron-selector multi="" id="selector" attr-for-selected="data-x" selected-values="[&quot;x-1&quot;,&quot;x-2&quot;]">
+        <div data-x="x-1" data-y="y-1">1</div>
+        <div data-x="x-2" data-y="y-2">2</div>
+        <div data-x="x-3" data-y="y-3">3</div>
+      </iron-selector>
+    </template>
+  </test-fixture>
+
+  <script>suite("selected attributes",function(){var t;setup(function(){t=fixture("test")}),test("custom selectedAttribute",function(){t.selectedAttribute="myattr",assert.isFalse(t.children[4].hasAttribute("myattr")),t.selected=4,assert.isTrue(t.children[4].hasAttribute("myattr"))})}),suite("changing attrForSelected",function(){var t;setup(function(){t=fixture("test-attr-change")}),test("changing selectedAttribute",function(){Polymer.dom.flush(),t.attrForSelected="data-y",assert.equal(t.selected,"y-1")})}),suite("changing attrForSelected in multi",function(){var t;setup(function(){t=fixture("test-attr-change-multi")}),test("changing selectedAttribute",function(){Polymer.dom.flush(),t.attrForSelected="data-y",assert.equal(t.selectedValues.length,2),assert.equal(t.selectedValues[0],"y-1"),assert.equal(t.selectedValues[1],"y-2")})});</script>
+
+
+
+</body></html>

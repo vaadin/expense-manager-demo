@@ -1,0 +1,42 @@
+<!DOCTYPE html><html><head>
+
+  <title>iron-selector-selected-attribute</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+  <link rel="import" href="../iron-selector.html">
+</head>
+<body>
+
+  <test-fixture id="test1">
+    <template>
+      <iron-selector>
+        <div>Item 0</div>
+        <div>Item 1</div>
+        <div>Item 2</div>
+        <span>Item 3</span>
+      </iron-selector>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="test2">
+    <template>
+      <iron-selector>
+        <div>Item 0</div>
+        <div>Item 1</div>
+        <div>Item 2</div>
+        <p>Item 3</p>
+      </iron-selector>
+    </template>
+  </test-fixture>
+
+  <script>suite("excluded local names",function(){var e,a;setup(function(){e=fixture("test1"),a=fixture("test2")}),test("default `_excludedLocalNames`",function(){assert.isTrue("template"in e._excludedLocalNames),assert.isTrue("template"in a._excludedLocalNames)}),test("custom `_excludedLocalNames`",function(){e._excludedLocalNames.foo=1,assert.isTrue("foo"in e._excludedLocalNames),assert.isFalse("foo"in a._excludedLocalNames)}),test("items",function(s){e._excludedLocalNames.span=1,a._excludedLocalNames.div=1,e._updateItems(),a._updateItems(),Polymer.Base.async(function(){var t=-1,u=e.items.map(function(e){return e.localName}),c=a.items.map(function(e){return e.localName});assert.equal(u.indexOf("span"),t),assert.equal(c.indexOf("div"),t),s()})})});</script>
+
+
+
+</body></html>

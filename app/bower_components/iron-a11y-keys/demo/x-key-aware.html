@@ -1,0 +1,21 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-styles/color.html">
+<link rel="import" href="../iron-a11y-keys.html">
+
+</head><body><dom-module id="x-key-aware">
+  <style>:host{display:block;position:relative;}pre{color:var(--google-blue-700);}.keys{line-height:25px;}.keys span{cursor:default;background-color:var(--google-grey-100);border:1px solid var(--google-grey-300);padding:1px 5px;border-radius:5px;}</style>
+  <template>
+    <h4>Press any of these keys</h4>
+    <span class="keys">
+      <template is="dom-repeat" items="[[boundKeys]]">
+        <span>{{item}}</span>
+      </template>
+    </span>
+    <iron-a11y-keys id="keys" keys="* pageup pagedown left right down up shift+a alt+a home end space enter" target="[[target]]" on-keys-pressed="_updatePressed">
+    </iron-a11y-keys>
+    <pre id="output">[[pressed]]</pre>
+  </template>
+</dom-module>
+
+<script>Polymer({is:"x-key-aware",properties:{pressed:{type:String,readOnly:!0,value:""},boundKeys:{type:Array},target:{type:Object,value:function(){return document.body}}},ready:function(){this.boundKeys=this.$.keys.keys.split(" ")},_updatePressed:function(e){console.log(e.detail),this._setPressed(this.pressed+e.detail.combo+" pressed!\n")}});</script>
+</body></html>

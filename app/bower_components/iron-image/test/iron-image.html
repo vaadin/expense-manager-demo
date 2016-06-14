@@ -1,0 +1,40 @@
+<!DOCTYPE html><html><head>
+    <title>iron-image</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+    <link rel="import" href="../../polymer/polymer.html">
+    <link rel="import" href="../../test-fixture/test-fixture.html">
+    <link rel="import" href="../iron-image.html">
+
+    <style is="custom-style">.fixed-width-container{width:500px;}.fixed-width-container iron-image{width:100%;--iron-image-width:100%;}.fixed-height-container{height:500px;}.fixed-height-container iron-image{height:100%;--iron-image-height:100%;}</style>
+  </head>
+  <body>
+    <test-fixture id="TrivialImage">
+      <template>
+        <iron-image></iron-image>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="FixedWidthContainer">
+      <template>
+        <div class="fixed-width-container">
+          <iron-image></iron-image>
+        </div>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="FixedHeightContainer">
+      <template>
+        <div class="fixed-height-container">
+          <iron-image></iron-image>
+        </div>
+      </template>
+    </test-fixture>
+
+    <script>suite("<iron-image>",function(){function e(){return"../demo/polymer.svg?"+Math.random()}var t;suite("basic behavior",function(){setup(function(){t=fixture("TrivialImage")}),test("loading, loaded, error are false before any src is set",function(){expect(t.loading).to.be.eql(!1),expect(t.loaded).to.be.eql(!1),expect(t.error).to.be.eql(!1)}),test("loading, loaded, error are false when src is set to empty string",function(i){t.addEventListener("loaded-changed",function a(){t.loaded&&(t.removeEventListener("loaded-changed",a),t.addEventListener("loaded-changed",function e(){t.removeEventListener("loaded-changed",e),expect(t.loading).to.be.eql(!1),expect(t.loaded).to.be.eql(!1),expect(t.error).to.be.eql(!1),i()}),expect(t.loading).to.be.eql(!1),expect(t.loaded).to.be.eql(!0),expect(t.error).to.be.eql(!1),t.src="")}),t.src=e()}),test("can load images given a src",function(i){t.addEventListener("loaded-changed",function a(){t.removeEventListener("loaded-changed",a);try{expect(t.loaded).to.be.eql(!0),i()}catch(e){i(e)}}),t.src=e()}),test("will reload images when src changes",function(i){var a=0;t.addEventListener("loaded-changed",function r(){t.loaded===!0&&(a++,2===a?(t.removeEventListener("loaded-changed",r),i()):t.src=e())}),t.src=e()}),test("error property is set when the image fails to load",function(e){t.addEventListener("error-changed",function i(){assert(t.error,"image has error property set"),t.removeEventListener("error-changed",i),e()}),t.src="/this_image_should_not_exist.jpg"}),test("placeholder is hidden after loading when src is changed from invalid to valid",function(i){t.preload=!0,t.addEventListener("error-changed",function a(){t.removeEventListener("error-changed",a),assert.equal(t.loading,!1,"errored image loading = false"),assert.equal(t.loaded,!1,"errored image loaded = false"),assert.equal(t.error,!0,"errored image error = true"),t.addEventListener("loaded-changed",function r(){t.loaded&&(t.removeEventListener("loaded-changed",r),assert.equal(t.loading,!1,"ok image loading = false"),assert.equal(t.loaded,!0,"ok image loaded = true"),assert.equal(t.error,!1,"ok image error = false"),assert.equal(getComputedStyle(t.$.placeholder).display,"none","placeholder has style.display = none"),i())}),t.src=e()}),t.src="/this_image_should_not_exist.jpg"}),test("image is not shown below placeholder if previous image was loaded with sizing on and current image fails to load",function(i){t.preload=!0,t.sizing="cover",t.addEventListener("loaded-changed",function a(){t.loaded&&(t.removeEventListener("loaded-changed",a),assert.notEqual(getComputedStyle(t.$.sizedImgDiv).backgroundImage,"none","image visible after successful load"),assert.equal(getComputedStyle(t.$.placeholder).display,"none","placeholder hidden after successful load"),t.addEventListener("error-changed",function e(){t.error&&(t.removeEventListener("error-changed",e),assert.equal(getComputedStyle(t.$.sizedImgDiv).backgroundImage,"none","image hidden after failed load"),assert.notEqual(getComputedStyle(t.$.placeholder).display,"none","placeholder visible after failed load"),i())}),t.src="/this_image_should_not_exist.jpg")}),t.src=e()})}),suite("--iron-image-width, --iron-image-height",function(){var t,i,a,r;setup(function(){t=fixture("FixedWidthContainer"),i=t.querySelector("iron-image"),a=fixture("FixedHeightContainer"),r=a.querySelector("iron-image")}),test("100% width image fills container",function(a){i.$.img.addEventListener("load",function r(e){i.$.img.removeEventListener("load",r),Polymer.updateStyles();var n=t.getBoundingClientRect(),s=i.getBoundingClientRect(),o=i.$.img.getBoundingClientRect();expect(n.width).to.be.closeTo(500,.5),expect(s.width).to.be.closeTo(500,.5),expect(o.width).to.be.closeTo(500,.5),a()}),i.src=e()}),test("100% height image fills container",function(t){r.$.img.addEventListener("load",function i(e){r.$.img.removeEventListener("load",i),Polymer.updateStyles();var n=a.getBoundingClientRect(),s=r.getBoundingClientRect(),o=r.$.img.getBoundingClientRect();expect(n.height).to.be.closeTo(500,.5),expect(s.height).to.be.closeTo(500,.5),expect(o.height).to.be.closeTo(500,.5),t()}),r.src=e()})}),suite("accessibility",function(){suite("sizing inactive",function(){var e;setup(function(){e=fixture("TrivialImage")}),test("#sizedImgDiv is hidden",function(){var t=window.getComputedStyle(e.$.sizedImgDiv);assert.strictEqual(t.display,"none")}),test("img has no alt text by default",function(){assert.isFalse(e.$.img.hasAttribute("alt"))}),test("img alt text is empty string when iron-image alt text is empty string",function(){e.alt="",assert.isTrue(e.$.img.hasAttribute("alt")),assert.strictEqual(e.$.img.getAttribute("alt"),"")}),test("img alt text matches iron-image alt text when defined",function(){e.alt="alt text value",assert.isTrue(e.$.img.hasAttribute("alt")),assert.strictEqual(e.$.img.getAttribute("alt"),"alt text value")})}),suite("sizing active",function(){var e;setup(function(){e=fixture("TrivialImage"),e.sizing="cover"}),test("inner img is hidden",function(){var t=window.getComputedStyle(e.$.img);assert.strictEqual(t.display,"none")}),test("#sizedImgDiv has empty aria-label text by default",function(){assert.isTrue(e.$.sizedImgDiv.hasAttribute("aria-label")),assert.strictEqual(e.$.sizedImgDiv.getAttribute("aria-label"),"")}),test("#sizedImgDiv has aria-hidden when iron-image alt text is empty string",function(){e.alt="",assert.isTrue(e.$.sizedImgDiv.hasAttribute("aria-hidden"));var t=e.$.sizedImgDiv.getAttribute("aria-hidden");assert.isTrue(""===t||"true"===t)}),test("#sizedImgDiv aria-label matches iron-image alt text when defined",function(){e.alt="alt text value",assert.isTrue(e.$.sizedImgDiv.hasAttribute("aria-label")),assert.strictEqual(e.$.sizedImgDiv.getAttribute("aria-label"),"alt text value")}),test("#sizedImgDiv aria-label text is last path component of src when iron-image alt text is undefined",function(){e.src="/some/path.components/file.jpg?a=b&c=d#anchor",assert.isTrue(e.$.sizedImgDiv.hasAttribute("aria-label")),assert.strictEqual(e.$.sizedImgDiv.getAttribute("aria-label"),"file.jpg")})})})});</script>
+  
+
+</body></html>

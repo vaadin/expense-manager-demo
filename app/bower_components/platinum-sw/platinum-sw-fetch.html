@@ -1,0 +1,4 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+
+<script>Polymer({is:"platinum-sw-fetch",properties:{handler:String,origin:String,path:String},_getParameters:function(t){return new Promise(function(e){var i={importscriptLate:new URL("bootstrap/sw-toolbox-setup.js",t).href};this.path&&this.handler?i.route=[this.path,this.handler,this.origin]:console.warn('The following platinum-sw-fetch element will not have any effect. Both the "path" and "handler" attributes must be set.',this),e(i)}.bind(this))}});</script>
+</head><body></body></html>

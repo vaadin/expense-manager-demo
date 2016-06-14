@@ -1,0 +1,46 @@
+<!DOCTYPE html><html><head>
+
+    <title>iron-autogrow-textarea tests</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../iron-test-helpers/mock-interactions.js"></script>
+    <link rel="import" href="../iron-autogrow-textarea.html">
+
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <iron-autogrow-textarea></iron-autogrow-textarea>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="has-bindValue">
+      <template>
+        <iron-autogrow-textarea bind-value="foobar"></iron-autogrow-textarea>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="has-value">
+      <template>
+        <iron-autogrow-textarea value="foobar"></iron-autogrow-textarea>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="rows">
+      <template>
+        <iron-autogrow-textarea rows="3"></iron-autogrow-textarea>
+      </template>
+    </test-fixture>
+
+    <script>suite("basic",function(){test("setting bindValue sets textarea value",function(){var e=fixture("basic"),a=e.textarea;e.bindValue="batman",assert.equal(a.value,e.bindValue,"textarea value equals to bindValue")}),test("can set an initial bindValue",function(){var e=fixture("has-bindValue");assert.equal(e.textarea.value,"foobar","textarea value equals to initial bindValue"),assert.equal(e.value,"foobar","value equals to initial bindValue")}),test("can set an initial value",function(){var e=fixture("has-value");assert.equal(e.textarea.value,"foobar","textarea value equals to initial bindValue"),assert.equal(e.bindValue,"foobar","textarea bindValue equals to initial value")}),test("can update the value",function(){var e=fixture("has-bindValue");assert.equal(e.textarea.value,"foobar","textarea value equals to initial bindValue"),e.value="batman",assert.equal(e.textarea.value,"batman","textarea value is updated"),assert.equal(e.bindValue,"batman","bindValue is updated"),assert.equal(e.value,"batman","value is updated")}),test("can update the bindValue",function(){var e=fixture("has-bindValue");assert.equal(e.textarea.value,"foobar","textarea value equals to initial bindValue"),e.bindValue="batman",assert.equal(e.textarea.value,"batman","textarea value is updated"),assert.equal(e.bindValue,"batman","bindValue is updated"),assert.equal(e.value,"batman","value is updated")}),test("can set an initial number of rows",function(){var e=fixture("rows");assert.equal(e.textarea.rows,3,"textarea has rows=3")}),test("adding rows grows the textarea",function(){var e=fixture("basic"),a=e.offsetHeight;e.bindValue="batman\nand\nrobin";var t=e.offsetHeight;assert.isTrue(t>a)}),test("removing rows shrinks the textarea",function(){var e=fixture("basic");e.bindValue="batman\nand\nrobin";var a=e.offsetHeight;e.bindValue="batman";var t=e.offsetHeight;assert.isTrue(a>t)}),test("an undefined bindValue is the empty string",function(){var e=fixture("basic"),a=e.offsetHeight;e.bindValue="batman\nand\nrobin";var t=e.offsetHeight;assert.isTrue(t>a),e.bindValue=void 0,assert.equal(e.offsetHeight,a),assert.equal(e.textarea.value,"")}),test("textarea selection works",function(){var e=fixture("basic"),a=e.textarea;e.bindValue="batman\nand\nrobin",e.selectionStart=3,e.selectionEnd=5,assert.equal(a.selectionStart,3),assert.equal(a.selectionEnd,5)})}),suite("focus/blur events",function(){var e;setup(function(){e=fixture("basic")}),test("focus/blur events fired on host element",function(a){var t=0,i=0;e.addEventListener("focus",function(){t+=1,setTimeout(function(){assert.equal(t,1,"one focus event fired"),MockInteractions.blur(e.textarea)})}),e.addEventListener("blur",function(){i+=1,setTimeout(function(){assert.equal(i,1,"one blur event fired"),a()})}),MockInteractions.focus(e.textarea)})}),suite("validation",function(){test("a required textarea with no text is invalid",function(){var e=fixture("basic");e.required=!0,assert.isFalse(e.validate()),e.bindValue="batman",assert.isTrue(e.validate())})});</script>
+
+  
+
+</body></html>

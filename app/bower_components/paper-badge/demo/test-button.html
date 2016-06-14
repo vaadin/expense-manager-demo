@@ -1,0 +1,17 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../iron-icons/iron-icons.html">
+<link rel="import" href="../../paper-styles/color.html">
+<link rel="import" href="../paper-badge.html">
+
+</head><body><dom-module id="test-button">
+  <template>
+    <style>:host{display:inline-block;position:relative;}paper-icon-button{padding:0;margin:0;}paper-badge{--paper-badge-background:var(--paper-light-blue-300);}</style>
+
+    <paper-icon-button id="button" icon="menu" alt="menu"></paper-icon-button>
+    <paper-badge for="button" label="♠︎"></paper-badge>
+  </template>
+
+  <script>Polymer({is:"test-button"});</script>
+</dom-module>
+</body></html>

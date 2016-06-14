@@ -1,0 +1,31 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>paper-material basic tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <link href="../paper-material.html" rel="import">
+
+</head>
+<body>
+  <test-fixture id="TrivialCard">
+    <template>
+      <paper-material elevation="1"></paper-material>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="ProgressiveElevations">
+    <template>
+      <paper-material elevation="1"></paper-material>
+      <paper-material elevation="2"></paper-material>
+      <paper-material elevation="3"></paper-material>
+      <paper-material elevation="4"></paper-material>
+      <paper-material elevation="5"></paper-material>
+    </template>
+  </test-fixture>
+
+  <script>suite("<paper-material>",function(){suite("with a non-zero elevation attribute",function(){var e,o;setup(function(){o=fixture("TrivialCard"),e=window.getComputedStyle(o)}),test("has a shadow",function(){expect(e.boxShadow).to.be.ok,expect(e.boxShadow).to.not.be.eql("none")}),test("loses shadow with elevation value 0",function(){o.elevation=0,expect(e.boxShadow).to.be.eql("none")})}),suite("progressively increasing values of elevation",function(){var e;setup(function(){e=fixture("ProgressiveElevations")}),test('yield progressively "deeper" cards',function(){var o,t;expect(e.length).to.be.eql(5),e.forEach(function(e){t=window.getComputedStyle(e),expect(t.boxShadow).to.be.ok,expect(t.boxShadow).to.not.be.eql("none"),expect(t.boxShadow).to.not.be.eql(o&&o.boxShadow),o=t})})})});</script>
+
+
+</body></html>

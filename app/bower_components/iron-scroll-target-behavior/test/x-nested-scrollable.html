@@ -1,0 +1,17 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="x-scrollable.html">
+
+</head><body><dom-module id="x-nested-scrollable">
+
+  <style>:host{display:block;}#xRegion{width:100px;height:100px;overflow:auto;}</style>
+
+  <template>
+    <div id="xRegion">
+      <x-scrollable id="xScrollable" scroll-target="xRegion"></x-scrollable>
+    </div>
+  </template>
+
+</dom-module>
+
+<script>Polymer({is:"x-nested-scrollable"});</script>
+</body></html>

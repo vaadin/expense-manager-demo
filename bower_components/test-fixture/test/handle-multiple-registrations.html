@@ -1,0 +1,13 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <title>Multiple Registrations</title>
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <link rel="import" href="../test-fixture.html">
+  <link rel="import" href="test-fixture-symlink.html">
+</head>
+<body>
+  <script>test("multiple registrations",function(){for(var t=document.querySelectorAll('link[rel="import"]'),e=0;e<t.length;e++)assert.ok(t[e]["import"],"import loaded")});</script>
+
+
+</body></html>

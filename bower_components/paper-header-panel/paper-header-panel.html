@@ -1,0 +1,22 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+
+
+
+</head><body><dom-module id="paper-header-panel">
+  <template>
+    <style>:host{@apply (--layout-vertical);position:relative;height:100%;@apply (--paper-header-panel);}#mainContainer{@apply (--layout-flex);position:relative;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;}#mainPanel{@apply (--layout-vertical);@apply (--layout-flex);position:relative;min-height:0;@apply (--paper-header-panel-body);}:host([mode=scroll]) #mainContainer{@apply (--paper-header-panel-scroll-container);overflow:visible;}:host([mode=scroll]){overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;}:host([mode=cover]) #mainContainer{@apply (--paper-header-panel-cover-container);position:absolute;top:0;right:0;bottom:0;left:0;}:host([mode=cover]) #mainPanel{position:static;}:host([mode=standard]) #mainContainer{@apply (--paper-header-panel-standard-container);}:host([mode=seamed]) #mainContainer{@apply (--paper-header-panel-seamed-container);}:host([mode=waterfall]) #mainContainer{@apply (--paper-header-panel-waterfall-container);}:host([mode=waterfall-tall]) #mainContainer{@apply (--paper-header-panel-waterfall-tall-container);}#dropShadow{transition:opacity 0.5s;height:6px;box-shadow:inset 0px 5px 6px -3px rgba(0, 0, 0, 0.4);@apply (--paper-header-panel-shadow);position:absolute;top:0;left:0;right:0;opacity:0;pointer-events:none;}#dropShadow.has-shadow{opacity:1;}</style>
+
+    <content id="headerContent" select="paper-toolbar, .paper-header"></content>
+
+    <div id="mainPanel">
+      <div id="mainContainer" class$="[[_computeMainContainerClass(mode)]]">
+        <content id="mainContent" select="*"></content>
+      </div>
+      <div id="dropShadow"></div>
+    </div>
+  </template>
+
+  <script>!function(){"use strict";var t=1,e=2,s={outerScroll:{scroll:!0},shadowMode:{standard:e,waterfall:t,"waterfall-tall":t},tallMode:{"waterfall-tall":!0}};Polymer({is:"paper-header-panel",properties:{mode:{type:String,value:"standard",observer:"_modeChanged",reflectToAttribute:!0},shadow:{type:Boolean,value:!1},tallClass:{type:String,value:"tall"},atTop:{type:Boolean,value:!0,notify:!0,readOnly:!0,reflectToAttribute:!0}},observers:["_computeDropShadowHidden(atTop, mode, shadow)"],ready:function(){this.scrollHandler=this._scroll.bind(this)},attached:function(){this._addListener(),this._keepScrollingState()},detached:function(){this._removeListener()},get header(){return Polymer.dom(this.$.headerContent).getDistributedNodes()[0]},get scroller(){return this._getScrollerForMode(this.mode)},get visibleShadow(){return this.$.dropShadow.classList.contains("has-shadow")},_computeDropShadowHidden:function(o,l,a){var r=s.shadowMode[l];this.shadow?this.toggleClass("has-shadow",!0,this.$.dropShadow):r===e?this.toggleClass("has-shadow",!0,this.$.dropShadow):r!==t||o?this.toggleClass("has-shadow",!1,this.$.dropShadow):this.toggleClass("has-shadow",!0,this.$.dropShadow)},_computeMainContainerClass:function(t){var e={};return e.flex="cover"!==t,Object.keys(e).filter(function(t){return e[t]}).join(" ")},_addListener:function(){this.scroller.addEventListener("scroll",this.scrollHandler,!1)},_removeListener:function(){this.scroller.removeEventListener("scroll",this.scrollHandler)},_modeChanged:function(t,e){var o=s,l=this.header,a=200;l&&(o.tallMode[e]&&!o.tallMode[t]?(l.classList.remove(this.tallClass),this.async(function(){l.classList.remove("animate")},a)):this.toggleClass("animate",o.tallMode[t],l)),this._keepScrollingState()},_keepScrollingState:function(){var t=this.scroller,e=this.header;this._setAtTop(0===t.scrollTop),e&&this.tallClass&&s.tallMode[this.mode]&&this.toggleClass(this.tallClass,this.atTop||e.classList.contains(this.tallClass)&&t.scrollHeight<this.offsetHeight,e)},_scroll:function(){this._keepScrollingState(),this.fire("content-scroll",{target:this.scroller},{bubbles:!1})},_getScrollerForMode:function(t){return s.outerScroll[t]?this:this.$.mainContainer}})}();</script>
+</dom-module>
+</body></html>

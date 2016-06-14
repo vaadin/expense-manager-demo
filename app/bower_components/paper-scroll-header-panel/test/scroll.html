@@ -1,0 +1,33 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>paper-scroll-header-panel test</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../paper-scroll-header-panel.html">
+  <link rel="import" href="../demo/sample-content.html">
+  <link rel="import" href="../../paper-toolbar/paper-toolbar.html">
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+</head>
+<body>
+
+  <test-fixture id="trivialProgress">
+    <template>
+      <paper-scroll-header-panel condenses="">
+        <paper-toolbar>
+        </paper-toolbar>
+        <div class="content">
+        <sample-content size="100"></sample-content>
+        </div>
+      </paper-scroll-header-panel>
+    </template>
+  </test-fixture>
+
+  <script>suite("scroll",function(){var o;setup(function(){o=fixture("trivialProgress"),o.measureHeaderHeight()}),teardown(function(){o.scroll(0)}),test("scroll smoothly",function(e){function t(){return o.scroller.scrollTop===l?(assert.notEqual(r,0),void e()):(r++,void setTimeout(t,0))}var l=100,r=0;o.scroll(l,!0),t()}),test("condense smoothly",function(e){flush(function(){function t(){return o.headerState===Polymer.PaperScrollHeaderPanel.HEADER_STATE_CONDENSED?(assert.notEqual(l,0),void e()):(l++,void setTimeout(t,1))}var l=0;o.condense(!0),t()})}),test("condense immediately",function(e){flush(function(){o.condense(),assert.equal(o.headerState,Polymer.PaperScrollHeaderPanel.HEADER_STATE_CONDENSED),e()})}),test("scroll to top smoothly",function(e){o.scroll(100),flush(function(){function t(){return 0===o.scroller.scrollTop?(assert.notEqual(l,0),void e()):(l++,void setTimeout(t,0))}var l=0;o.scrollToTop(!0),t()})}),test("scroll to top immediately",function(e){o.scroll(100),flush(function(){assert.equal(o.scroller.scrollTop,100),o.scrollToTop(),Polymer.Base.async(function(){assert.equal(o.scroller.scrollTop,0),e()},100)})})});</script>
+
+
+
+</body></html>

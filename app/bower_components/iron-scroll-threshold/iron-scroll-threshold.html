@@ -1,0 +1,16 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-scroll-target-behavior/iron-scroll-target-behavior.html">
+
+
+
+</head><body><dom-module id="iron-scroll-threshold">
+  <template>
+    <style>:host{display:block;}</style>
+
+    <content></content>
+
+  </template>
+</dom-module>
+
+<script>Polymer({is:"iron-scroll-threshold",properties:{upperThreshold:{type:Number,value:100},lowerThreshold:{type:Number,value:100},upperTriggered:{type:Boolean,value:!1,notify:!0,readOnly:!0},lowerTriggered:{type:Boolean,value:!1,notify:!0,readOnly:!0},horizontal:{type:Boolean,value:!1}},behaviors:[Polymer.IronScrollTargetBehavior],observers:["_setOverflow(scrollTarget)","_initCheck(horizontal, isAttached)"],get _defaultScrollTarget(){return this},_setOverflow:function(e){this.style.overflow=e===this?"auto":""},_scrollHandler:function(){var e=200;this.isDebouncerActive("_checkTheshold")||this.debounce("_checkTheshold",function(){this.checkScrollThesholds()},e)},_initCheck:function(e,r){r&&this.debounce("_init",function(){this.clearTriggers(),this.checkScrollThesholds()})},checkScrollThesholds:function(){if(!(!this.scrollTarget||this.lowerTriggered&&this.upperTriggered)){var e=this.horizontal?this._scrollLeft:this._scrollTop,r=this.horizontal?this.scrollTarget.scrollWidth-this._scrollTargetWidth-this._scrollLeft:this.scrollTarget.scrollHeight-this._scrollTargetHeight-this._scrollTop;e<=this.upperThreshold&&!this.upperTriggered&&(this._setUpperTriggered(!0),this.fire("upper-threshold")),r<=this.lowerThreshold&&!this.lowerTriggered&&(this._setLowerTriggered(!0),this.fire("lower-threshold"))}},clearTriggers:function(){this._setUpperTriggered(!1),this._setLowerTriggered(!1)}});</script>
+</body></html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html><html><head>
+
+  <title>iron-selector-content</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+  <link rel="import" href="content-element.html">
+
+  <style>.iron-selected{background:#ccc;}</style>
+
+</head>
+<body>
+
+  <test-content-element id="selector1" selected="item0">
+    <div id="item0">item0</div>
+    <div id="item1">item1</div>
+    <div id="item2">item2</div>
+    <div id="item3">item3</div>
+  </test-content-element>
+
+  <test-content-element id="selector2" selected="item0" selectable="item">
+    <item id="item0">item0</item>
+    <hr>
+    <item id="item1">item1</item>
+    <item id="item2">item2</item>
+    <hr>
+    <item id="item3">item3</item>
+  </test-content-element>
+
+  <test-content-element id="selector3" selected="item0">
+    <template is="dom-repeat" id="t">
+      <div id$="[[item.name]]">[[item.name]]</div>
+    </template>
+  </test-content-element>
+
+  <script>var s1=document.querySelector("#selector1"),s2=document.querySelector("#selector2"),s3=document.querySelector("#selector3"),t=document.querySelector("#t");suite("content",function(){test("attribute selected",function(){assert.isTrue(s1.querySelector("#item0").classList.contains("iron-selected"))}),test("set selected",function(){s1.selected="item1",assert.isTrue(s1.querySelector("#item1").classList.contains("iron-selected"))}),test("get items",function(){assert.equal(s1.$.selector.items.length,4)}),test("activate event",function(){var e=s1.querySelector("#item2");e.dispatchEvent(new CustomEvent("tap",{bubbles:!0})),assert.isTrue(e.classList.contains("iron-selected"))}),test("add item dynamically",function(){var e=document.createElement("div");e.id="item4",e.textContent="item4",Polymer.dom(s1).appendChild(e),Polymer.dom.flush(),s1.selected="item4",assert.equal(s1.$.selector.items.length,5),assert.isTrue(s1.querySelector("#item4").classList.contains("iron-selected"))})}),suite("content with selectable",function(){test("attribute selected",function(){assert.isTrue(s2.querySelector("#item0").classList.contains("iron-selected"))}),test("set selected",function(){s2.selected="item1",assert.isTrue(s2.querySelector("#item1").classList.contains("iron-selected"))}),test("get items",function(){assert.equal(s2.$.selector.items.length,4)}),test("activate event",function(){var e=s2.querySelector("#item2");e.dispatchEvent(new CustomEvent("tap",{bubbles:!0})),assert.isTrue(e.classList.contains("iron-selected"))}),test("add item dynamically",function(){var e=document.createElement("item");e.id="item4",e.textContent="item4",Polymer.dom(s2).appendChild(e),Polymer.dom.flush(),s2.selected="item4",assert.equal(s2.$.selector.items.length,5),assert.isTrue(s2.querySelector("#item4").classList.contains("iron-selected"))})}),suite("content with dom-repeat",function(){test("supports repeated children",function(e){t.items=[{name:"item0"},{name:"item1"},{name:"item2"},{name:"item3"}],setTimeout(function(){assert.equal(s3.selected,"item0"),assert.isTrue(s3.querySelector("#item0").classList.contains("iron-selected")),s3.selected="item2",assert.isTrue(s3.querySelector("#item2").classList.contains("iron-selected")),e()})})});</script>
+
+
+
+</body></html>

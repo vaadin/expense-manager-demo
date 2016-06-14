@@ -1,0 +1,49 @@
+<!DOCTYPE html><html><head>
+
+  <title>iron-selector-basic</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+  <link rel="import" href="../iron-selector.html">
+
+  <style>.iron-selected{background:#ccc;}.my-selected{background:red;}</style>
+
+</head>
+<body>
+
+  <test-fixture id="defaults">
+    <template>
+      <iron-selector>
+        <div>Item 0</div>
+        <div>Item 1</div>
+        <div>Item 2</div>
+        <div>Item 3</div>
+        <div>Item 4</div>
+      </iron-selector>
+    </template>
+  </test-fixture>
+
+  <br><br>
+
+  <test-fixture id="basic">
+    <template>
+      <iron-selector selected="item2" attr-for-selected="id">
+        <div id="item0">Item 0</div>
+        <div id="item1">Item 1</div>
+        <div id="item2">Item 2</div>
+        <div id="item3">Item 3</div>
+        <div id="item4">Item 4</div>
+      </iron-selector>
+    </template>
+  </test-fixture>
+
+  <script>suite("defaults",function(){var e;setup(function(){e=fixture("defaults")}),test("to nothing selected",function(){assert.equal(e.selected,null)}),test("to iron-selected as selectedClass",function(){assert.equal(e.selectedClass,"iron-selected")}),test("to false as multi",function(){assert.isFalse(e.multi)}),test("to tap as activateEvent",function(){assert.equal(e.activateEvent,"tap")}),test("to nothing as attrForSelected",function(){assert.equal(e.attrForSelected,null)}),test("as many items as children",function(){assert.equal(e.items.length,e.querySelectorAll("div").length)})}),suite("basic",function(){var e;setup(function(){e=fixture("basic")}),test("honors the attrForSelected attribute",function(t){Polymer.Base.async(function(){assert.equal(e.attrForSelected,"id"),assert.equal(e.selected,"item2"),assert.equal(e.selectedItem,document.querySelector("#item2")),t()})}),test("allows assignment to selected",function(){e.selected="item4",assert.isTrue(e.children[4].classList.contains("iron-selected")),assert.equal(e.selectedItem,e.children[4])}),test("fire iron-select when selected is set",function(){var t=0;e.addEventListener("iron-select",function(e){t++}),e.selected="item4",assert.equal(t,1)}),test("set selected to old value",function(){var t=0;e.addEventListener("iron-select",function(e){t++}),e.selected="item2",assert.equal(t,0)}),test("force synchronous item update",function(){expect(e.items.length).to.be.equal(5),Polymer.dom(e).appendChild(document.createElement("div")),expect(e.items.length).to.be.equal(5),e.forceSynchronousItemUpdate(),expect(e.items.length).to.be.equal(6)}),suite("`select()` and `selectIndex()`",function(){test("`select()` selects an item with the given value",function(){e.select("item1"),assert.equal(e.selected,"item1"),e.select("item3"),assert.equal(e.selected,"item3"),e.select("item2"),assert.equal(e.selected,"item2")}),test("`selectIndex()` selects an item with the given index",function(){assert.equal(e.selectedItem,void 0),e.selectIndex(1),assert.equal(e.selected,"item1"),assert.equal(e.selectedItem,e.items[1]),e.selectIndex(3),assert.equal(e.selected,"item3"),assert.equal(e.selectedItem,e.items[3]),e.selectIndex(4),assert.equal(e.selected,"item4"),assert.equal(e.selectedItem,e.items[4])})}),suite("items changing",function(){var t;setup(function(){t=fixture("defaults")}),test("cause iron-items-changed to fire",function(t){var s=document.createElement("div"),n=0;s.id="item999",e.addEventListener("iron-items-changed",function(e){n++;var t=e.detail;assert.notEqual(t,void 0),assert.notEqual(t.addedNodes,void 0),assert.notEqual(t.removedNodes,void 0)}),Polymer.dom(e).appendChild(s),Polymer.Base.async(function(){Polymer.dom(e).removeChild(s),Polymer.Base.async(function(){expect(n).to.be.equal(2),t()},1)},1)}),test("updates selected item",function(e){t.addEventListener("iron-items-changed",function s(){t.removeEventListener("iron-items-changed",s);var n=Polymer.dom(t).firstElementChild;expect(n).to.be.equal(t.selectedItem),expect(n.classList.contains("iron-selected")).to.be.eql(!0),Polymer.dom(t).removeChild(t.selectedItem),t.addEventListener("iron-items-changed",function(){n=Polymer.dom(t).firstElementChild,expect(n).to.be.equal(t.selectedItem),expect(n.classList.contains("iron-selected")).to.be.eql(!0),e()})}),t.selected=0})}),suite("dynamic selector",function(){test("selects dynamically added child automatically",function(e){var t=document.createElement("iron-selector"),s=document.createElement("div");t.selected="0",s.textContent="Item 0",Polymer.dom(t).appendChild(s),document.body.appendChild(t),Polymer.Base.async(function(){assert.equal(s.className,"iron-selected"),document.body.removeChild(t),e()},1)})})});</script>
+
+
+
+</body></html>

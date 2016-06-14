@@ -1,0 +1,44 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>paper-dropdown-menu-light basic tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../../paper-listbox/paper-listbox.html">
+  <link rel="import" href="../../paper-item/paper-item.html">
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+  <link rel="import" href="../paper-dropdown-menu-light.html">
+</head>
+<body>
+
+  <test-fixture id="TrivialDropdownMenu">
+    <template>
+      <paper-dropdown-menu-light no-animations="">
+        <paper-listbox class="dropdown-content">
+          <paper-item>Foo</paper-item>
+          <paper-item>Bar</paper-item>
+        </paper-listbox>
+      </paper-dropdown-menu-light>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="PreselectedDropdownMenu">
+    <template>
+      <paper-dropdown-menu-light no-animations="">
+        <paper-listbox class="dropdown-content" selected="1">
+          <paper-item>Foo</paper-item>
+          <paper-item>Bar</paper-item>
+        </paper-listbox>
+      </paper-dropdown-menu-light>
+    </template>
+  </test-fixture>
+
+  <script>function runAfterOpen(e,t){e.$.menuButton.$.dropdown.addEventListener("iron-overlay-opened",function(){Polymer.Base.async(t,1)}),MockInteractions.tap(e)}suite("<paper-dropdown-menu-light>",function(){var e;setup(function(){e=fixture("TrivialDropdownMenu"),content=Polymer.dom(e).querySelector(".dropdown-content")}),test("opens when tapped",function(t){var n=content.getBoundingClientRect();expect(n.width).to.be.equal(0),expect(n.height).to.be.equal(0),runAfterOpen(e,function(){n=content.getBoundingClientRect(),expect(e.opened).to.be.equal(!0),expect(n.width).to.be.greaterThan(0),expect(n.height).to.be.greaterThan(0),t()}),expect(e.opened).to.be.equal(!0)}),test("closes when an item is activated",function(t){runAfterOpen(e,function(){var n=Polymer.dom(content).querySelector("paper-item");MockInteractions.tap(n),Polymer.Base.async(function(){expect(e.opened).to.be.equal(!1),t()})})}),test("sets selected item to the activated item",function(t){runAfterOpen(e,function(){var n=Polymer.dom(content).querySelector("paper-item");MockInteractions.tap(n),Polymer.Base.async(function(){expect(e.selectedItem).to.be.equal(n),t()})})}),suite("when a value is preselected",function(){setup(function(){e=fixture("PreselectedDropdownMenu")}),test("the input area shows the correct selection",function(){Polymer.dom.flush();var t=Polymer.dom(e).querySelectorAll("paper-item")[1];expect(e.selectedItem).to.be.equal(t)})}),suite("deselecting",function(){var t;setup(function(){e=fixture("PreselectedDropdownMenu"),t=Polymer.dom(e).querySelector(".dropdown-content")}),test("an `iron-deselect` event clears the current selection",function(){Polymer.dom.flush(),t.selected=null,expect(e.selectedItem).to.be.equal(null)})}),suite("validation",function(){test("a non required dropdown is valid regardless of its selection",function(){var e=fixture("TrivialDropdownMenu");menu=Polymer.dom(e).querySelector(".dropdown-content"),expect(e.validate()).to.be["true"],expect(e.invalid).to.be["false"],expect(e.value).to.not.be.ok,menu.selected=1,expect(e.validate()).to.be["true"],expect(e.invalid).to.be["false"],expect(e.value).to.be.equal("Bar")}),test("a required dropdown is invalid without a selection",function(){var e=fixture("TrivialDropdownMenu");e.required=!0,expect(e.validate()).to.be["false"],expect(e.invalid).to.be["true"],expect(e.value).to.not.be.ok}),test("a required dropdown is valid with a selection",function(){var e=fixture("PreselectedDropdownMenu");Polymer.dom.flush(),e.required=!0,expect(e.validate()).to.be["true"],expect(e.invalid).to.be["false"],expect(e.value).to.be.equal("Bar")})})});</script>
+
+
+
+</body></html>

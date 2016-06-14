@@ -1,0 +1,22 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+<link rel="import" href="../iron-behaviors/iron-control-state.html">
+<link rel="import" href="../iron-overlay-behavior/iron-overlay-behavior.html">
+<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../neon-animation/animations/opaque-animation.html">
+<link rel="import" href="iron-dropdown-scroll-manager.html">
+
+
+
+</head><body><dom-module id="iron-dropdown">
+  <style>:host{position:fixed;}#contentWrapper ::content > *{overflow:auto;}#contentWrapper.animating ::content > *{overflow:hidden;}</style>
+  <template>
+    <div id="contentWrapper">
+      <content id="content" select=".dropdown-content"></content>
+    </div>
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"iron-dropdown",behaviors:[Polymer.IronControlState,Polymer.IronA11yKeysBehavior,Polymer.IronOverlayBehavior,Polymer.NeonAnimationRunnerBehavior],properties:{horizontalAlign:{type:String,value:"left",reflectToAttribute:!0},verticalAlign:{type:String,value:"top",reflectToAttribute:!0},openAnimationConfig:{type:Object},closeAnimationConfig:{type:Object},focusTarget:{type:Object},noAnimations:{type:Boolean,value:!1},allowOutsideScroll:{type:Boolean,value:!1}},listeners:{"neon-animation-finish":"_onNeonAnimationFinish"},observers:["_updateOverlayPosition(positionTarget, verticalAlign, horizontalAlign, verticalOffset, horizontalOffset)"],get containedElement(){return Polymer.dom(this.$.content).getDistributedNodes()[0]},get _focusTarget(){return this.focusTarget||this.containedElement},detached:function(){this.cancelAnimation(),Polymer.IronDropdownScrollManager.removeScrollLock(this)},_openedChanged:function(){this.opened&&this.disabled?this.cancel():(this.cancelAnimation(),this.sizingTarget=this.containedElement||this.sizingTarget,this._updateAnimationConfig(),this.opened&&!this.allowOutsideScroll?Polymer.IronDropdownScrollManager.pushScrollLock(this):Polymer.IronDropdownScrollManager.removeScrollLock(this),Polymer.IronOverlayBehaviorImpl._openedChanged.apply(this,arguments))},_renderOpened:function(){!this.noAnimations&&this.animationConfig.open?(this.$.contentWrapper.classList.add("animating"),this.playAnimation("open")):Polymer.IronOverlayBehaviorImpl._renderOpened.apply(this,arguments)},_renderClosed:function(){!this.noAnimations&&this.animationConfig.close?(this.$.contentWrapper.classList.add("animating"),this.playAnimation("close")):Polymer.IronOverlayBehaviorImpl._renderClosed.apply(this,arguments)},_onNeonAnimationFinish:function(){this.$.contentWrapper.classList.remove("animating"),this.opened?this._finishRenderOpened():this._finishRenderClosed()},_updateAnimationConfig:function(){for(var n=(this.openAnimationConfig||[]).concat(this.closeAnimationConfig||[]),e=0;e<n.length;e++)n[e].node=this.containedElement;this.animationConfig={open:this.openAnimationConfig,close:this.closeAnimationConfig}},_updateOverlayPosition:function(){this.isAttached&&this.notifyResize()},_applyFocus:function(){var n=this.focusTarget||this.containedElement;n&&this.opened&&!this.noAutoFocus?n.focus():Polymer.IronOverlayBehaviorImpl._applyFocus.apply(this,arguments)}})}();</script>
+</dom-module>
+</body></html>

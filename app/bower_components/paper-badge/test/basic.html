@@ -1,0 +1,61 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>paper-badge tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <link rel="import" href="../paper-badge.html">
+  <link rel="import" href="test-button.html">
+
+<style>body{margin:0;padding:0;}#target{width:100px;height:20px;background-color:red;}</style></head>
+
+<body>
+
+  <test-fixture id="basic">
+    <template>
+      <div style="position:relative">
+        <div id="target"></div>
+        <paper-badge for="target" label="1"></paper-badge>
+      </div>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="dynamic">
+    <template>
+      <div>
+        <div id="target"></div>
+        <paper-badge label="1"></paper-badge>
+      </div>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="nested">
+    <template>
+      <div>
+        <div id="target">
+          <paper-badge label="1"></paper-badge>
+        </div>
+      </div>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="custom">
+    <template>
+      <test-button></test-button>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="icon-badge">
+    <template>
+      <div style="position:relative">
+        <div id="target"></div>
+        <paper-badge icon="favorite" label="favorite icon"></paper-badge>
+      </div>
+    </template>
+  </test-fixture>
+
+  <script>suite("basic",function(){test("badge is positioned correctly",function(e){var t=fixture("basic"),o=t.querySelector("paper-badge"),a=Polymer.dom(o.root).querySelector(".badge");expect(o.target.getAttribute("id")).to.be.equal("target"),o.updatePosition(),Polymer.Base.async(function(){assert.equal(a.textContent.trim(),"1");var i=t.querySelector("#target").getBoundingClientRect();expect(i.width).to.be.equal(100),expect(i.height).to.be.equal(20);var c=o.getBoundingClientRect();expect(c.width).to.be.equal(20),expect(c.height).to.be.equal(20),expect(c.left).to.be.equal(90),expect(c.top).to.be.equal(-10),expect(c.left).to.be.equal(i.width-10),expect(c.top).to.be.equal(i.top-10),e()})}),test("badge is positioned correctly after being dynamically set",function(e){var t=fixture("dynamic"),o=t.querySelector("paper-badge");o.updatePosition(),expect(o.target.getAttribute("id")).to.not.be.equal("target"),Polymer.Base.async(function(){var a=o.getBoundingClientRect();expect(a.left).to.not.be.equal(89),o["for"]="target",expect(o.target.getAttribute("id")).to.be.equal("target"),o.updatePosition(),Polymer.Base.async(function(){var a=t.querySelector("#target").getBoundingClientRect();expect(a.width).to.be.equal(100),expect(a.height).to.be.equal(20);var i=o.getBoundingClientRect();expect(i.width).to.be.equal(20),expect(i.height).to.be.equal(20),expect(i.left).to.be.equal(90),expect(i.top).to.be.equal(-10),expect(i.left).to.be.equal(a.width-10),expect(i.top).to.be.equal(a.top-10),e()})})}),test("badge is positioned correctly when nested in a target element",function(e){var t=fixture("nested"),o=t.querySelector("paper-badge");expect(o.target.getAttribute("id")).to.be.equal("target"),o.updatePosition(),Polymer.Base.async(function(){var a=t.querySelector("#target").getBoundingClientRect();expect(a.width).to.be.equal(100),expect(a.height).to.be.equal(20);var i=o.getBoundingClientRect();expect(i.width).to.be.equal(20),expect(i.height).to.be.equal(20),expect(i.left).to.be.equal(90),expect(i.top).to.be.equal(-10),expect(i.left).to.be.equal(a.width-10),expect(i.top).to.be.equal(a.top-10),e()})}),test("badge displays icons correctly",function(e){var t=fixture("icon-badge"),o=t.querySelector("paper-badge");Polymer.Base.async(function(){var t=Polymer.dom(o.root).querySelector("iron-icon");expect(t).not.to.be["null"],expect(t.icon).to.be.equal(o.icon),expect(o.getAttribute("aria-label")).to.be.equal(o.label),e()})}),suite("badge is inside a custom element",function(){test("badge is positioned correctly",function(e){var t=fixture("custom"),o=t.$.badge,a=Polymer.dom(o.root).querySelector(".badge");o.updatePosition(),Polymer.Base.async(function(){assert.equal(a.textContent.trim(),"1");var i=t.$.button.getBoundingClientRect();expect(i.width).to.be.equal(100),expect(i.height).to.be.equal(20);var c=o.getBoundingClientRect();expect(c.width).to.be.equal(20),expect(c.height).to.be.equal(20),expect(c.left).to.be.equal(90),expect(c.top).to.be.equal(-10),expect(c.left).to.be.equal(i.width-10),expect(c.top).to.be.equal(i.top-10),e()})})})});</script>
+
+
+</body></html>

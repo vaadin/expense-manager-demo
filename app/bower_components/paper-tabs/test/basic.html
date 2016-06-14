@@ -1,0 +1,39 @@
+<!DOCTYPE html><html><head>
+
+    <title>paper-tabs-basic</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../paper-tabs.html">
+    <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html">
+    
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <paper-tabs>
+          <paper-tab>ITEM ONE</paper-tab>
+          <paper-tab>ITEM TWO</paper-tab>
+          <paper-tab>ITEM THREE</paper-tab>
+        </paper-tabs>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="HiddenTabs">
+      <template>
+        <paper-tabs hidden="">
+          <paper-tab>ITEM ONE</paper-tab>
+          <paper-tab>ITEM TWO</paper-tab>
+        </paper-tabs>
+      </template>
+    </test-fixture>
+
+    <script>function ensureDocumentHasFocus(){window.top&&window.top.focus()}function checkSelectionBar(e,t){var s=t.getBoundingClientRect(),a=Polymer.dom(e.root).querySelector("#selectionBar").getBoundingClientRect();assert.equal(Math.round(s.left),Math.round(a.left))}suite("defaults",function(){var e;setup(function(){e=fixture("basic")}),test("to nothing selected",function(){assert.equal(e.selected,void 0)}),test("no tabs have iron-selected class",function(){Array.prototype.forEach.call(e.querySelectorAll("paper-tab"),function(e){assert.isFalse(e.classList.contains("iron-selected"))})}),test("to false as noink",function(){assert.equal(e.noink,!1)}),test("to false as noBar",function(){assert.equal(e.noBar,!1)}),test("to false as noSlide",function(){assert.equal(e.noSlide,!1)}),test("to false as scrollable",function(){assert.equal(e.scrollable,!1)}),test("to false as disableDrag",function(){assert.equal(e.disableDrag,!1)}),test("to false as hideScrollButtons",function(){assert.equal(e.hideScrollButtons,!1)}),test("to false as alignBottom",function(){assert.equal(e.alignBottom,!1)})}),suite("hidden tabs",function(){var e;setup(function(){e=fixture("HiddenTabs")}),test("choose the correct bar position once made visible",function(){e.removeAttribute("hidden"),e.selected=0,expect(e._width).to.be.greaterThan(0),expect(e._left).to.be.equal(0)})}),suite("set the selected attribute",function(){var e,t=0;setup(function(){e=fixture("basic"),e.selected=t}),test("selected value",function(){assert.equal(e.selected,t)}),test("selected tab has iron-selected class",function(){var s=e.querySelectorAll("paper-tab")[t];assert.isTrue(s.classList.contains("iron-selected"))}),test("selected tab has selection bar position at the bottom of the tab",function(s){setTimeout(function(){checkSelectionBar(e,e.querySelectorAll("paper-tab")[t]),s()},1e3)})}),suite("select tab via click",function(){var e,t,s=1;setup(function(){e=fixture("basic"),t=e.querySelectorAll("paper-tab")[s],t.dispatchEvent(new CustomEvent("click",{bubbles:!0}))}),test("selected value",function(){assert.equal(e.selected,s)}),test("selected tab has iron-selected class",function(){var t=e.querySelectorAll("paper-tab")[s];assert.isTrue(t.classList.contains("iron-selected"))}),test("selected tab has selection bar position at the bottom of the tab",function(t){setTimeout(function(){checkSelectionBar(e,e.querySelectorAll("paper-tab")[s]),t()},1e3)}),test("pressing enter on tab causes a click",function(e){var s=0;t.addEventListener("click",function a(){s++,t.removeEventListener("click",a),expect(s).to.be.equal(1),e()}),MockInteractions.pressEnter(t)})}),suite("noink attribute",function(){var e;setup(function(){e=fixture("basic")}),test("noink attribute propagates to all descendant tabs",function(){e.noink=!0,Array.prototype.slice.apply(e.querySelectorAll("paper-tab")).forEach(function(e){assert.isTrue(e.noink)}),e.noink=!1,Array.prototype.slice.apply(e.querySelectorAll("paper-tab")).forEach(function(e){assert.isFalse(e.noink)})})}),suite("accessibility",function(){var e,t=37,s=39;setup(function(){e=fixture("basic"),Polymer.dom.flush()}),test("paper-tabs has role tablist",function(){assert.equal(e.getAttribute("role"),"tablist")}),test("paper-tab has role tab",function(){e.items.forEach(function(e){assert.equal(e.getAttribute("role"),"tab")})}),test("without autoselect, tabs are not automatically selected",function(a){ensureDocumentHasFocus(),Polymer.Base.async(function(){e.select(0),MockInteractions.pressAndReleaseKeyOn(e.selectedItem,s),Polymer.Base.async(function(){assert.equal(e.selected,0),MockInteractions.pressAndReleaseKeyOn(e.selectedItem,t),Polymer.Base.async(function(){assert.equal(e.selected,0),MockInteractions.pressAndReleaseKeyOn(e.selectedItem,t),Polymer.Base.async(function(){assert.equal(e.selected,0),a()},100)},100)},100)})}),test("with autoselect, tabs are selected when moved to using arrow keys",function(a){ensureDocumentHasFocus(),Polymer.Base.async(function(){e.autoselect=!0,e.select(0),MockInteractions.pressAndReleaseKeyOn(e.selectedItem,s),Polymer.Base.async(function(){assert.equal(e.selected,1),MockInteractions.pressAndReleaseKeyOn(e.selectedItem,s),Polymer.Base.async(function(){assert.equal(e.selected,2),MockInteractions.pressAndReleaseKeyOn(e.selectedItem,t),Polymer.Base.async(function(){assert.equal(e.selected,1),a()},100)},100)},100)})}),test("with autoselect, tabs are selected when moved to using arrow keys (RTL)",function(a){ensureDocumentHasFocus(),Polymer.Base.async(function(){e.setAttribute("dir","rtl"),e.autoselect=!0,e.select(0),MockInteractions.pressAndReleaseKeyOn(e.selectedItem,t),Polymer.Base.async(function(){assert.equal(e.selected,1),MockInteractions.pressAndReleaseKeyOn(e.selectedItem,t),Polymer.Base.async(function(){assert.equal(e.selected,2),MockInteractions.pressAndReleaseKeyOn(e.selectedItem,s),Polymer.Base.async(function(){assert.equal(e.selected,1),a()},100)},100)},100)})}),test("with autoselect-delay zero, tabs are selected with microtask timing after the keyup",function(a){ensureDocumentHasFocus(),Polymer.Base.async(function(){e.autoselect=!0,e.autoselectDelay=0,e.select(0),MockInteractions.keyDownOn(e.selectedItem,s),Polymer.Base.async(function(){assert.equal(e.selected,0),assert.equal(e.items.indexOf(e.focusedItem),1),MockInteractions.keyDownOn(e.selectedItem,s),Polymer.Base.async(function(){assert.equal(e.selected,0),assert.equal(e.items.indexOf(e.focusedItem),2),MockInteractions.keyUpOn(e.selectedItem,s),assert.equal(e.selected,0),Polymer.Base.async(function(){assert.equal(e.selected,2),assert.equal(e.items.indexOf(e.focusedItem),2),MockInteractions.keyDownOn(e.selectedItem,t),Polymer.Base.async(function(){assert.equal(e.selected,2),assert.equal(e.items.indexOf(e.focusedItem),1),MockInteractions.keyUpOn(e.selectedItem,t),assert.equal(e.selected,2),Polymer.Base.async(function(){assert.equal(e.selected,1),a()})})})})})})}),test("with autoselect-delay positive, tabs are selected with microtask timing after the keyup and delay",function(a){ensureDocumentHasFocus(),Polymer.Base.async(function(){var n=100;e.autoselect=!0,e.autoselectDelay=n,e.select(0),MockInteractions.keyDownOn(e.selectedItem,s),Polymer.Base.async(function(){assert.equal(e.selected,0),assert.equal(e.items.indexOf(e.focusedItem),1),MockInteractions.keyDownOn(e.selectedItem,s),Polymer.Base.async(function(){assert.equal(e.selected,0),assert.equal(e.items.indexOf(e.focusedItem),2),MockInteractions.keyUpOn(e.selectedItem,s),assert.equal(e.selected,0),Polymer.Base.async(function(){assert.equal(e.selected,2),assert.equal(e.items.indexOf(e.focusedItem),2),MockInteractions.keyDownOn(e.selectedItem,t),Polymer.Base.async(function(){assert.equal(e.selected,2),assert.equal(e.items.indexOf(e.focusedItem),1),MockInteractions.keyUpOn(e.selectedItem,t),assert.equal(e.selected,2),Polymer.Base.async(function(){assert.equal(e.selected,1),a()},n+100)})},n+100)})})})})});</script>
+
+  
+
+</body></html>

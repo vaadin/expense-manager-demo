@@ -1,0 +1,11 @@
+<!DOCTYPE html><html><head>
+    <meta charset="utf-8">
+    <title>Base source for injecting into an iframe for tests</title>
+    <script src="../../webcomponentsjs/webcomponents.js"></script>
+    <link rel="import" href="./initialization-cases.html">
+  </head>
+  <body>
+    <script>function messageReceived(e){if(e.data||console.error("got invalid msg?"),"urlQuery"===e.data.type)e.source.postMessage({type:"urlQueryResponse",href:window.location.href,pathname:window.location.pathname,hash:window.location.hash,search:window.location.search},"*");else if("appendBody"===e.data.type){if(appendBodyReceived)throw new Error("should only receive at most one appendBody call");var a=document.createElement(e.data.tagName);document.body.appendChild(a),appendBodyReceived=!0}}window.addEventListener("message",messageReceived,!1),window.addEventListener("WebComponentsReady",function(){window.parent.postMessage({type:"ready"},"*")});var appendBodyReceived=!1;window.addEventListener("error",function(e){window.parent.postMessage({type:"error",error:e.message},"*")});</script>
+  
+
+</body></html>

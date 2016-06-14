@@ -1,0 +1,29 @@
+<!DOCTYPE html><html><head>
+    <title>iron-collapse-horizontal</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+    <link rel="import" href="../../test-fixture/test-fixture.html">
+    <link rel="import" href="../iron-collapse.html">
+  </head>
+  <body>
+
+    <test-fixture id="test">
+      <template>
+        <iron-collapse id="collapse" opened="" horizontal="">
+          <div style="width:100px">
+            Lorem ipsum
+          </div>
+        </iron-collapse>
+      </template>
+    </test-fixture>
+
+    <script>suite("horizontal",function(){var t,e;setup(function(){t=fixture("test"),e=getComputedStyle(t).width}),test("opened attribute",function(){assert.equal(t.opened,!0)}),test("horizontal attribute",function(){assert.equal(t.horizontal,!0)}),test("default opened width",function(){assert.equal(t.style.width,"auto")}),test("set opened to false, then to true",function(n){t.addEventListener("transitionend",function(){t.opened?(assert.equal(t.style.width,"auto"),n()):(assert.equal(t.style.width,"0px"),t.opened=!0,assert.equal(t.style.width,e))}),t.opened=!1,assert.equal(t.style.width,"0px")})});</script>
+
+  
+
+</body></html>

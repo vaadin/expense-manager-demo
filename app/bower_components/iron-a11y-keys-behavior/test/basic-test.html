@@ -1,0 +1,53 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+  <title>iron-a11y-keys</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../../polymer/polymer.html">
+  <link rel="import" href="../iron-a11y-keys-behavior.html">
+</head>
+<body>
+  <test-fixture id="BasicKeys">
+    <template>
+      <x-a11y-basic-keys></x-a11y-basic-keys>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="NonPropagatingKeys">
+    <template>
+      <x-a11y-basic-keys stop-keyboard-event-propagation=""></x-a11y-basic-keys>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="ComboKeys">
+    <template>
+      <x-a11y-combo-keys></x-a11y-combo-keys>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="AlternativeEventKeys">
+    <template>
+      <x-a11y-alternate-event-keys></x-a11y-alternate-event-keys>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="BehaviorKeys">
+    <template>
+      <x-a11y-behavior-keys></x-a11y-behavior-keys>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="PreventKeys">
+    <template>
+      <x-a11y-prevent-keys></x-a11y-prevent-keys>
+    </template>
+  </test-fixture>
+
+  <script>suite("Polymer.IronA11yKeysBehavior",function(){var e;suiteSetup(function(){var e=[Polymer.IronA11yKeysBehavior,{properties:{keyCount:{type:Number,value:0}},_keyHandler:function(e){this.keyCount++,this.lastEvent=e},_keyHandler2:function(e){this.keyCount++,this.lastEvent=e},_preventDefaultHandler:function(e){e.preventDefault(),this.keyCount++,this.lastEvent=e}}];Polymer({is:"x-a11y-basic-keys",behaviors:[e],keyBindings:{space:"_keyHandler","@":"_keyHandler",esc:"_keyHandler"}}),Polymer({is:"x-a11y-combo-keys",behaviors:[e],keyBindings:{enter:"_keyHandler2","ctrl+shift+a shift+enter":"_keyHandler"}}),Polymer({is:"x-a11y-alternate-event-keys",behaviors:[e],keyBindings:{"space:keyup":"_keyHandler"}});var t={keyBindings:{enter:"_keyHandler"}};Polymer({is:"x-a11y-behavior-keys",behaviors:[e,t],keyBindings:{enter:"_keyHandler"}}),Polymer({is:"x-a11y-prevent-keys",behaviors:[e,t],keyBindings:{"space a":"_keyHandler","enter shift+a":"_preventDefaultHandler"}})}),suite("basic keys",function(){setup(function(){e=fixture("BasicKeys")}),test("trigger the handler when the specified key is pressed",function(){MockInteractions.pressSpace(e),expect(e.keyCount).to.be.equal(1),MockInteractions.pressAndReleaseKeyOn(e,27,[],"Esc"),expect(e.keyCount).to.be.equal(2),MockInteractions.pressAndReleaseKeyOn(e,27,[],"Escape"),expect(e.keyCount).to.be.equal(3),MockInteractions.pressAndReleaseKeyOn(e,27,[]),expect(e.keyCount).to.be.equal(4)}),test("trigger the handler when the specified key is pressed together with a modifier",function(){var t=new CustomEvent("keydown");t.ctrlKey=!0,t.keyCode=t.code=32,e.dispatchEvent(t),expect(e.keyCount).to.be.equal(1)}),test("handles special character @",function(){var t=new CustomEvent("keydown");t.key="@",e.dispatchEvent(t),expect(e.keyCount).to.be.equal(1)}),test("do not trigger the handler for non-specified keys",function(){MockInteractions.pressEnter(e),expect(e.keyCount).to.be.equal(0)}),test("can have bindings added imperatively",function(){e.addOwnKeyBinding("enter","_keyHandler"),MockInteractions.pressEnter(e),expect(e.keyCount).to.be.equal(1),MockInteractions.pressSpace(e),expect(e.keyCount).to.be.equal(2)}),test("can remove imperatively added bindings",function(){e.addOwnKeyBinding("enter","_keyHandler"),e.removeOwnKeyBindings(),MockInteractions.pressEnter(e),expect(e.keyCount).to.be.equal(0),MockInteractions.pressSpace(e),expect(e.keyCount).to.be.equal(1)}),test("allows propagation beyond the key combo handler",function(){var t=sinon.spy();document.addEventListener("keydown",t),MockInteractions.pressEnter(e),expect(t.callCount).to.be.equal(1)}),suite("edge cases",function(){test("knows that `spacebar` is the same as `space`",function(){var t=new CustomEvent("keydown");t.key="spacebar",expect(e.keyboardEventMatchesKeys(t,"space")).to.be.equal(!0)}),test("handles `+`",function(){var t=new CustomEvent("keydown");t.key="+",expect(e.keyboardEventMatchesKeys(t,"+")).to.be.equal(!0)}),test("handles `:`",function(){var t=new CustomEvent("keydown");t.key=":",expect(e.keyboardEventMatchesKeys(t,":")).to.be.equal(!0)}),test("handles ` ` (space)",function(){var t=new CustomEvent("keydown");t.key=" ",expect(e.keyboardEventMatchesKeys(t,"space")).to.be.equal(!0)})}),suite("matching keyboard events to keys",function(){test("can be done imperatively",function(){var t=new CustomEvent("keydown");t.keyCode=65,expect(e.keyboardEventMatchesKeys(t,"a")).to.be.equal(!0)}),test("can be done with a provided keyboardEvent",function(){var t;MockInteractions.pressSpace(e),t=e.lastEvent,expect(t.detail.keyboardEvent).to.be.okay,expect(e.keyboardEventMatchesKeys(t,"space")).to.be.equal(!0)}),test("can handle variations in arrow key names",function(){var t=new CustomEvent("keydown");t.key="up",expect(e.keyboardEventMatchesKeys(t,"up")).to.be.equal(!0),t.key="ArrowUp",expect(e.keyboardEventMatchesKeys(t,"up")).to.be.equal(!0)})}),suite("matching keyboard events to top row and number pad digit keys",function(){test("top row can be done imperatively",function(){var t=new CustomEvent("keydown");t.keyCode=49,expect(e.keyboardEventMatchesKeys(t,"1")).to.be.equal(!0)}),test("number pad digits can be done imperatively",function(){var t=new CustomEvent("keydown");t.keyCode=97,expect(e.keyboardEventMatchesKeys(t,"1")).to.be.equal(!0)})})}),suite("combo keys",function(){setup(function(){e=fixture("ComboKeys")}),test("trigger the handler when the combo is pressed",function(){var t=new CustomEvent("keydown");t.ctrlKey=!0,t.shiftKey=!0,t.keyCode=t.code=65,e.dispatchEvent(t),expect(e.keyCount).to.be.equal(1)}),test("check if KeyBoardEvent.key is alpha-numberic",function(){var t=new CustomEvent("keydown");t.ctrlKey=!0,t.shiftKey=!0,t.key="å",t.keyCode=t.code=65,e.dispatchEvent(t),expect(e.keyCount).to.be.equal(1)}),test("trigger also bindings without modifiers",function(){var t=new CustomEvent("keydown");t.shiftKey=!0,t.keyCode=t.code=13,e.dispatchEvent(t),expect(e.keyCount).to.be.equal(2)}),test("give precendence to combos with modifiers",function(){var t=sinon.spy(e,"_keyHandler2"),n=sinon.spy(e,"_keyHandler"),o=new CustomEvent("keydown");o.shiftKey=!0,o.keyCode=o.code=13,e.dispatchEvent(o),expect(t.called).to.be["true"],expect(n.called).to.be["true"],expect(t.calledAfter(n)).to.be["true"]})}),suite("alternative event keys",function(){setup(function(){e=fixture("AlternativeEventKeys")}),test("trigger on the specified alternative keyboard event",function(){MockInteractions.keyDownOn(e,32),expect(e.keyCount).to.be.equal(0),MockInteractions.keyUpOn(e,32),expect(e.keyCount).to.be.equal(1)})}),suite("behavior keys",function(){setup(function(){e=fixture("BehaviorKeys")}),test("bindings in other behaviors are transitive",function(){MockInteractions.pressEnter(e),expect(e.keyCount).to.be.equal(2)})}),suite("stopping propagation automatically",function(){setup(function(){e=fixture("NonPropagatingKeys")}),test("does not propagate key events beyond the combo handler",function(){var t=sinon.spy();document.addEventListener("keydown",t),MockInteractions.pressEnter(e),expect(t.callCount).to.be.equal(0)})}),suite("prevent default behavior of event",function(){setup(function(){e=fixture("PreventKeys")}),test("`defaultPrevented` is correctly set",function(){MockInteractions.pressEnter(e),expect(e.lastEvent.defaultPrevented).to.be.equal(!0)}),test("only 1 handler is invoked",function(){var t=sinon.spy(e,"_keyHandler"),n=sinon.spy(e,"_preventDefaultHandler"),o=new CustomEvent("keydown",{cancelable:!0});o.shiftKey=!0,o.keyCode=o.code=65,e.dispatchEvent(o),expect(e.keyCount).to.be.equal(1),expect(n.called).to.be["true"],expect(t.called).to.be["false"]})})});</script>
+
+
+</body></html>

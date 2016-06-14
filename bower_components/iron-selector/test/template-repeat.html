@@ -1,0 +1,29 @@
+<!DOCTYPE html><html><head>
+
+  <title>iron-selector-template-repeat</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../iron-selector.html">
+
+  <style>.iron-selected{background:#ccc;}</style>
+
+</head>
+<body>
+
+  <template is="dom-bind">
+    <iron-selector id="selector" selected="1">
+      <template id="t" is="dom-repeat">
+        <div id$="[[item.name]]">{{item.name}}</div>
+      </template>
+    </iron-selector>
+  </template>
+
+  <script>suite("dom-repeat",function(){var e,t,s;setup(function(){e=document.querySelector('template[is="dom-bind"]'),t=e.$.selector,s=e.$.t,s.items=[{name:"item0"},{name:"item1"},{name:"item2"},{name:"item3"}]}),teardown(function(){s.items=[]}),test("supports repeated items",function(){s.render(),assert.equal(t.items.length,4),assert.equal(t.selected,1);var e=t.selectedItem;assert.equal(t.items[1],e),assert.isTrue(e.classList.contains("iron-selected"))}),test("update items",function(){s.render(),assert.equal(t.items.length,4),assert.equal(t.selected,1),s.items=[{name:"foo"},{name:"bar"}],s.render(),assert.equal(t.items.length,2),assert.equal(t.selected,1),assert.isTrue(t.querySelector("#bar").classList.contains("iron-selected"))}),test("set selected to something else",function(){s.render(),t.selected=3;var e=t.selectedItem;assert.equal(t.items[3],e),assert.isTrue(e.classList.contains("iron-selected"))})});</script>
+
+
+
+</body></html>

@@ -1,0 +1,18 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-location/iron-location.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../paper-styles/typography.html">
+
+
+</head><body><dom-module id="url-bar">
+  <template>
+    <style include="iron-flex">:host{margin:0px;padding:15px 35px;border-bottom:2px solid gray;height:1.5em;display:none;overflow-x:auto;overflow-y:hidden;background-color:white;@apply (--url-bar);}:host[in-iframe]{display:block;}label{@apply (--paper-font-common-base);display:inline-block;padding-right:25px;}span{@apply (--paper-font-common-code);white-space:pre;}</style>
+    <iron-location path="{{path}}" query="{{query}}" hash="{{hash}}">
+    </iron-location>
+    <div class="layout horizontal">
+      <label>URL</label><span>{{url}}</span>
+    </div>
+  </template>
+  <script>Polymer({is:"url-bar",properties:{url:{computed:"__computeUrl(path, query, hash)"},inIframe:{value:function(){return window.top!==window},reflectToAttribute:!0},path:{type:String},query:{type:String},hash:{type:String}},__computeUrl:function(r,t,e){var u=r;return t&&(u+="?"+t),e&&(u+="#"+e),u}});</script>
+</dom-module>
+</body></html>

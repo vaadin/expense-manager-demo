@@ -1,0 +1,17 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../iron-menubar-behavior.html">
+
+</head><body><dom-module id="test-menubar">
+
+  <template>
+
+    <content></content>
+
+    <div id="extraContent" tabindex="-1">focusable extra content</div>
+
+  </template>
+
+</dom-module>
+
+<script>!function(){Polymer({is:"test-menubar",behaviors:[Polymer.IronMenubarBehavior],get extraContent(){return this.$.extraContent}})}();</script>
+</body></html>

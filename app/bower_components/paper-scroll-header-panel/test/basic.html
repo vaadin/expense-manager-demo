@@ -1,0 +1,33 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>paper-scroll-header-panel test</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../paper-scroll-header-panel.html">
+  <link rel="import" href="../demo/sample-content.html">
+  <link rel="import" href="../../paper-toolbar/paper-toolbar.html">
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+</head>
+<body>
+
+  <test-fixture id="trivialProgress">
+    <template>
+      <paper-scroll-header-panel>
+        <paper-toolbar>
+        </paper-toolbar>
+        <div class="content">
+        <sample-content size="100"></sample-content>
+        </div>
+      </paper-scroll-header-panel>
+    </template>
+  </test-fixture>
+
+  <script>suite("basic features",function(){var e,t,s;setup(function(){e=fixture("trivialProgress"),t=Polymer.dom(e).querySelector("paper-toolbar"),s=Polymer.dom(e).querySelector(".content")}),test("check default",function(){assert.equal(e.header,t),assert.equal(e.content,s),assert.equal(e.condenses,!1),assert.equal(e.noReveal,!1),assert.equal(e.fixed,!1),assert.typeOf(e.scroller,"object"),assert.equal(e.keepCondensedHeader,!1),assert.equal(e.keepCondensedHeader,!1),e.measureHeaderHeight(),assert.equal(e.headerHeight,t.offsetHeight),assert.equal(e.condensedHeaderHeight,Math.round(1*t.offsetHeight/3))}),test("condensation",function(s){var n=t.getBoundingClientRect().top;e.condenses=!0,e.headerHeight=150,e.condensedHeaderHeight=50,e.scroller.scrollTop=300,flush(function(){assert.notEqual(n,t.getBoundingClientRect().top),s()})}),test("paper-header-transform event",function(t){e.condenses=!1,e.headerHeight=e.headerHeight||150,e.addEventListener("paper-header-transform",function(s){assert.typeOf(s.detail.y,"number"),assert.equal(s.detail.height,e.headerHeight),assert.equal(s.detail.condensedHeight,e.condensedHeaderHeight),t()}),flush(function(){e.scroller.scrollTop=300})}),test("content-scroll event",function(t){e.condenses=!1,e.addEventListener("content-scroll",function(s){assert.equal(s.detail.target,e.scroller),t()}),flush(function(){e.scroller.scrollTop=300})}),test("custom `condensedHeaderHeight`",function(t){var s=100;e.condensedHeaderHeight=s,e.headerHeight=s,assert.equal(e.condensedHeaderHeight,s),assert.equal(e.headerHeight,s),t()})});</script>
+
+
+
+</body></html>

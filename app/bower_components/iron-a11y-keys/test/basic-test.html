@@ -1,0 +1,24 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+  <title>iron-a11y-keys</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html">
+  <link rel="import" href="../iron-a11y-keys.html">
+</head>
+<body>
+
+  <test-fixture id="BasicKeys">
+    <template>
+      <iron-a11y-keys></iron-a11y-keys>
+    </template>
+  </test-fixture>
+
+  <script>suite("<iron-a11y-keys>",function(){var e;setup(function(){e=fixture("BasicKeys")}),test("target is parentNode by default",function(){expect(e.target).to.be.equal(e.parentNode)}),suite("keys attribute",function(){test("causes an event listener to be added",function(t){e.keys="space",e.addEventListener("keys-pressed",function(){t()}),Polymer.Base.async(function(){MockInteractions.pressSpace(e.parentNode)})}),test("will not trigger events for non-specified keys",function(){var t=0;e.keys="space",e.addEventListener("keys-pressed",function(){t++}),MockInteractions.pressSpace(e.parentNode),MockInteractions.pressEnter(e.parentNode),expect(t).to.be.equal(1)}),test("triggers events for space separated keys",function(){var t="";e.keys="a b c",e.addEventListener("keys-pressed",function(e){t+=e.detail.key}),MockInteractions.pressAndReleaseKeyOn(e.parentNode,65),MockInteractions.pressAndReleaseKeyOn(e.parentNode,66),MockInteractions.pressAndReleaseKeyOn(e.parentNode,67),expect(t).to.be.equal("abc")})}),suite("event listeners",function(){test("listeners are only active when element is in document",function(){var t=0,s=e.parentNode;e.keys="space",e.addEventListener("keys-pressed",function(e){t++}),MockInteractions.pressSpace(s),expect(t).to.be.equal(1),e.parentNode.removeChild(e),TestHelpers.flushAsynchronousOperations(),MockInteractions.pressSpace(s),expect(t).to.be.equal(1),s.appendChild(e),TestHelpers.flushAsynchronousOperations(),MockInteractions.pressSpace(s),expect(t).to.be.equal(2)})})});</script>
+
+
+
+</body></html>

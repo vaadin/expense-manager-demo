@@ -1,0 +1,16 @@
+<html><head><link rel="import" href="../iron-selector.html">
+
+</head><body><dom-module id="test-content-element">
+
+  <template>
+
+    <iron-selector id="selector" selected="{{selected}}" selectable="[[selectable]]" attr-for-selected="id">
+      <content></content>
+    </iron-selector>
+
+  </template>
+
+</dom-module>
+
+<script>Polymer({is:"test-content-element",properties:{selectable:String,selected:{type:String,notify:!0}}});</script>
+</body></html>

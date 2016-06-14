@@ -1,0 +1,64 @@
+<!DOCTYPE html><html><head>
+  <title>test-fixture</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../test-fixture-mocha.js"></script>
+
+  <link rel="import" id="test-fixture-import" href="../test-fixture.html">
+</head>
+<body>
+  <script>!function(){var e=Object.create(HTMLElement.prototype);e.onDetached=function(){},e.detachedCallback=function(){this.onDetached()},document.registerElement("x-custom",{prototype:e})}();</script>
+  <test-fixture id="TrivialFixture">
+    <template>
+      <div id="Foo"></div>
+    </template>
+  </test-fixture>
+  <test-fixture id="ComplexDomFixture">
+    <template>
+      <div id="Bar">
+        <div id="BarChild"></div>
+      </div>
+      <div id="BarSibling"></div>
+    </template>
+  </test-fixture>
+  <test-fixture id="MultiTemplateFixture">
+    <template>
+      <div id="Baz"></div>
+    </template>
+    <template>
+      <div id="Qux"></div>
+      <div id="QuxSibling"></div>
+    </template>
+  </test-fixture>
+  <test-fixture id="CommentedSingleChildFixture">
+    <template>
+      
+      
+      <div id="Foo"></div>
+      
+    </template>
+  </test-fixture>
+  <test-fixture id="CommentedMultiChildFixture">
+    <template>
+      
+      <div id="Bar">
+        <div id="BarChild"></div>
+      </div>
+      
+      
+      <div id="BarSibling"></div>
+      
+      <div id="Baz"></div>
+    </template>
+  </test-fixture>
+  <test-fixture id="AttachedFixture">
+    <template>
+      <x-custom></x-custom>
+    </template>
+  </test-fixture>
+  <script>describe("test-fixture import",function(){it("loads from test-fixture import",function(){var e=document.getElementById("test-fixture-import");expect(e["import"]).to.not.be["null"]})}),describe("<test-fixture>",function(){var e,t,n,o,r;beforeEach(function(){e=document.getElementById("TrivialFixture"),t=document.getElementById("ComplexDomFixture"),n=document.getElementById("MultiTemplateFixture"),o=document.getElementById("CommentedSingleChildFixture"),r=document.getElementById("CommentedMultiChildFixture")}),afterEach(function(){e.restore(),t.restore(),n.restore(),o.restore(),r.restore()}),describe("an stamped-out fixture",function(){var e,t;beforeEach(function(){e=document.getElementById("AttachedFixture"),t=e.create()}),afterEach(function(){e.restore()}),it("detaches the fixtured DOM when it is restored",function(){var n=!1;t.onDetached=function(){n=!0},e.restore(),expect(n).to.be.eql(!0)})}),describe("when create is called",function(){var c;beforeEach(function(){c=e.create()}),it("clones all template fragments within itself",function(){expect(c).to.be.ok,expect(document.getElementById("Foo")).to.be.ok}),it("detaches all fixture templates from itself",function(){expect(e.querySelectorAll("template").length).to.be.equal(0)}),describe("and then restore is called",function(){beforeEach(function(){e.restore()}),it("re-attaches all fixture templates",function(){expect(e.querySelectorAll("template").length).to.be.equal(1)}),it("removes all cloned elements from itself",function(){expect(document.getElementById("Foo")).to.not.be.ok})}),describe("for a dom with a single root element",function(){it("returns a reference to the root element",function(){expect(c).to.be.instanceOf(HTMLElement)})}),describe("for a complex dom",function(){var e;beforeEach(function(){e=t.create()}),it("fixtures all the dom elements in the template",function(){expect(document.getElementById("Bar")).to.be.ok,expect(document.getElementById("BarSibling")).to.be.ok,expect(document.getElementById("BarChild")).to.be.ok}),it("returns an array of root elements",function(){expect(e).to.be.instanceOf(Array),expect(e[0]).to.be.instanceOf(HTMLElement),expect(e[1]).to.be.instanceOf(HTMLElement)})}),describe("when there are multiple templates",function(){var e;beforeEach(function(){e=n.create()}),it("fixtures elements from all of the templates",function(){expect(document.getElementById("Baz")).to.be.ok,expect(document.getElementById("Qux")).to.be.ok}),it("returns an array with elements grouped by template",function(){expect(e).to.be.instanceOf(Array),expect(e[0]).to.be.instanceOf(HTMLElement),expect(e[1]).to.be.instanceOf(Array),expect(e[1][0]).to.be.instanceOf(HTMLElement),expect(e[1][1]).to.be.instanceOf(HTMLElement)})}),describe("when there are comments in the template",function(){var e,t;beforeEach(function(){e=o.create(),t=r.create()}),it("returns a single element if the template has a single child",function(){expect(e).to.be.instanceOf(HTMLElement)}),it("returns multiple elements if the template has multiple children",function(){expect(t).to.be.instanceOf(Array),expect(t.length).to.equal(3)})})}),describe("when the fixture global is called",function(){var e;beforeEach(function(){e=fixture("TrivialFixture")}),it("generates a DOM fragment from the associated fixture",function(){expect(e).to.be.equal(document.getElementById("Foo"))})})});</script>
+
+
+
+</body></html>

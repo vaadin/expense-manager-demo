@@ -1,0 +1,46 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>paper-radio-button basic tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+  <link rel="import" href="../paper-radio-button.html">
+
+  <style is="custom-style">paper-radio-button.large{--paper-radio-button-size:48px;}paper-radio-button.medium{--paper-radio-button-size:24px;}paper-radio-button.small{--paper-radio-button-size:12px;}</style>
+</head>
+<body>
+  <test-fixture id="NoLabel">
+    <template>
+      <paper-radio-button id="radio1"></paper-radio-button>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="WithLabel">
+    <template>
+      <paper-radio-button id="radio2">Batman</paper-radio-button>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="AriaLabel">
+    <template>
+      <paper-radio-button aria-label="Batman">Robin</paper-radio-button>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="WithDifferentSizes">
+    <template>
+      <paper-radio-button class="small" checked=""></paper-radio-button>
+      <paper-radio-button class="medium" checked=""></paper-radio-button>
+      <paper-radio-button class="large" checked=""></paper-radio-button>
+    </template>
+  </test-fixture>
+
+  <script>suite("defaults",function(){var t;setup(function(){t=fixture("NoLabel")}),test("check button via click",function(e){t.addEventListener("click",function(){assert.isTrue("true"==t.getAttribute("aria-checked")),assert.isTrue(t.checked),e()}),MockInteractions.tap(t)}),test("toggle button via click",function(e){t.checked=!0,t.addEventListener("click",function(){assert.isFalse("true"==t.getAttribute("aria-checked")),assert.isFalse(t.checked),e()}),MockInteractions.tap(t)}),test("disabled button cannot be clicked",function(e){t.disabled=!0,t.checked=!0,MockInteractions.tap(t),setTimeout(function(){assert.isTrue("true"==t.getAttribute("aria-checked")),assert.isTrue(t.checked),e()},1)}),test("can be styled with different sizes",function(){var t=fixture("WithDifferentSizes"),e=t[0].getBoundingClientRect(),i=t[1].getBoundingClientRect(),s=t[2].getBoundingClientRect();console.log(e.width,i.width,s.width),assert.isTrue(4<e.height),assert.isTrue(e.height<i.height),assert.isTrue(i.height<s.height),assert.isTrue(s.height<72),assert.isTrue(4<e.width),assert.isTrue(e.width<i.width),assert.isTrue(i.width<s.width),assert.isTrue(s.width<72)})}),suite("a11y",function(){var t,e;setup(function(){t=fixture("NoLabel"),e=fixture("WithLabel")}),test('has aria role "radio"',function(){assert.isTrue("radio"==t.getAttribute("role")),assert.isTrue("radio"==e.getAttribute("role"))}),test("button with no label has no aria label",function(){assert.isTrue(!t.getAttribute("aria-label"))}),test("button respects the user set aria-label",function(){var t=fixture("AriaLabel");assert.isTrue("Batman"==t.getAttribute("aria-label"))}),a11ySuite("NoLabel"),a11ySuite("WithLabel"),a11ySuite("AriaLabel")});</script>
+
+
+</body></html>

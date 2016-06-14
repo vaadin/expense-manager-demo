@@ -1,0 +1,15 @@
+<html><head><link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../neon-animated-pages.html">
+
+</head><body><dom-module id="reprojected-pages">
+  <template>
+    <style>neon-animated-pages{height:100%;}</style>
+    <neon-animated-pages selected="{{selected}}">
+      <content></content>
+    </neon-animated-pages>
+
+  </template>
+</dom-module>
+
+<script>Polymer({is:"reprojected-pages",properties:{selected:{type:String,notify:!0}}});</script>
+</body></html>

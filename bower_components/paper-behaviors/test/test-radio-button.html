@@ -1,0 +1,15 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../paper-checked-element-behavior.html">
+<link rel="import" href="../../paper-ripple/paper-ripple.html">
+
+</head><body><dom-module id="test-radio-button">
+  <style>:host #ink{position:absolute;top:-16px;left:-16px;width:48px;height:48px;}</style>
+  <template>
+    <div id="container">
+      <paper-ripple id="ink" class="circle" center=""></paper-ripple>
+    </div>
+  </template>
+</dom-module>
+
+<script>Polymer({is:"test-radio-button",behaviors:[Polymer.PaperCheckedElementBehavior]});</script>
+</body></html>

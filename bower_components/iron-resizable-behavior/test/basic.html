@@ -1,0 +1,29 @@
+<!DOCTYPE html><html><head>
+
+  <title>iron-resizable-behavior tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+  <link rel="import" href="../iron-resizable-behavior.html">
+  <link rel="import" href="test-elements.html">
+
+</head>
+<body>
+
+
+
+  <test-fixture id="TestElement">
+    <template>
+      <test-element></test-element>
+    </template>
+  </test-fixture>
+
+
+  <script>suite("iron-resizable-behavior",function(){function e(e,t){var o=function(e){e.path?e.path[0]:e.target;i--};return t!==!1&&i++,e.addEventListener("iron-resize",o),{el:e,remove:function(){e.removeEventListener("iron-resize",o)}}}function t(e){e.forEach(function(e){e.remove()})}var i,o;setup(function(){i=0,o=fixture("TestElement")}),suite("x-resizer-parent",function(){test("notify resizables from window",function(){var r=[e(o.$.parent),e(o.$.child1a),e(o.$.child1b),e(o.$.shadow1c.$.resizable),e(o.$.shadow1d.$.resizable)];window.dispatchEvent(new CustomEvent("resize",{bubbles:!1})),expect(i).to.be.eql(0),t(r)}),test("notify resizables from parent",function(){var r=[e(o.$.parent),e(o.$.child1a),e(o.$.child1b),e(o.$.shadow1c.$.resizable),e(o.$.shadow1d.$.resizable)];o.$.parent.notifyResize(),expect(i).to.be.eql(0),t(r)}),test("detach resizables then notify parent",function(){sinon.spy(o.$.child1a,"notifyResize"),sinon.spy(o.$.shadow1c.$.resizable,"notifyResize"),sinon.spy(o.$.child1b,"notifyResize"),sinon.spy(o.$.shadow1d.$.resizable,"notifyResize");var e=o.$.child1a,t=Polymer.dom(e).parentNode,i=o.$.shadow1c.$.resizable,r=Polymer.dom(i).parentNode;Polymer.dom(t).removeChild(e),Polymer.dom(r).removeChild(i),Polymer.dom.flush(),o.$.parent.notifyResize(),expect(o.$.child1a.notifyResize.callCount).to.be.equal(0),expect(o.$.shadow1c.$.resizable.notifyResize.callCount).to.be.equal(0),expect(o.$.child1b.notifyResize.callCount).to.be.equal(1),expect(o.$.shadow1d.$.resizable.notifyResize.callCount).to.be.equal(1)}),test("detach parent then notify window",function(r){var n=[e(o.$.parent,!1),e(o.$.child1a,!1),e(o.$.child1b,!1),e(o.$.shadow1c.$.resizable,!1),e(o.$.shadow1d.$.resizable,!1)],a=Polymer.dom(o.root).querySelector("#parent");a.parentNode.removeChild(a),setTimeout(function(){try{window.dispatchEvent(new CustomEvent("resize",{bubbles:!1})),expect(i).to.be.eql(0),t(n),r()}catch(e){r(e)}},0)})}),suite("x-resizer-parent-filtered",function(){test("notify resizables from window",function(){var r=[e(o.$.parentFiltered),e(o.$.child2a),e(o.$.child2b,!1),e(o.$.shadow2c.$.resizable,!1),e(o.$.shadow2d.$.resizable,!1)];o.$.parentFiltered.active=o.$.child2a,window.dispatchEvent(new CustomEvent("resize",{bubbles:!1})),expect(i).to.be.eql(0),t(r)}),test("notify resizables from parent",function(){var r=[e(o.$.parentFiltered),e(o.$.child2a),e(o.$.child2b,!1),e(o.$.shadow2c.$.resizable,!1),e(o.$.shadow2d.$.resizable,!1)];o.$.parentFiltered.active=o.$.child2a,o.$.parentFiltered.notifyResize(),expect(i).to.be.eql(0),t(r)}),test("detach resizables then notify parent",function(){var r=[e(o.$.parentFiltered),e(o.$.child2a,!1),e(o.$.child2b,!1),e(o.$.shadow2c.$.resizable,!1),e(o.$.shadow2d.$.resizable)],n=Polymer.dom(o.root).querySelector("#child2a");n.parentNode.removeChild(n),n=Polymer.dom(o.root).querySelector("#shadow2c"),n.parentNode.removeChild(n),o.$.parentFiltered.active=o.$.shadow2d.$.resizable,o.$.parentFiltered.notifyResize(),expect(i).to.be.eql(0),t(r)})})});</script>
+
+
+</body></html>

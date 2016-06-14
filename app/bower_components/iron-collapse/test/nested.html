@@ -1,0 +1,41 @@
+<!DOCTYPE html><html><head>
+    <title>iron-collapse-nested</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+    <link rel="import" href="../../test-fixture/test-fixture.html">
+    <link rel="import" href="../iron-collapse.html">
+  </head>
+  <body>
+
+    <test-fixture id="test">
+      <template>
+        <iron-collapse id="outer-collapse">
+          <div style="height:100px">
+            Lorem ipsum
+          </div>
+
+          <iron-collapse id="inner-collapse-vertical">
+            <div style="height:100px">
+              consectetur adipiscing elit
+            </div>
+          </iron-collapse>
+
+          <iron-collapse id="inner-collapse-horizontal" horizontal="" style="display: inline-block">
+            <div style="width:100px">
+              consectetur adipiscing elit
+            </div>
+          </iron-collapse>
+        </iron-collapse>
+      </template>
+    </test-fixture>
+
+    <script>suite("nested",function(){var e,t;setup(function(){e=fixture("test")}),suite("vertical",function(){setup(function(){t=e.querySelector("#inner-collapse-vertical")}),test("inner collapse default opened attribute",function(){assert.equal(t.opened,!1)}),test("inner collapse default style height",function(){assert.equal(t.style.height,"0px")}),test("open inner collapse updates size without animation",function(){t.opened=!0,assert.equal(t.style.transitionDuration,"0s")}),test("open inner collapse then open outer collapse reveals inner collapse with expanded height",function(){t.opened=!0,e.opened=!0,assert.equal(t.getBoundingClientRect().height,100)})}),suite("horizontal",function(){setup(function(){t=e.querySelector("#inner-collapse-horizontal")}),test("inner collapse default style width",function(){assert.equal(t.style.width,"0px")}),test("open inner collapse updates size without animation",function(){t.opened=!0,assert.equal(t.style.transitionDuration,"0s")}),test("open inner collapse then open outer collapse reveals inner collapse with expanded width",function(){t.opened=!0,e.opened=!0,assert.equal(t.getBoundingClientRect().width,100)})})});</script>
+
+  
+
+</body></html>

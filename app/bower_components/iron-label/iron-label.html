@@ -1,0 +1,6 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+
+</head><body><dom-module id="iron-label">
+  <script>Polymer.IronLabel=Polymer({is:"iron-label",listeners:{tap:"_tapHandler"},properties:{"for":{type:String,value:"",reflectToAttribute:!0,observer:"_forChanged"},_forElement:Object},attached:function(){this._forChanged()},ready:function(){this._generateLabelId()},_generateLabelId:function(){if(!this.id){var e="iron-label-"+Polymer.IronLabel._labelNumber++;Polymer.dom(this).setAttribute("id",e)}},_findTarget:function(){if(this["for"]){var e=Polymer.dom(this).getOwnerRoot();return Polymer.dom(e).querySelector("#"+this["for"])}var t=Polymer.dom(this).querySelector("[iron-label-target]");return t||(t=Polymer.dom(this).firstElementChild),t},_tapHandler:function(e){if(this._forElement){var t=Polymer.dom(e).localTarget;t!==this._forElement&&(this._forElement.focus(),this._forElement.click())}},_applyLabelledBy:function(){this._forElement&&Polymer.dom(this._forElement).setAttribute("aria-labelledby",this.id)},_forChanged:function(){this._forElement&&Polymer.dom(this._forElement).removeAttribute("aria-labelledby"),this._forElement=this._findTarget(),this._applyLabelledBy()}}),Polymer.IronLabel._labelNumber=0;</script>
+</dom-module>
+</body></html>

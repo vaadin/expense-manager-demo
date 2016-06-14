@@ -1,0 +1,14 @@
+<html><head><link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../neon-animation-runner-behavior.html">
+<link rel="import" href="../../animations/scale-down-animation.html">
+
+</head><body><dom-module id="my-animatable">
+  <template>
+    <style>:host{display:inline-block;border-radius:50%;width:300px;height:300px;background:orange;}</style>
+    <content></content>
+
+  </template>
+</dom-module>
+
+<script>Polymer({is:"my-animatable",behaviors:[Polymer.NeonAnimationRunnerBehavior],properties:{animationConfig:{type:Object,value:function(){return{name:"scale-down-animation",node:this}}}},listeners:{"neon-animation-finish":"_onNeonAnimationFinish"},animate:function(){this.playAnimation()},_onNeonAnimationFinish:function(){console.log("animation finish!")}});</script>
+</body></html>

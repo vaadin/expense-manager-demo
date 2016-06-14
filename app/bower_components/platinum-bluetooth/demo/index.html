@@ -1,0 +1,64 @@
+<!DOCTYPE html><html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+    <title>&lt;platinum-bluetooth&gt; Demo</title>
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../marked-element/marked-element.html">
+    <link rel="import" href="../../paper-item/paper-item.html">
+    <link rel="import" href="../../paper-material/paper-material.html">
+    <link rel="import" href="../../paper-progress/paper-progress.html">
+    <link rel="import" href="../../paper-button/paper-button.html">
+
+    <link rel="import" href="../platinum-bluetooth-device.html">
+    <link rel="import" href="../platinum-bluetooth-characteristic.html">
+
+    <style>body{background-color:#fafafa;margin:0;padding:24px;}paper-progress{display:block;padding-bottom:20px;padding-top:20px;width:100%;}paper-button{background-color:#0f9d58;color:white;margin-bottom:20px;}#actions{width:100%;}#container{background-color:white;margin:auto;max-width:800px;padding:20px;}</style>
+  </head>
+  <body unresolved="">
+
+    <template is="dom-bind" id="page-template">
+
+    <paper-material id="container" elevation="1">
+      <paper-item>
+        <paper-item-body>
+        <div>The <a href="https://github.com/WebBluetoothCG/web-bluetooth">Web Bluetooth API</a> discovers and communicates with devices over the Bluetooth 4 wireless standard using the <a href="https://developer.bluetooth.org/TechnologyOverview/Pages/GATT.aspx">Generic Attribute Profile (GATT)</a>. It is currently only partially implemented in Chrome OS behind the experimental flag <code>chrome://flags/#enable-web-bluetooth</code>.</div>
+        <br>
+        <div>This demo illustrates the use of the Web Bluetooth API to retrieve battery information, body sensor location and reset energy expended from a nearby Bluetooth Device advertising Battery and Heart Rate information with Bluetooth Low Energy. You may want to try it with the BLE Peripheral Simulator App from the <a target="_blank" href="https://play.google.com/store/apps/details?id=io.github.webbluetoothcg.bletestperipheral">Google Play Store</a>.</div>
+        </paper-item-body>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body id="actions">
+          <paper-progress></paper-progress>
+          <paper-button id="get-battery-level" raised="">Get Battery Level</paper-button>
+          <paper-button id="get-body-sensor-location" raised="">Get Body Sensor Location</paper-button>
+          <paper-button id="reset-energy-expended" raised="">Reset Energy Expended</paper-button>
+        </paper-item-body>
+      </paper-item>
+
+      <paper-item>
+        <paper-item-body>
+          <marked-element markdown="{{text}}"></marked-element>
+        </paper-item-body>
+      </paper-item>
+    </paper-material>
+
+    <platinum-bluetooth-device services-filter="[&quot;battery_service&quot;]" id="battery-device">
+      <platinum-bluetooth-characteristic service="battery_service" characteristic="battery_level" value="{{batteryLevel}}">
+      </platinum-bluetooth-characteristic>
+    </platinum-bluetooth-device>
+
+    <platinum-bluetooth-device services-filter="[&quot;heart_rate&quot;]" id="heart-rate-device">
+      <platinum-bluetooth-characteristic service="heart_rate" characteristic="body_sensor_location" value="{{bodySensorLocation}}">
+      </platinum-bluetooth-characteristic>
+      <platinum-bluetooth-characteristic service="heart_rate" characteristic="heart_rate_control_point">
+      </platinum-bluetooth-characteristic>
+    </platinum-bluetooth-device>
+    </template>
+
+    <script>document.addEventListener("WebComponentsReady",function(){function e(){s.indeterminate=!0,n.text=""}function t(e){n.text="Argh! "+e,s.indeterminate=!1}for(var n=document.getElementById("page-template"),r=document.getElementById("battery-device"),c=r.querySelector("[characteristic=battery_level]"),a=document.getElementById("heart-rate-device"),i=a.querySelector("[characteristic=body_sensor_location]"),o=a.querySelector("[characteristic=heart_rate_control_point]"),d=document.getElementById("get-battery-level"),u=document.getElementById("get-body-sensor-location"),l=document.getElementById("reset-energy-expended"),s=document.querySelector("paper-progress"),m=document.querySelectorAll("paper-button"),y=0;y<m.length;y++)m[y].addEventListener("click",e);d.addEventListener("click",function(){r.request().then(function(e){return c.read().then(function(t){var r=new DataView(t);n.text=e.name+" Battery Level is "+r.getUint8(0)+"%",s.indeterminate=!1})})["catch"](t)}),u.addEventListener("click",function(){a.request().then(function(e){return i.read().then(function(t){var r=new DataView(t),c=["other","chest","wrist","finger","hand","ear lobe","foot"];n.text=e.name+" Body sensor is placed on the "+c[r.getUint8(0)],s.indeterminate=!1})})["catch"](t)}),l.addEventListener("click",function(){a.request().then(function(e){var t=new Uint8Array([1]);return o.write(t).then(function(){n.text=e.name+" Energy expended has been reset",s.indeterminate=!1})})["catch"](t)})});</script>
+
+  
+
+</body></html>

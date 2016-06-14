@@ -1,0 +1,31 @@
+<!DOCTYPE html><html><head>
+
+    <title>iron-collapse-basic</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+    <link rel="import" href="../../test-fixture/test-fixture.html">
+    <link rel="import" href="../iron-collapse.html">
+
+  </head>
+  <body>
+
+    <test-fixture id="test">
+      <template>
+        <iron-collapse id="collapse" opened="">
+          <div style="height:100px">
+            Lorem ipsum
+          </div>
+        </iron-collapse>
+      </template>
+    </test-fixture>
+
+    <script>suite("basic",function(){var e,t;setup(function(){e=fixture("test"),t=getComputedStyle(e).height}),test("opened attribute",function(){assert.equal(e.opened,!0)}),test("animated by default",function(){assert.isTrue(!e.noAnimation,"`noAnimation` is falsy")}),test("horizontal attribute",function(){assert.equal(e.horizontal,!1)}),test("default opened height",function(){assert.equal(e.style.height,"auto")}),test("set opened to false triggers animation",function(t){e.opened=!1,assert.notEqual(e.style.transitionDuration,"0s"),e.addEventListener("transitionend",function(){assert.equal(e.style.transitionDuration,"0s"),t()})}),test("enableTransition(false) disables animations",function(){e.enableTransition(!1),assert.isTrue(e.noAnimation,"`noAnimation` is true"),e.updateSize("0px",!0),assert.equal(e.style.height,"0px")}),test("set opened to false, then to true",function(n){e.addEventListener("transitionend",function(){e.opened?(assert.equal(e.style.height,"auto"),n()):(assert.equal(e.style.height,"0px"),e.opened=!0,assert.equal(e.style.height,t))}),e.opened=!1,assert.equal(e.style.height,"0px")}),test("opened changes trigger iron-resize",function(){var t=sinon.stub();e.addEventListener("iron-resize",t),e.noAnimation=!0,e.opened=!1,assert.isTrue(t.calledOnce,"iron-resize was fired")}),test("overflow is hidden while animating",function(t){e.addEventListener("transitionend",function(){assert.equal(getComputedStyle(e).overflow,"hidden"),t()}),assert.equal(getComputedStyle(e).overflow,"visible"),e.opened=!1,assert.equal(getComputedStyle(e).overflow,"hidden")}),test("toggle horizontal updates size",function(){e.horizontal=!1,assert.equal(e.style.width,""),assert.equal(e.style.height,"auto"),assert.equal(e.style.transitionProperty,"height"),e.horizontal=!0,assert.equal(e.style.width,"auto"),assert.equal(e.style.height,""),assert.equal(e.style.transitionProperty,"width")})});</script>
+
+  
+
+</body></html>

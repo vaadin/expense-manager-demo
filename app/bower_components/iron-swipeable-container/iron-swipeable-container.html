@@ -1,0 +1,13 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+
+
+
+</head><body><dom-module id="iron-swipeable-container">
+  <template>
+    <style>:host{display:block;}</style>
+    <content id="content"></content>
+  </template>
+</dom-module>
+
+<script>Polymer({is:"iron-swipeable-container",properties:{swipeStyle:{type:String,value:"horizontal"},disabled:{type:Boolean,value:!1},widthRatio:{type:Number,value:3},opacityRate:{type:Number,value:.2},transition:{type:String,value:"300ms cubic-bezier(0.4, 0.0, 0.2, 1)"}},ready:function(){this._transitionProperty="opacity, transform",this._swipeComplete=!1,this._direction=""},attached:function(){this._nodeObserver=Polymer.dom(this.$.content).observeNodes(function(t){for(var e=0;e<t.addedNodes.length;e++)this._addListeners(t.addedNodes[e]);for(var e=0;e<t.removedNodes.length;e++)this._removeListeners(t.removedNodes[e])}.bind(this))},_addListeners:function(t){t.nodeType!==Node.TEXT_NODE&&t.nodeType!==Node.COMMENT_NODE&&(t.style.transitionProperty=this._transitionProperty,t.style.transition=this.transition,this.listen(t,"track","_onTrack"),this.listen(t,"transitionend","_onTransitionEnd"))},_removeListeners:function(t){t.nodeType!==Node.TEXT_NODE&&(this.unlisten(t,"track","_onTrack"),this.unlisten(t,"transitionend","_onTransitionEnd"))},detached:function(){this._nodeObserver&&(Polymer.dom(this.$.content).unobserveNodes(this._nodeObserver),this._nodeObserver=null)},_onTrack:function(t){if(!this.disabled){var e=t.currentTarget;if(!e.classList.contains("disable-swipe")){var i=t.detail;"start"===i.state?this._trackStart(i,e):"track"===i.state?this._trackMove(i,e):"end"===i.state&&this._trackEnd(i,e)}}},_trackStart:function(t,e){this._nodeWidth=e.offsetWidth,e.style.transition="none"},_trackMove:function(t,e){this._animate(t.dx,e)},_trackEnd:function(t,e){this._swipeComplete=Math.abs(t.dx)>this._nodeWidth/2,this._direction=t.dx>0,this._swipeEnd(e)},_animate:function(t,e){var i=t>0?1:-1,n=this._nodeWidth*this.widthRatio,s=Math.max(0,Math.abs(t)-this._nodeWidth*this.opacityRate),o=Math.max(0,(n-s)/n);e.style.opacity=o;var r,a;if("horizontal"===this.swipeStyle)r="translate3d("+t+"px,0px,0)",a="";else{var d=n-Math.sqrt(n*n-s*s),h=(1-o)*i*90;r="translate3d("+t+"px,"+d+"px,0)",a=" rotate("+h+"deg)"}this.transform(r+a,e)},_swipeEnd:function(t){if(t.style.transition=this.transition,this._swipeComplete){var e=this._nodeWidth*this.widthRatio;this._animate(this._direction?e:-e,t)}else this._animate(0,t)},_onTransitionEnd:function(t){var e=t.currentTarget;this._swipeComplete&&"opacity"===t.propertyName&&(Polymer.dom(this).removeChild(e),this.fire("iron-swipe",{direction:this._direction>0?"right":"left",target:e}))}});</script>
+</body></html>

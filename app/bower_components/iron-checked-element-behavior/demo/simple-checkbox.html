@@ -1,0 +1,16 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../iron-checked-element-behavior.html">
+
+</head><body><dom-module id="simple-checkbox">
+  <style>:host{display:block;}:host([invalid]) span{color:red;}#labelText{display:inline-block;width:100px;}</style>
+  <template>
+    <input type="checkbox" id="checkbox" on-tap="_onCheckTap">
+    <span id="labelText">{{label}}</span>
+    <paper-button raised="" on-click="_onClick">validate</paper-button>
+
+  </template>
+  <script>Polymer({is:"simple-checkbox",behaviors:[Polymer.IronCheckedElementBehavior],properties:{label:{type:String,value:"not validated"}},_onCheckTap:function(){this.checked=this.$.checkbox.checked},_onClick:function(){this.validate(),this.label=this.invalid?"is invalid":"is valid"}});</script>
+
+  </dom-module>
+</body></html>

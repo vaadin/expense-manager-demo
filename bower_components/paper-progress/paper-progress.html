@@ -1,0 +1,27 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-range-behavior/iron-range-behavior.html">
+<link rel="import" href="../paper-styles/color.html">
+
+
+
+</head><body><dom-module id="paper-progress">
+  <template>
+    <style>:host{display:block;width:200px;position:relative;overflow:hidden;}#progressContainer{position:relative;}#progressContainer,
+      /* the stripe for the indeterminate animation*/
+      .indeterminate::after{height:var(--paper-progress-height, 4px);}#primaryProgress,
+      #secondaryProgress,
+      .indeterminate::after{@apply (--layout-fit);}#progressContainer,
+      .indeterminate::after{background:var(--paper-progress-container-color, --google-grey-300);}:host(.transiting) #primaryProgress,
+      :host(.transiting) #secondaryProgress{-webkit-transition-property:-webkit-transform;transition-property:transform;-webkit-transition-duration:var(--paper-progress-transition-duration, 0.08s);transition-duration:var(--paper-progress-transition-duration, 0.08s);-webkit-transition-timing-function:var(--paper-progress-transition-timing-function, ease);transition-timing-function:var(--paper-progress-transition-timing-function, ease);-webkit-transition-delay:var(--paper-progress-transition-delay, 0s);transition-delay:var(--paper-progress-transition-delay, 0s);}#primaryProgress,
+      #secondaryProgress{@apply (--layout-fit);-webkit-transform-origin:left center;transform-origin:left center;-webkit-transform:scaleX(0);transform:scaleX(0);will-change:transform;}#primaryProgress{background:var(--paper-progress-active-color, --google-green-500);}#secondaryProgress{background:var(--paper-progress-secondary-color, --google-green-100);}:host([disabled]) #primaryProgress{background:var(--paper-progress-disabled-active-color, --google-grey-500);}:host([disabled]) #secondaryProgress{background:var(--paper-progress-disabled-secondary-color, --google-grey-300);}:host(:not([disabled])) #primaryProgress.indeterminate{-webkit-transform-origin:right center;transform-origin:right center;-webkit-animation:indeterminate-bar 2s linear infinite;animation:indeterminate-bar 2s linear infinite;}:host(:not([disabled])) #primaryProgress.indeterminate::after{content:"";-webkit-transform-origin:center center;transform-origin:center center;-webkit-animation:indeterminate-splitter 2s linear infinite;animation:indeterminate-splitter 2s linear infinite;}@-webkit-keyframes indeterminate-bar{0%{-webkit-transform:scaleX(1) translateX(-100%);}50%{-webkit-transform:scaleX(1) translateX(0%);}75%{-webkit-transform:scaleX(1) translateX(0%);-webkit-animation-timing-function:cubic-bezier(.28,.62,.37,.91);}100%{-webkit-transform:scaleX(0) translateX(0%);}}@-webkit-keyframes indeterminate-splitter{0%{-webkit-transform:scaleX(.75) translateX(-125%);}30%{-webkit-transform:scaleX(.75) translateX(-125%);-webkit-animation-timing-function:cubic-bezier(.42,0,.6,.8);}90%{-webkit-transform:scaleX(.75) translateX(125%);}100%{-webkit-transform:scaleX(.75) translateX(125%);}}@keyframes indeterminate-bar{0%{transform:scaleX(1) translateX(-100%);}50%{transform:scaleX(1) translateX(0%);}75%{transform:scaleX(1) translateX(0%);animation-timing-function:cubic-bezier(.28,.62,.37,.91);}100%{transform:scaleX(0) translateX(0%);}}@keyframes indeterminate-splitter{0%{transform:scaleX(.75) translateX(-125%);}30%{transform:scaleX(.75) translateX(-125%);animation-timing-function:cubic-bezier(.42,0,.6,.8);}90%{transform:scaleX(.75) translateX(125%);}100%{transform:scaleX(.75) translateX(125%);}}</style>
+
+    <div id="progressContainer">
+      <div id="secondaryProgress" hidden$="[[_hideSecondaryProgress(secondaryRatio)]]"></div>
+      <div id="primaryProgress"></div>
+    </div>
+  </template>
+</dom-module>
+
+<script>Polymer({is:"paper-progress",behaviors:[Polymer.IronRangeBehavior],properties:{secondaryProgress:{type:Number,value:0},secondaryRatio:{type:Number,value:0,readOnly:!0},indeterminate:{type:Boolean,value:!1,observer:"_toggleIndeterminate"},disabled:{type:Boolean,value:!1,reflectToAttribute:!0,observer:"_disabledChanged"}},observers:["_progressChanged(secondaryProgress, value, min, max)"],hostAttributes:{role:"progressbar"},_toggleIndeterminate:function(e){this.toggleClass("indeterminate",e,this.$.primaryProgress)},_transformProgress:function(e,r){var s="scaleX("+r/100+")";e.style.transform=e.style.webkitTransform=s},_mainRatioChanged:function(e){this._transformProgress(this.$.primaryProgress,e)},_progressChanged:function(e,r,s,t){e=this._clampValue(e),r=this._clampValue(r);var a=100*this._calcRatio(e),i=100*this._calcRatio(r);this._setSecondaryRatio(a),this._transformProgress(this.$.secondaryProgress,a),this._transformProgress(this.$.primaryProgress,i),this.secondaryProgress=e,this.setAttribute("aria-valuenow",r),this.setAttribute("aria-valuemin",s),this.setAttribute("aria-valuemax",t)},_disabledChanged:function(e){this.setAttribute("aria-disabled",e?"true":"false")},_hideSecondaryProgress:function(e){return 0===e}});</script>
+</body></html>

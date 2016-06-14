@@ -1,0 +1,34 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-autogrow-textarea/iron-autogrow-textarea.html">
+<link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
+<link rel="import" href="paper-input-behavior.html">
+<link rel="import" href="paper-input-char-counter.html">
+<link rel="import" href="paper-input-container.html">
+<link rel="import" href="paper-input-error.html">
+
+
+
+</head><body><dom-module id="paper-textarea">
+  <template>
+    <style>:host{display:block;}</style>
+
+    <paper-input-container no-label-float$="[[noLabelFloat]]" always-float-label="[[_computeAlwaysFloatLabel(alwaysFloatLabel,placeholder)]]" auto-validate$="[[autoValidate]]" disabled$="[[disabled]]" invalid="[[invalid]]">
+
+      <label hidden$="[[!label]]">[[label]]</label>
+
+      <iron-autogrow-textarea id="input" class="paper-input-input" bind-value="{{value}}" disabled$="[[disabled]]" autocomplete$="[[autocomplete]]" autofocus$="[[autofocus]]" inputmode$="[[inputmode]]" name$="[[name]]" placeholder$="[[placeholder]]" readonly$="[[readonly]]" required$="[[required]]" maxlength$="[[maxlength]]" autocapitalize$="[[autocapitalize]]" rows$="[[rows]]" max-rows$="[[maxRows]]" on-change="_onChange"></iron-autogrow-textarea>
+
+      <template is="dom-if" if="[[errorMessage]]">
+        <paper-input-error>[[errorMessage]]</paper-input-error>
+      </template>
+
+      <template is="dom-if" if="[[charCounter]]">
+        <paper-input-char-counter></paper-input-char-counter>
+      </template>
+
+    </paper-input-container>
+  </template>
+</dom-module>
+
+<script>Polymer({is:"paper-textarea",behaviors:[Polymer.PaperInputBehavior,Polymer.IronFormElementBehavior],properties:{_ariaLabelledBy:{observer:"_ariaLabelledByChanged",type:String},_ariaDescribedBy:{observer:"_ariaDescribedByChanged",type:String},rows:{type:Number,value:1},maxRows:{type:Number,value:0}},_ariaLabelledByChanged:function(e){this.$.input.textarea.setAttribute("aria-labelledby",e)},_ariaDescribedByChanged:function(e){this.$.input.textarea.setAttribute("aria-describedby",e)},get _focusableElement(){return this.$.input.textarea}});</script>
+</body></html>

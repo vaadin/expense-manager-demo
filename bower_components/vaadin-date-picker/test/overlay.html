@@ -1,0 +1,22 @@
+<!DOCTYPE html><html><head>
+  <meta charset="utf-8">
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="common.js"></script>
+
+  <link rel="import" href="../vaadin-date-picker-overlay.html">
+</head>
+
+<body>
+
+  <test-fixture id="overlay">
+    <template>
+      <vaadin-date-picker-overlay></vaadin-date-picker-overlay>
+    </template>
+  </test-fixture>
+
+  <script>describe("vaadin-date-picker-overlay",function(){var e;beforeEach(function(t){e=fixture("overlay"),e.i18n=getDefaultI18n(),waitUntilScrolledTo(e,new Date,t)}),it("should return correct month",function(){e._originDate=new Date(2016,2,31),expect(e._dateAfterXMonths(11).getMonth()).to.equal(1)}),it("should reflect the year of currently visible month on the toolbar",function(t){var o=new Date(2e3,1,1);e.scrollToDate(o),waitUntilScrolledTo(e,o,function(){expect(parseInt(e.$.toolbar.textContent)).to.equal(2e3),t()})}),it("should scroll to the given date",function(t){var o=new Date(2e3,1,1);e.scrollToDate(o),waitUntilScrolledTo(e,o,function(){expect(monthsEqual(getFirstVisibleItem(e.$.scroller,0).firstElementChild.month,o)).to.be["true"],t()})}),it("should scroll to the given year",function(t){var o=new Date(2e3,1,1);e.scrollToDate(o),waitUntilScrolledTo(e,o,function(){var o=e.$.yearScroller.clientHeight/2;expect(getFirstVisibleItem(e.$.yearScroller,o).firstElementChild.textContent).to.equal("2000"),t()})}),describe("taps",function(){beforeEach(function(t){e.async(t,350)}),it("should set ignoreTaps to calendar on scroll",function(t){e.$.scroller.$.scroller.scrollTop+=1,e.async(function(){expect(e.$.scroller.$$("vaadin-month-calendar").ignoreTaps).to.be["true"],t()},100)}),it("should not react to year tap after scroll",function(t){var o=sinon.spy(e,"_scrollToPosition");e.$.scroller.$.scroller.scrollTop+=1,e.async(function(){tap(e.$.yearScroller),expect(o.called).to.be["false"],t()},100)}),it("should react to year tap after 300ms elapsed after scroll",function(t){var o=sinon.spy(e,"_scrollToPosition");e.$.scroller.$.scroller.scrollTop+=1,e.async(function(){tap(e.$.yearScroller),expect(o.called).to.be["true"],t()},350)}),it("should not react if the tap takes more than 300ms",function(t){var o=sinon.spy(e,"_scrollToPosition");e._onYearScrollTouchStart(),e.async(function(){tap(e.$.yearScroller),expect(o.called).to.be["false"],t()},350)})}),describe("header",function(){it("should be visible",function(){e.setAttribute("fullscreen",""),e.$.header.setAttribute("style",""),e.$.header.removeAttribute("style"),expect(window.getComputedStyle(e.$.header).display).to.equal("flex")}),it("should be invisible",function(){expect(window.getComputedStyle(e.$.header).display).to.equal("none")}),it("should reflect value in label",function(){e.i18n={formatDate:function(e){return e.getMonth()+1+"/"+e.getDate()+"/"+e.getFullYear()}},e.selectedDate=new Date(2e3,1,1),expect(e.$.input.bindValue).to.equal("2/1/2000")}),it("should not show clear button if not value is set",function(){expect(window.getComputedStyle(e.$.clear).display).to.equal("none")}),it("should show clear button if value is set",function(){e.selectedDate=new Date,expect(window.getComputedStyle(e.$.clear).display).to.equal("flex")}),it("should clear the value and fire a close on clear",function(){e.selectedDate=new Date;var t=sinon.spy();e.addEventListener("close",t),tap(e.$.clear),expect(e.selectedDate).to.equal(""),expect(t.calledOnce).to.be["true"]})}),describe("footer",function(){it("should fire close on cancel click",function(){var t=sinon.spy();e.addEventListener("close",t),tap(e.$.cancelButton),expect(t.calledOnce).to.be["true"]}),it("should scroll to current date when tapping on today button",function(t){var o=new Date(2e3,1,1);e.scrollToDate(o),waitUntilScrolledTo(e,o,function(){tap(e.$.todayButton),waitUntilScrolledTo(e,new Date,function(){t()})})})})});</script>
+
+
+
+
+</body></html>

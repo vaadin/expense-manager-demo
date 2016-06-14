@@ -1,0 +1,18 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="test-overlay.html">
+
+</head><body><dom-module id="test-menu-button">
+
+  <template>
+    <button id="trigger" on-click="toggle">Open</button>
+    <test-overlay id="overlay">
+      Composed overlay
+      <button>button 1</button>
+      <button>button 2</button>
+    </test-overlay>
+  </template>
+
+</dom-module>
+
+<script>!function(){Polymer({is:"test-menu-button",toggle:function(){this.$.overlay.toggle()}})}();</script>
+</body></html>

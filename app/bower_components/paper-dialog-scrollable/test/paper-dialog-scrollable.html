@@ -1,0 +1,87 @@
+<!DOCTYPE html><html><head>
+
+    <title>paper-dialog-scrollable tests</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <script src="../../web-component-tester/browser.js"></script>
+    <link rel="import" href="../paper-dialog-scrollable.html">
+    <link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
+    <link rel="import" href="../../paper-dialog/paper-dialog.html">
+
+    <style is="custom-style">.fixed-height{width:100%;height:400px;@apply (--layout-vertical);}.fixed-height paper-dialog-scrollable{@apply (--layout-flex);}</style>
+
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <section class="fixed-height">
+          <div class="header">Header</div>
+          <paper-dialog-scrollable>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          </paper-dialog-scrollable>
+          <div class="footer">Footer</div>
+        </section>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="only-child">
+      <template>
+        <section class="fixed-height">
+          <paper-dialog-scrollable>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          </paper-dialog-scrollable>
+        </section>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="short">
+      <template>
+        <section class="fixed-height">
+          <div class="header">Header</div>
+          <paper-dialog-scrollable>
+            <p>Hello world!</p>
+          </paper-dialog-scrollable>
+          <div class="footer">Footer</div>
+        </section>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="dialog">
+      <template>
+        <paper-dialog opened="">
+          <h2>Dialog</h2>
+          <paper-dialog-scrollable>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          </paper-dialog-scrollable>
+          <div class="buttons">
+            <button dialog-dismiss="">close</button>
+          </div>
+        </paper-dialog>
+      </template>
+    </test-fixture>
+
+    <script>function runAfterScroll(e,t,o){var r=function(){e.scrollTop=t,e.scrollTop===t?setTimeout(function(){o()},250):setTimeout(r,10)};e.scrollTop=t,setTimeout(r)}suite("basic",function(){test("shows top divider if scrolled",function(e){var t=fixture("basic"),o=Polymer.dom(t).querySelector("paper-dialog-scrollable");setTimeout(function(){runAfterScroll(o.scrollTarget,10,function(){assert.ok(getComputedStyle(o,"::before").content,"::before has content"),e()})},10)}),test("shows bottom divider if scrollable",function(e){var t=fixture("basic");setTimeout(function(){var o=Polymer.dom(t).querySelector("paper-dialog-scrollable");requestAnimationFrame(function(){assert.ok(getComputedStyle(o,"::after").content,"::after has content"),e()})},10)}),test("hides bottom divider if scrolled to bottom",function(e){var t=fixture("basic"),o=Polymer.dom(t).querySelector("paper-dialog-scrollable");setTimeout(function(){runAfterScroll(o.scrollTarget,o.scrollTarget.scrollHeight-o.scrollTarget.offsetHeight,function(){var t=getComputedStyle(o,"::after").content;assert.ok(!t||"none"===t,"::after does not have content"),e()})},10)}),test("does not show dividers if scrolled and only child",function(e){var t=fixture("only-child"),o=Polymer.dom(t).querySelector("paper-dialog-scrollable");setTimeout(function(){runAfterScroll(o.scrollTarget,10,function(){var t=getComputedStyle(o,"::before").content;assert.ok(!t||"none"===t,"::before does not have content");var r=getComputedStyle(o,"::after").content;assert.ok(!r||"none"===r,"::after does not have content"),e()})},10)}),test("does not show bottom divider if not scrollable",function(e){var t=fixture("short");setTimeout(function(){var o=Polymer.dom(t).querySelector("paper-dialog-scrollable"),r=getComputedStyle(o,"::after").content;assert.ok(!r||"none"===r,"::after does not have content"),e()},10)}),test("can be added dynamically",function(e){var t=document.createElement("paper-dialog-scrollable");document.body.appendChild(t),setTimeout(function(){assert.isTrue(t.dialogElement===document.body,"dialogElement is body"),document.body.removeChild(t),e()},10)}),test("correctly sized (container = section)",function(){var e=fixture("basic"),t=Polymer.dom(e).querySelector("paper-dialog-scrollable"),o=e.getBoundingClientRect(),r=t.getBoundingClientRect(),l=t.scrollTarget.getBoundingClientRect();assert.equal(r.width,o.width,"scrollable width ok"),assert.isAbove(r.height,0,"scrollable height bigger than 0"),assert.isBelow(r.height,o.height,"scrollable height contained in container height"),assert.equal(l.width,r.width,"scrollTarget width ok"),assert.equal(l.height,r.height,"scrollTarget height ok")}),test("correctly sized (container = paper-dialog[opened])",function(e){var t=fixture("dialog"),o=Polymer.dom(t).querySelector("paper-dialog-scrollable");t.addEventListener("iron-overlay-opened",function(){var r=t.getBoundingClientRect(),l=o.getBoundingClientRect(),i=o.scrollTarget.getBoundingClientRect();assert.equal(l.width,r.width,"scrollable width ok"),assert.isAbove(l.height,0,"scrollable height bigger than 0"),assert.isBelow(l.height,r.height,"scrollable height contained in dialog height"),assert.equal(i.width,l.width,"scrollTarget width ok"),assert.equal(i.height,l.height,"scrollTarget height ok"),e()})})});</script>
+
+  
+
+</body></html>

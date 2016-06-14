@@ -1,0 +1,16 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../iron-icons/iron-icons.html">
+<link rel="import" href="../paper-tooltip.html">
+
+</head><body><dom-module id="test-button">
+  <template>
+    <style>:host{display:inline-block;}paper-icon-button{padding:0;}</style>
+
+    <paper-icon-button id="m" icon="menu" alt="menu"></paper-icon-button>
+    <paper-tooltip for="m" offset="8">hot dogs</paper-tooltip>
+  </template>
+
+  <script>Polymer({is:"test-button"});</script>
+</dom-module>
+</body></html>

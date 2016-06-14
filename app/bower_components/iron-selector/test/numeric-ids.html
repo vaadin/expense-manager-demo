@@ -1,0 +1,29 @@
+<!DOCTYPE html><html><head>
+
+  <title>iron-selector-numeric-ids</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../iron-selector.html">
+
+  <style>.iron-selected{background:#ccc;}</style>
+
+</head>
+<body>
+
+  <template is="dom-bind">
+    <iron-selector id="selector" attr-for-selected="name">
+      <template id="t" is="dom-repeat">
+        <div name="[[item.id]]">{{item.name}}</div>
+      </template>
+    </iron-selector>
+  </template>
+
+  <script>suite("select by a numeric property",function(){var e,t,n;setup(function(){e=document.querySelector('template[is="dom-bind"]'),t=e.$.selector,n=e.$.t,n.items=[{id:0,name:"item0"},{id:1,name:"item1"},{id:2,name:"item2"}]}),teardown(function(){n.items=[]}),test("select a value of zero",function(){n.render(),t.selected=1,assert.equal(t.selected,"1"),t.children[0].dispatchEvent(new CustomEvent("tap",{bubbles:!0})),assert.equal(t.selected,0)})});</script>
+
+
+
+</body></html>

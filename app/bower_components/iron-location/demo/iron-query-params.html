@@ -1,0 +1,35 @@
+<!DOCTYPE html><html><head>
+
+  <title>iron-query-params</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../iron-query-params.html">
+  <link rel="import" href="../../paper-styles/classes/typography.html">
+  <link rel="import" href="../../iron-flex-layout/classes/iron-flex-layout.html">
+  <link rel="import" href="../../paper-input/paper-input.html">
+  <link rel="stylesheet" href="../../paper-styles/demo.css">
+</head>
+<body>
+
+  <dom-module id="iron-query-params-demo">
+    <template>
+      <style>div.inputs{margin-bottom:15px;}label{display:inline-block;width:100px;}span.seconds{}[layout]{@apply (--layout);}[layout][horizontal]{@apply (--layout-horizontal);}[layout][horizontal] > div{padding:20px;max-width:500px;}[layout][vertical]{@apply (--layout-vertical);}[layout][flex]{@apply (--layout-flex);}h3{padding:0;margin:0;}</style>
+      <iron-query-params params-string="{{paramString}}" params-object="{{params}}">
+      </iron-query-params>
+
+      <div layout="" horizontal="">
+        <div layout="" vertical="" flex="" class="inputs">
+          <paper-input label="params as string" value="{{paramString}}" always-float-label="">
+          </paper-input>
+          <paper-input label="params as object" value="{{paramsString}}" invalid="{{paramsInvalid}}" error-message="Should be legal JSON" always-float-label="">
+          </paper-input>
+        </div>
+      </div>
+    </template>
+    <script>window.addEventListener("WebComponentsReady",function(){Polymer({is:"iron-query-params-demo",properties:{paramsString:{observer:"paramsStringChanged"},params:{observer:"paramsChanged"},paramsInvalid:{value:!1}},paramsStringChanged:function(){if(!this.ignore){this.ignore=!0;try{this.params=JSON.parse(this.paramsString),this.paramsInvalid=!1}catch(a){this.paramsInvalid=!0}this.ignore=!1}},paramsChanged:function(){this.ignore||(this.ignore=!0,this.paramsString=JSON.stringify(this.params),this.paramsInvalid=!1,this.ignore=!1)}})});</script>
+  </dom-module>
+
+  <iron-query-params-demo></iron-query-params-demo>
+
+
+</body></html>

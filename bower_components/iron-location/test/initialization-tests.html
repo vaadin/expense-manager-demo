@@ -1,0 +1,18 @@
+<!DOCTYPE html><html><head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="../../webcomponentsjs/webcomponents.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+    <link rel="import" href="../../polymer/polymer.html">
+    <link rel="import" href="../../promise-polyfill/promise-polyfill.html">
+    <link rel="import" href="../../test-fixture/test-fixture.html">
+    <link rel="import" href="../iron-location.html">
+  </head>
+
+  <body>
+    <script>"use strict";function getIframe(){return new Promise(function(e,t){var n=document.createElement("iframe"),o=getMessageMatching(n,function(e){return"ready"===e.type});n.src="./initialization-iframe.html",document.body.appendChild(n),n.addEventListener("error",t),o.then(function(){e(n)},t)})}function onMessage(e,t){var n=function(n){n.source===e.contentWindow&&t(n.data)};return window.addEventListener("message",n,!1),function(){window.removeEventListener("message",n)}}function getMessageMatching(e,t){var n=function(){},o=new Promise(function(o,r){n=onMessage(e,function(e){t(e)&&o(e)})});return o.then(n,n),o}function getUrl(e){var t=getMessageMatching(e,function(e){return"urlQueryResponse"===e.type}),n=function(){},t=new Promise(function(t,o){n=onMessage(e,t)});return t.then(n,n),e.contentWindow.postMessage({type:"urlQuery"},"*"),t}function timePasses(e){return new Promise(function(t){window.setTimeout(function(){t()},e)})}suite("<iron-location>'s initialization",function(){var e,t;setup(function(){return getIframe().then(function(n){function o(e){return"error"===e.type}e=n,getMessageMatching(e,o).then(function(e){t=e.error})})}),teardown(function(){e&&document.body.removeChild(e);var n=t;if(e=null,t=null,n)throw new Error("Error message from contained iframe: "+n)});var n=["default-before","attached-before","ready-before","default-after","attached-after","ready-after","default-below","attached-below","ready-below","default-above","attached-above","ready-above","default-container","attached-container","ready-container"];n.forEach(function(t){test("the url takes priority in "+t+" initialization",function(){return getUrl(e).then(function(n){return expect(n.search).to.be.eq(""),e.contentWindow.postMessage({type:"appendBody",tagName:t},"*"),timePasses(10).then(function(){return getUrl(e)})}).then(function(e){expect(e.search).to.be.eq("")})})});var o=["timeout-before","timeout-after","timeout-below","timeout-above","timeout-container"];o.forEach(function(t){test("the url does not take priority in "+t+" initialization",function(){return getUrl(e).then(function(n){return expect(n.search).to.be.eq(""),e.contentWindow.postMessage({type:"appendBody",tagName:t},"*"),timePasses(60).then(function(){return getUrl(e)})}).then(function(e){expect(e.search).to.be.eq("?on-timeout")})})})});</script>
+  
+
+</body></html>

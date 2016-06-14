@@ -1,0 +1,24 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>paper-button basic tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../paper-button.html">
+
+</head>
+<body>
+
+  <test-fixture id="TrivialButton">
+    <template>
+      <paper-button>Button</paper-button>
+    </template>
+  </test-fixture>
+
+  <script>suite("<paper-button>",function(){var e;setup(function(){e=fixture("TrivialButton")}),test("can be raised imperatively",function(t){e.raised=!0,expect(e.hasAttribute("raised")).to.be.eql(!0),Polymer.Base.async(function(){try{expect(e.elevation).to.be.eql(1),t()}catch(i){t(i)}},1)}),test("can be unraised after being raised imperatively",function(t){e.raised=!0,expect(e.hasAttribute("raised")).to.be.eql(!0),Polymer.Base.async(function(){expect(e.elevation).to.be.eql(1),e.raised=!1,expect(e.hasAttribute("raised")).to.be.eql(!1),Polymer.Base.async(function(){expect(e.elevation).to.be.eql(0),t()},1)},1)}),test("can be disabled imperatively",function(){e.disabled=!0,expect(e.getAttribute("aria-disabled")).to.be.eql("true"),expect(e.hasAttribute("disabled")).to.be.eql(!0)}),test("can be triggered with space",function(t){e.addEventListener("click",function(){t()}),MockInteractions.pressSpace(e)}),test("can be triggered with enter",function(t){e.addEventListener("click",function(){t()}),MockInteractions.pressEnter(e)})}),suite("<paper-button>",function(){var e;setup(function(){e=fixture("TrivialButton")}),test('has aria role "button"',function(){expect(e.getAttribute("role")).to.be.eql("button")}),a11ySuite("TrivialButton")});</script>
+
+
+</body></html>

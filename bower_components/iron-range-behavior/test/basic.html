@@ -1,0 +1,25 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>iron-range-behavior</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="x-progressbar.html">
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+</head>
+<body>
+
+  <test-fixture id="trivialRange">
+    <template>
+      <x-progressbar></x-progressbar>
+    </template>
+  </test-fixture>
+
+  <script>suite("<x-progressbar>",function(){var e;setup(function(){e=fixture("trivialRange")}),test("check default",function(){assert.equal(e.min,0),assert.equal(e.max,100),assert.equal(e.value,0)}),test("set value",function(u){e.value=50,flush(function(){assert.equal(e.value,50),e.value=60.1,flush(function(){assert.equal(e.value,60),u()})})}),test("set max",function(u){e.max=10,e.value=11,flush(function(){assert.equal(e.value,e.max),u()})}),test("test ratio",function(u){e.max=10,e.value=5,flush(function(){assert.equal(e.ratio,50),u()})}),test("set min",function(u){e.min=10,e.max=50,e.value=30,flush(function(){assert.equal(e.ratio,50),e.value=0,flush(function(){assert.equal(e.value,e.min),u()})})}),test("set step",function(u){e.min=0,e.max=10,e.value=5.1,flush(function(){assert.equal(e.value,5),e.step=.1,e.value=5.1,flush(function(){assert.equal(e.value,5.1),u()})})}),test("set large step",function(u){e.min=0,e.max=2625,e.step=875,e.value=875,flush(function(){assert.equal(e.value,875),u()})}),test("set step with min",function(u){e.min=-.9,e.max=1.1,e.step=.5,e.value=-.5,flush(function(){assert.equal(e.value,-.4),e.value=.7,flush(function(){assert.equal(e.value,.6),u()})})}),test("odd values",function(u){e.min=1,e.max=7,e.step=2,e.value=3,flush(function(){assert.equal(e.value,3),e.value+=e.step,assert.equal(e.value,5),e.value+=e.step,assert.equal(e.value,7),u()})}),test("negative values should round up",function(u){e.min=-10,e.max=10,e.step=.1,e.value=-8.4252,flush(function(){assert.equal(e.value,-8.4),u()})}),test("positive values should round up",function(u){e.min=10,e.max=100,e.step=.25,e.value=19.34567,flush(function(){assert.equal(e.value,19.25),u()})})});</script>
+
+
+
+</body></html>

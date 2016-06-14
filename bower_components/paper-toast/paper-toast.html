@@ -1,0 +1,17 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-a11y-announcer/iron-a11y-announcer.html">
+<link rel="import" href="../iron-overlay-behavior/iron-overlay-behavior.html">
+
+
+
+</head><body><dom-module id="paper-toast">
+  <template>
+    <style>:host{display:block;position:fixed;background-color:var(--paper-toast-background-color, #323232);color:var(--paper-toast-color, #f1f1f1);min-height:48px;min-width:288px;padding:16px 24px;box-sizing:border-box;box-shadow:0 2px 5px 0 rgba(0, 0, 0, 0.26);border-radius:2px;margin:12px;font-size:14px;cursor:default;-webkit-transition:-webkit-transform 0.3s, opacity 0.3s;transition:transform 0.3s, opacity 0.3s;opacity:0;-webkit-transform:translateY(100px);transform:translateY(100px);@apply (--paper-font-common-base);}:host(.capsule){border-radius:24px;}:host(.fit-bottom){width:100%;min-width:0;border-radius:0;margin:0;}:host(.paper-toast-open){opacity:1;-webkit-transform:translateY(0px);transform:translateY(0px);}</style>
+
+    <span id="label">{{text}}</span>
+    <content></content>
+  </template>
+
+  <script>!function(){var e=null;Polymer({is:"paper-toast",behaviors:[Polymer.IronOverlayBehavior],properties:{fitInto:{type:Object,value:window,observer:"_onFitIntoChanged"},horizontalAlign:{type:String,value:"left"},verticalAlign:{type:String,value:"bottom"},duration:{type:Number,value:3e3},text:{type:String,value:""},noCancelOnOutsideClick:{type:Boolean,value:!0},noAutoFocus:{type:Boolean,value:!0}},listeners:{transitionend:"__onTransitionEnd"},get visible(){return Polymer.Base._warn("`visible` is deprecated, use `opened` instead"),this.opened},get _canAutoClose(){return this.duration>0&&this.duration!==1/0},created:function(){this._autoClose=null,Polymer.IronA11yAnnouncer.requestAvailability()},show:function(e){"string"==typeof e&&(e={text:e});for(var t in e)0===t.indexOf("_")?Polymer.Base._warn('The property "'+t+'" is private and was not set.'):t in this?this[t]=e[t]:Polymer.Base._warn('The property "'+t+'" is not valid.');this.open()},hide:function(){this.close()},__onTransitionEnd:function(e){e&&e.target===this&&"opacity"===e.propertyName&&(this.opened?this._finishRenderOpened():this._finishRenderClosed())},_openedChanged:function(){null!==this._autoClose&&(this.cancelAsync(this._autoClose),this._autoClose=null),this.opened?(e&&e!==this&&e.close(),e=this,this.fire("iron-announce",{text:this.text}),this._canAutoClose&&(this._autoClose=this.async(this.close,this.duration))):e===this&&(e=null),Polymer.IronOverlayBehaviorImpl._openedChanged.apply(this,arguments)},_renderOpened:function(){this.classList.add("paper-toast-open")},_renderClosed:function(){this.classList.remove("paper-toast-open")},_onFitIntoChanged:function(e){this.positionTarget=e}})}();</script>
+</dom-module>
+</body></html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>iron-swipeable-container tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../iron-swipeable-container.html">
+  <link rel="import" href="test-element.html">
+
+<style>div{width:100px;height:100px;background-color:blue;}</style></head>
+
+<body>
+
+  <test-fixture id="basic">
+    <template>
+      <iron-swipeable-container>
+        <div id="native">Hello</div>
+        <test-element id="custom"></test-element>
+      </iron-swipeable-container>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="child-no-swipe">
+    <template>
+      <iron-swipeable-container>
+        <div id="native" class="disable-swipe">Hello</div>
+        <test-element id="custom" class="disable-swipe"></test-element>
+      </iron-swipeable-container>
+    </template>
+  </test-fixture>
+
+
+  <test-fixture id="no-swipe">
+    <template>
+      <iron-swipeable-container disabled="">
+        <div id="native">Hello</div>
+        <test-element id="custom"></test-element>
+      </iron-swipeable-container>
+    </template>
+  </test-fixture>
+
+  <script>suite("native elements",function(){test("dragging less than halfway does not swipe",function(e){var t=fixture("basic"),n=t.querySelector("#native");Polymer.Base.async(function(){var o=sinon.spy();t.addEventListener("iron-swipe",o),expect(Polymer.dom(t).queryDistributedElements("*").length).to.be.equal(2),MockInteractions.track(n,10,0),Polymer.Base.async(function(){expect(o.callCount).to.be.equal(0),expect(Polymer.dom(t).queryDistributedElements("*").length).to.be.equal(2),e()},1)})}),test("dragging more than halfway swipes it",function(e){var t=fixture("basic"),n=t.querySelector("#native");Polymer.Base.async(function(){expect(Polymer.dom(t).queryDistributedElements("*").length).to.be.equal(2),t.addEventListener("iron-swipe",function(n){expect(Polymer.dom(t).queryDistributedElements("*").length).to.be.equal(1),e()}),MockInteractions.track(n,60,0)})}),test("an element with disable-swipe cannot be swiped",function(e){var t=fixture("child-no-swipe"),n=t.querySelector("#native");Polymer.Base.async(function(){var o=sinon.spy();t.addEventListener("iron-swipe",o),expect(Polymer.dom(t).queryDistributedElements("*").length).to.be.equal(2),MockInteractions.track(n,60,0),Polymer.Base.async(function(){expect(o.callCount).to.be.equal(0),expect(Polymer.dom(t).queryDistributedElements("*").length).to.be.equal(2),e()},1)})})}),suite("custom elements",function(){test("dragging less than halfway does not swipe",function(e){var t=fixture("basic"),n=t.querySelector("#custom"),o=sinon.spy();t.addEventListener("iron-swipe",o),Polymer.Base.async(function(){expect(Polymer.dom(t).queryDistributedElements("*").length).to.be.equal(2),MockInteractions.track(n,10,0),Polymer.Base.async(function(){expect(o.callCount).to.be.equal(0),expect(Polymer.dom(t).queryDistributedElements("*").length).to.be.equal(2),e()},1)})}),test("dragging more than halfway swipes it",function(e){var t=fixture("basic"),n=t.querySelector("#custom");Polymer.Base.async(function(){expect(Polymer.dom(t).queryDistributedElements("*").length).to.be.equal(2),t.addEventListener("iron-swipe",function(n){expect(Polymer.dom(t).queryDistributedElements("*").length).to.be.equal(1),e()}),MockInteractions.track(n,60,0)})}),test("an element with disable-swipe cannot be swiped",function(e){var t=fixture("child-no-swipe"),n=t.querySelector("#custom");Polymer.Base.async(function(){var o=sinon.spy();t.addEventListener("iron-swipe",o),expect(Polymer.dom(t).queryDistributedElements("*").length).to.be.equal(2),MockInteractions.track(n,60,0),Polymer.Base.async(function(){expect(o.callCount).to.be.equal(0),expect(Polymer.dom(t).queryDistributedElements("*").length).to.be.equal(2),e()},1)})})}),suite("no swipe",function(){test("dragging a native element more than halfway does not swipe",function(e){var t=fixture("no-swipe"),n=t.querySelector("#native"),o=sinon.spy();t.addEventListener("iron-swipe",o),Polymer.Base.async(function(){expect(Polymer.dom(t).queryDistributedElements("*").length).to.be.equal(2),MockInteractions.track(n,60,0),Polymer.Base.async(function(){expect(o.callCount).to.be.equal(0),expect(Polymer.dom(t).queryDistributedElements("*").length).to.be.equal(2),e()},1)})}),test("dragging a custom element more than halfway does not swipe",function(e){var t=fixture("no-swipe"),n=t.querySelector("#custom"),o=sinon.spy();t.addEventListener("iron-swipe",o),Polymer.Base.async(function(){expect(Polymer.dom(t).queryDistributedElements("*").length).to.be.equal(2),MockInteractions.track(n,60,0),Polymer.Base.async(function(){expect(o.callCount).to.be.equal(0),expect(Polymer.dom(t).queryDistributedElements("*").length).to.be.equal(2),e()},1)})})});</script>
+
+
+</body></html>

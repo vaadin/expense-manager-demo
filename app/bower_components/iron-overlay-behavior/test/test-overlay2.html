@@ -1,0 +1,18 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+
+<link rel="import" href="../iron-overlay-behavior.html">
+
+</head><body><dom-module id="test-overlay2">
+
+  <style>:host{background:white;color:black;border:1px solid black;}</style>
+
+  <template>
+    <button id="first">first</button>
+    <content></content>
+    <button id="last">last</button>
+  </template>
+
+</dom-module>
+
+<script>!function(){Polymer({is:"test-overlay2",behaviors:[Polymer.IronOverlayBehavior],get _focusableNodes(){return[this.$.first,this.$.last]}})}();</script>
+</body></html>

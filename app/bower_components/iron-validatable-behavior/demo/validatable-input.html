@@ -1,0 +1,5 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../iron-validatable-behavior.html">
+
+<script>Polymer({is:"validatable-input","extends":"input",properties:{invalid:{notify:!0,type:Boolean,value:!1}},behaviors:[Polymer.IronValidatableBehavior],listeners:{input:"_onInput"},_onInput:function(i){this.invalid=!this.validate(i.target.value)}});</script>
+</head><body></body></html>

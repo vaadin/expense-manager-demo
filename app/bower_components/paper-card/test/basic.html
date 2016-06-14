@@ -1,0 +1,26 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>paper-card a11y tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <link rel="import" href="../paper-card.html">
+
+  <style>paper-card{width:400px;}</style>
+
+</head>
+<body>
+  <test-fixture id="basic">
+    <template>
+      <paper-card heading="header">
+        <div class="card-content"><p>Sample content</p></div>
+      </paper-card>
+    </template>
+  </test-fixture>
+
+  <script>suite("a11y",function(){var t;setup(function(){t=fixture("basic")}),test("aria-label set on card",function(){assert.strictEqual(t.getAttribute("aria-label"),t.heading)}),test("aria-label can be updated",function(){assert.strictEqual(t.getAttribute("aria-label"),t.heading),t.heading="batman",assert.strictEqual(t.getAttribute("aria-label"),"batman")})}),suite("header image",function(){var t,e;setup(function(){t=fixture("basic"),e=t.$$("iron-image")}),test("is iron-image",function(){expect(e).to.be.ok}),test("width properly setup",function(){assert.strictEqual(e.offsetWidth,0),t.image="some-img-url",assert.strictEqual(e.src,t.image),assert.strictEqual(e.offsetWidth,t.offsetWidth)}),test("preload properly setup",function(){assert.strictEqual(e.preload,t.preloadImage),t.preloadImage=!t.preloadImage,assert.strictEqual(e.preload,t.preloadImage)}),test("fade properly setup",function(){assert.strictEqual(e.fade,t.fadeImage),t.fadeImage=!t.fadeImage,assert.strictEqual(e.fade,t.fadeImage)})});</script>
+
+
+
+</body></html>

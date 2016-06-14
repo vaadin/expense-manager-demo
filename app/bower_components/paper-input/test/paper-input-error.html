@@ -1,0 +1,38 @@
+<!DOCTYPE html><html><head>
+
+  <title>paper-input-error tests</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../../iron-input/iron-input.html">
+  <link rel="import" href="../paper-input-container.html">
+  <link rel="import" href="../paper-input-error.html">
+
+</head>
+<body>
+
+  <paper-input-container id="container">
+    <input is="iron-input">
+    <paper-input-error>error</paper-input-error>
+  </paper-input-container>
+
+  <test-fixture id="auto-validate-numbers">
+    <template>
+      <paper-input-container auto-validate="" attr-for-value="bind-value">
+        <label id="l">label</label>
+        <input is="iron-input" id="i" pattern="[0-9]*">
+        <paper-input-error id="e">error</paper-input-error>
+      </paper-input-container>
+    </template>
+  </test-fixture>
+
+  <script>suite("basic",function(){test("error message only appears when input is invalid",function(){var e=fixture("auto-validate-numbers"),i=Polymer.dom(e).querySelector("#i"),t=Polymer.dom(e).querySelector("#e");assert.equal(getComputedStyle(t).visibility,"hidden","error is visibility:hidden"),i.bindValue="foobar",assert.notEqual(getComputedStyle(t).visibility,"hidden","error is not visibility:hidden")}),test("error message add on is registered",function(){var e=document.getElementById("container");assert.isTrue(e._addons&&1===e._addons.length,"add on is registered")})});</script>
+
+
+
+</body></html>

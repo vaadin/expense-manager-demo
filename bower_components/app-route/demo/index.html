@@ -1,0 +1,59 @@
+<!DOCTYPE html><html><head>
+<script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+<title>app-route Demo</title>
+<link rel="import" href="../../polymer/polymer.html">
+
+<link rel="import" href="../../paper-styles/paper-styles.html">
+<link rel="import" href="../../iron-demo-helpers/url-bar.html">
+<link rel="import" href="../../iron-pages/iron-pages.html">
+
+<link rel="import" href="../app-location.html">
+<link rel="import" href="../app-route.html">
+
+<link rel="import" href="youtube-search.html">
+<link rel="import" href="youtube-toolbar.html">
+<link rel="import" href="video-viewer.html">
+<link rel="import" href="search-results.html">
+<style>body{margin:0;padding:0;}url-bar{background-color:white;}</style>
+</head>
+
+<body>
+
+<url-bar></url-bar>
+
+<app-router-demo></app-router-demo>
+
+<dom-module id="app-router-demo">
+  <template>
+    <style>:host{display:block;position:relative;height:100vh;}:host([video-page-active]){overflow:hidden;}:host([video-page-active]) iron-pages{transform:translateY(-170px);}iron-pages{transition:transform 0.3s;}paper-button{@apply (--paper-font-common-base);color:var(--paper-red-500);margin-bottom:16px;}</style>
+
+
+    
+    <app-location route="{{route}}" use-hash-as-path=""></app-location>
+
+    
+    <app-route route="{{route}}" pattern="/:page" data="{{data}}"></app-route>
+    <app-route route="{{route}}" pattern="/search" tail="{{searchTail}}"></app-route>
+    <app-route route="{{route}}" pattern="/video" tail="{{videoTail}}" active="{{videoPageActive}}"></app-route>
+
+    <youtube-toolbar collapsed$="{{videoPageActive}}">
+      
+      <youtube-search route="{{searchTail}}" video-data="{{videoData}}">
+      </youtube-search>
+    </youtube-toolbar>
+
+    <iron-pages attr-for-selected="id" selected="{{data.page}}">
+      <search-results id="search" items="{{videos}}"></search-results>
+
+      
+      <video-viewer id="video" route="{{videoTail}}"></video-viewer>
+    </iron-pages>
+
+  </template>
+
+  <script>window.addEventListener("WebComponentsReady",function(){Polymer({is:"app-router-demo",properties:{route:{type:Object},videoData:{type:Object,observer:"_videoDataChanged"},videoPageActive:{type:Boolean,reflectToAttribute:!0,observer:"_videoPageActiveChanged"},searchTail:{type:Object,notify:!0},videoTail:{type:Object,notify:!0},newCategory:{type:String},videos:{type:Array,value:function(){return[]}},data:{type:Object,value:function(){return{page:"/search/"}}}},observers:["_onRoutePathChanged(route.path)"],_onRoutePathChanged:function(e){e||this.set("route.path","/search/")},_videoDataChanged:function(e){var t=[];e.items.forEach(function(e){var o={id:e.id.videoId,title:e.snippet.title,thumbnail:e.snippet.thumbnails.high.url};t.push(o)}),this.set("videos",t)},_videoPageActiveChanged:function(e,t){var o;return o=e?0:255,document.body.style.backgroundColor="rgb("+o+","+o+","+o+")",void 0===t?void(document.body.style.transition="background-color .2s linear"):void 0}})});</script>
+</dom-module>
+
+
+</body></html>

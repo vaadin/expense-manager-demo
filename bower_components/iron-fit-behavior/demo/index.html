@@ -1,0 +1,55 @@
+<!DOCTYPE html><html><head>
+
+  <title>iron-fit-behavior demo</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="simple-fit.html">
+  <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+  <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+
+  <style is="custom-style" include="demo-pages-shared-styles">.centered{min-width:500px;}demo-snippet{--demo-snippet-code:{max-height:250px;};}</style>
+
+</head>
+
+<body unresolved="" class="centered">
+  <h3>
+    An element with <code>IronFitBehavior</code> can be centered in
+    <code>fitInto</code> or positioned around a <code>positionTarget</code>
+  </h3>
+  <demo-snippet>
+    <template>
+      <style>.target{cursor:pointer;text-align:center;display:inline-block;box-sizing:border-box;border:1px solid;width:100px;padding:20px 0;margin:5px;}#myFit{z-index:10;padding:20px;overflow:auto;min-width:100px;min-height:100px;}button{background-color:white;border-radius:5px;border-width:1px;}button.selected{background-color:#b3e5fc;}</style>
+      <template is="dom-bind">
+        <template is="dom-repeat" items="[[containers]]">
+          <div class="target" on-tap="updatePositionTarget">Target</div>
+        </template>
+        <simple-fit id="myFit" auto-fit-on-attach="">
+          <h2>Align</h2>
+          <p>
+            <button on-tap="updateAlign" vertical-align="top">top</button>
+            <button on-tap="updateAlign" vertical-align="bottom">bottom</button>
+            <button on-tap="updateAlign" vertical-align="auto">auto</button>
+            <button on-tap="updateAlign" vertical-align="">null</button>
+          </p>
+          <p>
+            <button on-tap="updateAlign" horizontal-align="left">left</button>
+            <button on-tap="updateAlign" horizontal-align="right">right</button>
+            <button on-tap="updateAlign" horizontal-align="auto">auto</button>
+            <button on-tap="updateAlign" horizontal-align="">null</button>
+          </p>
+          <button on-tap="toggleNoOverlap">no overlap</button>
+          <button on-tap="toggleDynamicAlign">dynamic align</button>
+        </simple-fit>
+        <script>function toggleClass(t,e,a){t.classList[a?"add":"remove"](e)}var defaultTarget=Polymer.dom(myFit).parentNode,template=document.querySelector('template[is="dom-bind"]');template.containers=new Array(30),template.updatePositionTarget=function(t){var e=Polymer.dom(t).rootTarget;e=myFit.positionTarget===e?defaultTarget:e,myFit.positionTarget.style.backgroundColor="",e.style.backgroundColor="orange",myFit.positionTarget=e,template.refit()},template._raf=null,template.refit=function(){template._raf&&window.cancelAnimationFrame(template._raf),template._raf=window.requestAnimationFrame(function(){template._raf=null,myFit.refit()})},template.updateAlign=function(t){var e=Polymer.dom(t).rootTarget;if(e.hasAttribute("horizontal-align")){myFit.horizontalAlign=e.getAttribute("horizontal-align");for(var a=e.parentNode.querySelectorAll("[horizontal-align]"),l=0;l<a.length;l++)toggleClass(a[l],"selected",a[l]===e)}if(e.hasAttribute("vertical-align")){myFit.verticalAlign=e.getAttribute("vertical-align");for(var a=e.parentNode.querySelectorAll("[vertical-align]"),l=0;l<a.length;l++)toggleClass(a[l],"selected",a[l]===e)}template.refit()},template.toggleNoOverlap=function(t){myFit.noOverlap=!myFit.noOverlap,toggleClass(Polymer.dom(t).rootTarget,"selected",myFit.noOverlap),template.refit()},template.toggleDynamicAlign=function(t){myFit.dynamicAlign=!myFit.dynamicAlign,toggleClass(Polymer.dom(t).rootTarget,"selected",myFit.dynamicAlign),template.refit()},window.addEventListener("resize",template.refit),window.addEventListener("scroll",template.refit);</script>
+      </template>
+    </template>
+  </demo-snippet>
+
+
+
+
+</body></html>

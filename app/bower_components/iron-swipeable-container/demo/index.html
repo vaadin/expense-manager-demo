@@ -1,0 +1,84 @@
+<!DOCTYPE html><html lang="en"><head>
+  <title>iron-swipeable-container demo</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <link rel="import" href="../iron-swipeable-container.html">
+  <link rel="import" href="../../paper-card/paper-card.html">
+  <link rel="import" href="../../paper-styles/demo-pages.html">
+  <link rel="import" href="../../paper-styles/color.html">
+
+  <style is="custom-style">paper-card{width:100%;margin-bottom:16px;}.item{margin-bottom:16px;padding:20px;background-color:var(--paper-lime-500);}.item.blue{background-color:var(--paper-blue-300);}.swipe{-moz-user-select:none;-ms-user-select:none;-webkit-user-select:none;user-select:none;cursor:default;}</style>
+
+</head>
+<body unresolved="">
+  <div class="vertical-section-container centered">
+    <h4>Horizontal swipe</h4>
+    <div class="vertical-section">
+      <iron-swipeable-container>
+        <div class="item swipe">You can swipe native elements. This is a plain div.</div>
+
+        <paper-card class="swipe" heading="Swipe me!">
+          <div class="card-content">
+            You can automatically swipe custom elements, too. This is a paper-card.
+          </div>
+        </paper-card>
+
+        <paper-card class="swipe">
+          <div class="card-content">
+            This is another paper-card. Hello!
+          </div>
+        </paper-card>
+
+        <div class="item blue disable-swipe">This is another div but it can't be swiped.</div>
+      </iron-swipeable-container>
+    </div>
+
+    <h4>Curve swipe</h4>
+    <div class="vertical-section">
+      <iron-swipeable-container swipe-style="curve">
+        <div class="item swipe">You can swipe native elements. This is a plain div.</div>
+
+        <paper-card class="swipe" heading="Swipe me!">
+          <div class="card-content">
+            You can automatically swipe custom elements, too. This is a paper-card.
+          </div>
+        </paper-card>
+
+        <paper-card class="swipe">
+          <div class="card-content">
+            This is another paper-card. Hello!
+          </div>
+        </paper-card>
+
+        <div class="item blue disable-swipe">This is another div but it can't be swiped.</div>
+      </iron-swipeable-container>
+    </div>
+
+    <h4>Swipe disabled</h4>
+    <div class="vertical-section">
+      <iron-swipeable-container disabled="">
+        <div class="item swipe">You can swipe native elements. This is a plain div.</div>
+
+        <paper-card class="swipe" heading="Swipe me!">
+          <div class="card-content">
+            You can automatically swipe custom elements, too. This is a paper-card.
+          </div>
+        </paper-card>
+
+        <paper-card class="swipe">
+          <div class="card-content">
+            This is another paper-card. Hello!
+          </div>
+        </paper-card>
+
+        <div class="item blue">This is another div.</div>
+      </iron-swipeable-container>
+    </div>
+  </div>
+
+
+</body></html>

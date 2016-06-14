@@ -1,0 +1,62 @@
+<!DOCTYPE html><html><head>
+
+    <title>paper-tabs-links</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../paper-tabs.html">
+    <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html">
+
+  </head>
+  <body>
+
+    <test-fixture id="links">
+      <template>
+        <paper-tabs>
+          <paper-tab link=""><a href="#one" tabindex="-1">ONE</a></paper-tab>
+          <paper-tab link=""><a href="#two" tabindex="-1">TWO</a></paper-tab>
+          <paper-tab link=""><a href="#three" tabindex="-1">THREE</a></paper-tab>
+        </paper-tabs>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="not-links">
+      <template>
+        <paper-tabs>
+          <paper-tab><a href="#one" tabindex="-1">ONE</a></paper-tab>
+          <paper-tab><a href="#two" tabindex="-1">TWO</a></paper-tab>
+          <paper-tab><a href="#three" tabindex="-1">THREE</a></paper-tab>
+        </paper-tabs>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="not-first-child">
+      <template>
+        <paper-tabs>
+          <paper-tab>
+            <div>
+              <a href="#one" tabindex="-1">ONE</a>
+            </div>
+          </paper-tab>
+          <paper-tab>
+            <div>
+              <a href="#two" tabindex="-1">TWO</a>
+            </div>
+          </paper-tab>
+          <paper-tab>
+            <div>
+              <a href="#three" tabindex="-1">THREE</a>
+            </div>
+          </paper-tab>
+        </paper-tabs>
+      </template>
+    </test-fixture>
+
+    <script>suite("links",function(){suite("has link attribute",function(){var e,t,n;setup(function(){e=fixture("links"),t=e.querySelectorAll("paper-tab")[1],n=t.querySelector("a")}),test("pressing enter on tab causes anchor click",function(e){t.addEventListener("click",function c(r){t.removeEventListener("click",c),expect(r.target).to.be.equal(n),e()}),MockInteractions.pressEnter(t)}),test("pressing space on tab causes anchor click",function(e){t.addEventListener("click",function c(r){t.removeEventListener("click",c),expect(r.target).to.be.equal(n),e()}),MockInteractions.pressSpace(t)})}),suite("does not have link attribute",function(){var e,t,n;setup(function(){e=fixture("not-links"),t=e.querySelectorAll("paper-tab")[1],n=t.querySelector("a")}),test("pressing enter on tab does not cause anchor click",function(e){t.addEventListener("click",function c(r){t.removeEventListener("click",c),expect(r.target).to.not.equal(n),expect(r.target).to.be.equal(t),e()}),MockInteractions.pressEnter(t)})}),suite("not first child",function(){var e,t,n;setup(function(){e=fixture("links"),t=e.querySelectorAll("paper-tab")[1],n=t.querySelector("a")}),test("pressing enter on tab causes anchor click",function(e){t.addEventListener("click",function c(r){t.removeEventListener("click",c),expect(r.target).to.be.equal(n),e()}),MockInteractions.pressEnter(t)})})});</script>
+
+  
+
+</body></html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>paper-slider test</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../paper-slider.html">
+</head>
+<body>
+
+
+  <test-fixture id="trivialProgress">
+    <template>
+      <paper-slider></paper-slider>
+    </template>
+  </test-fixture>
+
+  <script>suite("<paper-slider>",function(){var e;setup(function(){e=fixture("trivialProgress")}),test("check default",function(){assert.equal(e.min,0),assert.equal(e.max,100),assert.equal(e.value,0)}),test("set value",function(t){e.value=50,flush(function(){assert.equal(e.value,50),e.value=60.1,flush(function(){assert.equal(e.value,60),t()})})}),test("set max",function(t){e.max=10,e.value=11,flush(function(){assert.equal(e.value,e.max),t()})}),test("ratio",function(t){e.max=10,e.value=5,flush(function(){assert.equal(e.ratio,.5),t()})}),test("snaps",function(t){e.snaps=!0,e.step=10,e.max=100,e.value=25,flush(function(){assert.equal(e.value,30),e.value=51.1,flush(function(){assert.equal(e.value,50),e.snaps=!1,e.step=1,t()})})}),test("secondary progress",function(t){e.max=10,e.secondaryProgress=50,flush(function(){assert.equal(e.secondaryProgress,e.max),t()})}),test("increment",function(t){e.min=0,e.max=10,e.step=2,e.value=0,e.increment(),flush(function(){assert.equal(e.value,e.step),e.step=1,t()})}),test("decrement",function(t){e.min=0,e.max=10,e.step=2,e.value=8,e.decrement(),flush(function(){assert.equal(e.value,6),e.step=1,t()})}),test("editable",function(t){e.min=0,e.max=10,e.step=1,e.editable=!0,flush(function(){e.value=2,assert.equal(e.$$("#input").value,e.value),t()})}),test("decimal values",function(t){e.min=0,e.max=1,e.value=e.min,e.step=.1,e.increment(),flush(function(){assert.equal(e.value,e.step),assert.equal(e.$.sliderBar.value,e.step),t()})}),test("snap to the correct value on tapping",function(t){var a=MockInteractions.topLeftOfNode(e.$.sliderBar);a.x+=.9*e.$.sliderBar.getBoundingClientRect().width,e.min=0,e.max=2,e.step=1,e.value=0,MockInteractions.down(e.$.sliderBar,a),flush(function(){assert.equal(e.value,e.max),e.step=1,t()})}),test("value should notify",function(t){function a(n){assert.equal(n.detail.value,s),t(),e.removeEventListener("value-changed",a)}var s=10;e.addEventListener("value-changed",a),e.min=0,e.max=100,e.value=s}),test("immediateValue should notify",function(t){var a=50;e.addEventListener("immediate-value-changed",function(s){assert.equal(s.detail.value,a),assert.equal(e.immediateValue,a),t()});var s=MockInteractions.topLeftOfNode(e.$.sliderBar);s.x+=e.$.sliderBar.getBoundingClientRect().width*a/100,e.min=0,e.max=100,MockInteractions.down(e.$.sliderBar,s)}),test("max markers",function(t){e.min=0,e.max=100,e.snap=!0,e.step=4,e.maxMarkers=10,flush(function(){assert.equal(e.markers.length,10),t()})}),test("decimal markers",function(t){e.min=0,e.max=.7,e.snap=!0,e.step=.1,e.maxMarkers=10,flush(function(){assert.equal(e.markers.length,7),t()})})});</script>
+
+
+
+</body></html>

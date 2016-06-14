@@ -1,0 +1,50 @@
+<!DOCTYPE html><html><head>
+
+    <title>iron-meta</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+    <link rel="import" href="../iron-meta.html">
+    <link rel="import" href="../../test-fixture/test-fixture.html">
+
+  </head>
+  <body>
+
+    <test-fixture id="TrivialMeta">
+      <template>
+        <iron-meta self="" key="info"></iron-meta>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="ManyMetas">
+      <template>
+        <iron-meta self="" key="default1"></iron-meta>
+        <iron-meta self="" key="default2"></iron-meta>
+        <iron-meta self="" key="default3"></iron-meta>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="DifferentTypedMetas">
+      <template>
+        <iron-meta self="" type="foo" key="foobarKey"></iron-meta>
+        <iron-meta self="" type="bar" key="foobarKey"></iron-meta>
+        <iron-meta self="" key="defaultKey"></iron-meta>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="ClashingMetas">
+      <template>
+        <iron-meta self="" key="baz"></iron-meta>
+        <iron-meta self="" key="baz"></iron-meta>
+      </template>
+    </test-fixture>
+
+    <script>suite("<iron-meta>",function(){suite("basic behavior",function(){var e;setup(function(){e=fixture("TrivialMeta")}),teardown(function(){e.key=null}),test("uses itself as the default value",function(){expect(e.value).to.be.equal(e)}),test("can be assigned alternative values",function(){e.value="foobar",expect(e.list[0]).to.be.equal("foobar")}),test("can access same-type meta values by key",function(){expect(e.byKey(e.key)).to.be.equal(e.value)}),test("yields a list of same-type meta data",function(){expect(e.list).to.be.ok,expect(e.list.length).to.be.equal(1),expect(e.list[0]).to.be.equal(e)})}),suite("many same-typed metas",function(){var e;setup(function(){e=fixture("ManyMetas")}),teardown(function(){e.forEach(function(e){e.key=null})}),test("all cache all meta values",function(){e.forEach(function(t,a){expect(t.list.length).to.be.equal(e.length),expect(t.list[a].value).to.be.equal(t.value)})}),test("can be unregistered individually",function(){e[0].key=null,expect(e[0].list.length).to.be.equal(2),expect(e[0].list).to.be.deep.equal([e[1],e[2]])}),test("can access each others value by key",function(){expect(e[0].byKey("default2")).to.be.equal(e[1].value)})}),suite("different-typed metas",function(){var e;setup(function(){e=fixture("DifferentTypedMetas")}),teardown(function(){e.forEach(function(e){e.key=null})}),test("cache their values separately",function(){var t=e[0],a=e[1];expect(t.value).to.not.be.equal(a.value),expect(t.byKey("foobarKey")).to.be.equal(t.value),expect(a.byKey("foobarKey")).to.be.equal(a.value)}),test("cannot access values of other types",function(){var t=e[2];expect(t.byKey("foobarKey")).to.be.equal(void 0)}),test("only list values of their type",function(){e.forEach(function(e){expect(e.list.length).to.be.equal(1),expect(e.list[0]).to.be.equal(e.value)})})}),suite("metas with clashing keys",function(){var e;setup(function(){e=fixture("ClashingMetas")}),teardown(function(){e.forEach(function(e){e.key=null})}),test("let the last value win registration against the key",function(){var t=e[0].byKey(e[0].key),a=e[0].value,n=e[1].value;expect(t).to.not.be.equal(a),expect(t).to.be.equal(n)})}),suite("singleton",function(){test("only one ironmeta created",function(){var e=Polymer.IronMeta.getIronMeta(),t=Polymer.IronMeta.getIronMeta();expect(e).to.be.equal(t)})})});</script>
+
+  
+
+</body></html>

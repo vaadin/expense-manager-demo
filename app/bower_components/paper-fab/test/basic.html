@@ -1,0 +1,50 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>paper-fab basic tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../../iron-icons/iron-icons.html">
+  <link rel="import" href="../paper-fab.html">
+
+</head>
+<body>
+
+  <test-fixture id="TrivialFab">
+    <template>
+      <div style="line-height:30px">
+        <paper-fab id="fab1" icon="add"></paper-fab>
+      </div>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="SrcFab">
+    <template>
+      <paper-fab src="add.png"></paper-fab>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="icon-fab">
+    <template>
+      <paper-fab icon="favorite" label="favorite icon"></paper-fab>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="icon-src-fab">
+    <template>
+      <paper-fab src="add.png" label="add icon"></paper-fab>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="label-fab">
+    <template>
+      <paper-fab label="HTML"></paper-fab>
+    </template>
+  </test-fixture>
+
+  <script>function centerOf(e){var t=e.getBoundingClientRect();return{left:t.left+t.width/2,top:t.top+t.height/2}}function approxEqual(e,t){return Math.round(e.left)==Math.round(t.left)&&Math.round(e.top)==Math.round(t.top)}function isHidden(e){var t=e.getBoundingClientRect();return 0==t.width&&0==t.height}var f1,f2,f3,f4,f5;setup(function(){f1=fixture("TrivialFab").querySelector("#fab1"),f2=fixture("SrcFab"),f3=fixture("icon-fab"),f4=fixture("icon-src-fab"),f5=fixture("label-fab")}),test("applies an icon specified by the `icon` attribute",function(){assert.isFalse(!!f1.$.icon.usesSrcAttribute),assert.ok(Polymer.dom(f1.$.icon.root).querySelector("svg"))}),test("applies an icon specified by the `src` attribute",function(){assert.isFalse(f2.$.icon._usesIconset()),assert.ok(f2.$.icon._img)}),test("renders correctly independent of line height",function(){assert.ok(approxEqual(centerOf(f1.$.icon),centerOf(f1)))}),test("fab displays icon with `icon` and `label` attributes",function(e){Polymer.Base.async(function(){var t=f3.$$("iron-icon"),i=f3.$$("span");expect(t).not.to.be["null"],assert.isFalse(isHidden(t)),assert.isTrue(isHidden(i)),expect(t.icon).to.be.equal(f3.icon),expect(f3.getAttribute("aria-label")).to.be.equal(f3.label),e()})}),test("fab displays icon with `src` and `label` attributes",function(e){Polymer.Base.async(function(){var t=f4.$$("iron-icon"),i=f4.$$("span");expect(t).not.to.be["null"],assert.isFalse(isHidden(t)),assert.isTrue(isHidden(i)),expect(t.src).to.be.equal(f4.src),expect(f4.getAttribute("aria-label")).to.be.equal(f4.label),e()})}),test("fab displays label with `label` attribute correctly",function(e){Polymer.Base.async(function(){var t=f5.$$("iron-icon"),i=f5.$$("span");expect(i).not.to.be["null"],assert.isTrue(isHidden(t)),assert.isFalse(isHidden(i)),expect(i.innerHTML).to.be.equal(f5.label),expect(f5.getAttribute("aria-label")).to.be.equal(f5.label),e()})});</script>
+
+
+</body></html>

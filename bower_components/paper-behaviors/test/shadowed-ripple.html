@@ -1,0 +1,18 @@
+<!DOCTYPE html><html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-behaviors/iron-button-state.html">
+<link rel="import" href="../paper-ripple-behavior.html">
+</head><body><dom-module id="sd-ripple">
+  <template>
+    <style>:host{display:block;width:200px;}#separate, #wrapper{height:50px;}#separate{background:blue;}#wrapper{background:red;}#wrapper > ::content  #source{height:25px;width:50px;background:green;}</style>
+    <div id="separate">
+      <div id="target">
+        Internal Text Node
+      </div>
+    </div>
+    <div id="wrapper">
+      <content id="content"></content>
+    </div>
+  </template>
+  <script>Polymer({is:"sd-ripple",behaviors:[Polymer.IronButtonState,Polymer.IronControlState,Polymer.PaperRippleBehavior]});</script>
+</dom-module>
+</body></html>

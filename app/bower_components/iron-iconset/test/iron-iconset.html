@@ -1,0 +1,46 @@
+<!DOCTYPE html><html><head>
+
+  <title>iron-iconset</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../iron-iconset.html">
+  <link rel="import" href="../../iron-meta/iron-meta.html">
+  <link rel="import" href="../../promise-polyfill/promise-polyfill.html">
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+
+</head>
+<body>
+
+  <test-fixture id="TrivialIconset">
+    <template>
+      <iron-iconset name="foo" src="../demo/my-icons.png"></iron-iconset>
+      <iron-meta type="iconset"></iron-meta>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="StandardIconset">
+    <template>
+      <iron-iconset name="my-icons" src="../demo/my-icons.png" width="96" size="24" icons="location place starta stopb bus car train walk"></iron-iconset>
+      <div></div>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="ThemedIconset">
+    <template>
+      <iron-iconset name="my-icons" src="../demo/my-icons.png" width="96" size="24" icons="location place starta stopb bus car train walk">
+        <property theme="large" offset-x="10" offset-y="10"></property>
+      </iron-iconset>
+      <div></div>
+    </template>
+  </test-fixture>
+
+  <script>suite("<iron-iconset>",function(){suite("basic behavior",function(){var e,t,n;setup(function(){n=new Promise(function(t){window.addEventListener("iron-iconset-added",function(n){n&&n.detail===e&&t()})});var o=fixture("TrivialIconset");e=o[0],t=o[1]}),test("it can be accessed via iron-meta",function(){expect(t.byKey("foo")).to.be.equal(e)}),test("it fires an iron-iconset-added event on the window",function(){return n})}),suite("when src, width, iconSize and icons are assigned",function(){var e,t;setup(function(){var n=fixture("StandardIconset");e=n[0],t=n[1]}),test("sets the background image of the target element",function(){var n;e.applyIcon(t,"location"),n=window.getComputedStyle(t),expect(n.backgroundImage).to.match(/url\(.*demo\/my-icons.png["']?\)/)}),test("offsets the background image to the icon's position",function(){var n;e.applyIcon(t,"bus"),n=window.getComputedStyle(t),expect(n.backgroundPosition).to.match(/0(px|%) -24px/)})}),suite("when an iconset is themed",function(){var e,t;setup(function(){var n=fixture("ThemedIconset");e=n[0],t=n[1]}),test("can use a theme when applying icon",function(){e.applyIcon(t,"bus","large"),expect(t).to.be.ok}),test("adjusts the icon by the theme offset",function(){var n;e.applyIcon(t,"bus","large"),n=window.getComputedStyle(t),expect(n.backgroundPosition).to.match(/-10px -34px/)})})});</script>
+
+
+
+</body></html>

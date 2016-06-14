@@ -1,0 +1,8 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../neon-shared-element-animation-behavior.html">
+<link rel="import" href="../web-animations.html">
+
+
+
+<script>Polymer({is:"hero-animation",behaviors:[Polymer.NeonSharedElementAnimationBehavior],configure:function(e){var t=this.findSharedElements(e);if(t){var i=t.from.getBoundingClientRect(),n=t.to.getBoundingClientRect(),o=i.left-n.left,r=i.top-n.top,f=i.width/n.width,s=i.height/n.height;return this._effect=new KeyframeEffect(t.to,[{transform:"translate("+o+"px,"+r+"px) scale("+f+","+s+")"},{transform:"none"}],this.timingFromConfig(e)),this.setPrefixedProperty(t.to,"transformOrigin","0 0"),t.to.style.zIndex=1e4,t.from.style.visibility="hidden",this._effect}},complete:function(e){var t=this.findSharedElements(e);return t?(t.to.style.zIndex="",void(t.from.style.visibility="")):null}});</script>
+</head><body></body></html>

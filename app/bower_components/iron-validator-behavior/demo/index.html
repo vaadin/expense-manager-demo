@@ -1,0 +1,88 @@
+<!DOCTYPE html><html><head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+
+  <title>iron-validator-behavior demo</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <link rel="import" href="../../iron-meta/iron-meta.html">
+  <link rel="import" href="../../paper-styles/paper-styles.html">
+  <link rel="import" href="cats-only.html">
+
+  <link rel="stylesheet" href="../../paper-styles/demo.css">
+
+  <style>.valid{color:limegreen;}.invalid{color:red;}</style>
+
+</head>
+<body>
+
+  <template is="dom-bind">
+
+    <cats-only></cats-only>
+
+    <section>
+
+      <p>
+        only type <code>cats</code>:
+
+        <input on-input="_onInput">
+
+        <span class="valid" hidden$="[[!valid]]">valid</span>
+        <span class="invalid" hidden$="[[valid]]">invalid</span>
+      </p>
+
+    </section>
+
+    <section>
+
+      <p>
+        only type <code>cats</code> across both input fields:
+
+        <span on-input="_onInputMulti">
+          <input>
+          <input>
+        </span>
+
+        <span class="valid" hidden$="[[!validMulti]]">valid</span>
+        <span class="invalid" hidden$="[[validMulti]]">invalid</span>
+      </p>
+
+    </section>
+
+    <section>
+
+      <p>
+        only type <code>cats</code> in the form:
+
+        </p><form on-submit="_onSubmit">
+          <label>
+            Type something: <input name="something">
+          </label>
+          <br>
+          <label>
+            Your favorite pet:
+            <select name="pet">
+              <option>iguanas</option>
+              <option>cats</option>
+              <option>pancakes</option>
+            </select>
+          </label>
+          <br>
+          <button type="submit">submit!</button>
+          <span class="valid" hidden$="[[!validForm]]">valid</span>
+          <span class="invalid" hidden$="[[validForm]]">invalid</span>
+        </form>
+
+      <p></p>
+
+    </section>
+
+  </template>
+
+  <script>document.addEventListener("WebComponentsReady",function(){var e=new Polymer.IronMeta({type:"validator"}).byKey("cats-only"),t=document.querySelector("template[is=dom-bind]");t.valid=t.validMulti=t.validForm=!0,t._onInput=function(t){this.valid=e.validate(t.target.value)},t._onInputMulti=function(t){for(var a,n=[],l=Polymer.dom(t.currentTarget).querySelectorAll("input"),i=0;a=l[i];i++)n.push(a.value);this.validMulti=e.validate(n)},t._onSubmit=function(t){t.preventDefault();for(var a,n={},l=0;a=t.target.elements[l];l++)a.name&&(n[a.name]=a.value);this.validForm=e.validate(n)}});</script>
+
+
+</body></html>

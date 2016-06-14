@@ -1,0 +1,16 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../carbon-location.html">
+<link rel="import" href="../carbon-route.html">
+
+
+
+</head><body><dom-module id="redirect-carbon-route">
+  <template>
+    <carbon-location route="{{route}}">
+    </carbon-location>
+    <carbon-route route="{{route}}" pattern="/:page" data="{{data}}" tail="{{tail}}">
+    </carbon-route>
+  </template>
+  <script>Polymer({is:"redirect-carbon-route",properties:{route:{notify:!0},data:{type:Object,notify:!0},tail:{notify:!0}}});</script>
+</dom-module>
+</body></html>

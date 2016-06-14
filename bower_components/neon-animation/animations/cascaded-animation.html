@@ -1,0 +1,8 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../neon-animation-behavior.html">
+<link rel="import" href="../web-animations.html">
+
+
+
+<script>Polymer({is:"cascaded-animation",behaviors:[Polymer.NeonAnimationBehavior],configure:function(i){this._animations=[];var n=i.nodes,e=[],o=i.nodeDelay||50;i.timing=i.timing||{},i.timing.delay=i.timing.delay||0;for(var t,a,m=i.timing.delay,r=0;a=n[r];r++){i.timing.delay+=o,i.node=a;var s=document.createElement(i.animation);if(!s.isNeonAnimation){console.warn(this.is+":",i.animation,"not found!"),t=!0;break}var c=s.configure(i);this._animations.push(s),e.push(c)}return i.timing.delay=m,i.node=null,t?void 0:(this._effect=new GroupEffect(e),this._effect)},complete:function(){for(var i,n=0;i=this._animations[n];n++)i.complete(i.config)}});</script>
+</head><body></body></html>

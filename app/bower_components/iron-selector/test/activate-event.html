@@ -1,0 +1,34 @@
+<!DOCTYPE html><html><head>
+
+  <title>iron-selector-activate-event</title>
+  <meta charset="UTF-8">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+  <link rel="import" href="../iron-selector.html">
+
+  <style>.iron-selected{background:#ccc;}</style>
+
+</head>
+<body>
+
+  <test-fixture id="test">
+    <template>
+      <iron-selector id="selector" selected="0">
+        <div>Item 0</div>
+        <div>Item 1</div>
+        <div>Item 2</div>
+        <div>Item 3</div>
+        <div>Item 4</div>
+      </iron-selector>
+    </template>
+  </test-fixture>
+
+  <script>suite("activate event",function(){var e;setup(function(){e=fixture("test")}),test("activates on tap",function(){assert.equal(e.selected,"0"),e.children[1].dispatchEvent(new CustomEvent("tap",{bubbles:!0})),assert.equal(e.selected,"1")}),test("activates on tap and fires iron-activate",function(t){assert.equal(e.selected,"0"),e.addEventListener("iron-activate",function(a){assert.equal(a.detail.selected,"1"),assert.equal(a.detail.item,e.children[1]),t()}),e.children[1].dispatchEvent(new CustomEvent("tap",{bubbles:!0}))}),test("tap on already selected and fires iron-activate",function(t){assert.equal(e.selected,"0"),e.addEventListener("iron-activate",function(a){assert.equal(a.detail.selected,"0"),assert.equal(a.detail.item,e.children[0]),t()}),e.children[0].dispatchEvent(new CustomEvent("tap",{bubbles:!0}))}),test("activates on mousedown",function(){e.activateEvent="mousedown",e.children[2].dispatchEvent(new CustomEvent("mousedown",{bubbles:!0})),assert.equal(e.selected,"2")}),test("activates on mousedown and fires iron-activate",function(t){e.addEventListener("iron-activate",function(a){assert.equal(a.detail.selected,"2"),assert.equal(a.detail.item,e.children[2]),t()}),e.activateEvent="mousedown",e.children[2].dispatchEvent(new CustomEvent("mousedown",{bubbles:!0}))}),test("no activation",function(){assert.equal(e.selected,"0"),e.activateEvent=null,e.children[2].dispatchEvent(new CustomEvent("mousedown",{bubbles:!0})),assert.equal(e.selected,"0")}),test("activates on tap and preventDefault",function(){e.addEventListener("iron-activate",function(e){e.preventDefault()}),e.children[2].dispatchEvent(new CustomEvent("tap",{bubbles:!0})),assert.equal(e.selected,"0")}),test("activates after detach and re-attach",function(){var t=e.parentNode;t.removeChild(e),t.appendChild(e),e.children[2].dispatchEvent(new CustomEvent("tap",{bubbles:!0})),assert.equal(e.selected,"2")})});</script>
+
+
+
+</body></html>

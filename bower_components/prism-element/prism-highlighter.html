@@ -1,0 +1,7 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="prism-import.html">
+
+
+<script>!function(){"use strict";var e="syntax-highlight";Polymer({is:"prism-highlighter",ready:function(){this._handler=this._highlight.bind(this)},attached:function(){(this.parentElement||this.parentNode.host).addEventListener(e,this._handler)},detached:function(){(this.parentElement||this.parentNode.host).removeEventListener(e,this._handler)},_highlight:function(t){if(!t.detail||!t.detail.code)return void Polymer.Base._warn("Malformed",e,"event:",t.detail);t.stopPropagation();var i=t.detail;i.code=Prism.highlight(i.code,this._detectLang(i.code,i.lang))},_detectLang:function(e,t){if(!t)return e.match(/^\s*</)?Prism.languages.markup:Prism.languages.javascript;if(Prism.languages[t])return Prism.languages[t];switch(t.substr(0,2)){case"js":case"es":return Prism.languages.javascript;case"c":return Prism.languages.clike;default:return Prism.languages.markup}}})}();</script>
+</head><body></body></html>

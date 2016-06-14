@@ -1,0 +1,25 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>iron-list test</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="helpers.html">
+  <link rel="import" href="x-list.html">
+</head>
+<body>
+
+  <test-fixture id="trivialList">
+    <template>
+      <x-list></x-list>
+    </template>
+  </test-fixture>
+
+<script>suite("basic features",function(){var t,e;setup(function(){e=fixture("trivialList"),t=e.list}),test("first item should be focusable",function(i){e.data=buildDataSet(100),flush(function(){console.log(getFirstItemFromList(t)),assert.notEqual(getFirstItemFromList(t).tabIndex,-1),i()})}),test("focus the first item and then reset the items",function(e){t.items=buildDataSet(100),flush(function(){getFirstItemFromList(t).focus(),simulateScroll({list:t,contribution:200,target:3e3,onScrollEnd:function(){t.items=[],flush(function(){e()})}})})}),test("focus the first item and then splice all the items",function(e){t.items=buildDataSet(100),flush(function(){getFirstItemFromList(t).focus(),simulateScroll({list:t,contribution:200,target:3e3,onScrollEnd:function(){t.splice("items",0,t.items.length),flush(function(){e()})}})})}),test("should not hide the list",function(e){t.items=buildDataSet(100),flush(function(){t._focusedIndex=t.items.length-1,t.scrollTarget.addEventListener("scroll",function(){var i=t.getBoundingClientRect();assert.isTrue(i.top+i.height>0),e()}),t._scrollTop=1e3})})});</script>
+
+
+
+</body></html>

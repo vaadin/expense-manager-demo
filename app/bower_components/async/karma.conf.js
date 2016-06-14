@@ -1,0 +1,1 @@
+module.exports=function(s){s.set({browsers:["Firefox"],files:["mocha_test/*.js"],frameworks:["browserify","mocha"],preprocessors:{"mocha_test/*.js":["browserify"]},reporters:["mocha"],singleRun:!0})};

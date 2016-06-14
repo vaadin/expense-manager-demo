@@ -1,0 +1,52 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>paper-toolbar basic tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+  <link rel="import" href="../../polymer/polymer.html">
+  <link rel="import" href="../paper-toolbar.html">
+
+</head>
+<body>
+
+  <test-fixture id="basic">
+    <template>
+      <paper-toolbar></paper-toolbar>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="title">
+    <template>
+      <paper-toolbar>
+        <span class="title">Title</span>
+      </paper-toolbar>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="title-with-id">
+    <template>
+      <paper-toolbar>
+        <span class="title" id="title">Title</span>
+      </paper-toolbar>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="multiple-titles">
+    <template>
+      <paper-toolbar>
+        <span class="title">Title 1</span>
+        <span class="title">Title 2</span>
+      </paper-toolbar>
+    </template>
+  </test-fixture>
+
+  <script>"use strict";suite("basic",function(){var e;setup(function(){e=fixture("basic")}),test("has expected medium-tall height",function(){var t=e.offsetHeight;e.classList.add("medium-tall"),expect(e.offsetHeight).to.be.eql(2*t)}),test("has expected tall height",function(){var t=e.offsetHeight;e.classList.add("tall"),expect(e.offsetHeight).to.be.eql(3*t)}),test("distributes nodes to topBar by default",function(){var t=document.createElement("div");Polymer.dom(e).appendChild(t),Polymer.dom.flush();var l=Polymer.dom(t).getDestinationInsertionPoints()[0];expect(Polymer.dom(l).parentNode).to.be.eql(e.$.topBar)}),test('distributes nodes with "middle" class to middleBar',function(){var t=document.createElement("div");t.classList.add("middle"),Polymer.dom(e).appendChild(t),Polymer.dom.flush();var l=Polymer.dom(t).getDestinationInsertionPoints()[0];expect(Polymer.dom(l).parentNode).to.be.eql(e.$.middleBar)}),test('distributes nodes with "bottom" class to bottombar',function(){var t=document.createElement("div");t.classList.add("bottom"),Polymer.dom(e).appendChild(t),Polymer.dom.flush();var l=Polymer.dom(t).getDestinationInsertionPoints()[0];expect(Polymer.dom(l).parentNode).to.be.eql(e.$.bottomBar)})}),suite("a11y",function(){test('has role="toolbar"',function(){var e=fixture("basic");assert.equal(e.getAttribute("role"),"toolbar",'has role="toolbar"')}),test("children with .title becomes the label",function(){var e=fixture("title");assert.isTrue(e.hasAttribute("aria-labelledby"),"has aria-labelledby"),assert.equal(e.getAttribute("aria-labelledby"),Polymer.dom(e).querySelector(".title").id,"aria-labelledby has the id of the .title element")}),test("existing ids on titles are preserved",function(){var e=fixture("title-with-id");assert.isTrue(e.hasAttribute("aria-labelledby"),"has aria-labelledby"),assert.equal(Polymer.dom(e).querySelector(".title").id,"title","id is preserved")}),test("multiple children with .title becomes the label",function(){var e=fixture("multiple-titles");assert.isTrue(e.hasAttribute("aria-labelledby"),"has aria-labelledby");for(var t,l=[],i=Polymer.dom(e).querySelectorAll(".title"),a=0;t=i[a];a++)l.push(t.id);assert.equal(e.getAttribute("aria-labelledby"),l.join(" "),"aria-labelledby has the id of all .title elements")})});</script>
+
+
+
+</body></html>

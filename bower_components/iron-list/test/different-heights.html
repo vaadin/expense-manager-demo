@@ -1,0 +1,26 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>iron-list test</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="helpers.html">
+  <link rel="import" href="x-list.html">
+
+</head>
+<body>
+
+  <test-fixture id="trivialList">
+    <template>
+      <x-list></x-list>
+    </template>
+  </test-fixture>
+
+  <script>suite("Different heights",function(){var t,i;setup(function(){i=fixture("trivialList"),t=i.list}),test("render without gaps 1",function(i){t.items=[{index:0,height:791},{index:1,height:671}],flush(function(){t.push("items",{index:2,height:251},{index:3,height:191},{index:4,height:151},{index:5,height:191},{index:6,height:51},{index:7,height:51},{index:8,height:51}),simulateScroll({list:t,contribution:20,target:1e5,onScrollEnd:i,onScroll:function(){t.debounce("scroll",function(){assert.isTrue(isFullOfItems(t))})}})})}),test("render without gaps 2",function(i){for(var e=2,n=[];n.length<15;)n.push({height:e}),e*=1.5;t.items=n,flush(function(){simulateScroll({list:t,contribution:20,target:1e5,onScrollEnd:i,onScroll:function(){t.debounce("scroll",function(){assert.equal(isFullOfItems(t),!0)})}})})}),test("render without gaps 3",function(i){var e=[20,100,140,117,800,50,15,80,90,255,20,15,19,250,314];t.items=e.map(function(t){return{height:t}}),flush(function(){simulateScroll({list:t,contribution:20,target:1e5,onScrollEnd:i,onScroll:function(){t.debounce("scroll",function(){assert.isTrue(isFullOfItems(t))})}})})})});</script>
+
+
+
+</body></html>

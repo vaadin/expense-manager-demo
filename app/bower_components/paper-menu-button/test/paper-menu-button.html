@@ -1,0 +1,42 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>paper-menu-button basic tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../paper-menu-button.html">
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+
+</head>
+<body>
+
+  <test-fixture id="TrivialMenuButton">
+    <template>
+      <paper-menu-button no-animations="">
+        <span class="dropdown-trigger">trigger</span>
+        <span class="dropdown-content">content</span>
+      </paper-menu-button>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="TwoMenuButtons">
+    <template>
+      <paper-menu-button no-animations="">
+        <span class="dropdown-trigger">trigger</span>
+        <span class="dropdown-content">content</span>
+      </paper-menu-button>
+      <paper-menu-button no-animations="">
+        <span class="dropdown-trigger">trigger</span>
+        <span class="dropdown-content">content</span>
+      </paper-menu-button>
+    </template>
+  </test-fixture>
+
+  <script>suite("<paper-menu-button>",function(){var e,t,o;setup(function(){e=fixture("TrivialMenuButton"),t=Polymer.dom(e).querySelector(".dropdown-trigger"),o=Polymer.dom(e).querySelector(".dropdown-content")}),test("opens when trigger is clicked",function(n){var r;r=o.getBoundingClientRect(),expect(r.width).to.be.equal(0),expect(r.height).to.be.equal(0),e.addEventListener("paper-dropdown-open",function(){expect(e.opened).to.be.equal(!0),n()}),MockInteractions.tap(t)}),test("closes when trigger is clicked again",function(o){e.addEventListener("paper-dropdown-open",function(){e.addEventListener("paper-dropdown-close",function(){expect(e.opened).to.be.equal(!1),o()}),Polymer.Base.async(function(){MockInteractions.tap(t)})}),MockInteractions.tap(t)}),test("closes when disabled while open",function(){var t;e.opened=!0,e.disabled=!0,expect(e.opened).to.be.equal(!1),t=o.getBoundingClientRect(),expect(t.width).to.be.equal(0),expect(t.height).to.be.equal(0)}),test("has aria-haspopup attribute",function(){expect(e.hasAttribute("aria-haspopup")).to.be.equal(!0)})}),suite("when there are two buttons",function(){var e,t,o,n;setup(function(){var r=fixture("TwoMenuButtons");e=r[0],o=r[1],t=Polymer.dom(e).querySelector(".dropdown-trigger"),n=Polymer.dom(o).querySelector(".dropdown-trigger")}),test("closes current and opens other",function(r){expect(e.opened).to.be.equal(!1),expect(o.opened).to.be.equal(!1),e.addEventListener("iron-overlay-opened",function(){expect(e.opened).to.be.equal(!0),expect(o.opened).to.be.equal(!1);var t=!1,a=!1;e.addEventListener("paper-dropdown-close",function(){t=!0}),o.addEventListener("paper-dropdown-open",function(){a=!0}),Polymer.Base.async(function(){MockInteractions.tap(n)}),Polymer.Base.async(function(){expect(t).to.be.equal(!0),expect(a).to.be.equal(!0),r()})}),MockInteractions.tap(t)})});</script>
+
+
+</body></html>

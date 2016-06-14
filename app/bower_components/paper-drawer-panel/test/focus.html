@@ -1,0 +1,52 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>paper-drawer-panel tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../paper-drawer-panel.html">
+  <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html">
+
+<style>body{margin:0;padding:0;}body{margin:0;padding:0;}</style></head>
+
+<body>
+
+  <test-fixture id="drawer">
+    <template>
+        <paper-drawer-panel force-narrow="">
+          <div drawer="">
+            <input id="innerLink1" tabindex="0" value="inside drawer 1">
+            <input id="innerLink2" tabindex="0" value="inside drawer 2">
+          </div>
+          <div main="">
+            <input id="outerLink" tabindex="0" value="outside drawer">
+          </div>
+        </paper-drawer-panel>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="nestedDrawer">
+    <template>
+      <paper-drawer-panel force-narrow="">
+        <div drawer="">
+          <input id="innerLink1" tabindex="0" value="inside drawer 1">
+        </div>
+        <paper-drawer-panel id="drawer2" main="" force-narrow="">
+          <div drawer="">
+            <input id="innerLink2" tabindex="0" value="inside drawer 2">
+          </div>
+          <div main="">
+            <input id="outerLink" tabindex="0" value="outside drawer">
+          </div>
+        </paper-drawer-panel>
+      </paper-drawer-panel>
+    </template>
+  </test-fixture>
+
+
+  <script>function ensureDocumentHasFocus(){window.top&&window.top.focus()}suite("focus",function(){var e,n,o;setup(function(){e=fixture("drawer"),n=e.querySelector("#innerLink1"),o=e.querySelector("#outerLink"),ensureDocumentHasFocus()}),test("should not focus content in drawer if the drawer is closed",function(e){Polymer.Base.async(function(){expect(Polymer.dom(document).activeElement).to.not.be.equal(n),e()},1),MockInteractions.focus(n)})}),suite("nested drawers",function(){var e,n,o,t;setup(function(){e=fixture("nestedDrawer"),n=e.querySelector("#drawer2"),o=e.querySelector("#innerLink1"),t=e.querySelector("#innerLink2"),ensureDocumentHasFocus()}),test("should not cause stack overflow",function(r){var c=sinon.spy();e.openDrawer(),n.openDrawer(),document.addEventListener("focus",c,!0),MockInteractions.focus(o),MockInteractions.focus(t),Polymer.Base.async(function(){if(c.callCount>10)throw new Error("stack overflow");r()},100)})});</script>
+
+
+</body></html>

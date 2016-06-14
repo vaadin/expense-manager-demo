@@ -1,0 +1,50 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>iron-scroll-target-behavior test</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="x-scrollable.html">
+  <link rel="import" href="x-nested-scrollable.html">
+
+  <style>#temporaryScrollingRegion,
+    #region{overflow:auto;width:100px;height:100px;}</style>
+</head>
+<body>
+
+  <test-fixture id="trivialScrollable">
+    <template>
+      <div id="temporaryScrollingRegion">
+        <x-scrollable></x-scrollable>
+      </div>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="trivialScrollingRegion">
+    <template>
+      <div id="region">
+        <x-scrollable scroll-target="region"></x-scrollable>
+      </div>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="trivialNestedScrollingRegion">
+    <template>
+      <x-nested-scrollable id="nestedScrollingRegion"></x-nested-scrollable>
+    </template>
+  </test-fixture>
+
+
+  <test-fixture id="trivialDocumentScroll">
+    <template>
+      <x-scrollable scroll-target="document"></x-scrollable>
+    </template>
+  </test-fixture>
+
+  <script>suite("basic features",function(){var l,e;setup(function(){l=fixture("trivialScrollable"),e=Polymer.dom(l).querySelector("x-scrollable")}),test("default",function(){assert.equal(e._scrollTop,0,"_scrollTop"),assert.equal(e._scrollLeft,0,"_scrollLeft"),assert.equal(e._scrollTargetWidth,0,"_scrollTargetWidth"),assert.equal(e._scrollTargetHeight,0,"_scrollTargetHeight"),assert.equal(e.scrollTarget,null,"scrollTarget"),assert.equal(e._defaultScrollTarget,e.scrollTarget,"_defaultScrollTarget")}),test("invalid `scrollTarget` selector",function(l){flush(function(){e.scrollTarget="invalid-id",assert.equal(e.scrollTarget,null),l()})}),test("valid `scrollTarget` selector",function(t){flush(function(){e.scrollTarget="temporaryScrollingRegion",assert.equal(e.scrollTarget,l),t()})})}),suite("scrolling region",function(){var l,e;setup(function(){l=fixture("trivialScrollingRegion"),e=Polymer.dom(l).querySelector("x-scrollable")}),teardown(function(){e._scrollTop=0,e._scrollLeft=0}),test("scrollTarget reference",function(t){flush(function(){assert.equal(e.scrollTarget,l),t()})}),test("invalid scrollTarget",function(t){flush(function(){assert.equal(e.scrollTarget,l),t()})}),test("setters",function(t){flush(function(){e._scrollTop=100,e._scrollLeft=100,assert.equal(l.scrollTop,100),assert.equal(l.scrollLeft,100),t()})}),test("getters",function(t){flush(function(){l.scrollTop=50,l.scrollLeft=50,assert.equal(e._scrollTop,50,"_scrollTop"),assert.equal(e._scrollLeft,50,"_scrollLeft"),assert.equal(e._scrollTargetWidth,l.offsetWidth,"_scrollTargetWidth"),assert.equal(e._scrollTargetHeight,l.offsetHeight,"_scrollTargetHeight"),t()})}),test("scroll method",function(l){flush(function(){e.scroll(110,110),assert.equal(e._scrollTop,110),assert.equal(e._scrollLeft,110),e.scroll(0,0),assert.equal(e._scrollTop,0),assert.equal(e._scrollLeft,0),l()})})}),suite("document scroll",function(){var l;setup(function(){l=fixture("trivialDocumentScroll")}),teardown(function(){l._scrollTop=0,l._scrollLeft=0}),test("scrollTarget reference",function(e){flush(function(){assert.equal(l.scrollTarget,document.documentElement),e()})}),test("setters",function(e){flush(function(){l._scrollTop=100,l._scrollLeft=100,assert.equal(window.pageXOffset,100),assert.equal(window.pageYOffset,100),e()})}),test("getters",function(e){flush(function(){window.scrollTo(50,50),assert.equal(l._scrollTop,50,"_scrollTop"),assert.equal(l._scrollLeft,50,"_scrollLeft"),assert.equal(l._scrollTargetWidth,window.innerWidth,"_scrollTargetWidth"),assert.equal(l._scrollTargetHeight,window.innerHeight,"_scrollTargetHeight"),e()})}),test("scroll method",function(e){flush(function(){l.scroll(1,2),assert.equal(l._scrollLeft,1),assert.equal(l._scrollTop,2),l.scroll(3,4),assert.equal(l._scrollLeft,3),assert.equal(l._scrollTop,4),e()})})}),suite("nested scrolling region",function(){var l,e;setup(function(){var t=fixture("trivialNestedScrollingRegion");e=t.$.xScrollable,l=t.$.xRegion}),teardown(function(){e._scrollTop=0,e._scrollLeft=0}),test("scrollTarget reference",function(t){flush(function(){assert.equal(e.scrollTarget,l),t()})}),test("setters",function(t){flush(function(){e._scrollTop=10,e._scrollLeft=20,assert.equal(l.scrollTop,10),assert.equal(l.scrollLeft,20),t()})}),test("getters",function(l){flush(function(){e._scrollTop=10,e._scrollLeft=20,assert.equal(e._scrollTop,10,"_scrollTop"),assert.equal(e._scrollLeft,20,"_scrollLeft"),l()})}),test("scroll method",function(l){flush(function(){e.scroll(1,2),assert.equal(e._scrollLeft,1),assert.equal(e._scrollTop,2),e.scroll(3,4),assert.equal(e._scrollLeft,3),assert.equal(e._scrollTop,4),l()})})});</script>
+
+
+
+</body></html>

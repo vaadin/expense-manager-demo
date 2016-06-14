@@ -1,0 +1,64 @@
+<html><head><link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../bower_components/vaadin-upload/vaadin-upload.html">
+<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+
+</head><body><dom-module id="expense-editor">
+  <template>
+    <style>#dialog{display:block;padding:0 8px;border-top:3px solid var(--accent-color);margin:0;width:60vw;background:var(--primary-background-color);max-height:100vh;overflow:visible;}.main-layout{display:flex;flex-direction:row;}.flex{flex:1;}.form{flex:2;}#form> *{margin-bottom:8px;}.buttons-layout{display:flex;flex-direction:row;margin-top:16px;}.buttons-layout paper-button{width:150px;}.save-button{background:var(--primary-color);color:var(--text-primary-color);}.cancel-button{color:var(--primary-color);}.main-layout h2{font-size:24px !important;font-weight:300 !important;}.receipt{flex:3;margin-left:24px;min-height:64px;max-width:400px;}.receipt .receipt-wrapper{max-width:100%;display:block;margin:20px auto;max-height:50vh;overflow-y:scroll;}.receipt-wrapper img{width:100%;}.receipt img[hidden]{display:none;}paper-button[hidden]{display:none;}div[prefix]{margin-right:6px;}#error{color:red;}:host> .wrapper{height:100%;width:100%;padding:0;}.close-button{color:var(--dark-primary-color);}.delete-button{margin-left:auto;color:var(--text-primary-color);background:var(--accent-color);}form::content label{font-weight:bold !important;color:#999 !important;}.wrapper{display:flex;}@media (min-width: 900px){#dialog{display:flex;flex-direction:column;}.wrapper{flex-direction:row;overflow:auto;}}@media (max-width: 900px){.receipt{margin:24px 0 0 0;}.wrapper{flex-direction:column;}.receipt{width:100%;margin:40px auto;}.receipt .receipt-wrapper{max-height:inherit;}#dialog{width:100vw;min-height:100vh;padding:0 0 60px 0;overflow-y:scroll;}}</style>
+
+    <app-route route="{{route}}" pattern="/:action" data="{{routeData}}"></app-route>
+
+    <iron-media-query query="(min-height: 900px)" query-matches="{{tallWindow}}"></iron-media-query>
+    <paper-dialog id="dialog" modal="" no-cancel-on-esc-key="false" opened="{{_showDialog(route.path)}}">
+      <div class="main-layout">
+        <h2>{{caption}}</h2>
+        <span class="flex"></span>
+        <paper-icon-button icon="close" on-tap="close" class="close-button self-start"></paper-icon-button>
+      </div>
+
+      <div class="wrapper">
+        <div class="form">
+          <form is="iron-form" id="form">
+            <iron-a11y-keys keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
+            <vaadin-combo-box name="merchant" id="merchant" items="[[merchants]]" value="{{expense.merchant}}" label="Merchant" allow-custom-value="" required=""></vaadin-combo-box>
+            <paper-input name="total" id="total" value="{{expense.total}}" type="number" max="10000" label="Total" required="" step="any">
+              <div prefix="">$</div>
+            </paper-input>
+
+            <vaadin-date-picker label="Date" value="{{expense.date}}" id="date" name="date" required=""></vaadin-date-picker>
+            <paper-textarea id="comment" name="comment" label="Comment" value="{{expense.comment}}"></paper-textarea>
+          </form>
+        </div>
+        <div class="receipt">
+          <vaadin-upload id="upload" accept="image/*" max-files="1" on-upload-before="_handleUpload" required="">
+            <div class="file-list">
+              <div class="receipt-wrapper">
+                <img src$="[[_receiptURL]]" alt="Receipt" hidden$="[[!_showReceipt(expense._attachments.*)]]">
+              </div>
+            </div>
+          </vaadin-upload>
+        </div>
+      </div>
+      <div class="buttons-layout">
+        <paper-button raised="" on-tap="_save" class="save-button">Save</paper-button>
+        <paper-button on-tap="close" class="cancel-button">Cancel</paper-button>
+        <paper-button on-tap="_delete" id="delete" class="delete-button">Delete</paper-button>
+      </div>
+      <span id="error" hidden$="[[!errorMessage]]">{{errorText}}</span>
+    </paper-dialog>
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"expense-editor",properties:{service:Object,merchants:Array,expense:{type:Object,notify:!0,value:function(){return{}}},caption:{type:String,computed:"_getCaption(expense)"},errorText:String,db:Object,_receiptURL:{type:String,notify:!0,value:"images/default-receipt.png"},route:Object,routeData:Object},observers:["_updateReceiptURL(expense._attachments.*)"],ready:function(){this.$.upload.set("i18n.dropFiles.one","Drop receipt here..."),this.$.upload.set("i18n.addFiles.one","Select receipt")},attached:function(){this._boundOnResize=this._onResize.bind(this),window.addEventListener("resize",this._boundOnResize)},detached:function(){window.removeEventListener("resize",this._boundOnResize)},_onResize:function(){this.$.dialog.notifyResize()},_showDialog:function(){return this.expense&&this.route.path&&"/edit"===this.route.path},_getCaption:function(e){return e._id?"Edit Expense":"Add Expense"},_showReceipt:function(){return this.expense._id&&"new"!==this.expense.status||this.expense._attachments&&this.expense._attachments.receipt},_updateReceiptURL:function(){this.expense._attachments&&this.expense._attachments.receipt?this.expense._attachments.receipt.data instanceof File||this.expense._attachments.receipt.data instanceof Blob?this._receiptURL=URL.createObjectURL(this.expense._attachments.receipt.data):this.db.getAttachment(this.expense._id,"receipt").then(function(e){this._receiptURL=URL.createObjectURL(e)}.bind(this))["catch"](function(e){console.log(e)}):this._receiptURL="images/default-receipt.png",this.$.dialog.notifyResize()},listeners:{"iron-form-invalid":"_formInvalid"},_canvasToBlob:function(e){for(var t=new RegExp("^data:(.*);.*,(.*)"),i=t.exec(e.toDataURL()),n=atob(i[2]),s=n.length,a=new Uint8Array(s);s--;)a[s]=n.charCodeAt(s);return new Blob([a],{type:i[1]})},_resizeImage:function(e,t,i,n,s){var a=document.createElement("img"),h=new FileReader;h.onload=function(){/^image/.test(e.type)&&(e.type!==i||n&&n)?(a.addEventListener("load",function(){var e=document.createElement("canvas"),h=e.getContext("2d");a.width>a.height&&a.width>n?(e.width=n,e.height=a.height*n/a.width):a.height>a.width&&a.height>s?(e.height=s,e.width=a.width*s/a.height):(e.height=a.height,e.width=a.width),h.drawImage(a,0,0,e.width,e.height),e.toBlob?e.toBlob(t,i,.9):t(this._canvasToBlob(e))}.bind(this)),a.src=h.result):t(h.result)}.bind(this),h.readAsDataURL(e)},_handleUpload:function(e){var t=e.detail.file;this._resizeImage(t,function(e){this.expense._attachments=this.expense._attachments||{},this.set("expense._attachments.receipt",{type:"image/jpeg",data:e})}.bind(this),"image/jpeg",1e3,1e3),this.$.upload.files=[],e.preventDefault()},_save:function(){this.$.error.innerText="";var e=this.$.form;e.validate()?(this.expense.total=parseFloat(this.expense.total),this.fire("expense-saved",this.expense)):(console.log("Form validation failed"),this.$.dialog.scrollTop=0,this.errorText="Please fill all required fields")},open:function(e){this.expense=JSON.parse(JSON.stringify(e)),e._attachments&&this.set("expense._attachments",e._attachments),this.$.upload.files=[],e.status||(this.expense.status="new"),e.total&&(this.$.total.value=e.total.toFixed(2)),this.$["delete"].hidden=!(this.expense._id&&"new"===this.expense.status),this.async(function(){this.$.dialog.scrollTop=0}),this.set("route.path","/edit")},close:function(){var e=this;this.async(function(){e.set("route.path",""),e.expense={}},100)},_delete:function(){this.fire("delete-expense",this.expense)}})}();</script>
+</dom-module>
+</body></html>

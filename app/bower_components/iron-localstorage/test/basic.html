@@ -1,0 +1,27 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>iron-localstorage-basic</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <link rel="import" href="../iron-localstorage.html">
+
+</head>
+<body>
+
+  <test-fixture id="fixture">
+    <template>
+      <iron-localstorage id="localstorage" name="iron-localstorage-test"></iron-localstorage>
+    </template>
+  </test-fixture>
+
+  <template id="boundTemplate" is="dom-bind">
+    <iron-localstorage id="boundLocal" name="iron-localstorage-test" value="{{value}}"></iron-localstorage>
+  </template>
+
+  <script>var storage;suite("basic",function(){setup(function(){window.localStorage.setItem("iron-localstorage-test",'{"foo":"bar"}'),storage=document.getElementById("fixture").create(),storage.flushDebouncer("reload")}),teardown(function(){window.localStorage.removeItem("iron-localstorage-test")}),test("load",function(){assert.isNotNull(storage.value),assert.equal(storage.value.foo,"bar")}),test("save",function(){var e={foo:"zot"};storage.value=e,storage.flushDebouncer("save");var o=window.localStorage.getItem(storage.name);o=JSON.parse(o),assert.equal(o.foo,e.foo)}),test("delete",function(){storage.value=null,storage.flushDebouncer("save");var e=window.localStorage.getItem(storage.name);assert.isNull(e),storage.value=void 0,storage.flushDebouncer("save");var e=window.localStorage.getItem(storage.name);assert.isNull(e)}),test("event iron-localstorage-load",function(e){var o=document.createElement("iron-localstorage");o.addEventListener("iron-localstorage-load",function(){e()}),o.name="iron-localstorage-test"}),test("event iron-localstorage-load-empty",function(e){window.localStorage.removeItem("iron-localstorage-test");var o=document.createElement("iron-localstorage");o.addEventListener("iron-localstorage-load-empty",function(){o.value="Yo",o.flushDebouncer("save"),assert.equal("Yo",JSON.parse(window.localStorage.getItem("iron-localstorage-test"))),e()}),o.name="iron-localstorage-test"}),test("auto-save sub-properties",function(){var e=document.querySelector("#boundTemplate"),o=document.querySelector("#boundLocal"),t={foo:"FOO",bar:"BAR"};e.value=t,assert.equal("FOO",o.value.foo),o.flushDebouncer("save"),e.value.foo="Yo",o.flushDebouncer("save");var a=JSON.parse(window.localStorage.getItem("iron-localstorage-test"));assert.notEqual("Yo",a.foo),e.set("value.foo","BAZ!"),o.flushDebouncer("save");var a=JSON.parse(window.localStorage.getItem("iron-localstorage-test"));assert.equal("BAZ!",a.foo),o.value=null})});</script>
+
+
+
+</body></html>

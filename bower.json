@@ -1,0 +1,27 @@
+{
+  "name": "expense-manager",
+  "authors": [
+    "Marcus Hellberg / Vaadin - marcus@vaadin.com"
+  ],
+  "private": true,
+  "dependencies": {
+    "polymer": "polymer/polymer#^1.4.0",
+    "vaadin-grid": "vaadin/vaadin-grid#3c37785",
+    "vaadin-combo-box": "^1.1.0",
+    "vaadin-date-picker": "^1.1.0",
+    "vaadin-upload": "^1.1.0",
+    "vaadin-charts": "vaadin/vaadin-charts#task/CHARTS-505",
+    "vaadin-pouchdb": "manolo/vaadin-pouchdb#em",
+    "iron-a11y-keys": "polymerelements/iron-a11y-keys#^1.0.5",
+    "paper-header-panel": "polymerelements/paper-header-panel#^1.1.6",
+    "paper-toolbar": "polymerelements/paper-toolbar#^1.1.4",
+    "app-route": "polymerelements/app-route#^0.9.1",
+    "paper-fab": "polymerelements/paper-fab#^1.2.0",
+    "paper-checkbox": "polymerelements/paper-checkbox#^1.2.0",
+    "qr-js": "^1.1.4",
+    "paper-dialog": "polymerelements/paper-dialog#^1.0.4"
+  },
+  "devDependencies": {
+    "web-component-tester": "^4.0.0"
+  }
+}

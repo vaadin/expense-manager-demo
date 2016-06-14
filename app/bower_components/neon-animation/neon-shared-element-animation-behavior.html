@@ -1,0 +1,5 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="neon-animation-behavior.html">
+
+<script>Polymer.NeonSharedElementAnimationBehaviorImpl={properties:{sharedElements:{type:Object}},findSharedElements:function(e){var n=e.fromPage,r=e.toPage;if(!n||!r)return console.warn(this.is+":",n?"toPage":"fromPage","is undefined!"),null;if(!n.sharedElements||!r.sharedElements)return console.warn(this.is+":","sharedElements are undefined for",n.sharedElements?r:n),null;var t=n.sharedElements[e.id],i=r.sharedElements[e.id];return t&&i?(this.sharedElements={from:t,to:i},this.sharedElements):(console.warn(this.is+":","sharedElement with id",e.id,"not found in",t?r:n),null)}},Polymer.NeonSharedElementAnimationBehavior=[Polymer.NeonAnimationBehavior,Polymer.NeonSharedElementAnimationBehaviorImpl];</script>
+</head><body></body></html>

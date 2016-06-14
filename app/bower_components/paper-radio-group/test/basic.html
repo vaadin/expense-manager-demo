@@ -1,0 +1,47 @@
+<!DOCTYPE html><html><head>
+    <meta charset="UTF-8">
+    <title>paper-radio-group basic tests</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../iron-test-helpers/mock-interactions.js"></script>
+    <link rel="import" href="../paper-radio-group.html">
+
+  </head>
+  <body>
+
+    <test-fixture id="NoSelection">
+      <template>
+        <paper-radio-group>
+          <paper-radio-button name="r1">r1</paper-radio-button>
+          <paper-radio-button name="r2">r2</paper-radio-button>
+          <paper-radio-button name="r3">r3</paper-radio-button>
+        </paper-radio-group>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="WithSelection">
+      <template>
+        <paper-radio-group selected="r1">
+          <paper-radio-button name="r1">r1</paper-radio-button>
+          <paper-radio-button name="r2">r2</paper-radio-button>
+          <paper-radio-button name="r3">r3</paper-radio-button>
+        </paper-radio-group>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="WithDisabled">
+      <template>
+        <paper-radio-group selected="r1">
+          <paper-radio-button name="r1">r1</paper-radio-button>
+          <paper-radio-button name="r2" disabled="">r2</paper-radio-button>
+          <paper-radio-button name="r3">r3</paper-radio-button>
+        </paper-radio-group>
+      </template>
+    </test-fixture>
+
+    <script>suite("defaults",function(){var e=37,t=39;test("group can have no selection",function(e){var t=fixture("NoSelection");Polymer.Base.async(function(){expect(t.selected).to.not.be.ok;var c=t.items;expect(c.length).to.be.equal(3),expect(c[0].checked).to.be.equal(!1),expect(c[1].checked).to.be.equal(!1),expect(c[2].checked).to.be.equal(!1),e()},1)}),test("group can have a selection",function(e){var t=fixture("WithSelection");Polymer.Base.async(function(){expect(t.selected).to.be.ok;var c=t.items;expect(c.length).to.be.equal(3),expect(c[0].checked).to.be.equal(!0),expect(c[1].checked).to.be.equal(!1),expect(c[2].checked).to.be.equal(!1),expect(c[0].getAttribute("name")).to.be.equal(t.selected),e()},1)}),test("right arrow advances the selection",function(e){var c=fixture("WithSelection");MockInteractions.focus(c),Polymer.Base.async(function(){var o=c.items;expect(o[0].checked).to.be.equal(!0),c.addEventListener("paper-radio-group-changed",function(){expect(o[0].checked).to.be.equal(!1),expect(o[1].checked).to.be.equal(!0),expect(o[2].checked).to.be.equal(!1),e()}),MockInteractions.keyDownOn(c,t)},1)}),test("left arrow reverses the selection",function(t){var c=fixture("WithSelection");MockInteractions.focus(c),Polymer.Base.async(function(){var o=c.items;expect(o[0].checked).to.be.equal(!0),c.addEventListener("paper-radio-group-changed",function(){expect(o[0].checked).to.be.equal(!1),expect(o[1].checked).to.be.equal(!1),expect(o[2].checked).to.be.equal(!0),t()}),MockInteractions.keyDownOn(c,e)},1)}),test("selection should skip disabled items",function(e){var c=fixture("WithDisabled");MockInteractions.focus(c),Polymer.Base.async(function(){var o=c.items;expect(o[0].checked).to.be.equal(!0),c.addEventListener("paper-radio-group-changed",function(){expect(o[0].checked).to.be.equal(!1),expect(o[1].checked).to.be.equal(!1),expect(o[2].checked).to.be.equal(!0),e()}),MockInteractions.keyDownOn(c,t)},1)}),test("clicking should change the selection",function(e){var t=fixture("WithSelection");MockInteractions.focus(t),Polymer.Base.async(function(){var c=t.items;expect(c[0].checked).to.be.equal(!0),t.addEventListener("paper-radio-group-changed",function(){expect(c[0].checked).to.be.equal(!1),expect(c[1].checked).to.be.equal(!0),expect(c[2].checked).to.be.equal(!1),e()}),MockInteractions.tap(c[1])},1)}),test("clicking the selected item should not deselect",function(e){var t=fixture("WithSelection");MockInteractions.focus(t),Polymer.Base.async(function(){var c=t.items;expect(c[0].checked).to.be.equal(!0),setTimeout(function(){expect(c[0].checked).to.be.equal(!0),expect(c[1].checked).to.be.equal(!1),expect(c[2].checked).to.be.equal(!1),e()},1),MockInteractions.tap(c[0])},1)}),test("clicking the selected item should deselect if allow-empty-selection is set",function(e){var t=fixture("WithSelection");t.allowEmptySelection=!0,Polymer.Base.async(function(){var c=t.items;expect(c[0].checked).to.be.equal(!0),setTimeout(function(){expect(c[0].checked).to.be.equal(!1),expect(c[1].checked).to.be.equal(!1),expect(c[2].checked).to.be.equal(!1),e()},1),MockInteractions.tap(c[0])},1)}),test("arrow keys cause iron-activate events",function(e){var t=fixture("WithSelection");MockInteractions.focus(t),Polymer.Base.async(function(){t.items[0].focus();var c=0;t.addEventListener("iron-activate",function(){switch(c++){case 0:MockInteractions.pressAndReleaseKeyOn(t,38);break;case 1:MockInteractions.pressAndReleaseKeyOn(t,39);break;case 2:MockInteractions.pressAndReleaseKeyOn(t,40);break;default:e()}}),MockInteractions.pressAndReleaseKeyOn(t,37)},1)})});</script>
+  
+
+</body></html>

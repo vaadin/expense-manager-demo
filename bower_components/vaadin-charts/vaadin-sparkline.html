@@ -1,0 +1,39 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="vaadin-line-chart.html">
+
+
+</head><body><dom-module id="vaadin-sparkline">
+
+    <template>
+        <vaadin-line-chart id="chart">
+            <chart-title text="null"></chart-title>
+
+            <chart margin="0" spacing="0" background-color="null" skip-clone="true">
+            </chart>
+
+            <exporting enabled="false"></exporting>
+
+            <plot-options>
+                <line enable-mouse-tracking="false" show-in-legend="false" animation="false" shadow="false">
+                    <marker enabled="false"></marker>
+                </line>
+            </plot-options>
+
+            <x-axis line-width="0" minor-grid-line-width="0" minor-tick-length="0" minor-tick-width="0" grid-line-width="0" title="null" max-padding="0" min-padding="0" start-on-tick="false" end-on-tick="false">
+                <labels enabled="false"></labels>
+            </x-axis>
+
+            <y-axis line-width="0" minor-grid-line-width="0" minor-tick-length="0" minor-tick-width="0" grid-line-width="0" title="null" max-padding="0.1" min-padding="0.1" start-on-tick="false" end-on-tick="false">
+                <labels enabled="false"></labels>
+            </y-axis>
+
+            <data-series type="line" data="[[_arrayData]]"></data-series>
+        </vaadin-line-chart>
+
+    </template>
+
+
+    <script>VaadinSparkline=Polymer({is:"vaadin-sparkline",properties:{data:String,_arrayData:{type:Array,computed:"_arrayFromData(data)"}},_arrayFromData:function(a){return JSON.parse("["+a+"]")}});</script>
+
+</dom-module>
+</body></html>

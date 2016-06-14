@@ -1,0 +1,39 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>iron-checked-element-behavior basic tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+  <link href="../../test-fixture/test-fixture.html" rel="import">
+  <link href="../../iron-meta/iron-meta.html" rel="import">
+  <link href="simple-checkbox.html" rel="import">
+
+</head>
+<body>
+
+  <test-fixture id="basic">
+    <template>
+      <simple-checkbox></simple-checkbox>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="checked">
+    <template>
+      <simple-checkbox checked=""></simple-checkbox>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="with-value">
+    <template>
+      <simple-checkbox value="batman"></simple-checkbox>
+    </template>
+  </test-fixture>
+
+  <script>suite("basic",function(){test("can be checked",function(){var e=fixture("basic");assert.isFalse(e.checked),e.checked=!0,assert.isTrue(e.checked)}),test("can be unchecked",function(){var e=fixture("checked");assert.isTrue(e.checked),e.checked=!1,assert.isFalse(e.checked)}),test("invalid if required and not checked",function(){var e=fixture("basic");e.required=!0,assert.isFalse(e.checked),assert.isFalse(e.validate()),assert.isTrue(e.invalid)}),test("valid if required and checked",function(){var e=fixture("basic");e.required=!0,e.checked=!0,assert.isTrue(e.checked),assert.isTrue(e.validate()),assert.isFalse(e.invalid)}),test("valid if not required and not checked",function(){var e=fixture("basic");assert.isFalse(e.checked),assert.isTrue(e.validate()),assert.isFalse(e.invalid)}),test('has a default value of "on", always',function(){var e=fixture("basic");assert.isTrue("on"===e.value),e.checked=!0,assert.isTrue("on"===e.value)}),test("does not stomp over user defined value when checked",function(){var e=fixture("with-value");assert.isTrue("batman"===e.value),e.checked=!0,assert.isTrue("batman"===e.value)}),test('value returns "on" when no explicit value is specified',function(){var e=fixture("basic");assert.equal(e.value,"on",'returns "on"')}),test("value returns the value when an explicit value is set",function(){var e=fixture("basic");e.value="abc",assert.equal(e.value,"abc",'returns "abc"'),e.value="123",assert.equal(e.value,"123",'returns "123"')}),test('value returns "on" when value is set to undefined',function(){var e=fixture("basic");e.value="abc",assert.equal(e.value,"abc",'returns "abc"'),e.value=void 0,assert.equal(e.value,"on",'returns "on"')})}),suite("a11y",function(){test("setting `required` sets `aria-required=true`",function(){var e=fixture("basic");e.required=!0,assert.equal(e.getAttribute("aria-required"),"true"),e.required=!1,assert.isFalse(e.hasAttribute("aria-required"))}),test("setting `invalid` sets `aria-invalid=true`",function(){var e=fixture("basic");e.invalid=!0,assert.equal(e.getAttribute("aria-invalid"),"true"),e.invalid=!1,assert.isFalse(e.hasAttribute("aria-invalid"))})});</script>
+
+
+
+</body></html>

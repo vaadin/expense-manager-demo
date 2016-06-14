@@ -1,0 +1,15 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../iron-a11y-announcer.html">
+
+</head><body><dom-module id="x-announces">
+  <style>:host{display:block;position:relative;padding:1em 0;}paper-button{background:#4285f4;color:#fff;}</style>
+  <template>
+    <paper-button on-tap="_onTapAnnounce" raised="">Announce</paper-button>
+    <span id="content" aria-hidden="true">
+      <content></content>
+    </span>
+  </template>
+  <script>Polymer({is:"x-announces",attached:function(){Polymer.IronA11yAnnouncer.requestAvailability()},_onTapAnnounce:function(){this.fire("iron-announce",{text:this.$.content.textContent.trim()},{bubbles:!0})}});</script>
+</dom-module>
+</body></html>

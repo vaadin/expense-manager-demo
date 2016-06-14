@@ -1,0 +1,24 @@
+<!DOCTYPE html><html><head>
+    <title>neon-animated-pages demo: load</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../../../iron-flex-layout/iron-flex-layout.html">
+    <link rel="import" href="../../neon-animated-pages.html">
+    <link rel="import" href="../../neon-animations.html">
+    <link rel="import" href="full-page.html">
+
+    <style is="custom-style">body{overflow:hidden;@apply (--layout-fullbleed);}full-page{@apply (--layout-fit);}</style>
+  </head>
+  <body>
+
+    <full-page></full-page>
+
+    <script>document.addEventListener("WebComponentsReady",function(){document.querySelector("full-page").show()});</script>
+
+  
+
+</body></html>

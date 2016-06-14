@@ -1,0 +1,24 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>iron-list test</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="helpers.html">
+  <link rel="import" href="x-list.html">
+</head>
+<body>
+
+  <test-fixture id="trivialList">
+    <template>
+      <x-list></x-list>
+    </template>
+  </test-fixture>
+
+<script>suite("basic features",function(){var t,e;setup(function(){e=fixture("trivialList"),t=e.list}),test("defaults",function(){assert.equal(t.items,null,"items"),assert.equal(t.as,"item","as"),assert.equal(t.indexAs,"index","indexAs"),assert.equal(t.selectedAs,"selected","selectedAs"),assert.equal(t.scrollTarget,t,"scrollTarget"),assert.isFalse(t.selectionEnabled,"selectionEnabled"),assert.isFalse(t.multiSelection,"multiSelection")}),test("check items length",function(s){e.data=buildDataSet(100),flush(function(){assert.equal(t.items.length,e.data.length),s()})}),test("check physical item heights",function(s){e.data=buildDataSet(100),flush(function(){var e=t._physicalItems[0].offsetHeight;t._physicalItems.forEach(function(t){assert.equal(t.offsetHeight,e)}),s()})}),test("check physical item size",function(s){var i=10;e.data=buildDataSet(i),flush(function(){assert.equal(t.items.length,i),s()})}),test("first visible index",function(s){e.data=buildDataSet(100),flush(function(){function i(){assert.equal(t.firstVisibleIndex,o),assert.equal(getFirstItemFromList(t).textContent,o)}function l(){var e=Math.floor(r/u);assert.equal(t.lastVisibleIndex,o+e-1),assert.equal(getLastItemFromList(t).textContent,o+e-1)}function a(){i(),l(),o=1,flush(function(){simulateScroll({list:t,contribution:u,target:o*u,onScrollEnd:n})})}function n(){i(),l(),s()}var o,u=(t.items.length,e.itemHeight),r=t.offsetHeight;o=50,simulateScroll({list:t,contribution:50,target:o*u,onScrollEnd:a})})}),test("scroll to index",function(e){t.items=buildDataSet(100),setTimeout(function(){t.scrollToIndex(30),assert.equal(t.firstVisibleIndex,30),t.scrollToIndex(0),assert.equal(t.firstVisibleIndex,0);var s=getFirstItemFromList(t).offsetHeight,i=t.offsetHeight,l=Math.floor(i/s);t.scrollToIndex(99),assert.equal(t.firstVisibleIndex,t.items.length-l),t.style.height=t._physicalItems[0].offsetHeight+"px",setTimeout(function(){t.scrollToIndex(99),assert.equal(t.firstVisibleIndex,99),e()},100)},100)}),test("reset items",function(e){t.items=buildDataSet(100),flush(function(){assert.equal(getFirstItemFromList(t).textContent,"0"),t.items=null,flush(function(){assert.notEqual(getFirstItemFromList(t).textContent,"0"),t.items=buildDataSet(100),flush(function(){assert.equal(getFirstItemFromList(t).textContent,"0"),e()})})})})});</script>
+
+
+
+</body></html>

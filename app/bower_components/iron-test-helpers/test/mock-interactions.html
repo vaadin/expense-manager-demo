@@ -1,0 +1,23 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>mock-interactions basic tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../mock-interactions.js"></script>
+
+  <link rel="import" href="../../paper-button/paper-button.html">
+</head>
+<body>
+
+  <test-fixture id="TrivialButton">
+    <template>
+      <paper-button>Hello</paper-button>
+    </template>
+  </test-fixture>
+
+  <script>suite("MockInteractions",function(){var t;setup(function(){t=fixture("TrivialButton")}),teardown(function(t){window.setTimeout(function(){t()},2500)}),suite("simulating tap",function(){test("only dispatches one tap event",function(){var n=sinon.spy();t.addEventListener("tap",n),MockInteractions.tap(t),t.removeEventListener("tap",n),expect(n.callCount).to.be.eql(1)}),suite("with touch emulation",function(){test("only dispatches one tap event",function(){var n=sinon.spy();t.addEventListener("tap",n),MockInteractions.tap(t,{emulateTouch:!0}),t.removeEventListener("tap",n),expect(n.callCount).to.be.eql(1)})})}),suite("simulating down and up",function(){test("only dispatches one tap event",function(n){var e=sinon.spy();t.addEventListener("tap",e),MockInteractions.downAndUp(t,function(){t.removeEventListener("tap",e),expect(e.callCount).to.be.eql(1),n()})}),suite("with touch emulation",function(){test("only dispatches one tap event",function(n){var e=sinon.spy();t.addEventListener("tap",e),MockInteractions.downAndUp(t,function(){t.removeEventListener("tap",e),expect(e.callCount).to.be.eql(1),n()},{emulateTouch:!0})})})})});</script>
+
+
+</body></html>

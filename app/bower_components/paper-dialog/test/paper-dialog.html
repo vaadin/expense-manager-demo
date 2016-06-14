@@ -1,0 +1,28 @@
+<!DOCTYPE html><html><head>
+
+    <title>paper-dialog tests</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <link rel="import" href="../paper-dialog.html">
+
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <paper-dialog>
+          <p>Dialog</p>
+        </paper-dialog>
+      </template>
+    </test-fixture>
+
+    <script>suite("a11y",function(){test('dialog has role="dialog"',function(){var a=fixture("basic");assert.equal(a.getAttribute("role"),"dialog",'has role="dialog"')})});</script>
+
+  
+
+</body></html>

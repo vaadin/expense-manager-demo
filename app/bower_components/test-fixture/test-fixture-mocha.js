@@ -1,0 +1,1 @@
+!function(e){function t(t){var n=e.interfaces[t],c="bdd"===t?"afterEach":"teardown";e.interfaces[t]=function(e){n.apply(this,arguments),e.on("pre-require",function(e,t,n){e[c]&&(e.fixture=function(t,n){return e[c](function(){document.getElementById(t).restore()}),document.getElementById(t).create(n)})})}}Object.keys(e.interfaces).forEach(t)}(this.Mocha);

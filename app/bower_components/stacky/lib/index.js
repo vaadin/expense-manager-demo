@@ -1,0 +1,1 @@
+"use strict";var formatting=require("./formatting"),normalization=require("./normalization"),parsing=require("./parsing");module.exports={normalize:normalization.normalize,parse:parsing.parse,pretty:formatting.pretty,formatting:formatting,normalization:normalization,parsing:parsing};

@@ -1,0 +1,30 @@
+<!DOCTYPE html><html><head>
+  <meta charset="utf-8">
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="common.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../../iron-form/iron-form.html">
+  <link rel="import" href="../vaadin-date-picker.html">
+</head>
+
+<body>
+
+  <test-fixture id="datepicker">
+    <template>
+      <vaadin-date-picker value="2000-01-01"></vaadin-date-picker>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="overlay">
+    <template>
+      <vaadin-date-picker-overlay></vaadin-date-picker-overlay>
+    </template>
+  </test-fixture>
+
+  <script>ios||describe("keyboard navigation",function(){function e(){MockInteractions.keyDownOn(r,40)}function t(){MockInteractions.keyDownOn(r,39)}function o(){MockInteractions.keyDownOn(r,38)}function n(){MockInteractions.keyDownOn(r,37)}function i(){MockInteractions.keyDownOn(r,36)}function c(){MockInteractions.keyDownOn(r,35)}function s(e){MockInteractions.keyDownOn(r,34,e)}function a(e){MockInteractions.keyDownOn(r,33,e)}function u(){MockInteractions.pressEnter(r)}function l(){MockInteractions.pressSpace(r)}function f(){MockInteractions.keyDownOn(r,27)}function d(){return h.focusedDate}var r,h;describe("date-picker",function(){var n;beforeEach(function(){n=fixture("datepicker"),h=n.$.overlay}),it("should open overlay on down",function(){r=n.$.input,e(),expect(n._opened).to.be["true"]}),it("should open overlay on up",function(){r=n.$.input,o(),expect(n._opened).to.be["true"]}),it("should close overlay on esc",function(){n.open(),r=n.$.overlay,f(),expect(n._opened).to.be["false"]}),it("should be focused on selected value when overlay is opened",function(){n.value="2001-01-01",n.open(),r=h,t(),expect(d()).to.eql(new Date(2001,0,2))}),it("should be focused on initial position when no value is set",function(e){n.value=null,n.initialPosition="2001-01-01",n.open(),r=h,n.async(function(){t(),expect(d()).to.eql(new Date(2001,0,2)),e()},1)}),it("should be focused on today if no initial position is set",function(){var e=new Date;n.value=null,n.initialPosition=null,n.open(),r=h,t(),expect(d()).to.eql(new Date(e.getFullYear(),e.getMonth(),e.getDate()+1))})}),describe("overlay",function(){beforeEach(function(e){h=fixture("overlay"),h.i18n=getDefaultI18n(),r=h,h.focusedDate=new Date(2e3,0,1),h.async(function(){h.scrollToDate(h.focusedDate),waitUntilScrolledTo(h,h.focusedDate,function(){e()})},1)}),it("should focus one week forward with arrow down",function(){e(h),expect(h.focusedDate).to.eql(new Date(2e3,0,8))}),it("should focus one week backward with arrow up",function(){o(h),expect(h.focusedDate).to.eql(new Date(1999,11,25))}),it("should focus one day forward with arrow right",function(){t(),expect(h.focusedDate).to.eql(new Date(2e3,0,2))}),it("should focus one day backward with arrow left",function(){n(),expect(h.focusedDate).to.eql(new Date(1999,11,31))}),it("should select focused day with enter",function(){t(),u(),expect(h.selectedDate).to.eql(new Date(2e3,0,2))}),it("should close overlay with enter",function(){var e=sinon.spy(h,"_close");u(),expect(e.calledOnce).to.be["true"]}),it("should scroll to focused month",function(e){h.addEventListener("scroll-animation-finished",function(t){expect(t.detail.position).to.eql(t.detail.oldPosition-1),e()}),o()}),it("should select a date with space",function(){t(),l(),expect(h.selectedDate).to.eql(new Date(2e3,0,2))}),it("should deselect selected date with space",function(){l(),expect(datepicker.value).to.be.empty}),it("should focus first day of the month with home",function(){n(),i(),expect(h.focusedDate).to.eql(new Date(1999,11,1))}),it("should focus last day of the month with end",function(){c(),expect(h.focusedDate).to.eql(new Date(2e3,0,31))}),it("should focus next month with pagedown",function(){s(),expect(d()).to.eql(new Date(2e3,1,1))}),it("should focus previous month with pageup",function(){a(),expect(h.focusedDate).to.eql(new Date(1999,11,1))}),it("should not skip a month",function(){h.focusedDate=new Date(2e3,0,31),s(),expect(h.focusedDate).to.eql(new Date(2e3,1,29))}),it("should focus the previously focused date number if available",function(){h.focusedDate=new Date(2e3,0,31),s(),s(),expect(h.focusedDate).to.eql(new Date(2e3,2,31))}),it("should focus next year with shift and pagedown",function(){s("shift"),expect(h.focusedDate).to.eql(new Date(2001,0,1))}),it("should focus previous year with shift and pageup",function(){a("shift"),expect(h.focusedDate).to.eql(new Date(1999,0,1))}),it("should scroll up when focus goes invisible",function(e){h.addEventListener("scroll-animation-finished",function(t){expect(t.detail.position).to.eql(t.detail.oldPosition-12),e()}),a("shift")}),it("should not scroll down when focus keeps visible",function(e){var t=h.$.scroller.position;s(),setTimeout(function(){expect(h.$.scroller.position).to.eql(t),e()})}),it("should scroll down when focus goes invisible",function(e){h.addEventListener("scroll-animation-finished",function(t){expect(t.detail.position).to.be.greaterThan(t.detail.oldPosition),e()}),s("shift")}),it("should not focus on today click if no date focused",function(){h.focusedDate=null,h._scrollToCurrentMonth(),expect(h.focusedDate).to.be["null"]}),it("should focus on today click if a date is focused",function(){t(),h._scrollToCurrentMonth(),expect(h.focusedDate.getFullYear()).to.eql((new Date).getFullYear()),expect(h.focusedDate.getMonth()).to.eql((new Date).getMonth()),expect(h.focusedDate.getDate()).to.eql((new Date).getDate())})})});</script>
+
+
+
+
+</body></html>

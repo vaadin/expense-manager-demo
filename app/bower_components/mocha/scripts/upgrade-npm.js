@@ -1,0 +1,2 @@
+#!/usr/bin/env node
+if("0.8"===process.env.TRAVIS_NODE_VERSION){var exec=require("child_process").exec;exec("npm install --production",function(e){if(e)throw new Error(e);exec("npm install --global npm@2",function(e){if(e)throw new Error(e);console.log("Upgraded to npm@2")})})}

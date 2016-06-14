@@ -1,0 +1,18 @@
+<html><head><link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../neon-shared-element-animatable-behavior.html">
+
+</head><body><dom-module id="x-cards-list">
+  <template>
+    <style>:host{display:block;overflow:hidden;}#placeholder{opacity:0;background-color:grey;@apply (--layout-fit);}</style>
+    
+    <div id="placeholder"></div>
+    <div id="container">
+      <content select="div"></content>
+    </div>
+
+  </template>
+</dom-module>
+
+<script>!function(){Polymer({is:"x-cards-list",behaviors:[Polymer.NeonSharedElementAnimatableBehavior],properties:{animationConfig:{value:function(){return{entry:[{name:"reverse-ripple-animation",id:"reverse-ripple",toPage:this}],exit:[{name:"fade-out-animation",node:this.$.container,timing:{delay:150,duration:0}},{name:"ripple-animation",id:"ripple",fromPage:this}]}}}}})}();</script>
+</body></html>

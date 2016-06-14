@@ -1,0 +1,39 @@
+<!DOCTYPE html><html><head>
+
+  <title>neon-animated-pages tests</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <script>Polymer={lazyRegister:!0};</script>
+
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+  <link rel="import" href="../neon-animated-pages.html">
+  <link rel="import" href="../neon-animatable.html">
+  <link rel="import" href="../animations/slide-from-left-animation.html">
+  <link rel="import" href="../animations/slide-right-animation.html">
+  <link rel="import" href="test-resizable-pages.html">
+
+</head>
+<body>
+
+  <test-fixture id="animate-initial-selection">
+    <template>
+      <neon-animated-pages entry-animation="slide-from-left-animation" exit-animation="slide-right-animation" animate-initial-selection="">
+        <neon-animatable></neon-animatable>
+        <neon-animatable></neon-animatable>
+      </neon-animated-pages>
+    </template>
+  </test-fixture>
+
+  <script>suite("animations found when `lazRegister` setting is true",function(){test("animations are registered",function(e){var i=fixture("animate-initial-selection");i._completeAnimations=sinon.spy(),assert.isUndefined(i.selected);var t=Polymer.dom(i).children;i.addEventListener("neon-animation-finish",function(n){if(0===i.selected)return void(i.selected=1);assert.strictEqual(i.selected,1),assert.equal(n.detail.fromPage,t[0]),assert.equal(n.detail.toPage,t[1]),assert.isTrue(i._completeAnimations.calledTwice);var a=i._completeAnimations.getCall(1).args[0];assert.isTrue(a[0].animation.isNeonAnimation,"entry animation is not a registered animation"),assert.isTrue(a[1].animation.isNeonAnimation,"exit animation is not a registered animation"),e()}),i.selected=0})});</script>
+
+
+
+</body></html>

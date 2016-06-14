@@ -1,0 +1,16 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+
+<link rel="import" href="../iron-overlay-behavior.html">
+
+</head><body><dom-module id="test-overlay">
+
+  <style>:host{background:white;color:black;border:1px solid black;}:host([animated]){-webkit-transition:-webkit-transform 0.3s;transition:transform 0.3s;-webkit-transform:translateY(300px);transform:translateY(300px);}:host(.opened[animated]){-webkit-transform:translateY(0px);transform:translateY(0px);}</style>
+
+  <template>
+    <content></content>
+  </template>
+
+</dom-module>
+
+<script>!function(){Polymer({is:"test-overlay",properties:{animated:{type:Boolean,reflectToAttribute:!0}},behaviors:[Polymer.IronOverlayBehavior],listeners:{transitionend:"__onTransitionEnd"},_renderOpened:function(){this.animated?(this.withBackdrop&&this.backdropElement.open(),this.classList.add("opened"),this.fire("simple-overlay-open-animation-start")):Polymer.IronOverlayBehaviorImpl._renderOpened.apply(this,arguments)},_renderClosed:function(){this.animated?(this.withBackdrop&&this.backdropElement.close(),this.classList.remove("opened"),this.fire("simple-overlay-close-animation-start")):Polymer.IronOverlayBehaviorImpl._renderClosed.apply(this,arguments)},__onTransitionEnd:function(e){e&&e.target===this&&(this.opened?this._finishRenderOpened():this._finishRenderClosed())}})}();</script>
+</body></html>

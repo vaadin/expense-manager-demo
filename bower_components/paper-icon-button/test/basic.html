@@ -1,0 +1,32 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>paper-icon-button basic tests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../../iron-icons/iron-icons.html">
+  <link rel="import" href="../paper-icon-button.html">
+
+</head>
+<body>
+
+  <test-fixture id="TrivialIconButton">
+    <template>
+      <div style="line-height:30px">
+        <paper-icon-button id="fab1" icon="add"></paper-icon-button>
+      </div>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="SrcIconButton">
+    <template>
+      <paper-icon-button src="add.png"></paper-icon-button>
+    </template>
+  </test-fixture>
+
+  <script>function centerOf(t){var e=t.getBoundingClientRect();return{left:e.left+e.width/2,top:e.top+e.height/2}}function approxEqual(t,e){return Math.abs(t.left-e.left)<=2&&Math.abs(t.top-e.top)<=2}var b1,b2;setup(function(){b1=fixture("TrivialIconButton").querySelector("#fab1"),b2=fixture("SrcIconButton")}),test("applies an icon specified by the `icon` attribute",function(){assert.strictEqual(!!b1.$.icon.src,!1),assert.ok(Polymer.dom(b1.$.icon.root).querySelector("svg"))}),test("applies an icon specified by the `src` attribute",function(){assert.strictEqual(!!b2.$.icon.src,!0),assert.ok(b2.$.icon.src)}),test("renders correctly independent of line height",function(){assert.ok(approxEqual(centerOf(b1.$.icon),centerOf(b1)))});</script>
+
+
+</body></html>

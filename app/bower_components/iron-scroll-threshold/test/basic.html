@@ -1,0 +1,35 @@
+<!DOCTYPE html><html id="html"><head>
+  <meta charset="UTF-8">
+  <title>iron-scroll-threshold test</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../iron-scroll-threshold.html">
+
+  <style>#scrollingRegion{width:200px;height:200px;overflow:auto;background:green;}.content{height:2000px;width:2px;background-color:gray;}</style>
+</head>
+<body>
+
+  <test-fixture id="trivialScrollThreshold">
+    <template>
+      <iron-scroll-threshold id="scrollingRegion">
+        <div class="content"></div>
+      </iron-scroll-threshold>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="trivialDocumentScrolling">
+    <template>
+      <iron-scroll-threshold scroll-target="html">
+        <div class="content"></div>
+      </iron-scroll-threshold>
+    </template>
+  </test-fixture>
+
+  <script>suite("basic features",function(){var e;setup(function(){e=fixture("trivialScrollThreshold")}),teardown(function(){e.clearTriggers(),e._scrollTop=0}),test("default",function(){assert.equal(e._defaultScrollTarget,e,"_defaultScrollTarget"),assert.equal(e.scrollTarget,e,"scrollTarget"),assert.equal(e.upperThreshold,100,"upperThreshold"),assert.equal(e.lowerThreshold,100,"lowerThreshold"),assert.equal(e.horizontal,!1,"horizontal"),assert.equal(window.getComputedStyle(e.scrollTarget).overflow,"auto","overflow")}),test("upper-threshold event",function(r){flush(function(){e.addEventListener("upper-threshold",function(){assert.isTrue(e.upperTriggered),r()}),assert.isTrue(e.upperTriggered),e.clearTriggers(),e._scrollTop=e._scrollTop+1})}),test("lower-threshold event",function(r){flush(function(){e.addEventListener("lower-threshold",function(){assert.isTrue(e.lowerTriggered),r()}),e._scrollTop=e.scrollTarget.scrollHeight})}),test("clearTriggers",function(r){flush(function(){assert.isTrue(e.upperTriggered),e.clearTriggers(),assert.isFalse(e.upperTriggered),r()})}),test("checkScrollThesholds",function(r){flush(function(){e._scrollTop=e.scrollTarget.scrollHeight,assert.isFalse(e.lowerTriggered,"check assumption"),e.checkScrollThesholds(),assert.isTrue(e.lowerTriggered,"check triggers"),e.clearTriggers(),assert.isFalse(e.lowerTriggered,"reset triggers"),r()})}),test("horizontal",function(r){e.horizontal=!0,flush(function(){e.clearTriggers(),e._scrollLeft=e.scrollTarget.scrollWidth,assert.isFalse(e.lowerTriggered,"check assumption"),e.checkScrollThesholds(),assert.isTrue(e.lowerTriggered,"check lowerTriggered"),e._scrollLeft=0,e.checkScrollThesholds(),assert.isTrue(e.upperTriggered,"upperTriggered"),r()})})}),suite("document scroll",function(){var e;setup(function(){e=fixture("trivialDocumentScrolling")}),teardown(function(){e.clearTriggers(),e._scrollTop=0}),test("default",function(){assert.equal(e.scrollTarget,e._doc,"scrollTarget"),assert.equal(e.upperThreshold,100,"upperThreshold"),assert.equal(e.lowerThreshold,100,"lowerThreshold"),assert.equal(e.horizontal,!1,"horizontal")}),test("upper-threshold event",function(r){flush(function(){e.addEventListener("upper-threshold",function(){assert.isTrue(e.upperTriggered),r()}),assert.isTrue(e.upperTriggered),e.clearTriggers(),e._scrollTop=e._scrollTop+1})}),test("lower-threshold event",function(r){flush(function(){e.addEventListener("lower-threshold",function(){assert.isTrue(e.lowerTriggered),r()}),e._scrollTop=e.scrollTarget.scrollHeight})}),test("clearTriggers",function(r){flush(function(){assert.isTrue(e.upperTriggered),e.clearTriggers(),assert.isFalse(e.upperTriggered),r()})}),test("checkScrollThesholds",function(r){flush(function(){e._scrollTop=e.scrollTarget.scrollHeight,assert.isFalse(e.lowerTriggered,"check assumption"),e.checkScrollThesholds(),assert.isTrue(e.lowerTriggered,"check triggers"),e.clearTriggers(),assert.isFalse(e.lowerTriggered,"reset triggers"),r()})}),test("horizontal",function(r){e.horizontal=!0,flush(function(){e.clearTriggers(),e._scrollLeft=e.scrollTarget.scrollWidth,assert.isFalse(e.lowerTriggered,"check assumption"),e.checkScrollThesholds(),assert.isTrue(e.lowerTriggered,"check lowerTriggered"),e._scrollLeft=0,e.checkScrollThesholds(),assert.isTrue(e.upperTriggered,"upperTriggered"),r()})})});</script>
+
+
+
+</body></html>

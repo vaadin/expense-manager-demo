@@ -1,0 +1,13 @@
+<html><head><link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../../paper-styles/shadow.html">
+<link rel="import" href="../../neon-animation-runner-behavior.html">
+
+</head><body><dom-module id="animated-dropdown">
+  <template>
+    <style>:host{display:none;padding:16px;background:white;color:black;@apply (--shadow-elevation-2dp);}</style>
+    <content></content>
+  </template>
+</dom-module>
+
+<script>Polymer({is:"animated-dropdown",behaviors:[Polymer.NeonAnimationRunnerBehavior],properties:{animationConfig:{type:Object,value:function(){return{entry:[{name:"scale-up-animation",node:this,transformOrigin:"0 0"}],exit:[{name:"fade-out-animation",node:this}]}}},_showing:{type:Boolean,value:!1}},listeners:{"neon-animation-finish":"_onAnimationFinish"},_onAnimationFinish:function(){this._showing||(this.style.display="")},show:function(){this.style.display="inline-block",this._showing=!0,this.playAnimation("entry")},hide:function(){this._showing=!1,this.playAnimation("exit")}});</script>
+</body></html>

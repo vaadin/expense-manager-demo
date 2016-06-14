@@ -1,0 +1,68 @@
+<!DOCTYPE html><html id="html"><head>
+
+  <title>Load data using iron-scroll-threshold</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <link rel="import" href="../../polymer/polymer.html">
+  <link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
+  <link rel="import" href="../../iron-scroll-threshold/iron-scroll-threshold.html">
+  <link rel="import" href="../../paper-styles/color.html">
+  <link rel="import" href="../../paper-styles/typography.html">
+  <link rel="import" href="../../app-layout/app-toolbar/app-toolbar.html">
+  <link rel="import" href="../../paper-spinner/paper-spinner.html">
+  <link rel="import" href="../../iron-ajax/iron-ajax.html">
+  <link rel="import" href="../../iron-icons/iron-icons.html">
+  <link rel="import" href="../iron-list.html">
+
+  <style is="custom-style">body{@apply (--paper-font-common-base);margin:0;padding:0;background-color:#eee;}app-toolbar{position:fixed;top:0;left:0;right:0;background:#F57C00;box-shadow:0 2px 5px 0 rgba(0, 0, 0, 0.3);color:white;z-index:1;font-weight:bold;}.loadingIndicator{text-align:center;height:40px;}.loadingIndicator paper-spinner{width:20px;height:20px;margin-right:10px;}iron-list{padding-top:64px;padding-bottom:16px;--iron-list-items-container:{max-width:800px;margin:auto;margin-top:60px;margin-bottom:10px;};}.personItem{@apply (--layout-horizontal);margin:16px 16px 0 16px;padding:20px;border-radius:8px;background-color:white;border:1px solid #ddd;}.pad{padding:0 16px;@apply (--layout-flex);@apply (--layout-vertical);}.primary{font-size:16px;font-weight:bold;}.secondary{font-size:14px;}.dim{color:gray;}.spacer{@apply (--layout-flex);}.index{width:30px;}</style>
+
+</head>
+<body unresolved="">
+
+  <template is="dom-bind" id="app">
+
+    <iron-ajax id="ajax" url="//www.filltext.com/" params="{&quot;rows&quot;: &quot;20&quot;, &quot;delay&quot;: 1, &quot;fname&quot;:&quot;{firstName}&quot;, &quot;lname&quot;: &quot;{lastName}&quot;, &quot;address&quot;: &quot;{streetAddress}&quot;,
+       &quot;city&quot;: &quot;{city}&quot;, &quot;state&quot;: &quot;{usState|abb}&quot;, &quot;zip&quot;: &quot;{zip}&quot;, &quot;business&quot;: &quot;{business}&quot;, &quot;index&quot;: &quot;{index}&quot;}" handle-as="json" loading="{{loadingPeople}}" on-response="_didRespond">
+    </iron-ajax>
+
+    <app-toolbar>
+      <div title="">Load data using iron-scroll-threshold</div>
+    </app-toolbar>
+
+    <iron-list id="list" items="[]" as="person" scroll-target="html">
+      <template>
+        <div>
+          <div class="personItem" tabindex$="[[tabIndex]]">
+            <div class="pad">
+              <div class="primary">[[person.fname]] [[person.lname]]</div>
+              <div class="secondary">[[person.address]] [[person.city]]</div>
+              <div class="secondary">[[person.city]], [[person.state]] [[person.zip]]</div>
+              <div class="secondary dim">[[person.business]]</div>
+            </div>
+            <iron-icon icon$="[[_iconForPerson(person)]]"></iron-icon>
+          </div>
+        </div>
+      </template>
+    </iron-list>
+
+    <div class="loadingIndicator">
+      <paper-spinner active="{{loadingPeople}}"></paper-spinner> Fetching data
+    </div>
+
+    
+    <iron-scroll-threshold id="scrollTheshold" lower-threshold="500" on-lower-threshold="_loadMoreData" scroll-target="html">
+    </iron-scroll-threshold>
+
+  </template>
+
+  <script>!function(e){e._iconForPerson=function(e){return e.integer<50?"star-border":"star"},e._loadMoreData=function(){e.$.ajax.generateRequest()},e._didRespond=function(r){var n=r.detail.response;n.forEach(function(r){e.$.list.push("items",r)}),e.$.scrollTheshold.clearTriggers()}}(document.querySelector("#app"));</script>
+
+
+
+</body></html>

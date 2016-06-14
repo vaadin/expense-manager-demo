@@ -1,0 +1,45 @@
+<html><head><link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<script src="../bower_components/qr-js/qr.min.js"></script>
+
+</head><body><dom-module id="info-dialog">
+  <template>
+    <style>:host{display:block;}paper-dialog{overflow:auto;}paper-button{background:var(--primary-color);color:var(--text-primary-color);}#dialog{max-width:600px;}code{font-weight:600;color:var(--paper-pink-a400);background:#eee;padding:5px;}.highlight{font-weight:600;}.instructions{display:flex;}#close-button{margin:0 16px 16px 0;}#qr{align-self:center;margin-left:32px;height:150px;width:150px;}a{text-decoration:none;color:var(--primary-color);}@media (max-width: 600px){#qr{display:none;}}</style>
+
+    <paper-dialog id="dialog" modal="">
+      <h2>Welcome to Expense Manager</h2>
+
+      <div class="dialog-body">
+        <div class="instructions">
+
+          <div class="text">
+            <p>
+              A private test database has been created for you. Connect other browsers and devices to
+            </p>
+            <code>{{url}}</code>
+            <p>
+              to test <span class="highlight">photo upload</span>, <span class="highlight">live synchronization</span> and <span class="highlight">offline</span> functionality.
+            </p>
+
+            <p>
+              Databases are cleared out after 1 hour. Accessing the URL later will give you a fresh set of test data.
+            </p>
+          </div>
+          <canvas id="qr"></canvas>
+        </div>
+        <div class="about">
+          <p>
+            This demo is built using <a href="https://www.polymer-project.org" target="_blank">Polymer</a> and <a href="https://vaadin.com/elements" target="_blank">Vaadin Elements</a>. You can find the source code and fork the project on <a href="https://github.com/vaadin/expense-manager-demo">GitHub</a>.
+          </p>
+        </div>
+      </div>
+      <div class="buttons">
+        <paper-button id="close-button" raised="" on-tap="close">Got it!</paper-button>
+      </div>
+    </paper-dialog>
+
+  </template>
+  <script>!function(){"use strict";Polymer({is:"info-dialog",properties:{url:String},open:function(){this.url=window.location.href,this._updateQR(),this.$.dialog.open()},close:function(){var i=this;this.async(function(){i.$.dialog.close()},10)},_updateQR:function(){qr.canvas({canvas:this.$.qr,value:this.url,size:6})}})}();</script>
+</dom-module>
+</body></html>

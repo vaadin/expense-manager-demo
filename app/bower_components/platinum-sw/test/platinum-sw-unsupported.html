@@ -1,0 +1,17 @@
+<!DOCTYPE html><html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../platinum-sw-register.html">
+  </head>
+
+  <body>
+    <platinum-sw-register auto-register=""></platinum-sw-register>
+
+    <script>document.addEventListener("WebComponentsReady",function(){var e=document.querySelector("platinum-sw-register");suite("Unsupported",function(){test("state is properly set",function(){assert.equal(e.state,"unsupported")})})});</script>
+  
+
+</body></html>

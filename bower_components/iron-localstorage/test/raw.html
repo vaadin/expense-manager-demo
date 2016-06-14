@@ -1,0 +1,24 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>iron-localstorage-raw</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <link rel="import" href="../iron-localstorage.html">
+
+</head>
+<body>
+
+
+  <test-fixture id="fixture">
+    <template>
+      <iron-localstorage id="localstorage" name="iron-localstorage-test" use-raw=""></iron-localstorage>
+    </template>
+  </test-fixture>
+
+  <script>var storage;suite("raw",function(){setup(function(){window.localStorage.setItem("iron-localstorage-test","hello world"),document.getElementById("fixture").create(),storage=document.getElementById("localstorage"),storage.flushDebouncer("reload")}),teardown(function(){window.localStorage.removeItem("iron-localstorage-test")}),test("load",function(){assert.equal(storage.value,"hello world")}),test("save",function(){var e="goodbye";storage.value=e,storage.flushDebouncer("save");var t=window.localStorage.getItem(storage.name);assert.equal(t,e)})});</script>
+
+
+
+</body></html>

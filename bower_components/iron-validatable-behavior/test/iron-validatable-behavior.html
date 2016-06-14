@@ -1,0 +1,39 @@
+<!DOCTYPE html><html><head>
+
+  <title>iron-validatable-behavior tests</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+  <link rel="import" href="test-validatable.html">
+  <link rel="import" href="cats-only.html">
+  <link rel="import" href="dogs-only.html">
+
+</head>
+<body>
+
+  <test-fixture id="basic">
+    <template>
+      <test-validatable></test-validatable>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="validators">
+    <template>
+      <cats-only></cats-only>
+      <dogs-only></dogs-only>
+      <test-validatable></test-validatable>
+    </template>
+  </test-fixture>
+
+  <script>suite("basic",function(){test("setting `invalid` sets `aria-invalid=true`",function(){var a=fixture("basic");a.invalid=!0,assert.equal(a.getAttribute("aria-invalid"),"true","aria-invalid is set"),a.invalid=!1,assert.isFalse(a.hasAttribute("aria-invalid"),"aria-invalid is unset")}),test("validate() is true if a validator isn't set",function(){var a=fixture("basic"),i=a.validate();assert.isTrue(i)}),test("changing the validator works",function(){var a=fixture("validators"),i=a[2];assert.isTrue(i.validate("")),assert.isTrue(i.validate("cats")),i.validator="cats-only",assert.isFalse(i.validate("ca")),assert.isTrue(i.validate("cats")),i.validator="dogs-only",assert.isFalse(i.validate("cats")),assert.isTrue(i.validate("dogs"))})});</script>
+
+
+</body></html>

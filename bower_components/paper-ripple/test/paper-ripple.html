@@ -1,0 +1,52 @@
+<!DOCTYPE html><html><head>
+
+  <meta charset="UTF-8">
+  <title>paper-ripple</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../paper-ripple.html">
+
+  <style>#RippleContainer{display:block;position:relative;width:100px;height:50px;}</style>
+</head>
+<body>
+  <test-fixture id="TrivialRipple">
+    <template>
+      <div id="RippleContainer">
+        <paper-ripple></paper-ripple>
+      </div>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="CenteringRipple">
+    <template>
+      <div id="RippleContainer">
+        <paper-ripple center=""></paper-ripple>
+      </div>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="RecenteringRipple">
+    <template>
+      <div id="RippleContainer">
+        <paper-ripple recenters=""></paper-ripple>
+      </div>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="NoinkTarget">
+    <template>
+      <div id="RippleContainer">
+        <paper-ripple noink=""></paper-ripple>
+      </div>
+    </template>
+  </test-fixture>
+
+  <script>suite("<paper-ripple>",function(){var e,t;suite("when tapped",function(){setup(function(){e=fixture("TrivialRipple"),t=e.firstElementChild}),test("creates a ripple",function(){expect(t.ripples.length).to.be.eql(0),MockInteractions.down(t),expect(t.ripples.length).to.be.eql(1)}),test("may create multiple ripples that overlap",function(){expect(t.ripples.length).to.be.eql(0);for(var e=0;3>e;++e)MockInteractions.down(t),expect(t.ripples.length).to.be.eql(e+1)})}),suite("when holdDown is togggled",function(){setup(function(){e=fixture("TrivialRipple"),t=e.firstElementChild}),test("generates a ripple",function(){t.holdDown=!0,expect(t.ripples.length).to.be.eql(1)}),test("generates a ripple when noink",function(){t.noink=!0,t.holdDown=!0,expect(t.ripples.length).to.be.eql(1)})}),suite("when target is noink",function(){setup(function(){e=fixture("NoinkTarget"),t=e.firstElementChild}),test("tapping does not create a ripple",function(){expect(t.ripples.length).to.be.eql(0),MockInteractions.down(t),expect(t.ripples.length).to.be.eql(0)}),test("ripples can be manually created",function(){expect(t.ripples.length).to.be.eql(0),t.simulatedRipple(),expect(t.ripples.length).to.be.eql(1)})}),suite("with the `center` attribute set to true",function(){setup(function(){e=fixture("CenteringRipple"),t=e.firstElementChild}),test("ripples will center",function(e){var n,i=document.createElement("div");i.style.webkitTransform="translate3d(0px, 0px, 0px)",i.style.transform="translate3d(0px, 0px, 0)",MockInteractions.down(t),n=t.ripples[0].waveContainer,MockInteractions.up(t),window.requestAnimationFrame(function(){var t=n.style.transform;try{expect(i.style.transform).to.be.ok,expect(t).to.be.ok,expect(t).to.be.eql(i.style.transform),e()}catch(r){e(r)}})})}),suite("with the `recenters` attribute set to true",function(){setup(function(){e=fixture("RecenteringRipple"),t=e.firstElementChild}),test("ripples will gravitate towards the center",function(e){var n,i;MockInteractions.down(t,{x:10,y:10}),n=t.ripples[0].waveContainer,i=n.style.transform,MockInteractions.up(t),window.requestAnimationFrame(function(){try{expect(i).to.be.ok,expect(n.style.transform).to.be.ok,expect(n.style.transform).to.not.be.eql(i),e()}catch(t){e(t)}})})})});</script>
+
+
+
+</body></html>

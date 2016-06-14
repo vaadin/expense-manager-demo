@@ -1,0 +1,21 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../paper-behaviors/paper-button-behavior.html">
+<link rel="import" href="../paper-material/paper-material-shared-styles.html">
+<link rel="import" href="../paper-styles/color.html">
+<link rel="import" href="../paper-styles/default-theme.html">
+
+
+
+</head><body><dom-module id="paper-fab">
+  <template strip-whitespace="">
+    <style include="paper-material-shared-styles">:host{@apply (--layout-vertical);@apply (--layout-center-center);background:var(--paper-fab-background, --accent-color);border-radius:50%;box-sizing:border-box;color:var(--text-primary-color);cursor:pointer;height:56px;min-width:0;outline:none;padding:16px;position:relative;-moz-user-select:none;-ms-user-select:none;-webkit-user-select:none;user-select:none;width:56px;z-index:0;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent;@apply (--paper-fab);}[hidden]{display:none !important;}:host([mini]){width:40px;height:40px;padding:8px;@apply (--paper-fab-mini);}:host([disabled]){color:var(--paper-fab-disabled-text, --paper-grey-500);background:var(--paper-fab-disabled-background, --paper-grey-300);@apply (--paper-fab-disabled);}iron-icon{@apply (--paper-fab-iron-icon);}span{width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;}:host(.keyboard-focus){background:var(--paper-fab-keyboard-focus-background, --paper-pink-900);}</style>
+
+    <iron-icon id="icon" hidden$="{{!_computeIsIconFab(icon, src)}}" src="[[src]]" icon="[[icon]]"></iron-icon>
+    <span hidden$="{{_computeIsIconFab(icon, src)}}">{{label}}</span>
+  </template>
+
+  <script>Polymer({is:"paper-fab",behaviors:[Polymer.PaperButtonBehavior],properties:{src:{type:String,value:""},icon:{type:String,value:""},mini:{type:Boolean,value:!1,reflectToAttribute:!0},label:{type:String,observer:"_labelChanged"}},_labelChanged:function(){this.setAttribute("aria-label",this.label)},_computeIsIconFab:function(e,t){return e.length>0||t.length>0}});</script>
+</dom-module>
+</body></html>

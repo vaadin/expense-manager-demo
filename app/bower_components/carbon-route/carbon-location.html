@@ -1,0 +1,19 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-location/iron-location.html">
+<link rel="import" href="../iron-location/iron-query-params.html">
+<link rel="import" href="carbon-route-converter.html">
+
+
+
+</head><body><dom-module id="carbon-location">
+  <template>
+    <iron-location path="{{__path}}" query="{{__query}}" hash="{{__hash}}" url-space-regex="{{urlSpaceRegex}}">
+    </iron-location>
+    <iron-query-params params-string="{{__query}}" params-object="{{__queryParams}}">
+    </iron-query-params>
+    <carbon-route-converter on-path-changed="__onPathChanged" path="[[__computeRoutePath(__path, __hash, useHashAsPath)]]" query-params="{{__queryParams}}" route="{{route}}">
+    </carbon-route-converter>
+  </template>
+  <script>"use strict";Polymer({is:"carbon-location",properties:{route:{type:Object,notify:!0},useHashAsPath:{type:Boolean,value:!1},urlSpaceRegex:{type:String,notify:!0},__queryParams:{type:Object},__path:{type:String},__query:{type:String},__hash:{type:String}},__computeRoutePath:function(){return this.useHashAsPath?this.__hash:this.__path},__onPathChanged:function(t){if(this._readied){var e=t.detail.value;this.useHashAsPath?this.__hash=e:this.__path=e}}});</script>
+</dom-module>
+</body></html>

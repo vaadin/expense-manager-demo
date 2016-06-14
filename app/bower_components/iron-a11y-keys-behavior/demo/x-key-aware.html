@@ -1,0 +1,20 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-styles/color.html">
+<link rel="import" href="../iron-a11y-keys-behavior.html">
+
+</head><body><dom-module id="x-key-aware">
+  <style>:host{display:block;position:relative;}pre{color:var(--google-blue-700);}.keys{line-height:25px;}.keys span{cursor:default;background-color:var(--google-grey-100);border:1px solid var(--google-grey-300);padding:1px 5px;border-radius:5px;}</style>
+  <template>
+    <h4>Press any of these keys</h4>
+    <input type="checkbox" checked="{{preventDefault::change}}"> prevent default = {{preventDefault}}
+    <p class="keys">
+      <template is="dom-repeat" items="[[boundKeys]]">
+        <span>{{item}}</span>
+      </template>
+    </p>
+    <pre>[[pressed]]</pre>
+  </template>
+</dom-module>
+
+<script>Polymer({is:"x-key-aware",behaviors:[Polymer.IronA11yKeysBehavior],properties:{pressed:{type:String,readOnly:!0,value:""},boundKeys:{type:Array,value:function(){return Object.keys(this.keyBindings).join(" ").split(" ")}},preventDefault:{type:Boolean,value:!0,notify:!0},keyEventTarget:{type:Object,value:function(){return document.body}}},keyBindings:{'* pageup pagedown left right down up home end space enter @ ~ " $ ? ! \\ + : # backspace':"_updatePressed",a:"_updatePressed","shift+a alt+a":"_updatePressed","shift+tab shift+space":"_updatePressed"},_updatePressed:function(e){console.log(e.detail),this.preventDefault&&e.preventDefault(),this._setPressed(this.pressed+e.detail.combo+" pressed!\n")}});</script>
+</body></html>

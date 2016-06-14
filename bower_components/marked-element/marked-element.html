@@ -1,0 +1,15 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="marked-import.html">
+
+
+</head><body><dom-module id="marked-element">
+  <template>
+    <style>.hidden{display:none !important;}</style>
+    <content select=".markdown-html"></content>
+    <div id="content" class="hidden"></div>
+  </template>
+
+</dom-module>
+
+<script>"use strict";Polymer({is:"marked-element",properties:{markdown:{observer:"render",type:String,value:null},pedantic:{observer:"render",type:Boolean,value:!1},sanitize:{observer:"render",type:Boolean,value:!1},smartypants:{observer:"render",type:Boolean,value:!1}},ready:function(){if(!this.markdown){var t=Polymer.dom(this).querySelector('[type^="text/markdown"]');null!=t&&(this.markdown=this._unindent(t.textContent))}},attached:function(){this._attached=!0,this._outputElement=this.outputElement,this.render()},detached:function(){this._attached=!1},unindent:function(t){return this._unindent(t)},get outputElement(){var t=Polymer.dom(this).queryDistributedElements(".markdown-html")[0];return t?t:(this.toggleClass("hidden",!1,this.$.content),this.$.content)},render:function(){if(this._attached){if(!this.markdown)return void(Polymer.dom(this._outputElement).innerHTML="");var t={highlight:this._highlight.bind(this),sanitize:this.sanitize,pedantic:this.pedantic,smartypants:this.smartypants};Polymer.dom(this._outputElement).innerHTML=marked(this.markdown,t),this.fire("marked-render-complete")}},_highlight:function(t,e){var n=this.fire("syntax-highlight",{code:t,lang:e});return n.detail.code||t},_unindent:function(t){if(!t)return t;var e=t.replace(/\t/g,"  ").split("\n"),n=e.reduce(function(t,e){if(/^\s*$/.test(e))return t;var n=e.match(/^(\s*)/)[0].length;return null===t?n:t>n?n:t},null);return e.map(function(t){return t.substr(n)}).join("\n")}});</script>
+</body></html>

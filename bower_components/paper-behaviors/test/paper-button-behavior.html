@@ -1,0 +1,25 @@
+<!DOCTYPE html><html><head>
+  <title>paper-button-behavior</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../../polymer/polymer.html">
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+  <link rel="import" href="test-button.html">
+</head>
+<body>
+
+  <test-fixture id="basic">
+    <template>
+      <test-button></test-button>
+    </template>
+  </test-fixture>
+
+  <script>suite("basic",function(){var e;setup(function(){e=fixture("basic")}),test("normal (no states)",function(){assert.equal(e.elevation,1)}),test("set disabled property",function(){e.disabled=!0,assert.equal(e.elevation,0)}),test("pressed and released",function(){MockInteractions.down(e),assert.equal(e.elevation,4),MockInteractions.up(e),assert.equal(e.elevation,1),assert.ok(e.hasRipple())}),suite("a button with toggles",function(){setup(function(){e.toggles=!0}),test("activated by tap",function(t){MockInteractions.downAndUp(e,function(){try{assert.equal(e.elevation,4),assert.ok(e.hasRipple()),t()}catch(s){t(s)}})})}),test("receives focused",function(){MockInteractions.focus(e),assert.equal(e.elevation,3),assert.ok(e.hasRipple())}),test("space key",function(t){const s=32;var n;MockInteractions.focus(e),assert.ok(e.hasRipple()),n=e.getRipple(),MockInteractions.keyDownOn(e,s),assert.equal(n.ripples.length,1),MockInteractions.keyDownOn(e,s),assert.equal(n.ripples.length,1),MockInteractions.keyUpOn(e,s);var a=!1;n.addEventListener("transitionend",function(){a||(a=!0,assert.equal(n.ripples.length,0),t())})})});</script>
+
+
+
+</body></html>

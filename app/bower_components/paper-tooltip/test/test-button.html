@@ -1,0 +1,14 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../paper-tooltip.html">
+
+</head><body><dom-module id="test-button">
+  <template>
+    <style>:host{display:inline-block;}#button{width:100px;height:20px;background-color:red;}paper-tooltip{width:70px;height:30px;}</style>
+
+    <div id="button"></div>
+    <paper-tooltip id="buttonTooltip" for="button">Tooltip text</paper-tooltip>
+  </template>
+
+  <script>Polymer({is:"test-button"});</script>
+</dom-module>
+</body></html>

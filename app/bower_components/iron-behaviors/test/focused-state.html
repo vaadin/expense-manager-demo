@@ -1,0 +1,36 @@
+<!DOCTYPE html><html><head>
+  <title>focused-state</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+  <link rel="import" href="test-elements.html">
+</head>
+<body>
+
+  <test-fixture id="TrivialFocusedState">
+    <template>
+      <test-control tabindex="-1"></test-control>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="NestedFocusedState">
+    <template>
+      <nested-focusable></nested-focusable>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="LightDOM">
+    <template>
+      <test-light-dom>
+        <input id="input">
+        <nested-focusable></nested-focusable>
+      </test-light-dom>
+    </template>
+  </test-fixture>
+
+  <script>suite("focused-state",function(){var e;setup(function(){e=fixture("TrivialFocusedState")}),suite("when is focused",function(){test("receives a focused attribute",function(){expect(e.hasAttribute("focused")).to.be.eql(!1),MockInteractions.focus(e),expect(e.hasAttribute("focused")).to.be.eql(!0)}),test("focused property is true",function(){expect(e.focused).to.not.be.eql(!0),MockInteractions.focus(e),expect(e.focused).to.be.eql(!0)})}),suite("when is blurred",function(){test("loses the focused attribute",function(){MockInteractions.focus(e),expect(e.hasAttribute("focused")).to.be.eql(!0),MockInteractions.blur(e),expect(e.hasAttribute("focused")).to.be.eql(!1)}),test("focused property is false",function(){MockInteractions.focus(e),expect(e.focused).to.be.eql(!0),MockInteractions.blur(e),expect(e.focused).to.be.eql(!1)})}),suite("when the focused state is disabled",function(){test("will not be focusable",function(){var t=sinon.spy(e,"blur");MockInteractions.focus(e),e.disabled=!0,expect(e.getAttribute("tabindex")).to.be.eql("-1"),expect(t.called).to.be.eql(!0)})})}),suite("nested focusable",function(){var e;setup(function(){e=fixture("NestedFocusedState")}),test("focus/blur events fired on host element",function(){var t=0,o=0;e.addEventListener("focus",function(){t+=1,expect(e.focused).to.be.equal(!0),MockInteractions.blur(e.$.input)}),e.addEventListener("blur",function(){expect(e.focused).to.be.equal(!1),o+=1}),MockInteractions.focus(e.$.input),expect(o).to.be.greaterThan(0),expect(t).to.be.greaterThan(0)})}),suite("elements in the light dom",function(){var e,t,o;setup(function(){e=fixture("LightDOM"),t=document.querySelector("#input"),o=Polymer.dom(e).querySelector("nested-focusable").$.input}),test("should not fire the focus event",function(){var o=0;e.addEventListener("focus",function(){o+=1}),MockInteractions.focus(t),expect(o).to.be.equal(0)}),test("should not fire the focus event from shadow descendants",function(){var t=0;e.addEventListener("focus",function(){t+=1}),MockInteractions.focus(o),expect(t).to.be.equal(0)})});</script>
+
+
+
+</body></html>

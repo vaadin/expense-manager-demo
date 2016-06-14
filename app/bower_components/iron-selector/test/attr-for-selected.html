@@ -1,0 +1,69 @@
+<!DOCTYPE html><html><head>
+
+  <title>iron-selector attr-for-selected</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+  <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html">
+
+  <link rel="import" href="../iron-selector.html">
+  <link rel="import" href="attr-for-selected-elements.html">
+
+  <style>.iron-selected{background:#ccc;}.my-selected{background:red;}</style>
+
+</head>
+<body>
+
+  <test-fixture id="inlineAttributes">
+    <template>
+      <iron-selector attr-for-selected="some-attr">
+        <div some-attr="value0">Item 0</div>
+        <div some-attr="value1">Item 1</div>
+        <div some-attr="value2">Item 2</div>
+      </iron-selector>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="reflectedProperties">
+    <template>
+      <iron-selector attr-for-selected="some-attr">
+        <attr-reflector>Item 0</attr-reflector>
+        <attr-reflector>Item 1</attr-reflector>
+        <attr-reflector>Item 2</attr-reflector>
+      </iron-selector>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="mixedPropertiesAndAttributes">
+    <template>
+      <iron-selector attr-for-selected="some-attr">
+        <attr-reflector>Item 0</attr-reflector>
+        <attr-reflector>Item 1</attr-reflector>
+        <div some-attr="value2">Item 2</div>
+        <div some-attr="value3">Item 3</div>
+        <attr-reflector>Item 4</attr-reflector>
+        <div some-attr="value5">Item 5</div>
+      </iron-selector>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="defaultAttribute">
+    <template>
+      <iron-selector attr-for-selected="some-attr" fallback-selection="default">
+        <div some-attr="value0">Item 0</div>
+        <div some-attr="value1">Item 1</div>
+        <div some-attr="default">Item 2</div>
+      </iron-selector>
+    </template>
+  </test-fixture>
+
+  <script>suite("inline attributes",function(){var e,t;setup(function(){e=fixture("inlineAttributes"),t=Array.prototype.slice.apply(e.querySelectorAll("div[some-attr]"))}),test("selecting value programatically selects correct item",function(){e.select("value1"),assert.equal(e.selectedItem,t[1])}),test("selecting item sets the correct selected value",function(l){MockInteractions.downAndUp(t[2],function(){assert.equal(e.selected,"value2"),l()})})}),suite("reflected properties as attributes",function(){var e,t;setup(function(){e=fixture("reflectedProperties"),t=Array.prototype.slice.apply(e.querySelectorAll("attr-reflector"));for(var l=0;l<t.length;l++)t[l].someAttr="value"+l}),test("selecting value programatically selects correct item",function(){e.select("value1"),assert.equal(e.selectedItem,t[1])}),test("selecting item sets the correct selected value",function(l){MockInteractions.downAndUp(t[2],function(){assert.equal(e.selected,"value2"),l()})})}),suite("mixed properties and inline attributes",function(){var e,t;setup(function(){e=fixture("mixedPropertiesAndAttributes"),t=Array.prototype.slice.apply(e.querySelectorAll("attr-reflector, div[some-attr]"));for(var l=0;l<t.length;l++)t[l].someAttr="value"+l}),test("selecting value programatically selects correct item",function(){for(var l=0;l<t.length;l++)e.select("value"+l),assert.equal(e.selectedItem,t[l])}),test("selecting item sets the correct selected value",function(l){function s(a){return a>=t.length?void l():void MockInteractions.downAndUp(t[a],function(){assert.equal(e.selected,"value"+a),s(a+1)})}var a=0;s(a)})}),suite("default attribute",function(){var e,t;setup(function(){e=fixture("defaultAttribute"),t=Array.prototype.slice.apply(e.querySelectorAll("div[some-attr]"))}),test("setting non-existing value sets default",function(){e.select("non-existing-value"),assert.equal(e.selected,"default"),assert.equal(e.selectedItem,t[2])}),test("setting non-existing value sets default",function(){e.multi=!0,e.select(["non-existing-value"]),assert.deepEqual(e.selectedValues,["default"]),assert.deepEqual(e.selectedItems,[t[2]])}),test("default not used when there was at least one match",function(){e.multi=!0,e.selectedValues=["non-existing-value","value0"],assert.deepEqual(e.selectedValues,["non-existing-value","value0"]),assert.deepEqual(e.selectedItems,[t[0]])}),test("default element not found does not result in infinite loop",function(){e.fallbackSelection="non-existing-fallback",e.select("non-existing-value"),assert.equal(e.selectedItem,void 0),e.multi=!0,e.selectedValues=["non-existing-value"],assert.deepEqual(e.selectedItems,[void 0]),e.fallbackSelection="default",assert.deepEqual(e.selectedItems,[t[2]])}),test("selection is updated after fallback is set",function(){e.fallbackSolution=void 0,e.select("non-existing-value"),e.fallbackSelection="default",assert.equal(e.selectedItem,t[2])}),test("multi-selection is updated after fallback is set",function(){e.fallbackSolution=void 0,e.selectedValues=["non-existing-value"],e.fallbackSolution="default",assert.equal(e.selectedItem,t[2])})});</script>
+
+
+
+</body></html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>iron-list test</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="helpers.html">
+  <link rel="import" href="x-grid.html">
+</head>
+<body>
+
+
+  <test-fixture id="trivialList">
+    <template>
+      <x-grid></x-grid>
+    </template>
+  </test-fixture>
+
+<script>suite("basic features",function(){var t,e;setup(function(){e=fixture("trivialList"),t=e.list}),test("check horizontal rendering",function(i){e.data=buildDataSet(100),flush(function(){for(var e=0;9>e;e++)assert.equal(getNthItemFromGrid(t,e).textContent,e);i()})}),test("first visible index",function(i){e.data=buildDataSet(100),flush(function(){function s(){assert.equal(t.firstVisibleIndex,getNthItemRowStart(t,l)),assert.equal(getNthItemFromGrid(t,0).textContent,getNthItemRowStart(t,l))}function n(){var e=Math.floor(u/a)*t._itemsPerRow,i=getNthItemRowStart(t,l);assert.equal(t.lastVisibleIndex,i+e-1),assert.equal(getNthItemFromGrid(t,8).textContent,i+e-1)}function o(){s(),n(),l=1,flush(function(){simulateScroll({list:t,contribution:a,target:getGridRowFromIndex(t,l)*a,onScrollEnd:r})})}function r(){s(),n(),i()}var l,a=(t.items.length,e.itemSize),u=t.offsetHeight;l=50,simulateScroll({list:t,contribution:a,target:getGridRowFromIndex(t,l)*a,onScrollEnd:o})})}),test("scroll to index",function(e){t.items=buildDataSet(100),flush(function(){t.scrollToIndex(30),assert.equal(t.firstVisibleIndex,30),t.scrollToIndex(0),assert.equal(t.firstVisibleIndex,0),t.scrollToIndex(60),assert.equal(t.firstVisibleIndex,60);var i=getNthItemFromGrid(t,0).offsetHeight,s=t.offsetHeight;Math.floor(s/i)*t._itemsPerRow;t.scrollToIndex(99),t.style.height=t._physicalItems[0].offsetHeight+"px",flush(function(){var i=99;t.scrollToIndex(i),assert.equal(t.firstVisibleIndex,i),e()})})}),test("reset items",function(e){t.items=buildDataSet(100),flush(function(){assert.equal(getNthItemFromGrid(t,0).textContent,"0"),t.items=null,flush(function(){assert.notEqual(getNthItemFromGrid(t,0).textContent,"0"),t.items=buildDataSet(100),flush(function(){assert.equal(getNthItemFromGrid(t,0).textContent,"0"),e()})})})})});</script>
+
+
+
+</body></html>

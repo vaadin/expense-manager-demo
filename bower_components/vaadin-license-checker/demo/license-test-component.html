@@ -1,0 +1,14 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-input/iron-input.html">
+<link rel="import" href="../vaadin-license-checker.html">
+
+</head><body><dom-module id="license-test-component">
+    <template>
+        <input is="iron-input" type="text" bind-value="{{inputValue}}">
+        
+        <vaadin-license-checker license-key="{{inputValue}}" license-url-base="../test-license/" product-name="some-product" product-version="2" product-caption="Vaadin Some Product">
+        </vaadin-license-checker>
+    </template>
+</dom-module>
+
+<script>Polymer({is:"license-test-component",properties:{inputValue:String}});</script></body></html>

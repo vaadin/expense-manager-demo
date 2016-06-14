@@ -1,0 +1,44 @@
+<!DOCTYPE html><html><head>
+  <title>iron-location</title>
+
+  <script src="../../webcomponentsjs/webcomponents.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../../polymer/polymer.html">
+  <link rel="import" href="../../promise-polyfill/promise-polyfill.html">
+  <link rel="import" href="../iron-location.html">
+  <link rel="import" href="./redirection.html">
+</head>
+<body>
+<test-fixture id="Solo">
+  <template>
+    <iron-location></iron-location>
+  </template>
+</test-fixture>
+<test-fixture id="Together">
+  <template>
+    <div>
+      <iron-location id="one"></iron-location>
+      <iron-location id="two"></iron-location>
+    </div>
+  </template>
+</test-fixture>
+<test-fixture id="RedirectHash">
+  <template>
+    <redirect-hash></redirect-hash>
+  </template>
+</test-fixture>
+<test-fixture id="RedirectPath">
+  <template>
+    <redirect-path></redirect-path>
+  </template>
+</test-fixture>
+<test-fixture id="RedirectQuery">
+  <template>
+    <redirect-query></redirect-query>
+  </template>
+</test-fixture>
+
+<script>"use strict";function timePasses(e){return new Promise(function(t){window.setTimeout(function(){t()},e)})}function makeAbsoluteUrl(e){return window.location.protocol+"//"+window.location.host+e}function replaceState(e){window.history.replaceState({},"",makeAbsoluteUrl(e))}function ironLocationTests(){suite("when used solo",function(){var e;setup(function(){e=fixture("Solo")}),test("basic functionality with #hash urls",function(){expect(window.location.hash).to.be.equal(e.hash),e.hash="/lol/ok",expect(window.location.hash).to.be.equal("#/lol/ok");var t=document.createElement("a"),o=window.location.protocol+"//"+window.location.host+window.location.pathname;return t.href=o+"#/wat",document.body.appendChild(t),t.click(),timePasses(10).then(function(){expect(e.hash).to.be.equal("/wat")})}),test("basic functionality with paths",function(){expect(window.location.pathname).to.be.equal(e.path),e.path="/foo/bar",expect(window.location.pathname).to.be.equal("/foo/bar"),replaceState("/baz"),window.dispatchEvent(new CustomEvent("location-changed")),expect(e.path).to.be.equal("/baz")}),test("assigning to a relative path URL",function(){e.path="/foo/bar",expect(window.location.pathname).to.be.equal("/foo/bar"),e.path="baz",expect(window.location.pathname).to.be.equal("/baz")}),test("basic functionality with ?key=value params",function(){expect(e.query).to.be.eq(""),replaceState("/?greeting=hello&target=world"),window.dispatchEvent(new CustomEvent("location-changed")),expect(e.query).to.be.equal("greeting=hello&target=world"),e.query="greeting=hello&target=world&another=key",expect(window.location.search).to.be.equal("?greeting=hello&target=world&another=key")})}),suite("when used with other iron-location elements",function(){function e(e,t){expect(e.path).to.be.equal(t.path),expect(e.hash).to.be.equal(t.hash),expect(e.query).to.be.equal(t.query)}var t,o;setup(function(){var e=fixture("Together");o=e.querySelector("#one"),t=e.querySelector("#two")}),test("coordinate their changes (by firing events on window)",function(){e(o,t),o.path="/a/b/c",e(o,t),t.query="alsdkjflaksjfd=alksjfdlkajsdfl",e(o,t),o.hash="lkjljifosjkldfjlksjfldsjf",e(o,t)})}),suite("when intercepting links",function(){function e(e,t){function o(t){expect(t.target).to.be.eq(e),n=t.defaultPrevented,t.preventDefault(),expect(t.defaultPrevented).to.be.eq(!0)}var n;window.addEventListener("click",o);var a=fixture("Solo");return null!=t&&(a.urlSpaceRegex=t),document.body.appendChild(e),e.click(),document.body.removeChild(e),window.removeEventListener("click",o),n}test("simple link to / is intercepted",function(){var t=document.createElement("a");document.baseURI!==window.location.href?t.href=makeAbsoluteUrl("/"):t.href="/",expect(e(t)).to.be.eq(!0)}),test("link that matches url space is intercepted",function(){var t=document.createElement("a");t.href=makeAbsoluteUrl("/foo"),expect(e(t,"/fo+")).to.be.eq(!0)}),test("link that doesn't match url space isn't intercepted",function(){var t=document.createElement("a");t.href=makeAbsoluteUrl("/bar"),expect(e(t,"/fo+")).to.be.eq(!1)}),test("link to another domain isn't intercepted",function(){var t=document.createElement("a");t.href="http://example.com/",expect(e(t)).to.be.eq(!1)}),test("a link with target=_blank isn't intercepted",function(){var t=document.createElement("a");t.href=makeAbsoluteUrl("/"),t.target="_blank",expect(e(t)).to.be.eq(!1)})}),suite("supports doing synchronous redirection",function(){test("of the hash portion of the URL",function(){expect(window.location.hash).to.be.equal("");var e=fixture("RedirectHash");expect(window.location.hash).to.be.equal("#redirectedTo"),expect(e.hash).to.be.equal("redirectedTo"),e.hash="newHash",expect(window.location.hash).to.be.equal("#redirectedTo"),expect(e.hash).to.be.equal("redirectedTo")}),test("of the path portion of the URL",function(){expect(window.location.pathname).to.not.be.equal("/redirectedTo");var e=fixture("RedirectPath");expect(window.location.pathname).to.be.equal("/redirectedTo"),expect(e.path).to.be.equal("/redirectedTo"),e.path="/newPath",expect(window.location.pathname).to.be.equal("/redirectedTo"),expect(e.path).to.be.equal("/redirectedTo")}),test("of the query portion of the URL",function(){expect(window.location.search).to.be.equal("");var e=fixture("RedirectQuery");expect(window.location.search).to.be.equal("?redirectedTo"),expect(e.query).to.be.equal("redirectedTo"),e.query="newQuery",expect(window.location.search).to.be.equal("?redirectedTo"),expect(e.query).to.be.equal("redirectedTo")})})}suite("<iron-location>",function(){var e;setup(function(){e=window.location.href}),teardown(function(){window.history.replaceState({},"",e)}),ironLocationTests(),suite("with a base URI",function(){var e;setup(function(){expect(document.baseURI).to.be.equal(window.location.href),e=document.createElement("base");var t="https://example.com/i/dont/exist/obviously";e.href=t,document.head.appendChild(e),expect(document.baseURI).to.be.equal(t)}),teardown(function(){document.head.removeChild(e)}),ironLocationTests()})});</script>
+
+</body></html>

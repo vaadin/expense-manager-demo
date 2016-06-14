@@ -1,0 +1,1 @@
+module.exports=function(){return"undefined"==typeof process||process+""!="[object process]"};

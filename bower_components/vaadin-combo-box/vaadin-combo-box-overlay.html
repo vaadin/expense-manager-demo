@@ -1,0 +1,24 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-list/iron-list.html">
+<link rel="import" href="../paper-styles/shadow.html">
+<link rel="import" href="vaadin-overlay-behavior.html">
+
+</head><body><dom-module id="vaadin-combo-box-overlay">
+  <style>:host{position:absolute;@apply (--shadow-elevation-2dp);background:#fff;border-radius:0 0 2px 2px;top:0;left:0;z-index:200;overflow:hidden;}#scroller{overflow:auto;max-height:var(--vaadin-combo-box-overlay-max-height, 65vh);transform:translate3d(0,0,0);-webkit-overflow-scrolling:touch;}#selector{--iron-list-items-container:{border-top:8px solid transparent;border-bottom:8px solid transparent;};}#selector .item{cursor:pointer;padding:13px 16px;color:var(--primary-text-color);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}#selector:not([touch-device]) .item:hover,
+    #selector .item[focused]{background:#eee;}#selector .item[selected]{color:var(--primary-color);}</style>
+
+  <template>
+    <div id="scroller" scroller="[[_getScroller()]]">
+      <iron-list id="selector" touch-device$="[[touchDevice]]" role="listbox" data-selection$="[[_ariaActiveIndex]]" on-touchend="_preventDefault" selected-item="{{_selectedItem}}" items="[[_items]]" selection-enabled="" scroll-target="[[_getScroller()]]">
+        <template>
+          <div class="item" id$="it[[index]]" selected$="[[selected]]" role$="[[_getAriaRole(index)]]" aria-selected$="[[_getAriaSelected(_focusedIndex,index)]]" focused$="[[_isItemFocused(_focusedIndex,index)]]">
+              [[getItemLabel(item)]]
+          </div>
+        </template>
+      </iron-list>
+    </div>
+  </template>
+</dom-module>
+
+<script>Polymer({is:"vaadin-combo-box-overlay",behaviors:[vaadin.elements.combobox.OverlayBehavior],properties:{touchDevice:{type:Boolean,reflectToAttribute:!0,value:function(){try{return document.createEvent("TouchEvent"),!0}catch(e){return!1}}},_selectedItem:{type:String,notify:!0},_items:{type:Object},_focusedIndex:{type:Number,notify:!0,value:-1,observer:"_focusedIndexChanged"},_focusedItem:{type:String,computed:"_getFocusedItem(_focusedIndex)"},_ariaActiveIndex:{type:Number,notify:!0,computed:"_getAriaActiveIndex(_focusedIndex)"},_itemLabelPath:{type:String,value:"label"},_itemValuePath:{type:String,value:"value"}},ready:function(){this._patchWheelOverScrolling(),void 0!==this.$.selector._scroller&&(this.$.selector._scroller=this._getScroller())},_getFocusedItem:function(e){return e>=0?this._items[e]:void 0},indexOfLabel:function(e){if(this._items&&e)for(var t=0;t<this._items.length;t++)if(this.getItemLabel(this._items[t]).toString().toLowerCase()===e.toString().toLowerCase())return t;return-1},getItemLabel:function(e){var t=this.get(this._itemLabelPath,e);return void 0!==t&&null!==t||(t=e?e.toString():""),t},_isItemFocused:function(e,t){return e==t},_getAriaActiveIndex:function(e){return e>=0?"it"+e:!1},_getAriaSelected:function(e,t){return this._isItemFocused(e,t).toString()},_getAriaRole:function(e){return void 0!==e?"option":!1},_focusedIndexChanged:function(e){e>=0&&this._scrollIntoView(e)},_scrollIntoView:function(e){if(void 0!==this._visibleItemsCount()){var t=e;e>this._lastVisibleIndex()?(t=e-this._visibleItemsCount()+1,this.$.selector.scrollToIndex(e)):e>this.$.selector.firstVisibleIndex&&(t=this.$.selector.firstVisibleIndex),this.$.selector.scrollToIndex(t)}},adjustScrollPosition:function(){this._items&&this._scrollIntoView(this._focusedIndex)},_getScroller:function(){return this.$.scroller},_patchWheelOverScrolling:function(){var e=this.$.selector;e.addEventListener("wheel",function(t){var i=e._scroller||e.scrollTarget,o=0===i.scrollTop,r=i.scrollHeight-i.scrollTop-i.clientHeight<=1;o&&t.deltaY<0?t.preventDefault():r&&t.deltaY>0&&t.preventDefault()})},updateViewportBoundaries:function(){this._cachedViewportTotalPadding=void 0,this.$.selector.updateViewportBoundaries()},get _viewportTotalPadding(){if(void 0===this._cachedViewportTotalPadding){var e=window.getComputedStyle(this._unwrapIfNeeded(this.$.selector.$.items));this._cachedViewportTotalPadding=[e.paddingTop,e.paddingBottom,e.borderTopWidth,e.borderBottomWidth].map(function(e){return parseInt(e,10)}).reduce(function(e,t){return e+t})}return this._cachedViewportTotalPadding},_visibleItemsCount:function(){var e=this.$.selector._physicalStart,t=this.$.selector._physicalSizes[e],i=this.$.selector._viewportHeight||this.$.selector._viewportSize;if(t&&i){var o=(i-this._viewportTotalPadding)/t;return Math.floor(o)}},_lastVisibleIndex:function(){return this._visibleItemsCount()?this.$.selector.firstVisibleIndex+this._visibleItemsCount()-1:void 0},_selectItem:function(e){e="number"==typeof e?this._items[e]:e,this.$.selector.selectedItem!==e&&this.$.selector.selectItem(e)},_preventDefault:function(e){e.preventDefault()}});</script>
+</body></html>
