@@ -1,0 +1,29 @@
+{
+  "name": "vaadin-expense-manager",
+  "version": "2.0.0",
+  "description": "Sample PWA showcasing Vaadin Elements",
+  "main": "service-worker.js",
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-gh-pages": "^0.5.4"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vaadin/expense-manager-demo.git"
+  },
+  "keywords": [
+    "pwa",
+    "vaadin",
+    "polymer"
+  ],
+  "author": "Marcus Hellberg / Vaadin",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/vaadin/expense-manager-demo/issues"
+  },
+  "homepage": "https://github.com/vaadin/expense-manager-demo#readme"
+}
