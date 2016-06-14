@@ -1,1 +1,0 @@
-window._controlledPromise=new Promise(function(e){var r=function(){navigator.serviceWorker.getRegistration().then(function(r){e(r)})};navigator.serviceWorker.controller?r():navigator.serviceWorker.addEventListener("controllerchange",r)});

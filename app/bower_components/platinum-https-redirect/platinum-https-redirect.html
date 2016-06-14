@@ -1,7 +1,0 @@
-<html><head><link rel="import" href="../polymer/polymer.html">
-
-
-</head><body><dom-module id="platinum-https-redirect">
-  <script>Polymer({is:"platinum-https-redirect",_isLocalhost:function(o){return!("localhost"!==o&&"[::1]"!==o&&!o.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/))},attached:function(){"http:"!==window.location.protocol||this._isLocalhost(window.location.hostname)||(window.location.href="https:"+window.location.href.substring(window.location.protocol.length))}});</script>
-</dom-module>
-</body></html>

@@ -29,7 +29,7 @@
 
 
 /* eslint-disable quotes, comma-spacing */
-var PrecacheConfig = [["/bower_components/webcomponentsjs/webcomponents-lite.min.js","a1882f82ebfc212658591b4e817d8e03"],["/images/default-receipt.png","14ef509ae3504333529fc5686906de39"],["/index.html","247b744fa5482a3c6469a2d1e6851f56"],["/manifest.json","a53e03e690f8728fdba14e5f3cdeabce"],["/src/expense-app.html","72ee2b2bac2565a201f7eaff1fd715e7"],["/src/login-page.html","276a7d3c75b8a25a27950fcb321dee91"],["/src/overview-page.html","3ccc6b6e9141dadba09a4456001740a2"]];
+var PrecacheConfig = [["/bower_components/webcomponentsjs/webcomponents-lite.min.js","a1882f82ebfc212658591b4e817d8e03"],["/images/default-receipt.png","14ef509ae3504333529fc5686906de39"],["/index.html","7832be424ae2d679714636b8c0678236"],["/manifest.json","a53e03e690f8728fdba14e5f3cdeabce"],["/src/expense-app.html","72ee2b2bac2565a201f7eaff1fd715e7"],["/src/login-page.html","276a7d3c75b8a25a27950fcb321dee91"],["/src/overview-page.html","3ccc6b6e9141dadba09a4456001740a2"]];
 /* eslint-enable quotes, comma-spacing */
 var CacheNamePrefix = 'sw-precache-v1--' + (self.registration ? self.registration.scope : '') + '-';
 
