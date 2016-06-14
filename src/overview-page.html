@@ -9,6 +9,8 @@
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/vaadin-pouchdb/vaadin-pouchdb.html">
+<link rel="import" href="expense-editor.html">
+<link rel="import" href="info-dialog.html">
 <link rel="import" href="content-panel.html">
 <link rel="import" href="filters-toolbar.html">
 <link rel="import" href="moment-js.html">
@@ -202,7 +204,7 @@
               .reduce(function(a, b) {
                 return a + b;
               }, 0);
-            this.totalOwed = accounting.formatMoney(total);
+            this.totalOwed = '$' + total.toFixed(2);
           }
         },
 
@@ -216,9 +218,7 @@
         },
 
         _openInfoWindow: function() {
-          this.importHref(this.resolveUrl('info-dialog.html'), function() {
-            this.$.info.open();
-          }.bind(this), null, true);
+          this.$.info.open();
         },
 
         _getUniqueMerchants: function() {
@@ -258,6 +258,7 @@
         },
 
         _handleBackendResponse: function(evt) {
+          // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
           var rsp = evt.detail.response;
           if (rsp && rsp.backend_db_id) {
             this.dbId = rsp.backend_db_id;
@@ -292,9 +293,7 @@
         _editExpense: function(evt) {
           if (evt && evt.detail) {
             var expense = evt.detail;
-            this.importHref(this.resolveUrl('expense-editor.html'), function() {
-              this.$.expenseEditor.open(expense);
-            }.bind(this), null, true);
+            this.$.expenseEditor.open(expense);
           }
         },
 
@@ -329,7 +328,7 @@
           this.loggedIn = false;
         },
 
-        _loginStateChanged: function(newValue, oldValue) {
+        _loginStateChanged: function() {
           if (this.loggedIn) {
             this.async(function() {
               this._setupDB();
@@ -341,7 +340,7 @@
 
         _route: function() {
           var id = this.route.path.replace(/^\//, '');
-          if (id && id != this.dbId) {
+          if (id && id !== this.dbId) {
             this.loggedIn = false;
             this.loggedIn = true;
           }

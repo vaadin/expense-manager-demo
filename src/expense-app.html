@@ -94,7 +94,8 @@
 
         _selectPage: function() {
           if (this.loggedIn) {
-            this.importHref(this.resolveUrl('overview-page.html'), function() {}.bind(this), null, true);
+            this.importHref(this.resolveUrl('overview-page.html'),
+              function() {}.bind(this), null, true);
           } else {
             this.importHref(this.resolveUrl('login-page.html'), null, null, true);
           }

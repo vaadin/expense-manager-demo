@@ -18,8 +18,6 @@
     "app-route": "polymerelements/app-route#^0.9.1",
     "paper-fab": "polymerelements/paper-fab#^1.2.0",
     "paper-checkbox": "polymerelements/paper-checkbox#^1.2.0",
-    "accounting": "^0.3.2",
-    "moment": "^2.13.0",
     "qr-js": "^1.1.4",
     "paper-dialog": "polymerelements/paper-dialog#^1.0.4"
   },
