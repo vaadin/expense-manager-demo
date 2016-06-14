@@ -105,7 +105,12 @@
       }
     </style>
 
-    <vaadin-pouchdb id="db" dbname="{{dbLocal}}" remote="{{dbRemote}}" data="{{expenses}}" status="{{status}}"></vaadin-pouchdb>
+    <vaadin-pouchdb
+      id="db"
+      dbname="{{dbLocal}}"
+      remote="{{dbRemote}}"
+      data="{{expenses}}"
+      status="{{status}}"></vaadin-pouchdb>
 
     <app-location route="{{route}}" use-hash-as-path></app-location>
     <app-route route="{{route}}" pattern="/:dbId" data="{{routeData}}" tail="{{subroute}}">
@@ -131,7 +136,7 @@
 
     </paper-header-panel>
 
-    <expense-editor id="expenseEditor" merchants="[[merchants]]" db="[[_db]]" route="{{subroute}}"></expense-editor>
+    <expense-editor id="expenseEditor" merchants="[[merchants]]" route="{{subroute}}"></expense-editor>
     <paper-toast id="saveNotification"></paper-toast>
     <info-dialog id="info"></info-dialog>
     <iron-localstorage name="expense-manager-db-id" value="{{dbId}}"></iron-localstorage>
@@ -144,7 +149,6 @@
         is: 'overview-page',
 
         properties: {
-          _db: Object,
           route: Object,
           routeData: Object,
           dbLocal: String,
@@ -170,15 +174,13 @@
                 merchant: ''
               };
             },
-
             notify: true
           }
         },
 
         listeners: {
           'edit-expense': '_editExpense',
-          'expenses-updated': '_expensesUpdated',
-          'expense-saved': '_saveExpense',
+          'save-expense': '_saveExpense',
           'delete-expense': '_deleteExpense'
         },
 
@@ -188,11 +190,6 @@
           '_calculateTotal(expenses.*)',
           '_route(route)'
         ],
-
-        ready: function() {
-          console.log('overview page ready');
-          this._db = this.$.db;
-        },
 
         _calculateTotal: function() {
           if (this.expenses) {
@@ -250,34 +247,18 @@
           this.$.ajax.generateRequest();
         },
 
-        _update: function() {
-          console.log('update');
-          this.debounce('update', function() {
-            this._db.query();
-          }.bind(this), 10);
-        },
-
         _handleBackendResponse: function(evt) {
           // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
           var rsp = evt.detail.response;
           if (rsp && rsp.backend_db_id) {
             this.dbId = rsp.backend_db_id;
             this.set('route.path', '/' + this.dbId);
-
             // Setting these, makes couchdb connect to local & remote DB and start syncing
             this.dbLocal = 'db_' + this.dbId;
             this.dbRemote = rsp.couchdb_db_url;
-
             if (rsp.new_db) {
               this._showInfo = true;
             }
-
-            // We update the entire UI on any change for simplicity.
-            this._db.changes(function() {
-              this._update();
-            }.bind(this));
-            // First hit
-            this._update();
           } else {
             this.dbId = null;
             this.set('route.path', '');
@@ -291,10 +272,7 @@
         },
 
         _editExpense: function(evt) {
-          if (evt && evt.detail) {
-            var expense = evt.detail;
-            this.$.expenseEditor.open(expense);
-          }
+          this.$.expenseEditor.open(evt.detail);
         },
 
         _hideSyncIcon: function() {
@@ -302,25 +280,28 @@
         },
 
         _saveExpense: function(evt) {
-          var expense = evt.detail;
-          this._db.save(expense);
-          this.fire('expenses-updated');
-        },
-        _deleteExpense: function(evt) {
-          var expense = evt.detail;
-          this._db.remove(expense);
-          this.fire('expenses-updated', {
-            reason: 'deleted'
-          });
+          // Modifying the expenses array, DB will be updated
+          var idx = this.expenses.indexOf(evt.detail.original);
+          if (idx > 0) {
+            this.set('expenses.' + idx , evt.detail.expense);
+          } else {
+            this.push('expenses', evt.detail.expense);
+          }
+          this._expensesUpdated('Expense was saved');
         },
 
-        _expensesUpdated: function(evt) {
-          this.$.expenseEditor.close();
-          if (evt.detail.reason === 'deleted') {
-            this.$.saveNotification.text = 'Expense was deleted';
-          } else {
-            this.$.saveNotification.text = 'Expense was saved';
+        _deleteExpense: function(evt) {
+          // Modifying the expenses array, DB will be updated
+          var idx = this.expenses.indexOf(evt.detail);
+          if (idx >= 0) {
+            this.splice('expenses', idx, 1);
+            this._expensesUpdated('Expense was deleted')
           }
+        },
+
+        _expensesUpdated: function(msg) {
+          this.$.expenseEditor.close();
+          this.$.saveNotification.text = msg;
           this.$.saveNotification.show();
         },
 

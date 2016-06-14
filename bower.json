@@ -11,7 +11,7 @@
     "vaadin-date-picker": "^1.1.0",
     "vaadin-upload": "^1.1.0",
     "vaadin-charts": "vaadin/vaadin-charts#task/CHARTS-505",
-    "vaadin-pouchdb": "manolo/vaadin-pouchdb#em",
+    "vaadin-pouchdb": "manolo/vaadin-pouchdb#new",
     "iron-a11y-keys": "polymerelements/iron-a11y-keys#^1.0.5",
     "paper-header-panel": "polymerelements/paper-header-panel#^1.1.6",
     "paper-toolbar": "polymerelements/paper-toolbar#^1.1.4",
