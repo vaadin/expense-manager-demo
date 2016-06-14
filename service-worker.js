@@ -29,7 +29,7 @@
 
 
 /* eslint-disable quotes, comma-spacing */
-var PrecacheConfig = [["/bower_components/webcomponentsjs/webcomponents-lite.min.js","a1882f82ebfc212658591b4e817d8e03"],["/images/default-receipt.png","14ef509ae3504333529fc5686906de39"],["/index.html","3aaef1a7634e14c3c4620594031e7d86"],["/manifest.json","a53e03e690f8728fdba14e5f3cdeabce"],["/src/expense-app.html","72ee2b2bac2565a201f7eaff1fd715e7"],["/src/login-page.html","276a7d3c75b8a25a27950fcb321dee91"],["/src/overview-page.html","3ccc6b6e9141dadba09a4456001740a2"]];
+var PrecacheConfig = [["/bower_components/webcomponentsjs/webcomponents-lite.min.js","a1882f82ebfc212658591b4e817d8e03"],["/images/default-receipt.png","14ef509ae3504333529fc5686906de39"],["/index.html","a1af187a9aaa08018e8193d28448a340"],["/manifest.json","9e43914aa202ed4d72ec02718281f030"],["/src/expense-app.html","72e0a652d7ff9b21ee4977828ed156e5"],["/src/login-page.html","276a7d3c75b8a25a27950fcb321dee91"],["/src/overview-page.html","e6cc22951ad219e11c4af1fe37ea8970"]];
 /* eslint-enable quotes, comma-spacing */
 var CacheNamePrefix = 'sw-precache-v1--' + (self.registration ? self.registration.scope : '') + '-';
 
@@ -216,7 +216,7 @@ self.addEventListener('fetch', function(event) {
       cacheName = AbsoluteUrlToCacheName[urlWithoutIgnoredParameters];
     }
 
-    var navigateFallback = '/index.html';
+    var navigateFallback = 'index.html';
     // Ideally, this would check for event.request.mode === 'navigate', but that is not widely
     // supported yet:
     // https://code.google.com/p/chromium/issues/detail?id=540967

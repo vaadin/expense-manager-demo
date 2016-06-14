@@ -19,7 +19,8 @@
     "paper-fab": "polymerelements/paper-fab#^1.2.0",
     "paper-checkbox": "polymerelements/paper-checkbox#^1.2.0",
     "qr-js": "^1.1.4",
-    "paper-dialog": "polymerelements/paper-dialog#^1.0.4"
+    "paper-dialog": "polymerelements/paper-dialog#^1.0.4",
+    "iron-pages": "polymerelements/iron-pages#^1.0.7"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"

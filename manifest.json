@@ -1,6 +1,6 @@
 {
   "name": "Expense Manager",
-  "short_name": "Expense Manager",
+  "short_name": "Expenses",
   "icons": [{
     "src": "images/app-icon-32.png",
     "type": "image/png",

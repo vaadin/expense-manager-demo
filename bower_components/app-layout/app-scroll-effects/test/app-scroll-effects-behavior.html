@@ -1,0 +1,27 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>test for app-scroll-effects-behavior</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../web-component-tester/browser.js"></script>
+  <script src="../../../test-fixture/test-fixture-mocha.js"></script>
+  <link rel="import" href="../../../test-fixture/test-fixture.html">
+  <link rel="import" href="x-container.html">
+
+  <style>body{margin:0;padding:0;height:1000vh;}x-container{position:fixed;top:0;left:0;right:0;height:200px;}</style>
+
+</head>
+<body>
+
+  <test-fixture id="testHeader">
+    <template>
+      <x-container></x-container>
+    </template>
+  </test-fixture>
+
+  <script>function scrollTestHelper(e,t){function s(){var e=t.shift();e&&(e.callback(),t.length>0&&l())}function l(){var l=e===document.documentElement?window.pageYOffset:e.scrollTop;t[0].y===l?s():e===document.documentElement?window.scrollTo(0,t[0].y):e.scrollTop=t[0].y}if(t.length>0){var a=e===document.documentElement?window:e;a.addEventListener("scroll",s),l()}}suite("basic features",function(){var e,t;suiteSetup(function(){t={setUp:sinon.spy(),tearDown:sinon.spy(),run:sinon.spy()},Polymer.AppLayout.registerEffect("test-effect",t)}),setup(function(){e=fixture("testHeader"),t.setUp.reset(),t.tearDown.reset(),t.run.reset()}),test("simple effect",function(s){e.effects="test-effect",flush(function(){scrollTestHelper(e.scrollTarget,[{y:0,callback:function(){assert.isTrue(t.setUp.called),assert.deepEqual(t.run.lastCall.args,[0,0])}},{y:.5*e.offsetHeight,callback:function(){assert.deepEqual(t.run.lastCall.args,[.5,.5*e.offsetHeight])}},{y:e.offsetHeight,callback:function(){assert.deepEqual(t.run.lastCall.args,[1,e.offsetHeight])}},{y:2*e.offsetHeight,callback:function(){assert.deepEqual(t.run.lastCall.args,[2,2*e.offsetHeight])}},{y:3*e.offsetHeight,callback:function(){assert.deepEqual(t.run.lastCall.args,[3,3*e.offsetHeight]),e.effects="",assert.isTrue(t.tearDown.called),s()}}])})}),test("effect with config",function(s){var l={startsAt:.5,endsAt:1};e.effects="test-effect",e.effectsConfig={"test-effect":l},flush(function(){scrollTestHelper(e.scrollTarget,[{y:0,callback:function(){assert.isTrue(t.setUp.called),assert.deepEqual(t.setUp.lastCall.args,[l]),assert.deepEqual(t.run.lastCall.args,[0,0])}},{y:.25*e.offsetHeight,callback:function(){assert.deepEqual(t.run.lastCall.args,[0,.25*e.offsetHeight])}},{y:.5*e.offsetHeight,callback:function(){assert.deepEqual(t.run.lastCall.args,[0,.5*e.offsetHeight])}},{y:.75*e.offsetHeight,callback:function(){assert.deepEqual(t.run.lastCall.args,[.5,.75*e.offsetHeight])}},{y:e.offsetHeight,callback:function(){assert.deepEqual(t.run.lastCall.args,[1,e.offsetHeight]),e.effects="",assert.isTrue(t.tearDown.called),s()}}])})})});</script>
+
+
+
+</body></html>

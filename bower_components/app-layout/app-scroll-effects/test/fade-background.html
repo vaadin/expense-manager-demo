@@ -1,0 +1,29 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>test for the fade-background effect</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../web-component-tester/browser.js"></script>
+  <script src="../../../test-fixture/test-fixture-mocha.js"></script>
+  <link rel="import" href="../../../test-fixture/test-fixture.html">
+  <link rel="import" href="../app-scroll-effects.html">
+  <link rel="import" href="x-container.html">
+  <link rel="import" href="utils.html">
+
+  <style>body{margin:0;padding:0;height:1000vh;}x-container{position:fixed;top:0;left:0;right:0;height:200px;}</style>
+
+</head>
+<body>
+
+  <test-fixture id="testHeader">
+    <template>
+      <x-container effects="fade-background"></x-container>
+    </template>
+  </test-fixture>
+
+  <script>suite("basic features",function(){var r;setup(function(){r=fixture("testHeader")}),test("effect outputs",function(e){flush(function(){r._updateScrollState(0),assert.isTrue(sameCSS(r.$.backgroundFrontLayer,"will-change: opacity; transition-property: opacity; transition-duration: 0.5s;"),"backgroundFrontLayer when progress = 0"),assert.isTrue(sameCSS(r.$.backgroundRearLayer,"will-change: opacity; transition-property: opacity;transition-duration: 0.5s;"),"backgroundRearLayer when progress = 0"),r.$.backgroundFrontLayer.style.transition="none",r.$.backgroundRearLayer.style.transition="none",assert.isTrue(sameCSS(r.$.backgroundFrontLayer,"opacity: 1"),"backgroundFrontLayer when progress = 0"),assert.isTrue(sameCSS(r.$.backgroundRearLayer,"opacity: 0"),"backgroundRearLayer when progress = 0"),r._updateScrollState(r.offsetHeight),assert.isTrue(sameCSS(r.$.backgroundFrontLayer,"opacity: 0"),"backgroundFrontLayer when progress = 1"),assert.isTrue(sameCSS(r.$.backgroundRearLayer,"opacity: 1"),"backgroundRearLayer when progress = 1"),e()})})});</script>
+
+
+
+</body></html>

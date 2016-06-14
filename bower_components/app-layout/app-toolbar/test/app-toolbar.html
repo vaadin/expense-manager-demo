@@ -1,0 +1,30 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>test for app-toolbar</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../web-component-tester/browser.js"></script>
+  <script src="../../../test-fixture/test-fixture-mocha.js"></script>
+  <link rel="import" href="../../../test-fixture/test-fixture.html">
+  <link rel="import" href="../app-toolbar.html">
+
+  <style>body{margin:0;padding:0;}app-toolbar{height:50px;background-color:gray;}[top-item]{height:10px;background-color:green;}[bottom-item]{height:10px;background-color:green;}[title]{background-color:red;}</style>
+</head>
+<body>
+
+  <test-fixture id="trivialToolbar">
+    <template>
+      <app-toolbar>
+        <div top-item=""></div>
+        <div title="">Title</div>
+        <div bottom-item=""></div>
+      </app-toolbar>
+    </template>
+  </test-fixture>
+
+  <script>suite("basic features",function(){var t;setup(function(){t=fixture("trivialToolbar")}),test("Items",function(){var e=t.offsetHeight,o=document.elementFromPoint(0,0),i=Polymer.dom(t).querySelector("[title]"),r=i.getBoundingClientRect(),n=t.getBoundingClientRect(),s=document.elementFromPoint(0,e-1);assert.isTrue(o.hasAttribute("top-item")),assert.isTrue(s.hasAttribute("bottom-item")),assert.isTrue(r.top>0&&n.bottom-r.bottom>0)})});</script>
+
+
+
+</body></html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>registerEffect</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../web-component-tester/browser.js"></script>
+  <script src="../../../test-fixture/test-fixture-mocha.js"></script>
+  <link rel="import" href="../../../test-fixture/test-fixture.html">
+  <link rel="import" href="../helpers.html">
+
+</head>
+<body>
+
+  <script>suite("Polymer.AppLayout.registerEffect",function(){test("should register the effects",function(){Polymer.AppLayout.registerEffect("test",{setUp:Function(),run:Function(),tearDown:Function()}),assert.isFunction(Polymer.AppLayout._scrollEffects.test.setUp),assert.isFunction(Polymer.AppLayout._scrollEffects.test.run),assert.isFunction(Polymer.AppLayout._scrollEffects.test.tearDown)})});</script>
+
+
+
+</body></html>

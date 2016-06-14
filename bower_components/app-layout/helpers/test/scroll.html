@@ -1,0 +1,25 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>scroll</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../web-component-tester/browser.js"></script>
+  <script src="../../../test-fixture/test-fixture-mocha.js"></script>
+  <link rel="import" href="../../../test-fixture/test-fixture.html">
+  <link rel="import" href="../helpers.html">
+
+  <style>#region{height:500px;overflow:hidden;}.content{height:10000px;width:10000px;}</style>
+</head>
+<body>
+
+  <div id="region">
+    <div class="content"></div>
+  </div>
+  <div class="content"></div>
+
+  <script>suite("Polymer.AppLayout.scroll",function(){test("document scrolling",function(o){var e=500,t=500;document.querySelector("#region");Polymer.AppLayout.scroll({left:e,top:t}),Polymer.Base.async(function(){assert.equal(window.pageXOffset,e,"document scrollLeft"),assert.equal(window.pageYOffset,t,"document scrollTop"),o()},100)}),test("scrolling region",function(o){var e=500,t=500,l=document.querySelector("#region");Polymer.AppLayout.scroll({left:e,top:t,target:l}),Polymer.Base.async(function(){assert.equal(l.scrollLeft,e,"region scrollLeft"),assert.equal(l.scrollTop,t,"region scrollTop"),o()},100)}),test("behavior: silent",function(){Polymer.AppLayout.scroll({left:100,top:200,behavior:"silent"}),assert.isTrue(document.documentElement.classList.contains("app-layout-silent-scroll"))}),test("behavior: smooth",function(o){var e=sinon.spy();window.addEventListener("scroll",e),Polymer.AppLayout.scroll({top:0}),Polymer.AppLayout.scroll({top:500,behavior:"smooth"}),window.setTimeout(function(){assert.isAbove(e.callCount,1,"scroll top should be fired multiple times"),o()},300)}),test("smooth scrolling to the top",function(o){Polymer.AppLayout.scroll({top:1e3}),Polymer.AppLayout.scroll({top:0,behavior:"smooth"});var e;window.addEventListener("scroll",function(){clearInterval(e),e=setTimeout(function(){assert.equal(window.pageYOffset,0,"document scrollTop"),o()},200)})})});</script>
+
+
+
+</body></html>

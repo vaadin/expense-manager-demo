@@ -1,0 +1,36 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>test for app-drawer-layout</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../web-component-tester/browser.js"></script>
+  <script src="../../../test-fixture/test-fixture-mocha.js"></script>
+  <link rel="import" href="../../../iron-resizable-behavior/iron-resizable-behavior.html">
+  <link rel="import" href="../../../test-fixture/test-fixture.html">
+  <link rel="import" href="../app-drawer-layout.html">
+
+  <style is="custom-style">body{margin:0;padding:0;}app-drawer-layout{width:100px;height:300px;background:green;position:absolute;overflow:hidden !important;z-index:0;--app-drawer-layout-drawer:{background-color:blue;};--app-drawer-duration:0s;}[content]{width:1px;height:3000px;background-color:red;}[drawer]{width:100%;}</style>
+
+</head>
+<body>
+
+  <test-fixture id="testDrawerLayout">
+    <template>
+      <app-drawer-layout>
+        <app-drawer>Drawer</app-drawer>
+        <div drawer-toggle="">Toggle</div>
+        <p>Content</p>
+        <x-resizeable></x-resizeable>
+      </app-drawer-layout>
+    </template>
+  </test-fixture>
+
+    <script>HTMLImports.whenReady(function(){Polymer({is:"x-resizeable",behaviors:[Polymer.IronResizableBehavior]})});</script>
+  
+
+  <script>suite("basic features",function(){var e,t;setup(function(){e=fixture("testDrawerLayout"),t=e.querySelector("app-drawer")}),test("default values",function(){assert.isFalse(e.forceNarrow),assert.equal(e.responsiveWidth,"640px")}),test("get drawer",function(){assert.equal(e.drawer,t)}),test("forceNarrow",function(){e.responsiveWidth="0px",e.forceNarrow=!0,assert.isTrue(e.narrow)}),test("responsiveWidth",function(t){var s=e.querySelector("[drawer-toggle]");e.responsiveWidth="0px",window.setTimeout(function(){assert.isFalse(e.narrow),assert.equal(window.getComputedStyle(s).display,"none"),e.responsiveWidth="10000px",window.setTimeout(function(){assert.isTrue(e.narrow),assert.notEqual(window.getComputedStyle(s).display,"none"),t()},50)},50)}),test("drawer-toggle",function(){e.responsiveWidth="10000px",assert.isFalse(t.opened),Polymer.Base.fire("tap",null,{node:e.querySelector("p")}),assert.isFalse(t.opened),Polymer.Base.fire("tap",null,{node:e.querySelector("[drawer-toggle]")}),assert.isTrue(t.opened)}),test("content layout",function(s){var r=sinon.spy(),n=e.querySelector("x-resizeable");n.addEventListener("iron-resize",r),e.responsiveWidth="10000px",window.setTimeout(function(){assert.equal(e.$.contentContainer.style.marginLeft,""),assert.equal(e.$.contentContainer.style.marginRight,""),assert.isTrue(r.called),r.reset(),e.responsiveWidth="0px",window.setTimeout(function(){assert.equal(e.$.contentContainer.style.marginLeft,"256px"),assert.equal(e.$.contentContainer.style.marginRight,""),assert.isTrue(r.called),r.reset(),t.align="end",window.setTimeout(function(){assert.equal(e.$.contentContainer.style.marginLeft,""),assert.equal(e.$.contentContainer.style.marginRight,"256px"),assert.isTrue(r.called),s()},50)},50)},50)})});</script>
+
+
+
+</body></html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>test for app-scrollpos-control</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../web-component-tester/browser.js"></script>
+  <script src="../../../test-fixture/test-fixture-mocha.js"></script>
+  <link rel="import" href="../../../test-fixture/test-fixture.html">
+  <link rel="import" href="../app-scrollpos-control.html">
+</head>
+<body>
+
+  <test-fixture id="basicScrollposControl">
+    <template>
+      <app-scrollpos-control></app-scrollpos-control>
+      <div style="height: 10000px"></div>
+    </template>
+  </test-fixture>
+
+  <script>suite("basic features",function(){var e;setup(function(){e=fixture("basicScrollposControl")[0]}),test("default settings",function(){assert.isFalse(e.reset)}),test("store and retrieve",function(t){e.selected="page0",assert.equal(window.pageYOffset,0),window.scrollTo(0,200),e.selected="page1",setTimeout(function(){assert.equal(window.pageYOffset,0,"should be reset to 0"),e.selected="page0",setTimeout(function(){assert.equal(window.pageYOffset,200,"should update to previous scrollpos on page0"),t()},50)},10)})});</script>
+
+
+
+</body></html>

@@ -1,0 +1,9 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../helpers/helpers.html">
+
+
+
+</head><body><dom-module id="app-scrollpos-control">
+  <script>Polymer({is:"app-scrollpos-control",properties:{selected:{type:String,observer:"_selectedChanged"},reset:{type:Boolean,value:!1}},observers:["_updateScrollPos(selected, reset)"],created:function(){this._scrollposMap={}},_selectedChanged:function(e,o){null!=o&&(this._scrollposMap[o]={x:window.pageXOffset,y:window.pageYOffset})},_updateScrollPos:function(e,o){this.debounce("_updateScrollPos",function(){var e=this._scrollposMap[this.selected];null==e||this.reset?this._scrollTo(0,0):this._scrollTo(e.x,e.y)})},_scrollTo:function(e,o){Polymer.AppLayout.scroll({left:e,top:o,behavior:"silent"})}});</script>
+</dom-module>
+</body></html>

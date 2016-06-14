@@ -1,0 +1,25 @@
+<html><head><link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="../app-scroll-effects/app-scroll-effects-behavior.html">
+
+
+
+</head><body><dom-module id="app-box">
+  <template>
+    <style>:host{position:relative;display:block;}#background{@apply (--layout-fit);overflow:hidden;height:100%;}#backgroundFrontLayer{min-height:100%;pointer-events:none;background-size:cover;@apply (--app-box-background-front-layer);}#contentContainer{position:relative;width:100%;height:100%;}:host([disabled]),
+      :host([disabled]) #backgroundFrontLayer{transition:none !important;}</style>
+
+    <div id="background">
+      <div id="backgroundFrontLayer">
+        <content select="[background]"></content>
+      </div>
+    </div>
+    <div id="contentContainer">
+      <content id="content"></content>
+    </div>
+  </template>
+
+  <script>Polymer({is:"app-box",behaviors:[Polymer.AppScrollEffectsBehavior,Polymer.IronResizableBehavior],listeners:{"iron-resize":"_resizeHandler"},_progress:0,attached:function(){this.resetLayout()},resetLayout:function(){this.debounce("_resetLayout",function(){if(0!==this.offsetWidth||0!==this.offsetHeight){var e=this._clampedScrollTop,t=this.disabled;this.disabled=!0,this._elementTop=this._getElementTop(),this._elementHeight=this.offsetHeight,this._cachedScrollTargetHeight=this._scrollTargetHeight,this._setUpEffect(),this._updateScrollState(e),this.disabled=t}},1)},_getElementTop:function(){for(var e=this,t=0;e&&e!==this.scrollTarget;)t+=e.offsetTop,e=e.offsetParent;return t},_updateScrollState:function(e){if(this.isOnScreen()){var t=this._elementTop-e;this._progress=1-(t+this._elementHeight)/this._cachedScrollTargetHeight,this._runEffects(this._progress,e)}},isOnScreen:function(){return this._elementTop<this._scrollTop+this._cachedScrollTargetHeight&&this._elementTop+this._elementHeight>this._scrollTop},_resizeHandler:function(){this.resetLayout()},_getDOMRef:function(e){return"background"===e?this.$.background:"backgroundFrontLayer"===e?this.$.backgroundFrontLayer:void 0},getScrollState:function(){return{progress:this._progress}}});</script>
+</dom-module>
+</body></html>

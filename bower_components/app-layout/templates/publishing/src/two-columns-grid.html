@@ -1,0 +1,21 @@
+<html><head><link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
+
+
+</head><body><dom-module id="two-columns-grid">
+
+  <template>
+
+    <style>:host{@apply (--layout-horizontal);@apply (--layout-wrap);max-width:calc(2 * var(--grid-column-width) + 4 * var(--grid-gutter));margin:var(--grid-gutter) auto;--grid-item-height:calc(3 * var(--grid-column-width) / 4);}:host > ::content > *{@apply (--layout-flex-none);width:var(--grid-column-width);height:var(--grid-item-height);margin:var(--grid-gutter);box-sizing:border-box;}:host > ::content > *:nth-of-type(3n - 2){width:calc(100% - 2 * var(--grid-gutter));height:calc(var(--grid-column-width)  + 2 * var(--grid-gutter));}:host([narrow-layout]){max-width:none;margin:0 var(--grid-gutter);}:host([narrow-layout]) > ::content > *{width:100% !important;height:var(--grid-item-height) !important;margin:var(--grid-gutter) 0;}iron-media-query{display:none;}</style>
+
+    <content></content>
+
+    <iron-media-query query="{{query}}" query-matches="{{narrowLayout}}"></iron-media-query>
+
+  </template>
+
+  <script>Polymer({is:"two-columns-grid",properties:{columnWidth:{type:Number,value:300},gutter:{type:Number,value:8},narrowLayout:{type:Boolean,notify:!0,reflectToAttribute:!0}},observers:["_updateLayout(columnWidth, gutter)"],attached:function(){this._updateCustomStyles()},_updateLayout:function(t,e){this.query="(max-width:"+(2*t+4*e)+"px)",this._updateCustomStyles()},_updateCustomStyles:function(){this.updateStyles({"--grid-column-width":this.columnWidth+"px","--grid-gutter":this.gutter+"px"})}});</script>
+
+</dom-module>
+</body></html>

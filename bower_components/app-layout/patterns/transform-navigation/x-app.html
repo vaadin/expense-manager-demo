@@ -1,0 +1,63 @@
+<html><head><link rel="import" href="../../app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../../app-drawer/app-drawer.html">
+<link rel="import" href="../../app-header/app-header.html">
+<link rel="import" href="../../app-header-layout/app-header-layout.html">
+<link rel="import" href="../../app-toolbar/app-toolbar.html">
+<link rel="import" href="../../../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../iron-icons/iron-icons.html">
+<link rel="import" href="../../../iron-media-query/iron-media-query.html">
+<link rel="import" href="../../../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../paper-item/paper-item.html">
+<link rel="import" href="../../../paper-menu/paper-menu.html">
+<link rel="import" href="../../../paper-tabs/paper-tabs.html">
+
+</head><body><dom-module id="x-app">
+
+  <template>
+
+    <style>app-toolbar{background-color:#dcdcdc;}.main-header{box-shadow:0px 5px 6px -3px rgba(0, 0, 0, 0.4);}paper-tabs{max-width:640px;--paper-tabs-selection-bar-color:black;}paper-tab{--paper-tab-ink:#aaa;text-transform:uppercase;}[hidden]{display:none !important;}</style>
+
+    <app-drawer-layout force-narrow="">
+
+      <app-drawer id="drawer">
+
+        <app-toolbar></app-toolbar>
+
+        
+        <paper-menu selected="{{selected}}" attr-for-selected="name">
+          <template is="dom-repeat" items="{{items}}">
+            <paper-item name="{{item}}">{{item}}</paper-item>
+          </template>
+        </paper-menu>
+
+      </app-drawer>
+
+      <app-header-layout>
+        <app-header class="main-header">
+
+          <app-toolbar>
+            <paper-icon-button class="menu-button" icon="menu" drawer-toggle="" hidden$="{{wideLayout}}"></paper-icon-button>
+          </app-toolbar>
+
+          <app-toolbar class="tabs-bar" hidden$="{{!wideLayout}}">
+            
+            <paper-tabs selected="{{selected}}" attr-for-selected="name" bottom-item="">
+              <template is="dom-repeat" items="{{items}}">
+                <paper-tab name="{{item}}">{{item}}</paper-tab>
+              </template>
+            </paper-tabs>
+          </app-toolbar>
+
+        </app-header>
+      </app-header-layout>
+
+    </app-drawer-layout>
+
+    <iron-media-query query="min-width: 600px" query-matches="{{wideLayout}}"></iron-media-query>
+
+  </template>
+
+  <script>Polymer({is:"x-app",properties:{selected:{type:String,value:"Item One"},wideLayout:{type:Boolean,value:!1,observer:"onLayoutChange"},items:{type:Array,value:function(){return["Item One","Item Two","Item Three","Item Four","Item Five"]}}},onLayoutChange:function(e){var t=this.$.drawer;e&&t.opened&&(t.opened=!1)}});</script>
+
+</dom-module>
+</body></html>

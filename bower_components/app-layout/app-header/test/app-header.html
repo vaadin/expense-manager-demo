@@ -1,0 +1,50 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>test for app-header</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../web-component-tester/browser.js"></script>
+  <script src="../../../test-fixture/test-fixture-mocha.js"></script>
+  <link rel="import" href="../../../test-fixture/test-fixture.html">
+  <link rel="import" href="../../app-toolbar/app-toolbar.html">
+  <link rel="import" href="../app-header.html">
+
+  <style>body{margin:0;padding:0;}.header{position:fixed;top:0;left:0;width:100%;background:green;}.content{width:1px;height:3000px;background-color:red;}</style>
+
+</head>
+<body>
+
+  <test-fixture id="testHeader">
+    <template>
+      <div>
+        <app-header class="header">
+          <app-toolbar>
+            <div condensed-title="">Title</div>
+          </app-toolbar>
+          <app-toolbar>
+            <div title="" spacer="">Title</div>
+          </app-toolbar>
+        </app-header>
+        <div class="content"></div>
+      </div>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="testPrimaryElement">
+    <template>
+      <div>
+        <app-header fixed="" condenses="" reveals="" class="header">
+          <app-toolbar></app-toolbar>
+          <app-toolbar primary=""></app-toolbar>
+        </app-header>
+        <div class="content"></div>
+      </div>
+    </template>
+  </test-fixture>
+
+  <script>function scrollTestHelper(e,s){function t(){var e=s.shift();e&&(e.callback(),s.length>0&&a())}function a(){var a=e===document.documentElement?window.pageYOffset:e.scrollTop;s[0].y===a?t():e===document.documentElement?window.scrollTo(0,s[0].y):e.scrollTop=s[0].y}if(s.length>0){var l=e===document.documentElement?window:e;l.addEventListener("scroll",t),a()}}function assertHeaderIsFullSized(e){var s=e.getBoundingClientRect();assert.equal(s.top,0),assert.equal(s.bottom,s.height)}function assertHeaderIsCondensed(e){var s=e.getBoundingClientRect();assert.equal(s.top+s.height,e._primaryEl.offsetHeight)}function assertHeaderIsHidden(e){var s=e.getBoundingClientRect();assert.isBelow(s.bottom,0)}suite("basic features",function(){var e,s,t,a;suiteSetup(function(){a={setUp:sinon.spy(),tearDown:sinon.spy(),run:sinon.spy()},Polymer.AppLayout.registerEffect("test-effect",a)}),setup(function(){e=fixture("testHeader"),s=e.querySelector("app-header"),t=e.querySelector("app-toolbar"),a.setUp.reset(),a.tearDown.reset(),a.run.reset()}),test("default values",function(){assert.isFalse(s.condenses),assert.isFalse(s.fixed),assert.isFalse(s.reveals),assert.isFalse(s.shadow)}),test("condenses",function(e){s.condenses=!0,flush(function(){scrollTestHelper(s.scrollTarget,[{y:0,callback:function(){assertHeaderIsFullSized(s)}},{y:t.offsetHeight,callback:function(){assertHeaderIsCondensed(s)}},{y:10*t.offsetHeight,callback:function(){assertHeaderIsHidden(s)}},{y:5*t.offsetHeight,callback:function(){assertHeaderIsHidden(s)}},{y:0,callback:function(){assertHeaderIsFullSized(s),e()}}])})}),test("fixed",function(e){s.fixed=!0,flush(function(){scrollTestHelper(s.scrollTarget,[{y:0,callback:function(){assertHeaderIsFullSized(s)}},{y:10*t.offsetHeight,callback:function(){assertHeaderIsFullSized(s),e()}}])})}),test("reveals",function(e){s.reveals=!0,flush(function(){scrollTestHelper(s.scrollTarget,[{y:0,callback:function(){assertHeaderIsFullSized(s)}},{y:10*t.offsetHeight,callback:function(){assertHeaderIsHidden(s)}},{y:5*t.offsetHeight,callback:function(){assertHeaderIsFullSized(s),e()}}])})}),test("condenses and reveals",function(e){s.condenses=!0,s.reveals=!0,flush(function(){scrollTestHelper(s.scrollTarget,[{y:0,callback:function(){assertHeaderIsFullSized(s)}},{y:t.offsetHeight,callback:function(){assertHeaderIsCondensed(s)}},{y:10*t.offsetHeight,callback:function(){assertHeaderIsHidden(s)}},{y:5*t.offsetHeight,callback:function(){assertHeaderIsCondensed(s)}},{y:0,callback:function(){assertHeaderIsFullSized(s),e()}}])})}),test("condenses and fixed",function(e){s.condenses=!0,s.fixed=!0,flush(function(){scrollTestHelper(s.scrollTarget,[{y:0,callback:function(){assertHeaderIsFullSized(s)}},{y:t.offsetHeight,callback:function(){assertHeaderIsCondensed(s)}},{y:10*t.offsetHeight,callback:function(){assertHeaderIsCondensed(s),e()}}])})}),test("simple effect",function(e){s.effects="test-effect",flush(function(){scrollTestHelper(s.scrollTarget,[{y:0,callback:function(){assert.isTrue(a.setUp.called),assert.deepEqual(a.run.lastCall.args,[0,0])}},{y:t.offsetHeight,callback:function(){assert.deepEqual(a.run.lastCall.args,[1,64])}},{y:2*t.offsetHeight,callback:function(){assert.deepEqual(a.run.lastCall.args,[2,128])}},{y:3*t.offsetHeight,callback:function(){assert.deepEqual(a.run.lastCall.args,[2.078125,133])}},{y:4*t.offsetHeight,callback:function(){assert.deepEqual(a.run.lastCall.args,[2.078125,133]),s.effects="",assert.isTrue(a.tearDown.called),e()}}])})}),test("effect with config",function(e){var l={startsAt:.5,endsAt:.75};s.effects="test-effect",s.effectsConfig={"test-effect":l},flush(function(){scrollTestHelper(s.scrollTarget,[{y:0,callback:function(){assert.isTrue(a.setUp.called),assert.deepEqual(a.setUp.lastCall.args,[l]),assert.deepEqual(a.run.lastCall.args,[0,0])}},{y:32,callback:function(){assert.deepEqual(a.run.lastCall.args,[0,32])}},{y:40,callback:function(){assert.deepEqual(a.run.lastCall.args,[.5,40])}},{y:48,callback:function(){assert.deepEqual(a.run.lastCall.args,[1,48])}},{y:t.offsetHeight,callback:function(){assert.deepEqual(a.run.lastCall.args,[2,64]),s.effects="",assert.isTrue(a.tearDown.called),e()}}])})}),test("disabled state",function(e){s.effects="test-effect",flush(function(){scrollTestHelper(s.scrollTarget,[{y:0,callback:function(){assert.isTrue(a.setUp.called),assert.deepEqual(a.run.lastCall.args,[0,0]),s.disabled=!0}},{y:t.offsetHeight,callback:function(){assert.deepEqual(a.run.lastCall.args,[0,0]),s.disabled=!1}},{y:2*t.offsetHeight,callback:function(){assert.deepEqual(a.run.lastCall.args,[2,128]),e()}}])})}),test("isOnScreen",function(e){flush(function(){scrollTestHelper(s.scrollTarget,[{y:0,callback:function(){assert.isTrue(s.isOnScreen())}},{y:t.offsetHeight,callback:function(){assert.isTrue(s.isOnScreen())}},{y:2*t.offsetHeight,callback:function(){assert.isFalse(s.isOnScreen()),s.fixed=!0}},{y:3*t.offsetHeight,callback:function(){assert.isTrue(s.isOnScreen()),e()}}])})}),test("DOM references",function(e){flush(function(){assert.isNotNull(s._getDOMRef("backgroundFrontLayer")),assert.isNotNull(s._getDOMRef("backgroundRearLayer")),assert.isNotNull(s._getDOMRef("title")),assert.isNotNull(s._getDOMRef("condensedTitle")),e()})})}),suite("Primary element",function(){var e,s;setup(function(){e=fixture("testPrimaryElement"),s=e.querySelector("app-header")}),test("primary element reference",function(){assert.equal(s._getPrimaryEl(),s.querySelector("[primary]"))}),test("should reveal the entire header",function(e){flush(function(){scrollTestHelper(s.scrollTarget,[{y:0,callback:function(){assertHeaderIsFullSized(s)}},{y:1e3,callback:function(){assertHeaderIsCondensed(s)}},{y:980,callback:function(){setTimeout(function(){assertHeaderIsFullSized(s),e()},100)}}])})})});</script>
+
+
+
+</body></html>

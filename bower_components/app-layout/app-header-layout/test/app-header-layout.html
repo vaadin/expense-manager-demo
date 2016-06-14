@@ -1,0 +1,37 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>test for app-header-layout</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+  <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../web-component-tester/browser.js"></script>
+  <script src="../../../test-fixture/test-fixture-mocha.js"></script>
+  <link rel="import" href="../../../test-fixture/test-fixture.html">
+  <link rel="import" href="../../app-toolbar/app-toolbar.html">
+  <link rel="import" href="../../app-header/app-header.html">
+  <link rel="import" href="../app-header-layout.html">
+
+  <style>body{margin:0;padding:0;}app-header{background:green;}.content{width:1px;height:3000px;background-color:red;}</style>
+
+</head>
+<body>
+
+  <test-fixture id="trivialHeader">
+    <template>
+      <app-header-layout>
+        <app-header condenses="">
+          <app-toolbar></app-toolbar>
+          <app-toolbar>
+            <div title="" spacer="">Title</div>
+          </app-toolbar>
+        </app-header>
+        <div class="content"></div>
+      </app-header-layout>
+    </template>
+  </test-fixture>
+
+  <script>suite("basic features",function(){var e,t,o;setup(function(){e=fixture("trivialHeader"),t=e.querySelector("app-header"),o=e.querySelector("app-toolbar")}),test("default values",function(){assert.isFalse(e.hasScrollingRegion),assert.equal(t.scrollTarget,document.documentElement)}),test("scrolling region",function(){e.hasScrollingRegion=!0,assert.isTrue(t.scrollTarget!==document.documentElement,"scroller should not point to the document element")}),test("header box size",function(o){e.hasScrollingRegion=!1,flush(function(){assert.equal(e.offsetWidth,t.offsetWidth,"should have the same width of app-header-layout"),e.style.width="200px",e.resetLayout(),flush(function(){assert.equal(e.offsetWidth,t.offsetWidth,"should have the same width of app-header-layout even after setting a width"),o()})})})});</script>
+
+
+
+</body></html>

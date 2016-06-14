@@ -1,0 +1,19 @@
+<html><head><link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../app-scroll-effects-behavior.html">
+
+</head><body><dom-module id="x-container">
+  <template>
+    <style>:host{position:relative;display:block;}#background,
+      #backgroundFrontLayer,
+      #backgroundRearLayer{position:absolute;top:0;left:0;right:0;bottom:0;}#backgroundFrontLayer{bottom:-200px;}#title, #condensedTitle{display:block;overflow:hidden;margin:0;padding:0;position:absolute;}#title{height:18px;top:0;left:0;}#condensedTitle{height:37px;top:100px;left:100px;}</style>
+
+    <div id="background"></div>
+    <div id="backgroundFrontLayer"></div>
+    <div id="backgroundRearLayer"></div>
+    <h4 id="title">Title</h4>
+    <h1 id="condensedTitle">Condensed title</h1>
+  </template>
+
+  <script>Polymer({is:"x-container",behaviors:[Polymer.AppScrollEffectsBehavior],properties:{shadow:{type:Boolean,reflectToAttribute:!0}},observers:["_xScrollEffectChanged(effects)"],_getDOMRef:function(e){return this.$[e]||null},_updateScrollState:function(e){this._runEffects(e/this.offsetHeight,e)},_xScrollEffectChanged:function(){this._updateScrollState(this._scrollTop)}});</script>
+</dom-module>
+</body></html>
