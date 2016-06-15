@@ -94,9 +94,15 @@
         _selectPage: function() {
           if (this.loggedIn) {
             this.importHref(this.resolveUrl('overview-page.html'),
-              function() {}.bind(this), null, true);
+              null, null, true);
           } else {
             this.importHref(this.resolveUrl('login-page.html'), null, null, true);
+
+            // Start downloading and initializing the overview page once the login page has rendered
+            Polymer.RenderStatus.afterNextRender(this.$.login, function() {
+              this.importHref(this.resolveUrl('overview-page.html'),
+                null, null, true);
+            }.bind(this));
           }
           this.selected = this.loggedIn ? 1 : 0;
         }
