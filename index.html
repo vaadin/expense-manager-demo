@@ -9,18 +9,26 @@
   <meta name="theme-color" content="#33383a">
   <link rel="manifest" href="manifest.json">
 
-  <script>function _isLocalhost(e){return!("localhost"!==e&&"[::1]"!==e&&!e.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/))}"http:"!==window.location.protocol||_isLocalhost(window.location.hostname)||(window.location.href="https:"+window.location.href.substring(window.location.protocol.length)),window.Polymer={lazyRegister:!0,dom:"shadow"},function(){if("registerElement"in document&&"import"in document.createElement("link")&&"content"in document.createElement("template"));else{var e=document.createElement("script");e.src="bower_components/webcomponentsjs/webcomponents-lite.min.js",document.head.appendChild(e)}}(),"serviceWorker"in navigator&&window.addEventListener("load",function(){navigator.serviceWorker.register("service-worker.js")});</script>
+  
+  <link rel="apple-touch-icon" href="images/app-icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Expense Manager">
 
-  <link rel="import" href="src/expense-app.html">
+  <link id="bundle" rel="import" href="src/expense-app.html" async="">
 
-  <style>body{margin:0;font-family:'Roboto', 'Noto', sans-serif;min-height:100vh;background-color:#33383a;}</style>
+  <style is="custom-style">html{height:100%;}body{overflow:hidden;display:flex;flex-direction:column;margin:0;height:100%;background:#fff;font-family:'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;-webkit-tap-highlight-color:transparent;}.loading{width:100vw;height:100vh;overflow:hidden;}.login{background:#33383a;}body:not(.login) #loadingScreen{height:64px;width:100vw;background:#33383a;position:absolute;}body:not(.login) #loadingScreen .text{position:absolute;top:45vh;text-align:center;left:0;right:0;color:rgba(0, 0, 0, 0.54);transition:opacity 300ms;}@media (max-width: 600px){:not(.login) #loadingScreen{height:56px;}}#loadingScreen{width:100%;}.login #loadingScreen{position:absolute;top:36%;left:0;color:rgba(255, 255, 255, 0.56);text-align:center;line-height:10;font-weight:400;font-family:arial, sans-serif;}#loadingScreen .spinner{content:"";position:absolute;height:2px;background:#ff3a39;top:0;left:0;width:100%;animation:1.2s loading infinite;transform-origin:100% 0;}body:not(.login) #loadingScreen .spinner{top:auto;bottom:-2px;}@keyframes loading{50%{transform:scalex(0);}51%{transform:translatex(-100vw);}}#loadingScreen.animation-stop .spinner{animation-name:none;}#loadingScreen.animation-stop .text{opacity:0;}.ready expense-app{animation:fade-in 0.25s;}@keyframes fade-in{0%{opacity:0;}}</style>
 
 </head>
 
-<body>
-
+<body class="loading">
+  <div id="loadingScreen">
+    <div class="spinner"></div>
+    <p class="text">Loading…</p>
+  </div>
   <expense-app></expense-app>
 
+  <script>function _isLocalhost(o){return!("localhost"!==o&&"[::1]"!==o&&!o.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/))}function onImportLoaded(){document.body.classList.remove("loading"),document.body.classList.add("ready")}function finishLazyLoading(){var o=document.querySelector("#bundle");o["import"]&&"complete"===o["import"].readyState?onImportLoaded():o.addEventListener("load",onImportLoaded)}"http:"!==window.location.protocol||_isLocalhost(window.location.hostname)||(window.location.href="https:"+window.location.href.substring(window.location.protocol.length));var loggedIn=window.localStorage.getItem("loggedIn");loggedIn&&"false"!==loggedIn||document.querySelector("body").classList.add("login"),window.Polymer={lazyRegister:!0,dom:"shadow"},function(){if("registerElement"in document&&"import"in document.createElement("link")&&"content"in document.createElement("template"))finishLazyLoading();else{var o=document.createElement("script");o.src="bower_components/webcomponentsjs/webcomponents-lite.min.js",o.onload=finishLazyLoading,document.head.appendChild(o)}}(),"serviceWorker"in navigator&&window.addEventListener("load",function(){navigator.serviceWorker.register("service-worker.js")});</script>
 
 
 

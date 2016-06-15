@@ -30,7 +30,7 @@ var PrecacheConfig = [
     'a1882f82ebfc212658591b4e817d8e03'
   ],
   ['images/default-receipt.png', '14ef509ae3504333529fc5686906de39'],
-  ['index.html', 'a1af187a9aaa08018e8193d28448a340'],
+  ['index.html', '73ec4e73626231ced8e44ff34851efdf'],
   ['manifest.json', '9e43914aa202ed4d72ec02718281f030'],
   ['src/expense-app.html', 'b695c3ce6d13da1afc9ca6d116bdc909'],
   ['src/login-page.html', '276a7d3c75b8a25a27950fcb321dee91'],
