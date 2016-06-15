@@ -266,6 +266,6 @@ for(n in this._instanceProps)e._addPropertyEffect(n,"function",this._createInsta
 
   </template>
 
-  <script>!function(){"use strict";Polymer({is:"expense-app",properties:{loggedIn:{type:Boolean,notify:!0,observer:"_selectPage"},selected:{type:Number,notify:!0}},_selectPage:function(){this.loggedIn?this.importHref(this.resolveUrl("overview-page.html"),function(){}.bind(this),null,!0):this.importHref(this.resolveUrl("login-page.html"),null,null,!0),this.selected=this.loggedIn?1:0}})}();</script>
+  <script>!function(){"use strict";Polymer({is:"expense-app",properties:{loggedIn:{type:Boolean,notify:!0,observer:"_selectPage"},selected:{type:Number,notify:!0}},_selectPage:function(){this.loggedIn?this.importHref(this.resolveUrl("overview-page.html"),null,null,!0):(this.importHref(this.resolveUrl("login-page.html"),null,null,!0),Polymer.RenderStatus.afterNextRender(this.$.login,function(){this.importHref(this.resolveUrl("overview-page.html"),null,null,!0)}.bind(this))),this.selected=this.loggedIn?1:0}})}();</script>
 </dom-module>
 </body></html>
