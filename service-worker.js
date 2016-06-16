@@ -30,11 +30,10 @@ var PrecacheConfig = [
     'a1882f82ebfc212658591b4e817d8e03'
   ],
   ['images/default-receipt.png', '14ef509ae3504333529fc5686906de39'],
-  ['index.html', '73ec4e73626231ced8e44ff34851efdf'],
+  ['index.html', 'df41d20a99dbb9dd2fdfe9aaecad07a8'],
   ['manifest.json', '9e43914aa202ed4d72ec02718281f030'],
-  ['src/expense-app.html', 'b695c3ce6d13da1afc9ca6d116bdc909'],
-  ['src/login-page.html', '276a7d3c75b8a25a27950fcb321dee91'],
-  ['src/overview-page.html', 'e6cc22951ad219e11c4af1fe37ea8970']
+  ['src/expense-app.html', '6dcd747aceb0a5c1849a4adf357d1c69'],
+  ['src/overview-page.html', '8f0efd091387b60def05add36af4bd9c']
 ];
 /* eslint-enable quotes, comma-spacing */
 var CacheNamePrefix = 'sw-precache-v1--' + (self.registration ? self.registration.scope : '') + '-';
