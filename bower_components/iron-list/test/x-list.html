@@ -9,9 +9,9 @@
   <template>
     <iron-list style$="[[_computedListHeight(listHeight)]]" items="[[data]]" as="item" id="list">
       <template>
-        <div class="item">
-          <div style$="[[_computedItemHeight(item)]]" tabindex$="[[tabIndex]]" hidden$="[[primitive]]">[[item.index]]</div>
-          <div style$="[[_computedItemHeight(item)]]" tabindex$="[[tabIndex]]" hidden$="[[!primitive]]">[[item]]</div>
+        <div class="item" tabindex$="[[tabIndex]]">
+          <div style$="[[_computedItemHeight(item)]]" tabindex="0" hidden$="[[primitive]]">[[item.index]]</div>
+          <div style$="[[_computedItemHeight(item)]]" tabindex="0" hidden$="[[!primitive]]">[[item]]</div>
         </div>
       </template>
     </iron-list>

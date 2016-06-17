@@ -1,0 +1,27 @@
+<html><head><link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../../paper-input/paper-input.html">
+<link rel="import" href="../../../iron-ajax/iron-ajax.html">
+
+<link rel="import" href="../../app-route.html">
+
+<link rel="import" href="route-info.html">
+
+</head><body><dom-module id="youtube-search">
+  <template>
+    <style>:host{--primary-color:#fff;--paper-input-container-color:#fff;display:block;position:relative;padding:1em;}route-info{color:#fff;}</style>
+
+    
+    <app-route route="{{route}}" pattern="/:searchQuery" data="{{data}}">
+    </app-route>
+
+    <paper-input label="Search Youtube" value="{{data.searchQuery}}"></paper-input>
+
+    <route-info route="[[route]]"></route-info>
+
+    <iron-ajax auto="" id="youtubeSearch" url="https://www.googleapis.com/youtube/v3/search" params="{{params}}" last-response="{{videoData}}">
+    </iron-ajax>
+  </template>
+
+  <script>Polymer({is:"youtube-search",properties:{route:{type:Object,notify:!0},data:{type:Object},category:{type:String,notify:!0,observer:"_categoryChanged"},params:{type:String,computed:"_setParams(data.searchQuery)"},videoData:{type:Object,notify:!0}},observers:["_pathChanged(route.path)"],_pathChanged:function(){this.async(function(){this.route.path||this.set("route.path","/")})},_setParams:function(t){return{part:"snippet",q:this.data.searchQuery,key:"AIzaSyAuecFZ9xJXbGDkQYWBmYrtzOGJD-iDIgI",type:"video"}}});</script>
+</dom-module>
+</body></html>

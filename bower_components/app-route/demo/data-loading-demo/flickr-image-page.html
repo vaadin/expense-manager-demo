@@ -1,0 +1,37 @@
+<html><head><link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../../iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../paper-spinner/paper-spinner.html">
+<link rel="import" href="../../app-route.html">
+
+</head><body><dom-module id="flickr-image-page">
+  <template>
+    <style>paper-spinner{display:block;}.tags span{display:inline-block;padding-right:10px;font-size:110%;}.tags span::after{content:', ';}.tags span:last-of-type::after{content:'';}</style>
+    <app-route route="{{route}}" pattern="/:farm/:server/:id/:secret" data="{{data}}">
+    </app-route>
+    <img src="{{_computeSrc(data)}}">
+    <iron-ajax auto="" url="https://www.flickr.com/services/rest/" handle-as="json" params="{{params}}" last-response="{{metadata}}" last-error="{{error}}" loading="{{loading}}">
+    </iron-ajax>
+    <paper-spinner active="{{loading}}"></paper-spinner>
+    <div>
+      <h1>{{metadata.photo.title._content}}</h1>
+      <div class="tags">
+      <template is="dom-repeat" items="{{metadata.photo.tags.tag}}">
+        <span>{{item.raw}}</span>
+      </template>
+      </div>
+      <div>
+        <ul>
+          <template is="dom-repeat" items="{{metadata.photo.urls.url}}">
+            <li>
+              <a target="_blank" href="{{item._content}}">
+                {{item._content}}
+              </a>
+            </li>
+          </template>
+        </ul>
+      </div>
+    </div>
+  </template>
+  <script>Polymer({is:"flickr-image-page",properties:{apiKey:{type:String},params:{type:Object,computed:"_computeParams(apiKey, data.id, data.secret)"}},observers:["_clearOldMetadata(route.path)"],_clearOldMetadata:function(){this.metadata=null},_computeParams:function(t,e,a){return{method:"flickr.photos.getInfo",api_key:t,photo_id:e,secret:a,format:"json",nojsoncallback:1}},_computeSrc:function(t){return t&&t.farm?"https://farm"+t.farm+".staticflickr.com/"+t.server+"/"+t.id+"_"+t.secret+".jpg":""}});</script>
+</dom-module>
+</body></html>

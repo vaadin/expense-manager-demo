@@ -1,0 +1,14 @@
+<html><head><link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../../google-youtube/google-youtube.html">
+
+</head><body><dom-module id="youtube-lite">
+  <template>
+    <style>:host{display:block;position:relative;width:100%;}google-youtube{height:100%;}</style>
+
+    <google-youtube id="player" video-id="{{videoId}}" state="{{__state}}" currenttime="{{__currentTime}}" width="100%" height="100%">
+    </google-youtube>
+  </template>
+
+  <script>Polymer({is:"youtube-lite",properties:{videoId:{type:String,notify:!0},state:{type:String,notify:!0,observer:"_stateChanged"},currentTime:{type:Number,notify:!0,observer:"_currentTimeChanged"},startTime:{type:Number},__state:{type:String,observer:"__ytApiStateChange"},__currentTime:{type:String,observer:"_ytCurrentTimeChanged"},__pauseOnFirstSeek:{type:Boolean}},listeners:{"google-youtube-ready":"_onYoutubeReady"},_seekTo:function(t){var e=this.$.player;(1==e.duration||t<e.duration)&&e.seekTo(t)},_onYoutubeReady:function(){this.__pauseOnFirstSeek="paused"==this.state,this.__pauseOnFirstSeek&&!this.startTime||this._seekTo(this.startTime)},_currentTimeChanged:function(t,e){var s=this.__readableStateToApiState(this.state);2==s&&2==this.__state&&this._seekTo(t)},_ytCurrentTimeChanged:function(t){this.__state!==this.__apiStates.PAUSED&&(this.currentTime=t)},_stateChanged:function(t,e){var s=this.__readableStateToApiState(t);if(s!=this.__state&&this.__state!=this.__apiStates.UNSTARTED){this.currentTime=this.__currentTime;var i=this.$.player;switch(s){case this.__apiStates.PLAYING:i.play();break;case this.__apiStates.PAUSED:i.pause();break;default:return}}},__ytApiStateChange:function(t,e){var s;switch(t){case this.__apiStates.ENDED:s=this.__states.PAUSED;break;case this.__apiStates.PLAYING:s=this.__states.PLAYING;break;case this.__apiStates.PAUSED:s=this.__states.PAUSED;break;default:return}if(this.state!=s){if(this.__pauseOnFirstSeek&&s==this.__states.PLAYING)return this.__pauseOnFirstSeek=!1,void this.$.player.pause();this.state=s,this.currentTime=this.__currentTime}},__readableStateToApiState:function(t){var e=-2;return t==this.__states.PLAYING?e=this.__apiStates.PLAYING:(t=this.__states.PAUSED)&&(e=this.__apiStates.PAUSED),e},__states:{PLAYING:"playing",PAUSED:"paused"},__apiStates:{UNSTARTED:-1,ENDED:0,PLAYING:1,PAUSED:2,BUFFERING:3,QUEUED:5}});</script>
+</dom-module>
+</body></html>

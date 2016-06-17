@@ -120,14 +120,23 @@ property is then bound into the `app-route` element. The bindings are two-
 directional, so when changes to the `route` object occur within `app-route`,
 they automatically reflect back to the global location.
 
-A `app-location` can be configured to use the hash part of a URL as the
-canonical source for path information.
+### Hashes vs Paths
 
-Example:
+By default `app-location` routes using the pathname portion of the URL. This has
+broad browser support but it does require cooperation of the backend server. An
+`app-location` can be configured to use the hash part of a URL instead using
+the `use-hash-as-path` attribute, like so:
 
 ```html
 <app-location route="{{route}}" use-hash-as-path></app-location>
 ```
+
+### Integrating with other routing code
+
+There is no standard event that is fired when window.location is modified.
+`app-location` fires a `location-changed` event on `window` when it updates the
+location. It also listens for that same event, and re-reads the URL when it's
+fired. This makes it very easy to interop with other routing code.
 
 
 

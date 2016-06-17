@@ -1,0 +1,29 @@
+<html><head><link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../../paper-spinner/paper-spinner.html">
+<link rel="import" href="../../../paper-input/paper-input.html">
+<link rel="import" href="../../app-route.html">
+
+</head><body><dom-module id="flickr-search-page">
+  <template>
+    <style>paper-spinner{display:block;}img{max-width:200px;max-height:200px;}</style>
+    <app-route pattern="/" route="{{route}}" query-params="{{queryParams}}" active="{{active}}">
+    </app-route>
+    <paper-input autofocus="" label="Search the public domain on Flickr" value="{{queryParams.search}}">
+    </paper-input>
+
+    <iron-ajax auto="" url="https://www.flickr.com/services/rest/" handle-as="json" debounce-duration="300" params="{{params}}" last-response="{{response}}" last-error="{{error}}" loading="{{loading}}">
+    </iron-ajax>
+    <paper-spinner active="{{loading}}"></paper-spinner>
+    <template is="dom-repeat" items="{{response.photos.photo}}" as="photo">
+      <a href="{{_computeLink(photo)}}">
+        <img src="{{_computeSrc(photo)}}">
+      </a>
+    </template>
+    <template is="dom-if" if="{{error}}">
+      <span>{{error.statusCode}}</span> Error:
+      <pre>{{error.response}}</pre>
+    </template>
+  </template>
+  <script>Polymer({is:"flickr-search-page",properties:{apiKey:{type:String},params:{type:Object,computed:"_computeParams(apiKey, queryParams.search)"}},observers:["_clearOldSearchResults(queryParams.search)","_setDefaultSearch(active)"],_clearOldSearchResults:function(){this.response=null},_computeParams:function(e,r){return{method:"flickr.photos.search",api_key:e,text:r,license:"7,8",format:"json",nojsoncallback:1}},_computeSrc:function(e){return e&&e.farm?"https://farm"+e.farm+".staticflickr.com/"+e.server+"/"+e.id+"_"+e.secret+".jpg":""},_computeLink:function(e){return window.location.pathname+"#/image/"+e.farm+"/"+e.server+"/"+e.id+"/"+e.secret},_setDefaultSearch:function(e){e&&!this.queryParams.search&&this.set("queryParams.search","spaceship")}});</script>
+</dom-module>
+</body></html>

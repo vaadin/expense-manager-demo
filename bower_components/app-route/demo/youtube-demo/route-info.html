@@ -1,0 +1,10 @@
+<html><head><link rel="import" href="../../../polymer/polymer.html">
+
+</head><body><dom-module id="route-info">
+  <template>
+    <style>:host{font-style:italic;font-size:0.85em;font-weight:200;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;}</style>
+    <span>Route prefix: {{route.prefix}} · Route path: {{route.path}} · Query params: {{_stringifyQueryParams(route.queryParams.*)}}</span>
+  </template>
+  <script>Polymer({is:"route-info",properties:{route:{type:Object}},_stringifyQueryParams:function(){var r=[];if(this.route&&this.route.queryParams)for(var e in this.route.queryParams)r.push(e+" = "+this.route.queryParams[e]);return r.join(", ")}});</script>
+</dom-module>
+</body></html>
