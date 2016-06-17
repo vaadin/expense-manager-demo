@@ -27,7 +27,7 @@
 
   <expense-app></expense-app>
 
-  <script>function registerServiceWorker(){"serviceWorker"in navigator&&window.addEventListener("load",function(){navigator.serviceWorker.register("service-worker.js")})}function onImportLoaded(){document.body.classList.remove("loading"),document.body.classList.add("ready"),registerServiceWorker()}function finishLazyLoading(){var e=document.querySelector("#bundle");e["import"]&&"complete"===e["import"].readyState?onImportLoaded():e.addEventListener("load",onImportLoaded)}if("registerElement"in document&&"import"in document.createElement("link")&&"content"in document.createElement("template"))finishLazyLoading();else{var e=document.createElement("script");e.src="bower_components/webcomponentsjs/webcomponents-lite.min.js",e.onload=finishLazyLoading,document.head.appendChild(e)}</script>
+  <script>function registerServiceWorker(){"serviceWorker"in navigator&&navigator.serviceWorker.register("service-worker.js")}function onImportLoaded(){document.body.classList.remove("loading"),document.body.classList.add("ready"),registerServiceWorker()}function finishLazyLoading(){var e=document.querySelector("#bundle");e["import"]&&"complete"===e["import"].readyState?onImportLoaded():e.addEventListener("load",onImportLoaded)}if("registerElement"in document&&"import"in document.createElement("link")&&"content"in document.createElement("template"))finishLazyLoading();else{var e=document.createElement("script");e.src="bower_components/webcomponentsjs/webcomponents-lite.min.js",e.onload=finishLazyLoading,document.head.appendChild(e)}</script>
 
 
 
