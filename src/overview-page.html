@@ -190,7 +190,9 @@
         ],
 
         ready: function() {
-          console.log('overview page ready');
+          Polymer.RenderStatus.afterNextRender(this, function() {
+            this._setupDB();
+          }.bind(this));
           this._db = this.$.db;
         },
 
@@ -329,11 +331,7 @@
         },
 
         _loginStateChanged: function() {
-          if (this.loggedIn) {
-            this.async(function() {
-              this._setupDB();
-            }.bind(this), 1);
-          } else {
+          if (!this.loggedIn) {
             this._teardownDB();
           }
         },
