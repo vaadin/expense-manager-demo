@@ -12,23 +12,17 @@
   <meta name="theme-color" content="#33383a">
   <link rel="manifest" href="manifest.json">
 
-  <script>
-    // HTTPS redirect is borrowed from
-    // https://github.com/PolymerElements/platinum-https-redirect/
-    // blob/master/platinum-https-redirect.html
-    // With license: http://polymer.github.io/LICENSE.txt
-    function _isLocalhost(hostname) {
-      // !! coerces the logical expression to evaluate to the values true or false.
-      return !!(hostname === 'localhost' ||
-        // [::1] is the IPv6 localhost address.
-        hostname === '[::1]' ||
-        // 127.0.0.1/8 is considered localhost for IPv4.
-        hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/));
-    }
+  <!-- iOS -->
+  <!-- <link rel="apple-touch-icon" href="images/app-icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="Expense Manager"> -->
 
-    if (window.location.protocol === 'http:' && !_isLocalhost(window.location.hostname)) {
-      // Redirect to https: if we're currently using http: and we're not on localhost.
-      window.location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
+  <script type="text/javascript">
+
+    // Redirect to https: if we're in production server
+    if (window.location.protocol === 'http:' && /vaadin.com$/i.test(window.location.hostname)) {
+      window.location.protocol = 'https:';
     }
 
     // setup Polymer options
@@ -36,46 +30,135 @@
       lazyRegister: true,
       dom: 'shadow'
     };
-
-    // load webcomponents polyfills
-    (function() {
-      if ('registerElement' in document &&
-        'import' in document.createElement('link') &&
-        'content' in document.createElement('template')) {
-        // browser has web components
-      } else {
-        // polyfill web components
-        var e = document.createElement('script');
-        e.src = 'bower_components/webcomponentsjs/webcomponents-lite.min.js';
-        document.head.appendChild(e);
-      }
-    })();
-
-    // load pre-caching service worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('service-worker.js');
-      });
-    }
   </script>
 
-  <link rel="import" href="src/expense-app.html">
+  <link id="bundle" rel="import" href="src/expense-app.html" async>
 
   <style>
+    html {
+      height: 100%;
+    }
+
     body {
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
       margin: 0;
-      font-family: 'Roboto', 'Noto', sans-serif;
-      min-height: 100vh;
-      background-color: #33383a;
+      height: 100%;
+      background: #33383a;
+      font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .loading {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #loadingScreen {
+      width: 100%;
+    }
+
+    #loadingScreen {
+      position: absolute;
+      top: 36%;
+      left: 0;
+      color: rgba(255, 255, 255, 0.56);
+      text-align: center;
+      line-height: 10;
+      font-weight: 400;
+      font-family: arial, sans-serif;
+    }
+
+    #loadingScreen .spinner {
+      content: "";
+      position: absolute;
+      height: 2px;
+      background: #ff3a39;
+      top: 0;
+      left: 0;
+      width: 100%;
+      animation: 1.2s loading infinite;
+      transform-origin: 100% 0;
+    }
+
+    @keyframes loading {
+      50% {
+        transform: scalex(0);
+      }
+      51% {
+        transform: translatex(-100vw);
+      }
+    }
+
+    #loadingScreen.animation-stop .spinner {
+      animation-name: none;
+    }
+
+    .loading expense-app {
+      opacity: 0;
+    }
+
+    .ready expense-app {
+      animation: fade-in 0.25s;
+    }
+
+    @keyframes fade-in {
+      0% {
+        opacity: 0;
+      }
     }
   </style>
 
 </head>
 
-<body>
+<body class="loading">
+  <div id="loadingScreen">
+    <div class="spinner"></div>
+  </div>
 
   <expense-app></expense-app>
 
+  <script>
+    function registerServiceWorker() {
+      // load pre-caching service worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('service-worker.js');
+        });
+      }
+    }
+
+    function onImportLoaded() {
+      document.body.classList.remove('loading');
+      document.body.classList.add('ready');
+      registerServiceWorker();
+    }
+
+    function finishLazyLoading() {
+      var link = document.querySelector('#bundle');
+      if (link.import && link.import.readyState === 'complete') {
+        onImportLoaded();
+      } else {
+        link.addEventListener('load', onImportLoaded);
+      }
+    }
+
+    // load webcomponents polyfills
+    if ('registerElement' in document &&
+      'import' in document.createElement('link') &&
+      'content' in document.createElement('template')) {
+      // browser has web components
+      finishLazyLoading();
+    } else {
+      // polyfill web components
+      var e = document.createElement('script');
+      e.src = 'bower_components/webcomponentsjs/webcomponents-lite.min.js';
+      e.onload = finishLazyLoading;
+      document.head.appendChild(e);
+    }
+  </script>
 </body>
 
 </html>

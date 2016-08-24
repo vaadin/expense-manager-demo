@@ -105,11 +105,18 @@
       }
     </style>
 
-    <vaadin-pouchdb id="db" dbname="{{dbLocal}}" remote="{{dbRemote}}" data="{{expenses}}" status="{{status}}"></vaadin-pouchdb>
+    <vaadin-pouchdb
+      id="db"
+      dbname="[[dbLocal]]"
+      remote="[[dbRemote]]"
+      data="{{expenses}}"
+      status="{{status}}"></vaadin-pouchdb>
 
     <app-location route="{{route}}" use-hash-as-path></app-location>
-    <app-route route="{{route}}" pattern="/:dbId" data="{{routeData}}" tail="{{subroute}}">
-    </app-route>
+    <app-route route="{{route}}" pattern="/:id" data="{{routeData}}" tail="{{subroute}}"></app-route>
+
+    <iron-localstorage name="expense-manager-db-id" value="{{dbLocal}}"></iron-localstorage>
+    <iron-localstorage name="expense-manager-db-remote" value="{{dbRemote}}"></iron-localstorage>
 
     <iron-ajax id="ajax" handle-as="json" on-response="_handleBackendResponse" on-error="_handleBackendError"></iron-ajax>
 
@@ -134,7 +141,6 @@
     <expense-editor id="expenseEditor" merchants="[[merchants]]" db="[[_db]]" route="{{subroute}}"></expense-editor>
     <paper-toast id="saveNotification"></paper-toast>
     <info-dialog id="info"></info-dialog>
-    <iron-localstorage name="expense-manager-db-id" value="{{dbId}}"></iron-localstorage>
   </template>
 
   <script>
@@ -144,12 +150,10 @@
         is: 'overview-page',
 
         properties: {
-          _db: Object,
           route: Object,
           routeData: Object,
           dbLocal: String,
           dbRemote: String,
-          dbId: String,
           _showInfo: Boolean,
           loggedIn: {
             type: Boolean,
@@ -170,15 +174,17 @@
                 merchant: ''
               };
             },
-
             notify: true
           }
         },
 
+        ready: function() {
+          this._db = this.$.db;
+        },
+
         listeners: {
           'edit-expense': '_editExpense',
-          'expenses-updated': '_expensesUpdated',
-          'expense-saved': '_saveExpense',
+          'save-expense': '_saveExpense',
           'delete-expense': '_deleteExpense'
         },
 
@@ -186,13 +192,8 @@
           '_showInfoDialog(loggedIn, _showInfo)',
           '_getUniqueMerchants(expenses.*)',
           '_calculateTotal(expenses.*)',
-          '_route(route)'
+          '_route(routeData)'
         ],
-
-        ready: function() {
-          console.log('overview page ready');
-          this._db = this.$.db;
-        },
 
         _calculateTotal: function() {
           if (this.expenses) {
@@ -231,70 +232,32 @@
           }
         },
 
-        _teardownDB: function() {
-          this.dbId = this.dbLocal = this.dbRemote = null;
-          this.set('route.path', '');
-        },
-
-        _setupDB: function() {
-          if (this.routeData && this.routeData.dbId) {
-            this.dbId = this.routeData.dbId;
-          }
-          if (this.dbId) {
-            this.dbLocal = 'db_' + this.dbId;
-            this.set('route.path', '/' + this.dbId);
-            this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/db/' + this.dbId;
+        _setupDB: function(dbName) {
+          if (dbName) {
+            this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/db/' + this._dbId(dbName);
           } else {
             this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/create';
           }
+          console.log(this.$.ajax.url)
           this.$.ajax.generateRequest();
         },
 
-        _update: function() {
-          console.log('update');
-          this.debounce('update', function() {
-            this._db.query();
-          }.bind(this), 10);
-        },
-
         _handleBackendResponse: function(evt) {
-          // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
           var rsp = evt.detail.response;
           if (rsp && rsp.backend_db_id) {
-            this.dbId = rsp.backend_db_id;
-            this.set('route.path', '/' + this.dbId);
-
-            // Setting these, makes couchdb connect to local & remote DB and start syncing
-            this.dbLocal = 'db_' + this.dbId;
+            this.dbLocal = this._dbLocal(rsp.backend_db_id);
             this.dbRemote = rsp.couchdb_db_url;
-
-            if (rsp.new_db) {
-              this._showInfo = true;
-            }
-
-            // We update the entire UI on any change for simplicity.
-            this._db.changes(function() {
-              this._update();
-            }.bind(this));
-            // First hit
-            this._update();
-          } else {
-            this.dbId = null;
-            this.set('route.path', '');
-            this._setupDB();
+            this._showInfo = !!rsp.new_db;
+            this.set('route.path', '/' + rsp.backend_db_id);
           }
         },
 
         _handleBackendError: function() {
-          // Make sure we at least populate from our local DB if the backend is unavailable
-          this._update();
+          console.log("Error calling backend: " + this.$.ajax.url);
         },
 
         _editExpense: function(evt) {
-          if (evt && evt.detail) {
-            var expense = evt.detail;
-            this.$.expenseEditor.open(expense);
-          }
+          this.$.expenseEditor.open(evt.detail);
         },
 
         _hideSyncIcon: function() {
@@ -302,26 +265,39 @@
         },
 
         _saveExpense: function(evt) {
-          var expense = evt.detail;
-          this._db.save(expense);
-          this.fire('expenses-updated');
-        },
-        _deleteExpense: function(evt) {
-          var expense = evt.detail;
-          this._db.remove(expense);
-          this.fire('expenses-updated', {
-            reason: 'deleted'
-          });
+          // Modifying the expenses array, DB will be updated
+          var idx = this.expenses.indexOf(evt.detail.original);
+          if (idx > 0) {
+            this.set('expenses.' + idx , evt.detail.expense);
+          } else {
+            this.push('expenses', evt.detail.expense);
+          }
+          this._expensesUpdated('Expense was saved');
         },
 
-        _expensesUpdated: function(evt) {
-          this.$.expenseEditor.close();
-          if (evt.detail.reason === 'deleted') {
-            this.$.saveNotification.text = 'Expense was deleted';
-          } else {
-            this.$.saveNotification.text = 'Expense was saved';
+        _deleteExpense: function(evt) {
+          // Modifying the expenses array, DB will be updated
+          var idx = this.expenses.indexOf(evt.detail);
+          if (idx >= 0) {
+            this.splice('expenses', idx, 1);
+            this._expensesUpdated('Expense was deleted')
           }
+        },
+
+        _expensesUpdated: function(msg) {
+          this.$.expenseEditor.close();
+          this.$.saveNotification.text = msg;
           this.$.saveNotification.show();
+        },
+
+        _route: function() {
+          if (this.routeData.id) {
+            if (this.loggedIn) {
+              this._loginStateChanged();
+            } else {
+              this.loggedIn = true;
+            }
+          }
         },
 
         _logout: function() {
@@ -330,21 +306,31 @@
 
         _loginStateChanged: function() {
           if (this.loggedIn) {
-            this.async(function() {
+            var dbhash = this._dbLocal(this.routeData.id);
+            if (dbhash && dbhash != this.dbLocal) {
+              this.dbLocal = this.dbRemote = null;
+              // Validate dbid in hash fragment
+              this._setupDB(dbhash);
+            } else if (this.dbLocal && this.dbRemote) {
+              // we already have dblocal and dbremote validated
+              this.set('route.path', '/' + this._dbId(this.dbLocal));
+            } else {
+              // create a new db
               this._setupDB();
-            }.bind(this), 1);
+            }
           } else {
-            this._teardownDB();
+            this.set('route.path', '/');
           }
         },
 
-        _route: function() {
-          var id = this.route.path.replace(/^\//, '');
-          if (id && id !== this.dbId) {
-            this.loggedIn = false;
-            this.loggedIn = true;
-          }
+        _dbLocal: function(id) {
+          return /^.{10}$/.test(id) ? 'db_' + id : '';
+        },
+
+        _dbId: function(id) {
+          return id.replace(/^db_/, '');
         }
+
       });
     })();
   </script>

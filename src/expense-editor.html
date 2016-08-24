@@ -218,11 +218,11 @@
           merchants: Array,
           expense: {
             type: Object,
-            notify: true,
             value: function() {
               return {};
             }
           },
+          _original: Object,
           caption: {
             type: String,
             computed: '_getCaption(expense)'
@@ -372,7 +372,7 @@
           var form = this.$.form;
           if (form.validate()) {
             this.expense.total = parseFloat(this.expense.total);
-            this.fire('expense-saved', this.expense);
+            this.fire('save-expense', {original: this._original, expense: this.expense});
           } else {
             console.log('Form validation failed');
             this.$.dialog.scrollTop = 0;
@@ -380,23 +380,24 @@
           }
         },
 
-        open: function(expense) {
+        open: function(original) {
+          this._original = original;
 
           // Create a copy of the expense to be edited so we don't automatically flush changes to db
-          this.expense = JSON.parse(JSON.stringify(expense));
+          this.expense = JSON.parse(JSON.stringify(original));
           // File objects don't survive the JSON dance, so copy that over manually
-          if (expense._attachments) {
-            this.set('expense._attachments', expense._attachments);
+          if (this.expense._attachments) {
+            this.set('expense._attachments', original._attachments);
           }
 
           this.$.upload.files = [];
 
-          if (!expense.status) {
+          if (!this.expense.status) {
             this.expense.status = 'new';
           }
 
-          if (expense.total) {
-            this.$.total.value = expense.total.toFixed(2);
+          if (this.expense.total) {
+            this.$.total.value = this.expense.total.toFixed(2);
           }
 
           this.$.delete.hidden = !(this.expense._id && this.expense.status === 'new');
@@ -419,7 +420,7 @@
         },
 
         _delete: function() {
-          this.fire('delete-expense', this.expense);
+          this.fire('delete-expense', this._original);
         }
       });
     })();
