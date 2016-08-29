@@ -20,7 +20,8 @@ If you want to work on the same data in several browsers, you can install a loca
 Once installed, make sure that the `location` attribute is correct on the `<pouch-db>` element in `overview-page.html`. **Note** If you do not use a database to sync with, omit the `location` attribute.
 
 ## Install dependencies
-You need polymer-cli installed to build the app `npm install -g polymer-cli`
+You need polymer-cli installed to build the app `npm install -g polymer-cli`.
+Install all bower dependencies with `bower install`.
 
 ## Run development server
 `polymer serve` will run the application locally
