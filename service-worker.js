@@ -29,7 +29,7 @@
 
 
 /* eslint-disable quotes, comma-spacing */
-var PrecacheConfig = [["/index.html","7fbe4f2fcfd4247521a2a4983bd266b9"],["/src/expense-app.html","1edc88bf7184f34767637c77ee2447ab"],["/src/overview-page.html","97c75055ecf1523b662b4e6287fe6726"]];
+var PrecacheConfig = [["/images/default-receipt.png","14ef509ae3504333529fc5686906de39"],["/index.html","7fbe4f2fcfd4247521a2a4983bd266b9"],["/src/expense-app.html","1edc88bf7184f34767637c77ee2447ab"],["/src/overview-page.html","2105e08e86b92335fb543bb1c4a22a13"]];
 /* eslint-enable quotes, comma-spacing */
 var CacheNamePrefix = 'sw-precache-v1--' + (self.registration ? self.registration.scope : '') + '-';
 
