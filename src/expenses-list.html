@@ -98,7 +98,7 @@
     </style>
 
 
-    <vaadin-grid id="expenses" on-cell-click="_cellClick" size="50">
+    <vaadin-grid id="expenses" frozen-columns="1" on-cell-click="_cellClick" size="50">
       <vaadin-grid-column width="120px">
         <template is="header">Date</template>
   <template>[[_formatDate(item.date)]]</template>
