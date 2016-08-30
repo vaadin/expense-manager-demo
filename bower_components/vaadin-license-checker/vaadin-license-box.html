@@ -2,7 +2,46 @@
 <link rel="import" href="../iron-overlay-behavior/iron-overlay-behavior.html">
 
 </head><body><dom-module id="vaadin-license-box">
-    <style>:host{font:300 16px/1.55 "Open Sans", sans-serif;position:fixed;top:0;right:0;cursor:pointer;backface-visibility:hidden;background:white;}#licenseBoxContent{padding:11px 13px;margin:0;display:inline-block;text-align:left;font-weight:inherit;white-space:nowrap;letter-spacing:0;line-height:1;font-size:16px;border-bottom-left-radius:4px;box-shadow:0 5px 15px 0 rgba(0, 0, 0, 0.15);}#licenseBoxContent.trial{color:#197de1;}#licenseBoxContent.unlicensed{background:#ed473b;font-weight:400;color:white;}#licenseBoxContent.expired{background:#FFF3D2;color:#AC7C00;}</style>
+    <style>
+        :host {
+            font: 300 16px/1.55 "Open Sans", sans-serif;
+            position: fixed;
+            top: 0;
+            right: 0;
+            cursor: pointer;
+            backface-visibility: hidden;
+            background: white;
+        }
+
+        #licenseBoxContent {
+            padding: 11px 13px;
+            margin: 0;
+            display: inline-block;
+            text-align: left;
+            font-weight: inherit;
+            white-space: nowrap;
+            letter-spacing: 0;
+            line-height: 1;
+            font-size: 16px;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 5px 15px 0 rgba(0, 0, 0, 0.15);
+        }
+
+        #licenseBoxContent.trial {
+            color: #197de1;
+        }
+
+        #licenseBoxContent.unlicensed {
+            background: #ed473b;
+            font-weight: 400;
+            color: white;
+        }
+
+        #licenseBoxContent.expired {
+            background: #FFF3D2;
+            color: #AC7C00;
+        }
+    </style>
     <template>
         <div id="licenseBoxContent" class$="[[type]]" on-click="_close">[[content]]</div>
     </template>

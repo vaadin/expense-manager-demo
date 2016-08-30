@@ -13,9 +13,226 @@
 
 </head><body><dom-module id="vaadin-date-picker-overlay">
   <template>
-    <style>:host{display:flex;flex-direction:column;height:100%;width:100%;background:var(--primary-background-color);font:inherit;outline:none;@apply (--paper-font-common-base);@apply (--shadow-elevation-2dp);@apply (--vaadin-date-picker-overlay);}#toolbar{display:flex;justify-content:space-between;padding:14px;background:var(--primary-background-color);z-index:2;@apply (--paper-font-button);@apply (--shadow-elevation-2dp);flex-shrink:0;transform:translateZ(0);color:var(--primary-color);@apply (--vaadin-date-picker-toolbar);}#toolbar:not([desktop]){cursor:pointer;}#toolbar iron-icon{fill:var(--primary-color);padding:0px;transition:transform 200ms;--iron-icon-width:20px;--iron-icon-height:20px;@apply (--vaadin-date-picker-toolbar-icon);}#toolbar iron-icon[rotate]{transform:rotate(180deg);}#toolbar iron-icon[hidden]{display:none;}#scrollers{display:flex;flex-direction:row;height:100%;width:100%;position:relative;overflow:hidden;}#scrollers #fade{pointer-events:none;display:block;background:linear-gradient(90deg, var(--primary-background-color), rgba(255, 255, 255, 0));width:50px;position:absolute;height:100%;z-index:1;transform:translateX(-100%);@apply (--vaadin-date-picker-scrollers-fade);}#scrollers[desktop] #fade{display:none;}#scroller,
-      #yearScroller{height:100%;}#scroller{padding:0 8px;position:absolute;top:0;left:0;right:0;bottom:0;}#scrollers[desktop] #scroller{right:50px;transform:none !important;}#yearScroller{text-align:center;width:50px;background:var(--dark-theme-background-color);color:var(--dark-theme-secondary-color);cursor:pointer;position:absolute;right:0;transform:translateX(100%);-webkit-tap-highlight-color:transparent;@apply (--paper-font-menu);@apply (--vaadin-date-picker-yearscroller);}#yearScroller div{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}#scrollers[desktop] #yearScroller{position:absolute;transform:none !important;}#yearScroller{--vaadin-infinite-scroller-buffer:{top:50%;margin-top:-33px;width:90px;};}#yearScroller:before{content:'';display:block;background:transparent;width:0px;height:0px;position:absolute;left:0;top:50%;margin-top:-6px;border-width:6px;border-style:solid;border-color:transparent;border-left-color:var(--primary-background-color);@apply (--vaadin-date-picker-yearscroller-indicator);}:host(.animate) vaadin-infinite-scroller{transition:all 200ms;}:host(:not([fullscreen])) #header{display:none;}#toolbar[desktop]{display:none;}#header{background:var(--primary-color);padding:0 14px 14px;display:flex;flex-shrink:0;@apply (--paper-font-subhead);@apply (--shadow-elevation-2dp);@apply (--vaadin-date-picker-header);}#header label,
-      #header input{color:var(--dark-theme-text-color);}#header iron-icon{color:var(--dark-theme-text-color);cursor:pointer;}#toggle{align-self:flex-end;}#header paper-input-container{flex:1;margin-right:24px;padding-bottom:0;--paper-input-container-underline:{display:none;};--paper-input-container-underline-focus:{display:block;background:var(--dark-theme-text-color);-webkit-transform:none;transform:none;};}#clear{display:none;}#clear[showclear]{display:flex;}#footer{display:flex;justify-content:space-between;padding:4px;@apply (--paper-font-body2);background:var(--primary-background-color);z-index:2;box-shadow:0 -1px 4px 0 rgba(0, 0, 0, 0.50);color:var(--primary-color);flex-shrink:0;@apply (--vaadin-date-picker-footer);}</style>
+    <style>
+      :host {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+        background: var(--primary-background-color);
+        font: inherit;
+        outline: none;
+        @apply(--paper-font-common-base);
+        @apply(--shadow-elevation-2dp);
+        @apply(--vaadin-date-picker-overlay);
+      }
+
+      #toolbar {
+        display: flex;
+        justify-content: space-between;
+        padding: 14px;
+        background: var(--primary-background-color);
+        z-index: 2;
+        @apply(--paper-font-button);
+        @apply(--shadow-elevation-2dp);
+        flex-shrink: 0;
+        transform: translateZ(0);
+        color: var(--primary-color);
+        @apply(--vaadin-date-picker-toolbar);
+      }
+
+      #toolbar:not([desktop]) {
+        cursor: pointer;
+      }
+
+      #toolbar iron-icon {
+        fill: var(--primary-color);
+        padding: 0px;
+        transition: transform 200ms;
+        --iron-icon-width: 20px;
+        --iron-icon-height: 20px;
+        @apply(--vaadin-date-picker-toolbar-icon);
+      }
+
+      #toolbar iron-icon[rotate] {
+        transform: rotate(180deg);
+      }
+
+      #toolbar iron-icon[hidden] {
+        display: none;
+      }
+
+      #scrollers {
+        display: flex;
+        flex-direction: row;
+        height: 100%;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+      }
+
+      #scrollers #fade {
+        pointer-events: none;
+        display: block;
+        background: linear-gradient(90deg, var(--primary-background-color), rgba(255, 255, 255, 0));
+        width: 50px;
+        position: absolute;
+        height: 100%;
+        z-index: 1;
+        transform: translateX(-100%);
+        @apply(--vaadin-date-picker-scrollers-fade);
+      }
+
+      #scrollers[desktop] #fade {
+        display: none;
+      }
+
+      #scroller,
+      #yearScroller {
+        height: 100%;
+      }
+
+      #scroller {
+        padding: 0 8px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+
+      #scrollers[desktop] #scroller {
+        right: 50px;
+        transform: none !important;
+      }
+
+      #yearScroller {
+        text-align: center;
+        width: 50px;
+        background: var(--dark-theme-background-color);
+        color: var(--dark-theme-secondary-color);
+        cursor: pointer;
+        position: absolute;
+        right: 0;
+        transform: translateX(100%);
+        -webkit-tap-highlight-color: transparent;
+        @apply(--paper-font-menu);
+        @apply(--vaadin-date-picker-yearscroller);
+      }
+
+      #yearScroller div {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      #scrollers[desktop] #yearScroller {
+        position: absolute;
+        transform: none !important;
+      }
+
+      #yearScroller {
+        /* Center the year scroller position. */
+        --vaadin-infinite-scroller-buffer: {
+          top: 50%;
+          margin-top: -12px;
+          width: 90px;
+        }
+      }
+
+      #yearScroller:before {
+        content: '';
+        display: block;
+        background: transparent;
+        width: 0px;
+        height: 0px;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        margin-top: -6px;
+        border-width: 6px;
+        border-style: solid;
+        border-color: transparent;
+        border-left-color: var(--primary-background-color);
+        @apply(--vaadin-date-picker-yearscroller-indicator);
+      }
+
+      :host(.animate) vaadin-infinite-scroller {
+        transition: all 200ms;
+      }
+
+      :host(:not([fullscreen])) #header {
+        display: none;
+      }
+
+      #toolbar[desktop] {
+        display: none;
+      }
+
+      #header {
+        background: var(--primary-color);
+        padding: 0 14px 14px;
+        display: flex;
+        flex-shrink: 0;
+        height: 64px; /* height set to 64px to match app-toolbar height */
+        box-sizing: border-box;
+
+        @apply(--paper-font-subhead);
+        @apply(--shadow-elevation-2dp);
+        @apply(--vaadin-date-picker-header);
+      }
+
+      #header label,
+      #header input {
+        color: var(--dark-theme-text-color);
+      }
+
+      #header iron-icon {
+        color: var(--dark-theme-text-color);
+        cursor: pointer;
+      }
+
+      #toggle {
+        align-self: flex-end;
+      }
+
+      #header paper-input-container {
+        flex: 1;
+        margin-right: 24px;
+        padding-bottom: 0;
+        --paper-input-container-underline: {
+          display: none;
+        };
+        --paper-input-container-underline-focus: {
+          display: block;
+          background: var(--dark-theme-text-color);
+          -webkit-transform: none;
+          transform: none;
+        };
+      }
+
+      #clear {
+        display: none;
+      }
+
+      #clear[showclear] {
+        display: flex;
+      }
+
+      #footer {
+        display: flex;
+        justify-content: space-between;
+        padding: 4px;
+        @apply(--paper-font-body2);
+        background: var(--primary-background-color);
+        z-index: 2;
+        box-shadow: 0 -1px 4px 0 rgba(0, 0, 0, 0.50);
+        color: var(--primary-color);
+        flex-shrink: 0;
+        @apply(--vaadin-date-picker-footer);
+      }
+    </style>
 
     <div id="header" on-touchend="_preventDefault">
       <paper-input-container>
@@ -57,6 +274,6 @@
 
     <iron-media-query query="(min-width: 375px)" query-matches="{{_desktopMode}}"></iron-media-query>
   </template>
-  <script>Polymer({is:"vaadin-date-picker-overlay",listeners:{keydown:"_onKeydown"},properties:{selectedDate:{type:Date,notify:!0},focusedDate:{type:Date,observer:"_focusedDateChanged"},_focusedMonthDate:Number,initialPosition:{type:Date,observer:"_initialPositionChanged"},_originDate:{value:new Date},_visibleMonthIndex:Number,_desktopMode:Boolean,_translateX:{observer:"_translateXChanged"},_yearScrollerWidth:{value:50},i18n:{type:Object},_ignoreTaps:Boolean,_notTapping:Boolean},attached:function(){this._translateX=this._yearScrollerWidth,this.toggleClass("animate",!0),this.setScrollDirection("y",this.$.scroller)},scrollToDate:function(t,e){this._scrollToPosition(this._differenceInMonths(t,this._originDate),e)},_focusedDateChanged:function(t,e){if(t){var i=this._differenceInMonths(t,this._originDate),o=this.$.scroller.position>i,s=this.$.scroller.clientHeight/this.$.scroller.itemHeight,r=this.$.scroller.position+s-1<i;o?this._scrollToPosition(i,!0):r&&this._scrollToPosition(i-s+1,!0)}},_initialPositionChanged:function(t){this.scrollToDate(t)},_repositionYearScroller:function(){this._visibleMonthIndex=Math.floor(this.$.scroller.position),this.$.yearScroller.position=this.$.scroller.position/12},_repositionMonthScroller:function(){this.$.scroller.position=12*this.$.yearScroller.position,this._visibleMonthIndex=Math.floor(this.$.scroller.position)},_onMonthScroll:function(){this._repositionYearScroller(),this._doIgnoreTaps()},_onYearScroll:function(){this._repositionMonthScroller(),this._doIgnoreTaps()},_onYearScrollTouchStart:function(){this._notTapping=!1,this.async(function(){this._notTapping=!0},300),this._repositionMonthScroller()},_onMonthScrollTouchStart:function(){this._repositionYearScroller()},_doIgnoreTaps:function(){this._ignoreTaps=!0,this.debounce("restore-taps",function(){this._ignoreTaps=!1},300)},_formatDisplayed:function(t,e){return t?e(t):void 0},_scrollToCurrentMonth:function(){this.focusedDate&&(this.focusedDate=new Date),this.scrollToDate(new Date,!0),this.focus()},_showClear:function(t){return null!==t},_onYearTap:function(t){if(!this._ignoreTaps&&!this._notTapping){var e=t.detail.y-(this.$.yearScroller.getBoundingClientRect().top+this.$.yearScroller.clientHeight/2),i=e/this.$.yearScroller.itemHeight;this._scrollToPosition(this.$.scroller.position+12*i,!0)}},_scrollToPosition:function(t,e){if(void 0!==this._targetPosition)return void(this._targetPosition=t);if(!e)return this.$.scroller.position=t,this._targetPosition=void 0,void this._repositionYearScroller();this._targetPosition=t;var i=function(t,e,i,o){return t/=o/2,1>t?i/2*t*t+e:(t--,-i/2*(t*(t-2)-1)+e)},o=e?300:0,s=0,r=this.$.scroller.position,n=function(t){s=s||t;var e=t-s;if(o>e){var a=i(e,r,this._targetPosition-r,o);this.$.scroller.position=a,window.requestAnimationFrame(n)}else this.fire("scroll-animation-finished",{position:this._targetPosition,oldPosition:r}),this.$.scroller.position=this._targetPosition,this._targetPosition=void 0;this.async(this._repositionYearScroller,1)}.bind(this);window.requestAnimationFrame(n)},_track:function(t){if(!this._desktopMode)switch(t.detail.state){case"start":this.toggleClass("animate",!1);break;case"track":var e=this._translateX+t.detail.dx/this._yearScrollerWidth*5;e>this._yearScrollerWidth?this._closeYearScroller():0>e?this._openYearScroller():this._translateX=e;break;case"end":this.toggleClass("animate",!0),this._translateX>=this._yearScrollerWidth/2?this._closeYearScroller():this._openYearScroller()}},_toggleYearScroller:function(){this._isYearScrollerVisible()?this._closeYearScroller():this._openYearScroller()},_openYearScroller:function(){this._translateX=0},_closeYearScroller:function(){this._translateX=this._yearScrollerWidth},_isYearScrollerVisible:function(){return this._translateX<this._yearScrollerWidth/2},_translateXChanged:function(t){this._desktopMode||(this.transform("translateX("+(t-this._yearScrollerWidth)+"px)",this.$.scroller),this.transform("translateX("+t+"px)",this.$.yearScroller),this.transform("translateX("+-t+"px)",this.$.fade))},_yearAfterXYears:function(t){var e=new Date(this._originDate);return e.setFullYear(parseInt(t)+this._originDate.getFullYear()),e.getFullYear()},_yearAfterXMonths:function(t){return this._dateAfterXMonths(t).getFullYear()},_dateAfterXMonths:function(t){var e=new Date(this._originDate);return e.setDate(1),e.setMonth(parseInt(t)+this._originDate.getMonth()),e},_differenceInMonths:function(t,e){var i=12*(t.getFullYear()-e.getFullYear());return i-e.getMonth()+t.getMonth()},_differenceInYears:function(t,e){return this._differenceInMonths(t,e)/12},_clear:function(){this.selectedDate="",this._close()},_close:function(){this.fire("close")},_preventDefault:function(t){t.preventDefault()},_eventKey:function(t){for(var e=["down","up","right","left","enter","space","home","end","pageup","pagedown"],i=0;i<e.length;i++){var o=e[i];if(Polymer.IronA11yKeysBehavior.keyboardEventMatchesKeys(t,o))return o}},_onKeydown:function(t){var e=this._currentlyFocusedDate(),i=this._eventKey(t);if(i)switch(t.preventDefault(),i){case"down":this._moveFocusByDays(7);break;case"up":this._moveFocusByDays(-7);break;case"right":this._moveFocusByDays(1);break;case"left":this._moveFocusByDays(-1);break;case"enter":this.focusedDate&&(this.selectedDate=this.focusedDate),this._close();break;case"space":this._dateEquals(this.focusedDate,this.selectedDate)?this.selectedDate="":this.selectedDate=this.focusedDate;break;case"home":this.focusedDate=new Date(e.getFullYear(),e.getMonth(),1);break;case"end":this.focusedDate=new Date(e.getFullYear(),e.getMonth()+1,0);break;case"pagedown":this._moveFocusByMonths(t.shiftKey?12:1);break;case"pageup":this._moveFocusByMonths(t.shiftKey?-12:-1)}},_dateEquals:function(t,e){return t&&e?t.getFullYear()===e.getFullYear()&&t.getMonth()===e.getMonth()&&t.getDate()===e.getDate():!1},_currentlyFocusedDate:function(){return this.focusedDate||this.selectedDate||this.initialPosition||new Date},_moveFocusByDays:function(t){var e=this._currentlyFocusedDate();this.focusedDate=new Date(e.getFullYear(),e.getMonth(),e.getDate()+t),this._focusedMonthDate=this.focusedDate.getDate()},_moveFocusByMonths:function(t){var e=this._currentlyFocusedDate(),i=new Date(e.getFullYear(),e.getMonth()+t,1),o=i.getMonth();i.setDate(this._focusedMonthDate||(this._focusedMonthDate=e.getDate())),i.getMonth()!==o&&i.setDate(0),this.focusedDate=i}});</script>
+  <script>Polymer({is:"vaadin-date-picker-overlay",listeners:{keydown:"_onKeydown"},properties:{selectedDate:{type:Date,notify:!0},focusedDate:{type:Date,observer:"_focusedDateChanged"},_focusedMonthDate:Number,initialPosition:{type:Date,observer:"_initialPositionChanged"},_originDate:{value:new Date},_visibleMonthIndex:Number,_desktopMode:Boolean,_translateX:{observer:"_translateXChanged"},_yearScrollerWidth:{value:50},i18n:{type:Object},_ignoreTaps:Boolean,_notTapping:Boolean},attached:function(){this._translateX=this._yearScrollerWidth,this.toggleClass("animate",!0),this.setScrollDirection("y",this.$.scroller)},scrollToDate:function(t,e){this._scrollToPosition(this._differenceInMonths(t,this._originDate),e)},_focusedDateChanged:function(t,e){if(t){var i=this._differenceInMonths(t,this._originDate),o=this.$.scroller.position>i,s=this.$.scroller.clientHeight/this.$.scroller.itemHeight,r=this.$.scroller.position+s-1<i;o?this._scrollToPosition(i,!0):r&&this._scrollToPosition(i-s+1,!0)}},_initialPositionChanged:function(t){this.scrollToDate(t)},_repositionYearScroller:function(){this._visibleMonthIndex=Math.floor(this.$.scroller.position),this.$.yearScroller.position=(this.$.scroller.position+this._originDate.getMonth())/12},_repositionMonthScroller:function(){this.$.scroller.position=12*this.$.yearScroller.position-this._originDate.getMonth(),this._visibleMonthIndex=Math.floor(this.$.scroller.position)},_onMonthScroll:function(){this._repositionYearScroller(),this._doIgnoreTaps()},_onYearScroll:function(){this._repositionMonthScroller(),this._doIgnoreTaps()},_onYearScrollTouchStart:function(){this._notTapping=!1,this.async(function(){this._notTapping=!0},300),this._repositionMonthScroller()},_onMonthScrollTouchStart:function(){this._repositionYearScroller()},_doIgnoreTaps:function(){this._ignoreTaps=!0,this.debounce("restore-taps",function(){this._ignoreTaps=!1},300)},_formatDisplayed:function(t,e){if(t)return e(t)},_scrollToCurrentMonth:function(){this.focusedDate&&(this.focusedDate=new Date),this.scrollToDate(new Date,!0),this.focus()},_showClear:function(t){return null!==t},_onYearTap:function(t){if(!this._ignoreTaps&&!this._notTapping){var e=t.detail.y-(this.$.yearScroller.getBoundingClientRect().top+this.$.yearScroller.clientHeight/2),i=e/this.$.yearScroller.itemHeight;this._scrollToPosition(this.$.scroller.position+12*i,!0)}},_scrollToPosition:function(t,e){if(void 0!==this._targetPosition)return void(this._targetPosition=t);if(!e)return this.$.scroller.position=t,this._targetPosition=void 0,void this._repositionYearScroller();this._targetPosition=t;var i=function(t,e,i,o){return t/=o/2,t<1?i/2*t*t+e:(t--,-i/2*(t*(t-2)-1)+e)},o=e?300:0,s=0,r=this.$.scroller.position,n=function(t){s=s||t;var e=t-s;if(e<o){var a=i(e,r,this._targetPosition-r,o);this.$.scroller.position=a,window.requestAnimationFrame(n)}else this.fire("scroll-animation-finished",{position:this._targetPosition,oldPosition:r}),this.$.scroller.position=this._targetPosition,this._targetPosition=void 0;this.async(this._repositionYearScroller,1)}.bind(this);window.requestAnimationFrame(n)},_track:function(t){if(!this._desktopMode)switch(t.detail.state){case"start":this.toggleClass("animate",!1);break;case"track":var e=this._translateX+t.detail.dx/this._yearScrollerWidth*5;e>this._yearScrollerWidth?this._closeYearScroller():e<0?this._openYearScroller():this._translateX=e;break;case"end":this.toggleClass("animate",!0),this._translateX>=this._yearScrollerWidth/2?this._closeYearScroller():this._openYearScroller()}},_toggleYearScroller:function(){this._isYearScrollerVisible()?this._closeYearScroller():this._openYearScroller()},_openYearScroller:function(){this._translateX=0},_closeYearScroller:function(){this._translateX=this._yearScrollerWidth},_isYearScrollerVisible:function(){return this._translateX<this._yearScrollerWidth/2},_translateXChanged:function(t){this._desktopMode||(this.transform("translateX("+(t-this._yearScrollerWidth)+"px)",this.$.scroller),this.transform("translateX("+t+"px)",this.$.yearScroller),this.transform("translateX("+-t+"px)",this.$.fade))},_yearAfterXYears:function(t){var e=new Date(this._originDate);return e.setFullYear(parseInt(t)+this._originDate.getFullYear()),e.getFullYear()},_yearAfterXMonths:function(t){return this._dateAfterXMonths(t).getFullYear()},_dateAfterXMonths:function(t){var e=new Date(this._originDate);return e.setDate(1),e.setMonth(parseInt(t)+this._originDate.getMonth()),e},_differenceInMonths:function(t,e){var i=12*(t.getFullYear()-e.getFullYear());return i-e.getMonth()+t.getMonth()},_differenceInYears:function(t,e){return this._differenceInMonths(t,e)/12},_clear:function(){this.selectedDate="",this._close()},_close:function(){this.fire("close")},_preventDefault:function(t){t.preventDefault()},_eventKey:function(t){for(var e=["down","up","right","left","enter","space","home","end","pageup","pagedown"],i=0;i<e.length;i++){var o=e[i];if(Polymer.IronA11yKeysBehavior.keyboardEventMatchesKeys(t,o))return o}},_onKeydown:function(t){var e=this._currentlyFocusedDate(),i=this._eventKey(t);if(i)switch(t.preventDefault(),i){case"down":this._moveFocusByDays(7);break;case"up":this._moveFocusByDays(-7);break;case"right":this._moveFocusByDays(1);break;case"left":this._moveFocusByDays(-1);break;case"enter":this.focusedDate&&(this.selectedDate=this.focusedDate),this._close();break;case"space":this._dateEquals(this.focusedDate,this.selectedDate)?this.selectedDate="":this.selectedDate=this.focusedDate;break;case"home":this.focusedDate=new Date(e.getFullYear(),e.getMonth(),1);break;case"end":this.focusedDate=new Date(e.getFullYear(),e.getMonth()+1,0);break;case"pagedown":this._moveFocusByMonths(t.shiftKey?12:1);break;case"pageup":this._moveFocusByMonths(t.shiftKey?-12:-1)}},_dateEquals:function(t,e){return!(!t||!e)&&(t.getFullYear()===e.getFullYear()&&t.getMonth()===e.getMonth()&&t.getDate()===e.getDate())},_currentlyFocusedDate:function(){return this.focusedDate||this.selectedDate||this.initialPosition||new Date},_moveFocusByDays:function(t){var e=this._currentlyFocusedDate();this.focusedDate=new Date(e.getFullYear(),e.getMonth(),e.getDate()+t),this._focusedMonthDate=this.focusedDate.getDate()},_moveFocusByMonths:function(t){var e=this._currentlyFocusedDate(),i=new Date(e.getFullYear(),e.getMonth()+t,1),o=i.getMonth();i.setDate(this._focusedMonthDate||(this._focusedMonthDate=e.getDate())),i.getMonth()!==o&&i.setDate(0),this.focusedDate=i}});</script>
 </dom-module>
 </body></html>

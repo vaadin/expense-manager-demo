@@ -1,0 +1,13 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+
+</head><body><dom-module id="vaadin-grid-column">
+  <template>
+    <style>
+      :host {
+        display: none;
+      }
+    </style>
+  </template>
+  <script>Polymer({is:"vaadin-grid-column",properties:{headers:{type:Array,notify:!0,value:function(){var t=Polymer.dom(this).querySelectorAll("template[is=header]");return t?t.map(function(t){var e=t.hasAttribute("colspan")&&parseInt(t.getAttribute("colspan"))||0;return this.dataHost&&(t._rootDataHost=this.dataHost._rootDataHost||this.dataHost),{template:t,colspan:e}}.bind(this)):[]}},footers:{type:Array,notify:!0,value:function(){var t=Polymer.dom(this).querySelectorAll("template[is=footer]");return t?t.map(function(t){var e=t.hasAttribute("colspan")&&parseInt(t.getAttribute("colspan"))||0;return this.dataHost&&(t._rootDataHost=this.dataHost._rootDataHost||this.dataHost),{template:t,colspan:e}}.bind(this)):[]}},instances:{type:Array,value:function(){return[]}},name:{type:String,value:""},template:{type:Object,notify:!0,value:function(){var t=Polymer.dom(this).querySelector("template:not([is=header])");return this.dataHost&&(t._rootDataHost=this.dataHost._rootDataHost||this.dataHost),t}},width:{type:String,notify:!0,value:"100px"},flex:{value:1,notify:!0}},ready:function(){this.fire("width-changed",{value:this.width}),this.fire("flex-changed",{value:this.flex}),this.fire("headers-changed",{value:this.headers}),this.fire("footers-changed",{value:this.footers})}});</script>
+</dom-module>
+</body></html>

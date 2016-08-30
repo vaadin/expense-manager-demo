@@ -11,5 +11,5 @@
   </template>
 </dom-module>
 
-<script>!function(){Polymer({is:"paper-dialog",behaviors:[Polymer.PaperDialogBehavior,Polymer.NeonAnimationRunnerBehavior],listeners:{"neon-animation-finish":"_onNeonAnimationFinish"},_renderOpened:function(){this.cancelAnimation(),this.withBackdrop&&this.backdropElement.open(),this.playAnimation("entry")},_renderClosed:function(){this.cancelAnimation(),this.withBackdrop&&this.backdropElement.close(),this.playAnimation("exit")},_onNeonAnimationFinish:function(){this.opened?this._finishRenderOpened():this._finishRenderClosed()}})}();</script>
+<script>!function(){Polymer({is:"paper-dialog",behaviors:[Polymer.PaperDialogBehavior,Polymer.NeonAnimationRunnerBehavior],listeners:{"neon-animation-finish":"_onNeonAnimationFinish"},_renderOpened:function(){this.cancelAnimation(),this.playAnimation("entry")},_renderClosed:function(){this.cancelAnimation(),this.playAnimation("exit")},_onNeonAnimationFinish:function(){this.opened?this._finishRenderOpened():this._finishRenderClosed()}})}();</script>
 </body></html>

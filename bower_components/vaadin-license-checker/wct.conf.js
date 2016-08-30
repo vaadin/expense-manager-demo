@@ -1,1 +1,0 @@
-module.exports={verbose:!1,testTimeout:3e5,plugins:{sauce:{disabled:!0,browsers:["Windows 8.1/internet explorer","Windows 8.1/chrome","Windows 8.1/firefox","OS X 10.10/safari"]}}};

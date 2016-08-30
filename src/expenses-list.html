@@ -6,22 +6,123 @@
 
 </head><body><dom-module id="expenses-list">
   <template>
-    <style>:host{position:relative;display:flex;flex-direction:column;background:#fff;}#add-button{position:absolute;right:32px;bottom:32px;z-index:2;}@media (max-width: 1124px){#add-button{bottom:-28px;}}@media (min-width: 1125px){#add-button{bottom:auto;top:-29px;}}@media (max-width: 900px){#add-button{bottom:32px;}}#expenses{flex:1;color:var(--primary-text-color);}@media (max-width: 1124px){#expenses{font-size:15px;}}#expenses /deep/ thead.vaadin-grid-header{box-shadow:0 -9px 2px 10px rgba(0, 0, 0, 0.1), 0 -8px 3px 10px rgba(204, 204, 204, 0.20);}#expenses /deep/ thead.vaadin-grid-header th{text-transform:uppercase;font-size:12px;font-weight:500;color:var(--primary-text-color);}vaadin-grid /deep/ .total{flex-direction:row-reverse;}vaadin-grid /deep/ td.status-new{color:var(--accent-color);font-weight:500;}vaadin-grid /deep/ td.status-in_progress{font-weight:500;font-style:italic;text-transform:capitalize;}vaadin-grid /deep/ td.comment{position:relative;}vaadin-grid /deep/ td.comment span{width:100%;position:absolute;top:50%;transform:translateY(-50%);padding-right:35px;box-sizing:border-box;}#expenses /deep/ .vaadin-grid-header [class*="sort-"]:after{content:"";border-width:5px;border-style:solid;border-color:transparent;width:0;padding:0;min-width:0;margin:0 10px;}#expenses /deep/ .vaadin-grid-header.vaadin-grid .sort-desc.vaadin-grid:after{border-top-color:var(--accent-color);transform:translateY(25%);}#expenses /deep/ .vaadin-grid-header.vaadin-grid .sort-asc.vaadin-grid:after{border-bottom-color:var(--accent-color);transform:translateY(-25%);}</style>
+    <style>
+      :host {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+      }
+
+      #add-button {
+        position: absolute;
+        right: 32px;
+        bottom: 32px;
+        z-index: 2;
+      }
+
+      @media (max-width: 1124px) {
+        #add-button {
+          bottom: -28px;
+        }
+      }
+
+      @media (min-width: 1125px) {
+        #add-button {
+          bottom: auto;
+          top: -29px;
+        }
+      }
+
+      @media (max-width: 900px) {
+        #add-button {
+          bottom: 32px;
+        }
+      }
+
+      #expenses {
+        flex: 1;
+        color: var(--primary-text-color);
+      }
+
+      @media (max-width: 1124px) {
+        #expenses {
+          font-size: 15px;
+        }
+      }
+
+      #expenses /deep/ thead.vaadin-grid-header {
+        box-shadow: 0 -9px 2px 10px rgba(0, 0, 0, 0.1), 0 -8px 3px 10px rgba(204, 204, 204, 0.20);
+      }
+
+      #expenses th {
+        text-transform: uppercase;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--primary-text-color);
+      }
+
+      #expenses  .total {
+        flex-direction: row-reverse;
+      }
+
+      #expenses  .status-new {
+        color: var(--accent-color);
+        font-weight: 500;
+      }
+
+      #expenses .status-in_progress {
+        font-weight: 500;
+        font-style: italic;
+        text-transform: capitalize;
+      }
+
+      #expenses  .comment {
+        position: relative;
+      }
+
+      #expenses .comment span {
+        width: 100%;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        padding-right: 35px;
+        box-sizing: border-box;
+      }
+
+      #expenses vaadin-grid-column > div {
+        padding: 16px;
+        cursor: pointer;
+      }
+
+    </style>
 
 
-    <vaadin-grid id="expenses" frozen-columns="1">
-      <table>
-        <colgroup>
-          <col name="date" width="120" sortable="" sort-direction="desc">
-          <col name="merchant" flex="1" min-width="145" sortable="">
-          <col name="total" width="90" sortable="">
-          <col name="status" width="120" sortable="">
-          <col name="comment" flex="2" min-width="260" sortable="">
-        </colgroup>
-      </table>
-    </vaadin-grid>
-    <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
+    <vaadin-grid id="expenses" frozen-columns="1" on-cell-click="_cellClick" size="50">
+      <vaadin-grid-column width="120px">
+        <template is="header">Date</template>
+  <template>[[_formatDate(item.date)]]</template>
+  </vaadin-grid-column>
+  <vaadin-grid-column width="145px">
+    <template is="header">Merchant</template>
+    <template>[[item.merchant]]</template>
+  </vaadin-grid-column>
+  <vaadin-grid-column width="90px">
+    <template is="header">Total</template>
+    <template><span class="total">[[_formatMoney(item.total)]]</span></template>
+  </vaadin-grid-column>
+  <vaadin-grid-column width="120px">
+    <template is="header">Status</template>
+    <template><span class$="[[_getStatusClass(item.status)]]">[[item.status]]</span></template>
+  </vaadin-grid-column>
+  <vaadin-grid-column width="260px" flex="2">
+    <template is="header">Comment</template>
+    <template><span class="comment">[[item.comment]]</span></template>
+  </vaadin-grid-column>
+  </vaadin-grid>
+  <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
+
   </template>
-  <script>!function(){"use strict";Polymer({is:"expenses-list",properties:{expenses:Array,sortColumn:String,sortDirection:String,filters:Object},observers:["_update(filters, expenses)","_filtersChanged(filters.*)","_update(expenses.*)","_update(sortColumn)","_update(sortDirection)"],ready:function(){var e=this.$.expenses;e.addEventListener("sort-order-changed",function(){e.size>0&&(e.scrollToStart(),this._update())}.bind(this)),e.addEventListener("selected-items-changed",function(){var t=e.selection.selected();1===t.length&&e.getItem(t[0],function(e,t){this.fire("edit-expense",t)}.bind(this))}.bind(this)),e.cellClassGenerator=function(e){return"status"===e.columnName?"status-"+e.data.replace(/ /g,"-").toLowerCase():"total"===e.columnName?"total":"comment"===e.columnName?"comment":void 0},e.then(function(){e.columns[0].renderer=function(e){e.element.innerHTML=moment(e.data).format("MM/DD/YYYY")},e.columns[2].renderer=function(e){e.element.innerHTML="$"+e.data.toFixed(2)},e.columns[3].renderer=function(e){var t=e.data.replace(/_/g," ");t=t.charAt(0).toUpperCase()+t.slice(1),e.element.textContent=t},e.header.getCell(0,2).className="total"})},_showExpenseEditor:function(){this.fire("edit-expense",{})},_filtersChanged:function(){this.$.expenses.items&&this.debounce("_filtersChanged",function(){this._update()},300)},_update:function(){if(this.filters){var e,t,n=this.$.expenses,r=this.filters.merchant,s=this.filters.min,i=this.filters.max,o=this.filters.status,a=this.filters.start,l=this.filters.end;n.sortOrder&&n.sortOrder[0]&&(e=n.columns[n.sortOrder[0].column].name,t=n.sortOrder[0].direction);var c=this.expenses.filter(function(e){return!(r&&e.merchant.toUpperCase().indexOf(r.toUpperCase())<0)}).filter(function(e){return!(s&&e.total<s)}).filter(function(e){return!(i&&e.total>i)}).filter(function(e){return o&&o.length>0?o.indexOf(e.status)>=0:!1}).filter(function(e){if(a){var t=moment(a);return!(!t.isValid()||!moment(e.date).isAfter(t))}return!0}).filter(function(e){if(l){var t=moment(l);return!(!t.isValid()||!moment(e.date).isBefore(t))}return!0});if(e){var u=e,f=t||"desc",d=/^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/;c.sort(function(e,t){var n;return n=isNaN(e[u])?d.test(e[u])?moment(e[u]).isBefore(moment(t[u]))?1:-1:e[u].localeCompare(t[u]):parseInt(e[u],10)-parseInt(t[u],10),"desc"===f&&(n*=-1),n})}n.items=c}}})}();</script>
+  <script>!function(){"use strict";Polymer({is:"expenses-list",properties:{expenses:Array,sortColumn:String,sortDirection:String,filters:Object},observers:["_update(filters, expenses)","_filtersChanged(filters.*)","_update(expenses.*)","_update(sortColumn)","_update(sortDirection)"],_formatDate:function(e){return moment(e).format("MM/DD/YYYY")},_formatMoney:function(e){return"$"+e.toFixed(2)},_getStatusClass:function(e){return"status-"+e.replace(/ /g,"-").toLowerCase()},_showExpenseEditor:function(){this.fire("edit-expense",{})},_cellClick:function(e){console.log("Cell clicked!"),this.fire("edit-expense",e.detail.model.item)},_filtersChanged:function(){this.$.expenses.items&&this.debounce("_filtersChanged",function(){this._update()},300)},_update:function(){if(this.filters){var e=this.$.expenses,t=this.filters.merchant,r=this.filters.min,i=this.filters.max,n=this.filters.status,s=this.filters.start,o=this.filters.end,a="date",f="desc";e.sortOrder&&e.sortOrder[0]&&(a=e.columns[e.sortOrder[0].column].name,f=e.sortOrder[0].direction);var l=this.expenses.filter(function(e){return!(t&&e.merchant.toUpperCase().indexOf(t.toUpperCase())<0)}).filter(function(e){return!(r&&e.total<r)}).filter(function(e){return!(i&&e.total>i)}).filter(function(e){return!!(n&&n.length>0)&&n.indexOf(e.status)>=0}).filter(function(e){if(s){var t=moment(s);return!(!t.isValid()||!moment(e.date).isAfter(t))}return!0}).filter(function(e){if(o){var t=moment(o);return!(!t.isValid()||!moment(e.date).isBefore(t))}return!0});if(a){var u=a,c=f||"desc",d=/^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/;l.sort(function(e,t){var r;return r=isNaN(e[u])?d.test(e[u])?moment(e[u]).isBefore(moment(t[u]))?1:-1:e[u].localeCompare(t[u]):parseInt(e[u],10)-parseInt(t[u],10),"desc"===c&&(r*=-1),r})}l.length>0&&(e.dataSource=function(e,t){var r=e.page*e.pageSize,i=Math.min(r+e.pageSize,l.length);t(l.slice(r,i))},e.size!==l.length?e.size=l.length:e.clearCache())}}})}();</script>
 </dom-module>
 </body></html>

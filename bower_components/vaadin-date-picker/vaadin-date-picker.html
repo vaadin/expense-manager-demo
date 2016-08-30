@@ -6,38 +6,131 @@
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../paper-ripple/paper-ripple.html">
 <link rel="import" href="../iron-media-query/iron-media-query.html">
-<link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
-<link rel="import" href="../iron-validatable-behavior/iron-validatable-behavior.html">
-<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
 <link rel="import" href="vaadin-date-picker-overlay.html">
+<link rel="import" href="vaadin-date-picker-behavior.html">
 
 </head><body><dom-module id="vaadin-date-picker">
   <template>
-    <style>:host{display:block;}#dropdown:not([fullscreen]){padding:12px 0 10px 0;}#overlay{height:100vh;width:420px;}#inputcontainer{padding-bottom:0;}#inputcontainer,
-      #inputcontainer input{cursor:pointer;}#inputcontainer:focus{outline:none;}paper-input-container div[suffix]{position:absolute;right:-4px;bottom:-4px;width:24px;height:24px;padding:4px;text-align:center;}paper-input-container iron-icon{fill:rgba(0, 0, 0, .26);cursor:pointer;--iron-icon-width:20px;--iron-icon-height:20px;margin-top:-1px;transition:fill 0.2s;}paper-input-container paper-ripple{color:rgba(0, 0, 0, .54);}paper-input-container[opened]{--paper-input-container-underline-focus:{-webkit-transform:none;transform:none;};}paper-input-container iron-icon:hover,
-      paper-input-container[opened] iron-icon{fill:rgba(0, 0, 0, .54);}paper-input-container[opened] iron-icon:hover{fill:rgba(0, 0, 0, .86);}#input{pointer-events:none;}#clear{right:28px;}#clear iron-icon{@apply (--vaadin-date-picker-clear-icon);}#calendar iron-icon{@apply (--vaadin-date-picker-calendar-icon);}[hideclear] #clear{display:none;}#input{box-sizing:border-box;padding-right:28px;}#inputcontainer[opened]:not([hideclear]) #input{padding-right:60px;margin-right:-32px;}</style>
+    <style>
+      :host {
+        display: block;
+      }
 
-    <paper-input-container id="inputcontainer" hideclear$="[[_hideClearIcon(_selectedDate, _opened, _fullscreen)]]" invalid="[[invalid]]" tabindex$="[[_getTabIndex(disabled)]]" on-touchend="_preventDefault" on-tap="open" on-keydown="_onKeydown" disabled$="[[disabled]]" opened$="[[_opened]]" auto-validate$="[[autoValidate]]">
+      #overlay {
+        height: 100vh;
+        width: 420px;
+      }
+
+      #inputcontainer {
+        padding-bottom: 0;
+      }
+
+      #inputcontainer,
+      #inputcontainer input {
+        cursor: pointer;
+      }
+
+      #inputcontainer:focus {
+        outline: none;
+      }
+
+      paper-input-container div[suffix] {
+        position: absolute;
+        right: -4px;
+        bottom: -4px;
+        width: 24px;
+        height: 24px;
+        padding: 4px;
+        text-align: center;
+      }
+
+      paper-input-container iron-icon {
+        fill: rgba(0, 0, 0, .26);
+        cursor: pointer;
+        --iron-icon-width: 20px;
+        --iron-icon-height: 20px;
+        margin-top: -1px;
+        transition: fill 0.2s;
+      }
+
+      paper-input-container paper-ripple {
+        color: rgba(0, 0, 0, .54);
+      }
+
+      :host([opened]) paper-input-container {
+        --paper-input-container-underline-focus: {
+          -webkit-transform: none;
+          transform: none;
+        }
+      }
+
+      paper-input-container iron-icon:hover,
+      :host([opened]) paper-input-container iron-icon {
+        fill: rgba(0, 0, 0, .54);
+      }
+
+      :host([opened]) paper-input-container iron-icon:hover {
+        fill: rgba(0, 0, 0, .86);
+      }
+
+      #input {
+        pointer-events: none;
+      }
+
+      #clear {
+        right: 28px;
+      }
+
+      #clear iron-icon {
+        @apply(--vaadin-date-picker-clear-icon);
+      }
+
+      #calendar iron-icon {
+        @apply(--vaadin-date-picker-calendar-icon);
+      }
+
+      :host([disabled]) #calendar,
+      :host([readonly]) #calendar,
+      :host(:not([opened])) #clear,
+      :host(:not([has-value])) #clear,
+      :host([readonly]) #clear,
+      :host([disabled]) #clear {
+        display: none;
+      }
+
+      #input {
+        box-sizing: border-box;
+        padding-right: 28px;
+      }
+
+      :host([opened][has-value]) #input {
+        padding-right: 60px;
+        margin-right: -32px;
+      }
+    </style>
+
+    <paper-input-container id="inputcontainer" auto-validate$="[[autoValidate]]" tabindex$="[[_tabindex(disabled)]]" invalid$="[[invalid]]" disabled$="[[disabled]]">
       <label id="label">[[label]]</label>
-      <input id="input" is="iron-input" autocomplete="off" bind-value="[[_formatDisplayed(_selectedDate, i18n.formatDate)]]" type="text" invalid="{{invalid}}" name$="[[name]]" required$="[[required]]" tabindex="-1" on-focus="_focusInputContainer" validator="[[validator]]" readonly$="[[readonly]]" disabled$="[[disabled]]">
-
+      <input id="input" is="iron-input" autocomplete="off" tabindex="-1" type="text" on-focus="_focus" name$="[[name]]" invalid="{{invalid}}" required$="[[required]]" validator="[[validator]]" readonly$="[[readonly]]" disabled$="[[disabled]]">
       <div suffix="" id="clear" on-tap="_clear">
         <iron-icon icon="clear"></iron-icon>
         <paper-ripple class="circle" center=""></paper-ripple>
       </div>
-
-      <div suffix="" id="calendar" on-tap="_toggle" hidden$="[[_hideCalendarIcon(disabled, readonly)]]">
+      <div suffix="" id="calendar" on-tap="_toggle">
         <iron-icon icon="event"></iron-icon>
         <paper-ripple class="circle" center=""></paper-ripple>
       </div>
     </paper-input-container>
 
-    <iron-dropdown id="dropdown" fullscreen$="[[_fullscreen]]" allow-outside-scroll="" on-iron-overlay-opened="_onOverlayOpened" on-iron-overlay-closed="_onOverlayClosed" on-iron-overlay-canceled="_preventCancelOnComponentAccess" opened="{{_opened}}">
-      <vaadin-date-picker-overlay id="overlay" i18n="[[i18n]]" fullscreen$="[[_fullscreen]]" label="[[label]]" on-date-tap="close" selected-date="{{_selectedDate}}" class="dropdown-content" on-close="close" focused-date="[[focusedDate]]" tabindex="-1"></vaadin-date-picker-overlay>
+    <iron-dropdown id="dropdown" fullscreen$="[[_fullscreen]]" allow-outside-scroll="" on-iron-overlay-opened="_onOverlayOpened" on-iron-overlay-closed="_onOverlayClosed" on-iron-overlay-canceled="_preventCancelOnComponentAccess" opened="{{opened}}">
+      <vaadin-date-picker-overlay id="overlay" i18n="[[i18n]]" fullscreen$="[[_fullscreen]]" label="[[label]]" on-date-tap="close" selected-date="{{_selectedDate}}" class="dropdown-content" on-close="close" focused-date="[[focusedDate]]" tabindex="-1">
+      </vaadin-date-picker-overlay>
     </iron-dropdown>
 
-    <iron-media-query query="[[_fullscreenMediaQuery]]" query-matches="{{_fullscreen}}"></iron-media-query>
+    <iron-media-query query="[[_fullscreenMediaQuery]]" query-matches="{{_fullscreen}}">
+    </iron-media-query>
   </template>
-  <script>Polymer({is:"vaadin-date-picker",behaviors:[Polymer.IronFormElementBehavior,Polymer.IronValidatableBehavior],properties:{_selectedDate:{type:Date,observer:"_selectedDateChanged"},value:{type:String,observer:"_valueChanged"},initialPosition:String,label:String,_opened:Boolean,_fullscreen:{value:!1,observer:"_fullscreenChanged"},_fullscreenMediaQuery:{value:"(max-width: 420px), (max-height: 420px)"},_touchPrevented:Array,i18n:{type:Object,value:function(){return{monthNames:["January","February","March","April","May","June","July","August","September","October","November","December"],weekdaysShort:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],firstDayOfWeek:0,today:"Today",cancel:"Cancel",formatDate:function(e){return e.getMonth()+1+"/"+e.getDate()+"/"+e.getFullYear()},formatTitle:function(e,t){return e+" "+t}}}},disabled:{type:Boolean,value:!1},readonly:{type:Boolean,value:!1}},created:function(){this._boundOnScroll=this._onScroll.bind(this)},ready:function(){void 0===this.value&&(this.value="")},open:function(e){this._updateAlignmentAndPosition(),this.disabled||this.readonly||this.$.dropdown.open()},close:function(){this.$.dropdown.close()},_parseDate:function(e){var t=/^(\d{4}|[-+]\d{6})-(\d{2})-(\d{2})$/.exec(e);if(t){var n=new Date(0,0);return n.setFullYear(parseInt(t[1],10)),n.setMonth(parseInt(t[2],10)-1),n.setDate(parseInt(t[3],10)),n}},_formatISO:function(e){return e instanceof Date?new Date(e.getTime()-6e4*e.getTimezoneOffset()).toISOString().split("T")[0]:""},_formatDisplayed:function(e,t){return e?t(e):void 0},_selectedDateChanged:function(e){this.value=this._formatISO(e)},_valueChanged:function(e,t){if(!e)return void(this._selectedDate=null);var n=this._parseDate(e);return n?void(this._selectedDate instanceof Date&&n.getFullYear()===this._selectedDate.getFullYear()&&n.getMonth()===this._selectedDate.getMonth()&&n.getDate()===this._selectedDate.getDate()||(this._selectedDate=n)):void(this.value=t)},_updateAlignmentAndPosition:function(){var e=Math.max(document.documentElement.clientWidth,window.innerWidth||0);this.$.dropdown.verticalOffset=this._fullscreen?0:this.clientHeight-10,this.$.dropdown.positionTarget=this._fullscreen?document.documentElement:this;var t=Math.max(document.documentElement.clientHeight,window.innerHeight||0),n=this.getBoundingClientRect().top>t/2,i=this.getBoundingClientRect().left+this.clientWidth/2>e/2;this.$.dropdown.verticalAlign=n?"bottom":"top",this.$.dropdown.horizontalAlign=this._fullscreen?null:i?"right":"left",this.$.dropdown.refit()},_fullscreenChanged:function(){this.$.dropdown.opened&&this._updateAlignmentAndPosition()},_onOverlayOpened:function(){this.$.overlay.initialPosition=this._selectedDate||this.$.overlay.initialPosition||this._parseDate(this.initialPosition)||new Date,this.$.overlay.scrollToDate(this.$.overlay.focusedDate||this.$.overlay.initialPosition),window.addEventListener("scroll",this._boundOnScroll,!0),window.addEventListener("resize",this._boundOnScroll,!0),""===document.createElement("div").style.webkitOverflowScrolling&&(this._touchPrevented=this._preventWebkitOverflowScrollingTouch(this.parentElement)),this.$.overlay.focus(),this.updateStyles()},_preventWebkitOverflowScrollingTouch:function(e){for(var t=[];e;){if("touch"===window.getComputedStyle(e).webkitOverflowScrolling){var n=e.style.webkitOverflowScrolling;e.style.webkitOverflowScrolling="auto",t.push({element:e,oldInlineValue:n})}e=e.parentElement}return t},_onOverlayClosed:function(){window.removeEventListener("scroll",this._boundOnScroll,!0),window.removeEventListener("resize",this._boundOnScroll,!0),this.$.inputcontainer.focus(),this._touchPrevented&&(this._touchPrevented.forEach(function(e){e.element.style.webkitOverflowScrolling=e.oldInlineValue}),this._touchPrevented=[]),this.updateStyles()},detached:function(){this._onOverlayClosed()},_onScroll:function(e){e.target!==window&&this.$.overlay.contains(e.target)||(this.$.dropdown.style.bottom="auto",this.$.dropdown.resetFit(),this._updateAlignmentAndPosition(),this.$.dropdown.fire("iron-resize"))},_toggle:function(e){e.stopPropagation(),this[this.$.dropdown.opened?"close":"open"]()},_preventCancelOnComponentAccess:function(e){var t=Polymer.dom(e.detail);/tap|mousedown|touchstart/.test(e.detail.type)&&t.path.indexOf(this)>-1&&e.preventDefault()},_hideClearIcon:function(e,t,n){return!e||!t||n},_hideCalendarIcon:function(e,t){return t||e},_clear:function(e){e.stopPropagation(),this.value="",this.close()},_getValidity:function(){return this.$.input.validate()},_focusInputContainer:function(){this.$.inputcontainer.focus()},_preventDefault:function(e){e.preventDefault()},_eventKey:function(e){for(var t=["down","up"],n=0;n<t.length;n++){var i=t[n];if(Polymer.IronA11yKeysBehavior.keyboardEventMatchesKeys(e,i))return i}},_onKeydown:function(e){switch(this._eventKey(e)){case"down":case"up":e.preventDefault(),this._opened||this.open()}},_getTabIndex:function(e){return e?-1:0}});</script>
+
+  <script>Polymer({is:"vaadin-date-picker",behaviors:[vaadin.elements.datepicker.DatePickerBehavior],properties:{autoValidate:{type:Boolean,value:!1},disabled:{type:Boolean,value:!1,reflectToAttribute:!0},readonly:{type:Boolean,value:!1,reflectToAttribute:!0}},_getValidity:function(){return this.inputElement.validate()},_clear:function(e){e.stopPropagation(),this.value="",this.close()},_toggle:function(e){e.stopPropagation(),this[this.$.dropdown.opened?"close":"open"]()},_tabindex:function(e){return e?-1:0},_input:function(){return this.$.input},set _inputValue(e){this.inputElement.bindValue=e},get _inputValue(){return this.inputElement.bindValue}});</script>
 </dom-module>
 </body></html>

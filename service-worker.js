@@ -24,92 +24,91 @@
 /* eslint-disable indent, no-unused-vars, no-multiple-empty-lines, max-nested-callbacks, space-before-function-paren */
 'use strict';
 
+
+
+
+
 /* eslint-disable quotes, comma-spacing */
-var PrecacheConfig = [
-  ['bower_components/webcomponentsjs/webcomponents-lite.min.js',
-    'a1882f82ebfc212658591b4e817d8e03'
-  ],
-  ['images/default-receipt.png', '14ef509ae3504333529fc5686906de39'],
-  ['index.html', 'a64bed4c2b49a389b18b434c7c5a0917'],
-  ['manifest.json', '9e43914aa202ed4d72ec02718281f030'],
-  ['src/expense-app.html', '6dcd747aceb0a5c1849a4adf357d1c69'],
-  ['src/overview-page.html', '45b0df42186c09bee21fbff6d51f9deb']
-];
+var PrecacheConfig = [["/index.html","7fbe4f2fcfd4247521a2a4983bd266b9"],["/src/expense-app.html","1edc88bf7184f34767637c77ee2447ab"],["/src/overview-page.html","97c75055ecf1523b662b4e6287fe6726"]];
 /* eslint-enable quotes, comma-spacing */
 var CacheNamePrefix = 'sw-precache-v1--' + (self.registration ? self.registration.scope : '') + '-';
 
+
 var IgnoreUrlParametersMatching = [/^utm_/];
 
-var addDirectoryIndex = function(originalUrl, index) {
-  var url = new URL(originalUrl);
-  if (url.pathname.slice(-1) === '/') {
-    url.pathname += index;
-  }
-  return url.toString();
-};
 
-var getCacheBustedUrl = function(url, param) {
-  param = param || Date.now();
 
-  var urlWithCacheBusting = new URL(url);
-  urlWithCacheBusting.search += (urlWithCacheBusting.search ? '&' : '') +
-    'sw-precache=' + param;
-
-  return urlWithCacheBusting.toString();
-};
-
-var isPathWhitelisted = function(whitelist, absoluteUrlString) {
-  // If the whitelist is empty, then consider all URLs to be whitelisted.
-  if (whitelist.length === 0) {
-    return true;
-  }
-
-  // Otherwise compare each path regex to the path of the URL passed in.
-  var path = (new URL(absoluteUrlString)).pathname;
-  return whitelist.some(function(whitelistedPathRegex) {
-    return path.match(whitelistedPathRegex);
-  });
-};
-
-var populateCurrentCacheNames = function(precacheConfig,
-  cacheNamePrefix, baseUrl) {
-  var absoluteUrlToCacheName = {};
-  var currentCacheNamesToAbsoluteUrl = {};
-
-  precacheConfig.forEach(function(cacheOption) {
-    var absoluteUrl = new URL(cacheOption[0], baseUrl).toString();
-    var cacheName = cacheNamePrefix + absoluteUrl + '-' + cacheOption[1];
-    currentCacheNamesToAbsoluteUrl[cacheName] = absoluteUrl;
-    absoluteUrlToCacheName[absoluteUrl] = cacheName;
-  });
-
-  return {
-    absoluteUrlToCacheName: absoluteUrlToCacheName,
-    currentCacheNamesToAbsoluteUrl: currentCacheNamesToAbsoluteUrl
+var addDirectoryIndex = function (originalUrl, index) {
+    var url = new URL(originalUrl);
+    if (url.pathname.slice(-1) === '/') {
+      url.pathname += index;
+    }
+    return url.toString();
   };
-};
 
-var stripIgnoredUrlParameters = function(originalUrl,
-  ignoreUrlParametersMatching) {
-  var url = new URL(originalUrl);
+var getCacheBustedUrl = function (url, param) {
+    param = param || Date.now();
 
-  url.search = url.search.slice(1) // Exclude initial '?'
-    .split('&') // Split into an array of 'key=value' strings
-    .map(function(kv) {
-      return kv.split('='); // Split each 'key=value' string into a [key, value] array
-    })
-    .filter(function(kv) {
-      return ignoreUrlParametersMatching.every(function(ignoredRegex) {
-        return !ignoredRegex.test(kv[0]); // Return true iff the key doesn't match any of the regexes.
-      });
-    })
-    .map(function(kv) {
-      return kv.join('='); // Join each [key, value] array into a 'key=value' string
-    })
-    .join('&'); // Join the array of 'key=value' strings into a string with '&' in between each
+    var urlWithCacheBusting = new URL(url);
+    urlWithCacheBusting.search += (urlWithCacheBusting.search ? '&' : '') +
+      'sw-precache=' + param;
 
-  return url.toString();
-};
+    return urlWithCacheBusting.toString();
+  };
+
+var isPathWhitelisted = function (whitelist, absoluteUrlString) {
+    // If the whitelist is empty, then consider all URLs to be whitelisted.
+    if (whitelist.length === 0) {
+      return true;
+    }
+
+    // Otherwise compare each path regex to the path of the URL passed in.
+    var path = (new URL(absoluteUrlString)).pathname;
+    return whitelist.some(function(whitelistedPathRegex) {
+      return path.match(whitelistedPathRegex);
+    });
+  };
+
+var populateCurrentCacheNames = function (precacheConfig,
+    cacheNamePrefix, baseUrl) {
+    var absoluteUrlToCacheName = {};
+    var currentCacheNamesToAbsoluteUrl = {};
+
+    precacheConfig.forEach(function(cacheOption) {
+      var absoluteUrl = new URL(cacheOption[0], baseUrl).toString();
+      var cacheName = cacheNamePrefix + absoluteUrl + '-' + cacheOption[1];
+      currentCacheNamesToAbsoluteUrl[cacheName] = absoluteUrl;
+      absoluteUrlToCacheName[absoluteUrl] = cacheName;
+    });
+
+    return {
+      absoluteUrlToCacheName: absoluteUrlToCacheName,
+      currentCacheNamesToAbsoluteUrl: currentCacheNamesToAbsoluteUrl
+    };
+  };
+
+var stripIgnoredUrlParameters = function (originalUrl,
+    ignoreUrlParametersMatching) {
+    var url = new URL(originalUrl);
+
+    url.search = url.search.slice(1) // Exclude initial '?'
+      .split('&') // Split into an array of 'key=value' strings
+      .map(function(kv) {
+        return kv.split('='); // Split each 'key=value' string into a [key, value] array
+      })
+      .filter(function(kv) {
+        return ignoreUrlParametersMatching.every(function(ignoredRegex) {
+          return !ignoredRegex.test(kv[0]); // Return true iff the key doesn't match any of the regexes.
+        });
+      })
+      .map(function(kv) {
+        return kv.join('='); // Join each [key, value] array into a 'key=value' string
+      })
+      .join('&'); // Join the array of 'key=value' strings into a string with '&' in between each
+
+    return url.toString();
+  };
+
 
 var mappings = populateCurrentCacheNames(PrecacheConfig, CacheNamePrefix, self.location);
 var AbsoluteUrlToCacheName = mappings.absoluteUrlToCacheName;
@@ -145,9 +144,8 @@ self.addEventListener('install', function(event) {
             var urlWithCacheBusting = getCacheBustedUrl(
               CurrentCacheNamesToAbsoluteUrl[cacheName], cacheBustParam);
 
-            var request = new Request(urlWithCacheBusting, {
-              credentials: 'same-origin'
-            });
+            var request = new Request(urlWithCacheBusting,
+              {credentials: 'same-origin'});
             return fetch(request).then(function(response) {
               if (response.ok) {
                 return cache.put(CurrentCacheNamesToAbsoluteUrl[cacheName],
@@ -168,9 +166,10 @@ self.addEventListener('install', function(event) {
         return Promise.all(allCacheNames.filter(function(cacheName) {
           return cacheName.indexOf(CacheNamePrefix) === 0 &&
             !(cacheName in CurrentCacheNamesToAbsoluteUrl);
-        }).map(function(cacheName) {
-          return caches.delete(cacheName);
-        }));
+          }).map(function(cacheName) {
+            return caches.delete(cacheName);
+          })
+        );
       });
     }).then(function() {
       if (typeof self.skipWaiting === 'function') {
@@ -204,6 +203,7 @@ self.addEventListener('message', function(event) {
   }
 });
 
+
 self.addEventListener('fetch', function(event) {
   if (event.request.method === 'GET') {
     var urlWithoutIgnoredParameters = stripIgnoredUrlParameters(event.request.url,
@@ -212,8 +212,7 @@ self.addEventListener('fetch', function(event) {
     var cacheName = AbsoluteUrlToCacheName[urlWithoutIgnoredParameters];
     var directoryIndex = 'index.html';
     if (!cacheName && directoryIndex) {
-      urlWithoutIgnoredParameters = addDirectoryIndex(urlWithoutIgnoredParameters,
-        directoryIndex);
+      urlWithoutIgnoredParameters = addDirectoryIndex(urlWithoutIgnoredParameters, directoryIndex);
       cacheName = AbsoluteUrlToCacheName[urlWithoutIgnoredParameters];
     }
 
@@ -223,10 +222,10 @@ self.addEventListener('fetch', function(event) {
     // https://code.google.com/p/chromium/issues/detail?id=540967
     // https://bugzilla.mozilla.org/show_bug.cgi?id=1209081
     if (!cacheName && navigateFallback && event.request.headers.has('accept') &&
-      event.request.headers.get('accept').includes('text/html') &&
-      /* eslint-disable quotes, comma-spacing */
-      isPathWhitelisted([], event.request.url)) {
-      /* eslint-enable quotes, comma-spacing */
+        event.request.headers.get('accept').includes('text/html') &&
+        /* eslint-disable quotes, comma-spacing */
+        isPathWhitelisted([], event.request.url)) {
+        /* eslint-enable quotes, comma-spacing */
       var navigateFallbackUrl = new URL(navigateFallback, self.location);
       cacheName = AbsoluteUrlToCacheName[navigateFallbackUrl.toString()];
     }
@@ -246,11 +245,14 @@ self.addEventListener('fetch', function(event) {
             });
           });
         }).catch(function(e) {
-          console.warn('Couldn\'t serve response for "%s" from cache: %O', event.request.url,
-            e);
+          console.warn('Couldn\'t serve response for "%s" from cache: %O', event.request.url, e);
           return fetch(event.request);
         })
       );
     }
   }
 });
+
+
+
+

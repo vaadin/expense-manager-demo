@@ -1,0 +1,148 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+<link rel="import" href="../iron-scroll-target-behavior/iron-scroll-target-behavior.html">
+<link rel="import" href="vaadin-grid-scroll-behavior.html">
+<link rel="import" href="vaadin-grid-sizer.html">
+<link rel="import" href="vaadin-grid-outer-scroller.html">
+<link rel="import" href="vaadin-grid-header.html">
+<link rel="import" href="vaadin-grid-footer.html">
+<link rel="import" href="vaadin-grid-edge-behavior.html">
+<link rel="import" href="vaadin-grid-cell.html">
+<link rel="import" href="vaadin-grid-row.html">
+<link rel="import" href="vaadin-grid-row-details-behavior.html">
+<link rel="import" href="vaadin-grid-data-source-behavior.html">
+<link rel="import" href="vaadin-grid-selection-behavior.html">
+<link rel="import" href="iron-list-behavior.html">
+
+</head><body><dom-module id="vaadin-grid-scroller">
+  <template>
+    <style include="scroll-styles"></style>
+    <style include="vaadin-grid-edge-styles"></style>
+    <style include="row-details-styles"></style>
+    <style include="vaadin-grid-data-source-styles"></style>
+    <style include="selection-styles"></style>
+
+    <style>
+      :host {
+        display: block;
+        position: relative;
+      }
+
+      @media only screen and (-webkit-max-device-pixel-ratio: 1) {
+        :host {
+          will-change: transform;
+        }
+      }
+
+      #items {
+        @apply(--iron-list-items-container);
+        position: relative;
+      }
+
+      :host(:not([grid])) #items > ::content > * {
+        width: 100%;
+      };
+
+      #items > tr {
+        box-sizing: border-box;
+        margin: 0;
+        position: absolute;
+        /* iron-list expects top to be 0. Might cause issues */
+        /*top: 0;*/
+        will-change: transform;
+      }
+
+      table {
+        height: 100%;
+        width: 100%;
+        display: block;
+        overflow: auto;
+        box-sizing: border-box;
+        background: #fff;
+      }
+
+      table[overflow-hidden] {
+        overflow: hidden;
+      }
+
+      tbody {
+        display: block;
+      }
+
+      thead th,
+      tfoot td {
+        top: 0;
+        background-color: #fff;
+        font-weight: 500;
+      }
+
+      td, th {
+        background-color: #fff;
+
+        /* Bootstrap adds 8px padding to each cell, IE flexbasis ignores border-box so need to revert */
+        padding: 0 !important;
+      }
+
+      tr:hover td {
+        /*background-color: lightgrey;*/
+      }
+
+      tr:not([hidden]) {
+        display: flex;
+        width: 100%;
+      }
+
+      [frozen] {
+        z-index: 1;
+      }
+
+      caption {
+        position: absolute;
+        display: block;
+        padding: 0;
+        width: 100%;
+        z-index: -100;
+      }
+
+      /* Theme styles */
+      thead tr:last-child th {
+        border-bottom: 1px solid var(--vaadin-grid-border-color);
+      }
+      tfoot tr:first-child td {
+        border-top: 1px solid var(--vaadin-grid-border-color);
+      }
+
+      td, th {
+        border-bottom: 1px solid var(--vaadin-grid-border-color);
+        text-align: left;
+      }
+
+      tr[odd] td {
+        /*background-color: #f9f9f9;*/
+      }
+
+      [last-frozen] {
+        border-right: 1px solid var(--vaadin-grid-border-color);
+      }
+    </style>
+
+    <table id="table" class="table table-striped" overflow-hidden$="[[_hideTableOverflow(scrollbarWidth, safari)]]">
+      <caption>
+        <div is="vaadin-grid-sizer" scroll-height="[[_estScrollHeight]]" columns="[[columns]]">
+        </div>
+      </caption>
+      <thead id="header" is="vaadin-grid-header" columns="[[columns]]" frozen-columns="[[frozenColumns]]"></thead>
+      <tbody id="items"></tbody>
+      <tfoot id="footer" is="vaadin-grid-footer" columns="[[columns]]" frozen-columns="[[frozenColumns]]"></tfoot>
+    </table>
+
+    <vaadin-grid-outer-scroller id="outerscroller" scroll-target="[[scrollTarget]]" hidden="[[_hideOuterScroller(scrollbarWidth, safari)]]">
+      <div is="vaadin-grid-sizer" scroll-height="[[_estScrollHeight]]" columns="[[columns]]"></div>
+    </vaadin-grid-outer-scroller>
+
+  </template>
+</dom-module>
+
+<script>Polymer({is:"vaadin-grid-scroller",behaviors:[vaadin.elements.grid.IronListBehavior,Polymer.Templatizer,Polymer.IronResizableBehavior,Polymer.IronScrollTargetBehavior,navigator.userAgent.match(/Edge/)?vaadin.elements.grid.EdgeBehavior:vaadin.elements.grid.GridScrollBehavior],properties:{size:Number,columns:Array,frozenColumns:{value:0},bindData:Function,rowDetailsTemplate:Object,safari:{value:/^((?!chrome|android).)*safari/i.test(navigator.userAgent)},scrollbarWidth:{value:function(){var t=document.createElement("div");t.style.width="100px",t.style.height="100px",t.style.overflow="scroll",t.style.position="absolute",t.style.top="-9999px",document.body.appendChild(t);var i=t.offsetWidth-t.clientWidth;return document.body.removeChild(t),i}}},observers:["_columnsChanged(columns, frozenColumns, _physicalCount, _physicalItems)","_sizeChanged(size, bindData)","_rowDetailsTemplateChanged(rowDetailsTemplate, _physicalCount)"],_hideOuterScroller:function(t,i){return 0===t&&!i},_hideTableOverflow:function(t,i){return 0===t&&i},_rowDetailsTemplateChanged:function(t,i){i&&this._physicalItems.forEach(function(t){t.rowDetailsTemplate=this.rowDetailsTemplate},this)},_columnsChanged:function(t,i){this._physicalItems.forEach(function(e){e.columns=t,e.frozenColumns=i}),Polymer.RenderStatus.afterNextRender(this.$.header,function(){this.$.outerscroller.style.paddingTop=this.$.table.style.paddingTop=this.$.header.clientHeight+"px",this.$.outerscroller.style.paddingBottom=this.$.table.style.paddingBottom=this.$.footer.clientHeight+"px"}.bind(this))},_createPool:function(t){for(var i=new Array(t),e=0;e<t;e++){var s=document.createElement("tr","vaadin-grid-row");s.target=this.domHost,i[e]=s,s.setAttribute("hidden",""),Polymer.dom(this.$.items).appendChild(s)}return i},_sizeChanged:function(t){if(this._virtualStart=0,this._physicalTop=0,this._virtualCount=Math.min(t,1e5),this._physicalIndexForKey={},this._firstVisibleIndexVal=null,this._lastVisibleIndexVal=null,this._vidxOffset=0,this._resetScrollPosition(0),!this._physicalItems){var i=25;this._physicalCount=Math.max(1,Math.min(i,this._virtualCount)),this._physicalItems=this._createPool(this._physicalCount),this._physicalSizes=new Array(this._physicalCount)}this._physicalStart=0,this._itemsRendered=!1,this._debounceTemplate(this._render)},_assignModels:function(t){this._iterateItems(function(t,i){var e=this._physicalItems[t];e.index=i+this._vidxOffset,e.toggleAttribute("hidden",e.index>=this.size),this.bindData(e.index,e)},t)},_scrollHandler:function(t){if(this._ignoreScroll&&t)return void(this._ignoreScroll=!1);var i,e,s,a,l,h=Math.max(0,Math.min(this._maxScrollTop,this._scrollTop)),r=h-this._scrollPosition,o=this._ratio,n=0,c=this._hiddenContentSize,d=o,_=[];if(this._scrollPosition=h,this._firstVisibleIndexVal=null,this._lastVisibleIndexVal=null,a=this._scrollBottom,l=this._physicalBottom,Math.abs(r)>this._physicalSize)this._physicalTop+=r,n=Math.round(r/this._physicalAverage);else if(r<0){var u=h-this._physicalTop,p=this._virtualStart;for(s=[],e=this._physicalEnd,d=u/c;d<o&&n<this._physicalCount&&p-n>0&&l-this._getPhysicalSizeIncrement(e)>a;)i=this._getPhysicalSizeIncrement(e),d+=i/c,l-=i,s.push(e),n++,e=0===e?this._physicalCount-1:e-1;_=s,n=-n}else if(r>0){var m=l-a,y=this._virtualEnd,f=this._virtualCount-1;for(s=[],e=this._physicalStart,d=m/c;d<o&&n<this._physicalCount&&y+n<f&&this._physicalTop+this._getPhysicalSizeIncrement(e)<h;)i=this._getPhysicalSizeIncrement(e),d+=i/c,this._physicalTop+=i,s.push(e),n++,e=(e+1)%this._physicalCount}this._virtualCount<this.size&&this._adjustVirtualIndexOffset(r),0===n?(l<a||this._physicalTop>h)&&this._increasePoolIfNeeded():(this._virtualStart=this._virtualStart+n,this._physicalStart=this._physicalStart+n,this._update(s,_)),this._translateStationaryElements(),this._scheduleReorder()}});</script>
+</body></html>

@@ -5,8 +5,82 @@
 
 </head><body><dom-module id="history-panel">
   <template>
-    <style>:host{display:block;background:#f8f9f9;padding:20px 24px;}#container{display:flex;flex-direction:column;}.chart-title{@apply (--section-title);}#barchart::content text{font-family:'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;}#horizontal{display:none;}@media (max-width: 600px){.chart,
-        #horizontal{display:none;}.total{height:64px;-ms-flex-direction:row;-webkit-flex-direction:row;flex-direction:row;}.total .sum{margin-left:12px;}}@media (max-width: 1124px){#horizontal{display:flex;}.chart-title{display:none;}#horizontal .chart-title{display:block;width:450px;}#total > span:first-child{@apply (--section-title);}#total{flex:1;margin-left:16px;}#total .sum{display:block;text-align:center;font-weight:200;font-size:32px;line-height:100px;}#barchart{display:none;}}@media (min-width: 1125px){.chart-title{margin-top:200px;}}</style>
+    <style>
+      :host {
+        display: block;
+        background: #f8f9f9;
+        padding: 20px 24px;
+      }
+
+      #container {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .chart-title {
+        @apply(--section-title);
+      }
+
+      #barchart::content text {
+        font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      }
+
+      #horizontal {
+        display: none;
+      }
+
+      @media (max-width: 600px) {
+        .chart,
+        #horizontal {
+          display: none;
+        }
+        .total {
+          height: 64px;
+          -ms-flex-direction: row;
+          -webkit-flex-direction: row;
+          flex-direction: row;
+        }
+        .total .sum {
+          margin-left: 12px;
+        }
+      }
+
+      @media (max-width: 1124px) {
+        #horizontal {
+          display: flex;
+        }
+        .chart-title {
+          display: none;
+        }
+        #horizontal .chart-title {
+          display: block;
+          width: 450px;
+        }
+        #total > span:first-child {
+          @apply(--section-title);
+        }
+        #total {
+          flex: 1;
+          margin-left: 16px;
+        }
+        #total .sum {
+          display: block;
+          text-align: center;
+          font-weight: 200;
+          font-size: 32px;
+          line-height: 100px;
+        }
+        #barchart {
+          display: none;
+        }
+      }
+
+      @media (min-width: 1125px) {
+        .chart-title {
+          margin-top: 200px;
+        }
+      }
+    </style>
     <div id="container">
 
       <div class="chart">

@@ -1,0 +1,59 @@
+<html><head></head><body><dom-module id="vaadin-grid-data-source-styles">
+  <template>
+    <style>
+      :host([loading]) #items tr {
+        opacity: 0.1;
+      }
+
+      /* Anim */
+      @keyframes vaadin-grid-spin-360 {
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      @-webkit-keyframes vaadin-grid-spin-360 {
+        100% {
+          -webkit-transform: rotate(360deg);
+          transform: rotate(360deg);
+        }
+      }
+      :host(::before) {
+        border: 2px solid var(--primary-color, #03A9F4);
+        border-radius: 50%;
+        border-right-color: transparent;
+        border-top-color: transparent;
+        content: "";
+        height: 16px;
+        left: 50%;
+        margin-left: -8px;
+        margin-top: -8px;
+        position: absolute;
+        top: 50%;
+        width: 16px;
+        pointer-events: none;
+        opacity: 0;
+      }
+
+      :host([loading]::before)  {
+        opacity: 1;
+        -webkit-animation: vaadin-grid-spin-360 400ms linear infinite;
+        animation: vaadin-grid-spin-360 400ms linear infinite;
+      }
+
+      :host(:not([has-data])) tr::after {
+        visibility: hidden;
+        content: '-';
+        width: 0;
+
+         /* Must use the same padding (+border-top) as the cell wrapper itself.
+         FIXME: Use the vertical paddings on the cell directly (not the wrapper).
+         Then this could be removed.*/
+        padding: 9px 0 8px;
+      }
+    </style>
+  </template>
+</dom-module>
+
+
+<script>window.vaadin=window.vaadin||{},vaadin.elements=vaadin.elements||{},vaadin.elements.grid=vaadin.elements.grid||{},vaadin.elements.grid.DataSourceBehavior={properties:{pageSize:{type:Number,value:50},dataSource:Function,loading:Boolean,_cache:{value:function(){return{}}},_pendingRequests:{value:function(){return{}}}},observers:["clearCache(pageSize)"],_getItem:function(){this._cachedPagesForPhysicalItems().forEach(this._loadPage.bind(this)),this._eagerlyLoadPages();var e=this._uncachedPagesForPhysicalItems();e.length>0&&(this.loading=!0,this.debounce("load",function(){e.forEach(this._loadPage.bind(this))},100))},_cachedPagesForPhysicalItems:function(){return this._pagesForPhysicalItems().filter(function(e){return void 0!==this._cache&&void 0!==this._cache[e]}.bind(this))},_uncachedPagesForPhysicalItems:function(){return this._pagesForPhysicalItems().filter(function(e){return void 0===this._cache||void 0===this._cache[e]}.bind(this))},_eagerlyLoadPages:function(){var e=this._cachedPagesForPhysicalItems().slice(0);if(e.length>0){e.sort(function(e,t){return e>t});var t=Math.max(0,e[0]-1),i=Math.min(e[e.length-1]+1,Math.floor(this.size/this.pageSize)-1);this._loadPage(t),this._loadPage(i)}},_pagesForPhysicalItems:function(){var e=this._getPageForIndex(this.$.scroller.firstVisibleIndex+this.$.scroller._vidxOffset);return[e].concat(this.$.scroller._physicalItems.filter(function(e){return e.index}).map(function(e){return this._getPageForIndex(e.index)}.bind(this))).reduce(function(e,t){return e.indexOf(t)===-1&&e.push(t),e},[])},_updateItems:function(e,t){var i={};this.$.scroller._physicalItems.map(function(e){i[e.index]=e});for(var s=0;s<this.pageSize;s++){var a=e*this.pageSize+s,n=i[a];if(n)if(t){var h=t[s];if(this._updateItem(n,h),n._item===h)continue;n._item=h,n.style.minHeight="",this.$.scroller.hasAttribute("has-data")||(this.$.scroller._resetAverage(),this.$.scroller.toggleAttribute("has-data",!0)),this.debounce("update-heights",function(){this.$.scroller._update()},1)}else this._updateItem(n,null),n.style.minHeight=this.$.scroller._physicalAverage+"px"}},_loadPage:function(e){if(this._cache[e])this._updateItems(e,this._cache[e]);else if(!this._pendingRequests[e]&&this.dataSource){this._pendingRequests[e]=!0;var t={page:e,pageSize:this.pageSize};this.dataSource(t,function(t){this._cache[e]=t,delete this._pendingRequests[e],this._updateItems(e,t),this.loading=this._pendingRequests.length>0}.bind(this))}},_getPageForIndex:function(e){return Math.floor(e/this.pageSize)},clearCache:function(){this._cache={},this._pendingRequests={},this.$.scroller._update(),this._flushItemsDebouncer()},_flushItemsDebouncer:function(){this.flushDebouncer("load")}};</script>
+</body></html>

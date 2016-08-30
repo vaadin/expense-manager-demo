@@ -1,0 +1,46 @@
+<html><head></head><body><dom-module id="scroll-styles">
+  <template>
+    <style>
+      :host {
+        transform: translateZ(0);
+      }
+
+      thead {
+        position: absolute;
+        top: 0;
+        width: 100%;
+      }
+
+      tfoot {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+      }
+
+      tbody {
+        z-index: -1;
+      }
+
+      table {
+        position: relative;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        z-index: -2;
+
+        /* translate Z needed to be applied to keep scroll bars from disappearing
+        when scrolling on desktop Safari.
+        Also, this rule can't be applied on mobile
+        Safari to keep scroll bars visible in there :-) */
+        transform: translateZ(0);
+      }
+
+      :host([ios]) table {
+        transform: none;
+      }
+
+    </style>
+  </template>
+</dom-module>
+
+<script>window.vaadin=window.vaadin||{},vaadin.elements=vaadin.elements||{},vaadin.elements.grid=vaadin.elements.grid||{},vaadin.elements.grid.GridScrollBehaviorImpl={properties:{_vidxOffset:{value:0},ios:{value:navigator.userAgent.match(/iP(?:hone|ad;(?: U;)? CPU) OS (\d+)/),reflectToAttribute:!0},_frozenCells:Array},observers:["_frozenCellsChanged(columns, frozenColumns, _physicalCount)"],ready:function(){this.scrollTarget=this.$.table,this.listen(this.$.table,"wheel","_onWheel")},_onWheel:function(t){t.preventDefault(),this.$.table.scrollTop+=t.deltaY,this.$.table.scrollLeft+=t.deltaX,this._scrollHandler(),this._ignoreScroll=!0},_adjustVirtualIndexOffset:function(t){if(Math.abs(t)>1e4){if(this._noScale)return void(this._noScale=!1);var e=Math.round(this._scrollPosition/this._scrollHeight*1e3)/1e3,i=e*this.size;this._vidxOffset=Math.round(i-e*this._virtualCount),0===this._scrollTop&&this.scrollToIndex(0)}else{var s=this._vidxOffset||0,l=1e3,r=100;0===this._scrollTop?(this._vidxOffset=0,s!==this._vidxOffset&&this.scrollToIndex(0)):this.firstVisibleIndex<l&&this._vidxOffset>0&&(this._vidxOffset-=Math.min(this._vidxOffset,r),this.scrollToIndex(this.firstVisibleIndex+(s-this._vidxOffset)+1),this._noScale=!0);var n=this.size-this._virtualCount;this._scrollTop>=this._maxScrollTop?(this._vidxOffset=n,s!==this._vidxOffset&&this.scrollToIndex(this._virtualCount)):this.firstVisibleIndex>this._virtualCount-l&&this._vidxOffset<n&&(this._vidxOffset+=Math.min(n-this._vidxOffset,r),this.scrollToIndex(this.firstVisibleIndex-(this._vidxOffset-s)),this._noScale=!0)}},_scheduleReorder:function(){var t=Polymer.dom(this.$.items);this.debounce("reorderrows",function(){this._physicalItems.slice(0).sort(function(t,e){return t.index-e.index}).forEach(function(e){t.appendChild(e)},this)},100)},_frozenCellsChanged:function(){this.debounce("cache-elements",function(){Polymer.dom(this.root).querySelectorAll("td, th").forEach(function(t){t.style.transform=""}),this._frozenCells=Polymer.dom(this.root).querySelectorAll("[frozen]"),this._translateStationaryElements()})},_translateStationaryElements:function(){this.$.footer.style.transform=this.$.header.style.transform=this._getTranslate3d(0,this._scrollTop);for(var t=this._getTranslate3d(this._scrollLeft,0),e=0;e<this._frozenCells.length;e++)this._frozenCells[e].style.transform=t},_getTranslate3d:function(t,e){return"translate3d("+t+"px,"+e+"px, 0)"}},vaadin.elements.grid.GridScrollBehavior=[vaadin.elements.grid.GridScrollBehaviorImpl];</script>
+</body></html>

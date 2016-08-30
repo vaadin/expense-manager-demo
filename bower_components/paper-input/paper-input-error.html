@@ -7,7 +7,24 @@
 
 </head><body><dom-module id="paper-input-error">
   <template>
-    <style>:host{display:inline-block;visibility:hidden;color:var(--paper-input-container-invalid-color, --error-color);@apply (--paper-font-caption);@apply (--paper-input-error);position:absolute;left:0;right:0;}:host([invalid]){visibility:visible;}</style>
+    <style>
+      :host {
+        display: inline-block;
+        visibility: hidden;
+
+        color: var(--paper-input-container-invalid-color, --error-color);
+
+        @apply(--paper-font-caption);
+        @apply(--paper-input-error);
+        position: absolute;
+        left:0;
+        right:0;
+      }
+
+      :host([invalid]) {
+        visibility: visible;
+      };
+    </style>
 
     <content></content>
   </template>

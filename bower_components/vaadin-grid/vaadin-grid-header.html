@@ -1,0 +1,4 @@
+<html><head></head><body><dom-module id="vaadin-grid-header">
+  <script>Polymer({is:"vaadin-grid-header",extends:"thead",properties:{columns:Array,frozenColumns:Number,_rows:Array},observers:["_columnsChanged(columns.*, frozenColumns)"],_columnsChanged:function(){Polymer.dom(this).innerHTML="";for(var e=[],r=Math.max.apply(Math,this.columns.map(function(e){return Polymer.dom(e).querySelectorAll('[is="header"]').length}));e.length<r;){var o=document.createElement("tr","vaadin-grid-header-row");o.headerIndex=e.length,o.frozenColumns=this.frozenColumns,o.target=this.domHost.domHost,o.columns=this.columns,e.push(o),Polymer.dom(this).appendChild(o)}this._rows=e}});</script>
+</dom-module>
+</body></html>

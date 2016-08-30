@@ -19,7 +19,82 @@
 
   <link id="bundle" rel="import" href="src/expense-app.html" async="">
 
-  <style>html{height:100%;}body{overflow:hidden;display:flex;flex-direction:column;margin:0;height:100%;background:#33383a;font-family:'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;-webkit-tap-highlight-color:transparent;}.loading{width:100vw;height:100vh;overflow:hidden;}#loadingScreen{width:100%;}#loadingScreen{position:absolute;top:36%;left:0;color:rgba(255, 255, 255, 0.56);text-align:center;line-height:10;font-weight:400;font-family:arial, sans-serif;}#loadingScreen .spinner{content:"";position:absolute;height:2px;background:#ff3a39;top:0;left:0;width:100%;animation:1.2s loading infinite;transform-origin:100% 0;}@keyframes loading{50%{transform:scalex(0);}51%{transform:translatex(-100vw);}}#loadingScreen.animation-stop .spinner{animation-name:none;}.loading expense-app{opacity:0;}.ready expense-app{animation:fade-in 0.25s;}@keyframes fade-in{0%{opacity:0;}}</style>
+  <style>
+    html {
+      height: 100%;
+    }
+
+    body {
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+      height: 100%;
+      background: #33383a;
+      font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .loading {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #loadingScreen {
+      width: 100%;
+    }
+
+    #loadingScreen {
+      position: absolute;
+      top: 36%;
+      left: 0;
+      color: rgba(255, 255, 255, 0.56);
+      text-align: center;
+      line-height: 10;
+      font-weight: 400;
+      font-family: arial, sans-serif;
+    }
+
+    #loadingScreen .spinner {
+      content: "";
+      position: absolute;
+      height: 2px;
+      background: #ff3a39;
+      top: 0;
+      left: 0;
+      width: 100%;
+      animation: 1.2s loading infinite;
+      transform-origin: 100% 0;
+    }
+
+    @keyframes loading {
+      50% {
+        transform: scalex(0);
+      }
+      51% {
+        transform: translatex(-100vw);
+      }
+    }
+
+    #loadingScreen.animation-stop .spinner {
+      animation-name: none;
+    }
+
+    .loading expense-app {
+      opacity: 0;
+    }
+
+    .ready expense-app {
+      animation: fade-in 0.25s;
+    }
+
+    @keyframes fade-in {
+      0% {
+        opacity: 0;
+      }
+    }
+  </style>
 
 </head>
 
@@ -30,7 +105,7 @@
 
   <expense-app></expense-app>
 
-  <script>function registerServiceWorker(){"serviceWorker"in navigator&&navigator.serviceWorker.register("service-worker.js")}function onImportLoaded(){document.body.classList.remove("loading"),document.body.classList.add("ready"),registerServiceWorker()}function finishLazyLoading(){var e=document.querySelector("#bundle");e["import"]&&"complete"===e["import"].readyState?onImportLoaded():e.addEventListener("load",onImportLoaded)}if("registerElement"in document&&"import"in document.createElement("link")&&"content"in document.createElement("template"))finishLazyLoading();else{var e=document.createElement("script");e.src="bower_components/webcomponentsjs/webcomponents-lite.min.js",e.onload=finishLazyLoading,document.head.appendChild(e)}</script>
+  <script>function registerServiceWorker(){"serviceWorker"in navigator&&navigator.serviceWorker.register("service-worker.js")}function onImportLoaded(){document.body.classList.remove("loading"),document.body.classList.add("ready"),registerServiceWorker()}function finishLazyLoading(){var e=document.querySelector("#bundle");e.import&&"complete"===e.import.readyState?onImportLoaded():e.addEventListener("load",onImportLoaded)}if("registerElement"in document&&"import"in document.createElement("link")&&"content"in document.createElement("template"))finishLazyLoading();else{var e=document.createElement("script");e.src="bower_components/webcomponentsjs/webcomponents-lite.min.js",e.onload=finishLazyLoading,document.head.appendChild(e)}</script>
 
 
 

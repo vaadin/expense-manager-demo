@@ -1,0 +1,16 @@
+<html><head></head><body><dom-module id="row-details-styles">
+  <template>
+    <style>
+      [detailscell] {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: #fff !important;
+      }
+    </style>
+  </template>
+</dom-module>
+
+<script>window.vaadin=window.vaadin||{},vaadin.elements=vaadin.elements||{},vaadin.elements.grid=vaadin.elements.grid||{},vaadin.elements.grid.GridRowDetailsBehavior={properties:{expandedItems:{value:function(){return[]}}},listeners:{"template-instance-changed":"_templateInstanceChangedExpanded"},observers:["_expandedItemsChanged(expandedItems.*, dataSource)"],_expandedItemsChanged:function(e,n){this.$.scroller._update(),this._flushItemsDebouncer()},_isExpanded:function(e){return this.expandedItems.indexOf(e)!==-1},expandItem:function(e){this._isExpanded(e)||this.push("expandedItems",e)},collapseItem:function(e){this._isExpanded(e)&&this.splice("expandedItems",this.expandedItems.indexOf(e),1)},_templateInstanceChangedExpanded:function(e){"expanded"===e.detail.prop&&(e.detail.value?this.expandItem(e.detail.inst.item):this.collapseItem(e.detail.inst.item),e.stopPropagation())}};</script>
+</body></html>

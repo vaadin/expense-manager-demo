@@ -6,11 +6,11 @@
   "private": true,
   "dependencies": {
     "polymer": "polymer/polymer#^1.4.0",
-    "vaadin-grid": "vaadin/vaadin-grid#3c37785",
+    "vaadin-grid": "v2.0.0-pre.1",
     "vaadin-combo-box": "^1.1.0",
     "vaadin-date-picker": "^1.1.0",
     "vaadin-upload": "^1.1.0",
-    "vaadin-charts": "vaadin/vaadin-charts#task/CHARTS-505",
+    "vaadin-charts": "^3.1.0",
     "vaadin-pouchdb": "manolo/vaadin-pouchdb#em",
     "iron-a11y-keys": "polymerelements/iron-a11y-keys#^1.0.5",
     "paper-header-panel": "polymerelements/paper-header-panel#^1.1.6",

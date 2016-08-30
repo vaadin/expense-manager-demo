@@ -1,7 +1,39 @@
 <html><head><link rel="import" href="../polymer/polymer.html">
 
 </head><body><dom-module id="vaadin-infinite-scroller">
-  <style>:host{display:block;overflow:hidden;height:500px;}#scroller{position:relative;height:100%;overflow:auto;margin-right:-40px;-webkit-overflow-scrolling:touch;-ms-overflow-style:none;overflow-x:hidden;}#scroller.notouchscroll{-webkit-overflow-scrolling:auto;}#scroller::-webkit-scrollbar{display:none;}.buffer{position:absolute;width:100%;box-sizing:border-box;padding-right:40px;@apply (--vaadin-infinite-scroller-buffer);}</style>
+  <style>
+    :host {
+      display: block;
+      overflow: hidden;
+      height: 500px;
+    }
+
+    #scroller {
+      position: relative;
+      height: 100%;
+      overflow: auto;
+      margin-right: -40px;
+      -webkit-overflow-scrolling: touch;
+      -ms-overflow-style: none;
+      overflow-x: hidden;
+    }
+
+    #scroller.notouchscroll {
+      -webkit-overflow-scrolling: auto;
+    }
+
+    #scroller::-webkit-scrollbar {
+      display: none;
+    }
+
+    .buffer {
+      position: absolute;
+      width: 100%;
+      box-sizing: border-box;
+      padding-right: 40px;
+      @apply(--vaadin-infinite-scroller-buffer);
+    }
+  </style>
 
   <template>
     <div id="scroller">
