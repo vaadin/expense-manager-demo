@@ -236,6 +236,7 @@
         _teardownDB: function() {
           this.dbId = this.dbLocal = this.dbRemote = null;
           this.set('route.path', '');
+          this.routeData = {};
         },
 
         _setupDB: function() {
@@ -333,6 +334,8 @@
         _loginStateChanged: function() {
           if (!this.loggedIn) {
             this._teardownDB();
+          } else if (this.loggedIn && !this.dbLocal) {
+            this._setupDB();
           }
         },
 
