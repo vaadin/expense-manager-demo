@@ -4,13 +4,7 @@
 
 </head><body><dom-module id="iron-a11y-announcer">
   <template>
-    <style>
-      :host {
-        display: inline-block;
-        position: fixed;
-        clip: rect(0px,0px,0px,0px);
-      }
-    </style>
+    <style>:host{display:inline-block;position:fixed;clip:rect(0px,0px,0px,0px);}</style>
     <div aria-live$="[[mode]]">[[_text]]</div>
   </template>
 

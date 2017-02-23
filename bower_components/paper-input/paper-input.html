@@ -10,39 +10,7 @@
 
 </head><body><dom-module id="paper-input">
   <template>
-    <style>
-      :host {
-        display: block;
-      }
-
-      :host([focused]) {
-        outline: none;
-      }
-
-      :host([hidden]) {
-        display: none !important;
-      }
-
-      input::-webkit-input-placeholder {
-        color: var(--paper-input-container-color, --secondary-text-color);
-      }
-
-      input:-moz-placeholder {
-        color: var(--paper-input-container-color, --secondary-text-color);
-      }
-
-      input::-moz-placeholder {
-        color: var(--paper-input-container-color, --secondary-text-color);
-      }
-
-      input:-ms-input-placeholder {
-        color: var(--paper-input-container-color, --secondary-text-color);
-      }
-
-      label {
-        pointer-events: none;
-      }
-    </style>
+    <style>:host{display:block;}:host([focused]){outline:none;}:host([hidden]){display:none !important;}input::-webkit-input-placeholder{color:var(--paper-input-container-color, --secondary-text-color);}input:-moz-placeholder{color:var(--paper-input-container-color, --secondary-text-color);}input::-moz-placeholder{color:var(--paper-input-container-color, --secondary-text-color);}input:-ms-input-placeholder{color:var(--paper-input-container-color, --secondary-text-color);}label{pointer-events:none;}</style>
 
     <paper-input-container no-label-float="[[noLabelFloat]]" always-float-label="[[_computeAlwaysFloatLabel(alwaysFloatLabel,placeholder)]]" auto-validate$="[[autoValidate]]" disabled$="[[disabled]]" invalid="[[invalid]]">
 

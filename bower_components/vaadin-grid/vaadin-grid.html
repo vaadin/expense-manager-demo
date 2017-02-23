@@ -1,30 +1,26 @@
 <html><head><link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="vaadin-grid-scroller.html">
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="vaadin-grid-table.html">
 <link rel="import" href="vaadin-grid-column.html">
+<link rel="import" href="vaadin-grid-active-item-behavior.html">
 <link rel="import" href="vaadin-grid-row-details-behavior.html">
-<link rel="import" href="vaadin-grid-data-source-behavior.html">
+<link rel="import" href="vaadin-grid-data-provider-behavior.html">
+<link rel="import" href="vaadin-grid-array-data-provider-behavior.html">
+<link rel="import" href="vaadin-grid-dynamic-columns-behavior.html">
 <link rel="import" href="vaadin-grid-selection-behavior.html">
+<link rel="import" href="vaadin-grid-sort-behavior.html">
+<link rel="import" href="vaadin-grid-filter-behavior.html">
+<link rel="import" href="vaadin-grid-keyboard-navigation-behavior.html">
+<link rel="import" href="vaadin-grid-column-reordering-behavior.html">
 
 </head><body><dom-module id="vaadin-grid">
-  <style>
-    :host {
-      display: block;
-      height: 400px; /* default height to avoid accidental usage without explicit height */
-      --vaadin-grid-border-color: rgba(0,0,0,0.08);
-    }
-
-    #scroller {
-      border: 1px solid var(--vaadin-grid-border-color);
-      height: 100%;
-      width: 100%;
-    }
-  </style>
+  <style>:host{display:block;height:400px;background:var(--primary-background-color, #fff);box-sizing:border-box;border:1px solid var(--divider-color, rgba(0, 0, 0, 0.08));-webkit-tap-highlight-color:transparent;}:host(:focus){outline:none;}#scroller{height:100%;width:100%;}</style>
   <template>
-    <vaadin-grid-scroller loading$="[[loading]]" bind-data="[[_bindData]]" size="[[size]]" id="scroller" columns="[[_columns]]" frozen-columns="[[_frozenColumns]]" content-target="[[_getContentTarget()]]" row-details-template="[[rowDetailsTemplate]]">
+    <vaadin-grid-table id="scroller" loading$="[[_loading]]" bind-data="[[_bindData]]" size="[[size]]" column-tree="[[_columnTree]]" content-target="[[_getContentTarget()]]" row-details-template="[[_rowDetailsTemplate]]" column-reordering-allowed="[[columnReorderingAllowed]]">
       <content></content>
-    </vaadin-grid-scroller>
+    </vaadin-grid-table>
   </template>
 </dom-module>
 
-<script>Polymer({is:"vaadin-grid",properties:{columns:{type:Array,notify:!0},size:Number,frozenColumns:{type:Number,value:0},rowDetailsTemplate:Object,_bindData:{value:function(){return this._getItem.bind(this)}}},behaviors:[vaadin.elements.grid.GridRowDetailsBehavior,vaadin.elements.grid.DataSourceBehavior,vaadin.elements.grid.SelectionBehavior],_updateItem:function(e,t){e.__selected__=this._isSelected(t),e.iterateCells(function(e){e.instance.item=t,e.instance.selected=this._isSelected(t)}.bind(this)),e.expanded=e.__expanded__=this._isExpanded(t),e.toggleAttribute("selected",this._isSelected(t))},_getContentTarget:function(){return this},_isFrozenColumn:function(e){return this.columns.indexOf(e)<this.frozenColumns},ready:function(){this.columns=Polymer.dom(this).querySelectorAll("vaadin-grid-column"),this.rowDetailsTemplate=Polymer.dom(this).querySelector("template[is=row-details]")}});</script>
+<script>Polymer({is:"vaadin-grid",properties:{_columnTree:{type:Array,notify:!0},size:Number,_rowDetailsTemplate:Object,_bindData:{value:function(){return this._getItem.bind(this)}}},behaviors:[Polymer.IronA11yKeysBehavior,Polymer.IronResizableBehavior,vaadin.elements.grid.ActiveItemBehavior,vaadin.elements.grid.RowDetailsBehavior,vaadin.elements.grid.DataProviderBehavior,vaadin.elements.grid.DynamicColumnsBehavior,vaadin.elements.grid.ArrayDataProviderBehavior,vaadin.elements.grid.SelectionBehavior,vaadin.elements.grid.SortBehavior,vaadin.elements.grid.FilterBehavior,vaadin.elements.grid.KeyboardNavigationBehavior,vaadin.elements.grid.ColumnReorderingBehavior],listeners:{"property-changed":"_columnPropChanged","iron-resize":"_gridResizeHandler"},_updateItem:function(e,i){e.style.minHeight=i?"":this.$.scroller._physicalAverage+"px",e.item=i,e.selected=this._isSelected(i),e.expanded=this._isExpanded(i),e.active=null!==i&&i==this.activeItem,e.focused=e.index===this.$.scroller.$.items._focusedRowIndex},_getContentTarget:function(){return this},ready:function(){this._updateColumnTree(),this._rowDetailsTemplate=Polymer.dom(this).querySelector("template.row-details")||void 0,this.$.scroller.target=this},_columnPropChanged:function(e){"_childColumns"===e.detail.path&&this._updateColumnTree(),e.stopPropagation()},_gridResizeHandler:function(){this.$.scroller._gridResizeHandler()}});</script>
 </body></html>

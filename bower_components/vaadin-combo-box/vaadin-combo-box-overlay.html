@@ -2,74 +2,25 @@
 <link rel="import" href="../iron-list/iron-list.html">
 <link rel="import" href="../paper-styles/shadow.html">
 <link rel="import" href="vaadin-overlay-behavior.html">
+<link rel="import" href="vaadin-combo-box-item.html">
+<link rel="import" href="vaadin-spinner.html">
 
 </head><body><dom-module id="vaadin-combo-box-overlay">
-  <style>
-    :host {
-      position: absolute;
-      @apply(--shadow-elevation-2dp);
-      background: #fff;
-      border-radius: 0 0 2px 2px;
-      top: 0;
-      left: 0;
-
-      /**
-      * Keep the vaadin-combo-box-overlay above paper-dialogs.
-      * iron-overlay-manager.html: Polymer.IronOverlayManagerClass.prototype._applyOverlayZ
-      */
-      z-index: 200;
-      overflow: hidden;
-    }
-
-    #scroller {
-      overflow: auto;
-      max-height: var(--vaadin-combo-box-overlay-max-height, 65vh);
-
-      /* Fixes item background from getting on top of scrollbars on Safari */
-      transform: translate3d(0,0,0);
-
-      /* Enable momentum scrolling on iOS (iron-list v1.2+ no longer does it for us) */
-      -webkit-overflow-scrolling: touch;
-    }
-
-    #selector {
-      --iron-list-items-container: {
-        border-top: 8px solid transparent;
-        border-bottom: 8px solid transparent;
-      };
-    }
-
-    #selector .item {
-      cursor: pointer;
-      padding: 13px 16px;
-      color: var(--primary-text-color);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    #selector:not([touch-device]) .item:hover,
-    #selector .item[focused] {
-      background: #eee;
-    }
-
-    #selector .item[selected] {
-      color: var(--primary-color);
-    }
-  </style>
-
   <template>
-    <div id="scroller" scroller="[[_getScroller()]]">
-      <iron-list id="selector" touch-device$="[[touchDevice]]" role="listbox" data-selection$="[[_ariaActiveIndex]]" on-touchend="_preventDefault" selected-item="{{_selectedItem}}" items="[[_items]]" selection-enabled="" scroll-target="[[_getScroller()]]">
+    <style>:host{position:absolute;@apply (--shadow-elevation-2dp);background:#fff;border-radius:0 0 2px 2px;top:0;left:0;pointer-events:auto;z-index:200;overflow:hidden;}#scroller{overflow:auto;max-height:var(--vaadin-combo-box-overlay-max-height, 65vh);transform:translate3d(0, 0, 0);-webkit-overflow-scrolling:touch;}#selector{--iron-list-items-container:{border-top:8px solid transparent;border-bottom:8px solid transparent;};}#selector vaadin-combo-box-item{cursor:pointer;padding:13px 16px;color:var(--primary-text-color);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}:host([opened][loading]){display:block !important;height:58px;}#selector:not([touch-device]) vaadin-combo-box-item:hover,
+      #selector vaadin-combo-box-item[focused]{background:#eee;}#selector vaadin-combo-box-item[selected]{color:var(--primary-color);}</style>
+
+    <vaadin-spinner active="[[loading]]"></vaadin-spinner>
+    <div id="scroller" scroller="[[_getScroller()]]" on-tap="_stopPropagation" on-touchstart="_onTouchStart" on-touchend="_preventDefault" on-scroll="_onScroll" hidden$="[[loading]]">
+      <iron-list id="selector" touch-device$="[[touchDevice]]" role="listbox" items="[[_items]]" scroll-target="[[_getScroller()]]">
         <template>
-          <div class="item" id$="it[[index]]" selected$="[[selected]]" role$="[[_getAriaRole(index)]]" aria-selected$="[[_getAriaSelected(_focusedIndex,index)]]" focused$="[[_isItemFocused(_focusedIndex,index)]]">
-              [[getItemLabel(item)]]
-          </div>
+          <vaadin-combo-box-item on-tap="_onTap" index="[[index]]" item="[[item]]" label="[[getItemLabel(item)]]" selected="[[_isItemSelected(item, _selectedItem)]]" role$="[[_getAriaRole(index)]]" aria-selected$="[[_getAriaSelected(_focusedIndex,index)]]" focused="[[_isItemFocused(_focusedIndex,index)]]">
+          </vaadin-combo-box-item>
         </template>
       </iron-list>
     </div>
   </template>
 </dom-module>
 
-<script>Polymer({is:"vaadin-combo-box-overlay",behaviors:[vaadin.elements.combobox.OverlayBehavior],properties:{touchDevice:{type:Boolean,reflectToAttribute:!0,value:function(){try{return document.createEvent("TouchEvent"),!0}catch(e){return!1}}},_selectedItem:{type:String,notify:!0},_items:{type:Object},_focusedIndex:{type:Number,notify:!0,value:-1,observer:"_focusedIndexChanged"},_focusedItem:{type:String,computed:"_getFocusedItem(_focusedIndex)"},_ariaActiveIndex:{type:Number,notify:!0,computed:"_getAriaActiveIndex(_focusedIndex)"},_itemLabelPath:{type:String,value:"label"},_itemValuePath:{type:String,value:"value"}},ready:function(){this._patchWheelOverScrolling(),void 0!==this.$.selector._scroller&&(this.$.selector._scroller=this._getScroller())},_getFocusedItem:function(e){if(e>=0)return this._items[e]},indexOfLabel:function(e){if(this._items&&e)for(var t=0;t<this._items.length;t++)if(this.getItemLabel(this._items[t]).toString().toLowerCase()===e.toString().toLowerCase())return t;return-1},getItemLabel:function(e){var t=this.get(this._itemLabelPath,e);return void 0!==t&&null!==t||(t=e?e.toString():""),t},_isItemFocused:function(e,t){return e==t},_getAriaActiveIndex:function(e){return e>=0&&"it"+e},_getAriaSelected:function(e,t){return this._isItemFocused(e,t).toString()},_getAriaRole:function(e){return void 0!==e&&"option"},_focusedIndexChanged:function(e){e>=0&&this._scrollIntoView(e)},_scrollIntoView:function(e){if(void 0!==this._visibleItemsCount()){var t=e;e>this._lastVisibleIndex()?(t=e-this._visibleItemsCount()+1,this.$.selector.scrollToIndex(e)):e>this.$.selector.firstVisibleIndex&&(t=this.$.selector.firstVisibleIndex),this.$.selector.scrollToIndex(Math.max(0,t))}},adjustScrollPosition:function(){this._items&&this._scrollIntoView(this._focusedIndex)},_getScroller:function(){return this.$.scroller},_patchWheelOverScrolling:function(){var e=this.$.selector;e.addEventListener("wheel",function(t){var i=e._scroller||e.scrollTarget,o=0===i.scrollTop,r=i.scrollHeight-i.scrollTop-i.clientHeight<=1;o&&t.deltaY<0?t.preventDefault():r&&t.deltaY>0&&t.preventDefault()})},updateViewportBoundaries:function(){this._cachedViewportTotalPadding=void 0,this.$.selector.updateViewportBoundaries()},get _viewportTotalPadding(){if(void 0===this._cachedViewportTotalPadding){var e=window.getComputedStyle(this._unwrapIfNeeded(this.$.selector.$.items));this._cachedViewportTotalPadding=[e.paddingTop,e.paddingBottom,e.borderTopWidth,e.borderBottomWidth].map(function(e){return parseInt(e,10)}).reduce(function(e,t){return e+t})}return this._cachedViewportTotalPadding},_visibleItemsCount:function(){var e=this.$.selector._physicalStart,t=this.$.selector._physicalSizes[e],i=this.$.selector._viewportHeight||this.$.selector._viewportSize;if(t&&i){var o=(i-this._viewportTotalPadding)/t;return Math.floor(o)}},_lastVisibleIndex:function(){if(this._visibleItemsCount())return this.$.selector.firstVisibleIndex+this._visibleItemsCount()-1},_selectItem:function(e){e="number"==typeof e?this._items[e]:e,this.$.selector.selectedItem!==e&&this.$.selector.selectItem(e)},_preventDefault:function(e){e.preventDefault()}});</script>
+<script>Polymer({is:"vaadin-combo-box-overlay",behaviors:[vaadin.elements.combobox.OverlayBehavior],properties:{touchDevice:{type:Boolean,reflectToAttribute:!0,value:function(){try{return document.createEvent("TouchEvent"),!0}catch(e){return!1}}},loading:{type:Boolean,value:!1,reflectToAttribute:!0,observer:"notifyResize"},_selectedItem:{type:Object},_items:{type:Object},_focusedIndex:{type:Number,notify:!0,value:-1,observer:"_focusedIndexChanged"},_focusedItem:{type:String,computed:"_getFocusedItem(_focusedIndex)"},_itemLabelPath:{type:String,value:"label"},_itemValuePath:{type:String,value:"value"},_notTapping:Boolean,_ignoreTaps:Boolean},ready:function(){this._patchWheelOverScrolling(),void 0!==this.$.selector._scroller&&(this.$.selector._scroller=this._getScroller())},_getFocusedItem:function(e){if(e>=0)return this._items[e]},_isItemSelected:function(e,t){return e===t},_onTap:function(e){this._notTapping||this._ignoreTaps||this.fire("selection-changed",{item:e.model.item})},_onTouchStart:function(){this._notTapping=!1,this.async(function(){this._notTapping=!0},300)},_onScroll:function(){this._ignoreTaps=!0,this.debounce("restore-taps",function(){this._ignoreTaps=!1},300)},indexOfLabel:function(e){if(this._items&&e)for(var t=0;t<this._items.length;t++)if(this.getItemLabel(this._items[t]).toString().toLowerCase()===e.toString().toLowerCase())return t;return-1},getItemLabel:function(e){var t=e?this.get(this._itemLabelPath,e):void 0;return void 0===t&&(t=e?e.toString():""),t},_isItemFocused:function(e,t){return e==t},_getAriaSelected:function(e,t){return this._isItemFocused(e,t).toString()},_getAriaRole:function(e){return void 0!==e&&"option"},_focusedIndexChanged:function(e){e>=0&&this._scrollIntoView(e)},_scrollIntoView:function(e){var t=this._visibleItemsCount();if(void 0!==t){var o=e;e>this.$.selector.lastVisibleIndex-1?o=e-t+1:e>this.$.selector.firstVisibleIndex&&(o=this.$.selector.firstVisibleIndex),this.$.selector.scrollToIndex(Math.max(0,o));var i=this._items[e];if(void 0!==i){var n=this.$.selector._getPhysicalIndex(i),s=this.$.selector._physicalItems[n];if(s){var r=s.getBoundingClientRect(),l=this.$.scroller.getBoundingClientRect(),c=r.bottom-l.bottom+this._viewportTotalPaddingBottom;c>0&&(this.$.scroller.scrollTop+=c)}}}},ensureItemsRendered:function(){this.$.selector.flushDebouncer("_debounceTemplate")},adjustScrollPosition:function(){this._items&&this._scrollIntoView(this._focusedIndex)},_getScroller:function(){return this.$.scroller},_patchWheelOverScrolling:function(){var e=this.$.selector;e.addEventListener("wheel",function(t){var o=e._scroller||e.scrollTarget,i=0===o.scrollTop,n=o.scrollHeight-o.scrollTop-o.clientHeight<=1;i&&t.deltaY<0?t.preventDefault():n&&t.deltaY>0&&t.preventDefault()})},updateViewportBoundaries:function(){this._cachedViewportTotalPaddingBottom=void 0,this.$.selector.updateViewportBoundaries()},get _viewportTotalPaddingBottom(){if(void 0===this._cachedViewportTotalPaddingBottom){var e=window.getComputedStyle(this._unwrapIfNeeded(this.$.selector.$.items));this._cachedViewportTotalPaddingBottom=[e.paddingBottom,e.borderBottomWidth].map(function(e){return parseInt(e,10)}).reduce(function(e,t){return e+t})}return this._cachedViewportTotalPaddingBottom},_visibleItemsCount:function(){return this.$.selector.flushDebouncer("_debounceTemplate"),this.$.selector.scrollToIndex(this.$.selector.firstVisibleIndex),this.updateViewportBoundaries(),this.$.selector.lastVisibleIndex-this.$.selector.firstVisibleIndex+1},_selectItem:function(e){e="number"==typeof e?this._items[e]:e,this.$.selector.selectedItem!==e&&this.$.selector.selectItem(e)},_preventDefault:function(e){e.cancelable&&e.preventDefault()},_stopPropagation:function(e){e.stopPropagation()}});</script>
 </body></html>

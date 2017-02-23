@@ -6,123 +6,79 @@
 
 </head><body><dom-module id="expenses-list">
   <template>
-    <style>
-      :host {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        background: #fff;
-      }
+    <style>:host{position:relative;display:flex;flex-direction:column;background:#fff;}#add-button{position:absolute;right:32px;bottom:32px;z-index:2;}@media (max-width: 1124px){#add-button{bottom:-28px;}}@media (min-width: 1125px){#add-button{bottom:auto;top:-29px;}}@media (max-width: 900px){#add-button{bottom:32px;}}#expenses{flex:1;color:var(--primary-text-color);}vaadin-grid .status{text-transform:capitalize;}vaadin-grid .status-new{color:var(--accent-color);font-weight:500;}vaadin-grid .status-in_progress{font-weight:500;font-style:italic;text-transform:capitalize;}vaadin-grid .total{text-align:right;}vaadin-grid#expenses{font-family:Roboto, sans-serif;--divider-color:rgba(0, 0, 0, var(--dark-divider-opacity));--vaadin-grid-cell:{padding:0;};--vaadin-grid-header-cell:{height:64px;color:var(--primary-text-color);text-transform:uppercase;font-size:12px;font-weight:500;color:rgba(0, 0, 0, 0.87);padding:0 24px 0 24px;box-shadow:0 -9px 0px 0px rgba(0, 0, 0, 0.1), 0 2px 0px 0px rgba(204, 204, 204, 0.20);};--vaadin-grid-body-cell:{height:48px;color:rgba(0, 0, 0, var(--dark-primary-opacity));font-size:15px;padding:0 24px 0 24px;cursor:pointer;};--vaadin-grid-body-row-hover-cell:{background-color:var(--paper-grey-200);};--vaadin-grid-body-row-selected-cell:{background-color:var(--paper-grey-100);};--vaadin-grid-focused-cell:{box-shadow:none;font-weight:bold;};}vaadin-grid#expenses .cell{overflow:hidden;text-overflow:ellipsis;padding-right:56px;}vaadin-grid#expenses .cell.last{padding-right:24px;}vaadin-grid#expenses .cell.numeric{text-align:right;}vaadin-grid-sorter{--vaadin-grid-sorter-arrow:{color:#ff3a39;};}@media (min-width: 1125px){vaadin-grid#expenses{--vaadin-grid-body-cell:{height:48px;color:rgba(0, 0, 0, var(--dark-primary-opacity));font-size:13px;padding:0 24px 0 24px;cursor:pointer;};}}</style>
 
-      #add-button {
-        position: absolute;
-        right: 32px;
-        bottom: 32px;
-        z-index: 2;
-      }
+    
+    <iron-media-query query="min-width: 1125px" query-matches="{{_largeScreen}}"></iron-media-query>
+    <vaadin-grid items="[[_filteredExpenses]]" id="expenses" active-item="{{activeItem}}" column-reordering-allowed="">
 
-      @media (max-width: 1124px) {
-        #add-button {
-          bottom: -28px;
-        }
-      }
+      <vaadin-grid-column width="120px" flex="0" frozen="" resizable="">
+        <template class="header">
+          <vaadin-grid-sorter path="date" direction="desc">
+            <div class="header-cell">
+              Date
+            </div>
+          </vaadin-grid-sorter>
+        </template>
+        <template>
+          [[_formatDate(item.date)]]
+        </template>
+      </vaadin-grid-column>
 
-      @media (min-width: 1125px) {
-        #add-button {
-          bottom: auto;
-          top: -29px;
-        }
-      }
+      <vaadin-grid-column flex="2" resizable="">
+        <template class="header">
+          <vaadin-grid-sorter path="merchant">
+            <div class="header-cell">
+              Merchant
+            </div>
+          </vaadin-grid-sorter>
+        </template>
+        <template>
+          [[item.merchant]]
+        </template>
+      </vaadin-grid-column>
 
-      @media (max-width: 900px) {
-        #add-button {
-          bottom: 32px;
-        }
-      }
+      <vaadin-grid-column width="90px" flex="0" resizable="">
+        <template class="header">
+          <vaadin-grid-sorter path="total">
+            <div class="header-cell">
+              Total
+            </div>
+          </vaadin-grid-sorter>
+        </template>
+        <template>
+          <span class="total">[[_formatTotal(item.total)]]</span>
+        </template>
+      </vaadin-grid-column>
 
-      #expenses {
-        flex: 1;
-        color: var(--primary-text-color);
-      }
+      <vaadin-grid-column width="120px" flex="0" resizable="">
+        <template class="header">
+          <vaadin-grid-sorter path="status">
+            <div class="header-cell">
+              Status
+            </div>
+          </vaadin-grid-sorter>
+        </template>
+        <template>
+          <span class$="status-[[item.status]] status">[[_formatStatus(item.status)]]</span>
+        </template>
+      </vaadin-grid-column>
 
-      @media (max-width: 1124px) {
-        #expenses {
-          font-size: 15px;
-        }
-      }
+      <vaadin-grid-column width="260px" flex="2" resizable="">
+        <template class="header">
+          <vaadin-grid-sorter path="comment">
+            <div class="header-cell">
+              Comment
+            </div>
+          </vaadin-grid-sorter>
+        </template>
+        <template>
+          [[item.comment]]
+        </template>
+      </vaadin-grid-column>
 
-      #expenses /deep/ thead.vaadin-grid-header {
-        box-shadow: 0 -9px 2px 10px rgba(0, 0, 0, 0.1), 0 -8px 3px 10px rgba(204, 204, 204, 0.20);
-      }
-
-      #expenses th {
-        text-transform: uppercase;
-        font-size: 12px;
-        font-weight: 500;
-        color: var(--primary-text-color);
-      }
-
-      #expenses  .total {
-        flex-direction: row-reverse;
-      }
-
-      #expenses  .status-new {
-        color: var(--accent-color);
-        font-weight: 500;
-      }
-
-      #expenses .status-in_progress {
-        font-weight: 500;
-        font-style: italic;
-        text-transform: capitalize;
-      }
-
-      #expenses  .comment {
-        position: relative;
-      }
-
-      #expenses .comment span {
-        width: 100%;
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        padding-right: 35px;
-        box-sizing: border-box;
-      }
-
-      #expenses vaadin-grid-column > div {
-        padding: 16px;
-        cursor: pointer;
-      }
-
-    </style>
-
-
-    <vaadin-grid id="expenses" frozen-columns="1" on-cell-click="_cellClick" size="50">
-      <vaadin-grid-column width="120px">
-        <template is="header">Date</template>
-  <template>[[_formatDate(item.date)]]</template>
-  </vaadin-grid-column>
-  <vaadin-grid-column width="145px">
-    <template is="header">Merchant</template>
-    <template>[[item.merchant]]</template>
-  </vaadin-grid-column>
-  <vaadin-grid-column width="90px">
-    <template is="header">Total</template>
-    <template><span class="total">[[_formatMoney(item.total)]]</span></template>
-  </vaadin-grid-column>
-  <vaadin-grid-column width="120px">
-    <template is="header">Status</template>
-    <template><span class$="[[_getStatusClass(item.status)]]">[[item.status]]</span></template>
-  </vaadin-grid-column>
-  <vaadin-grid-column width="260px" flex="2">
-    <template is="header">Comment</template>
-    <template><span class="comment">[[item.comment]]</span></template>
-  </vaadin-grid-column>
-  </vaadin-grid>
-  <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
-
+    </vaadin-grid>
+    <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
   </template>
-  <script>!function(){"use strict";Polymer({is:"expenses-list",properties:{expenses:Array,sortColumn:String,sortDirection:String,filters:Object},observers:["_update(filters, expenses)","_filtersChanged(filters.*)","_update(expenses.*)","_update(sortColumn)","_update(sortDirection)"],_formatDate:function(e){return moment(e).format("MM/DD/YYYY")},_formatMoney:function(e){return"$"+e.toFixed(2)},_getStatusClass:function(e){return"status-"+e.replace(/ /g,"-").toLowerCase()},_showExpenseEditor:function(){this.fire("edit-expense",{})},_cellClick:function(e){console.log("Cell clicked!"),this.fire("edit-expense",e.detail.model.item)},_filtersChanged:function(){this.$.expenses.items&&this.debounce("_filtersChanged",function(){this._update()},300)},_update:function(){if(this.filters){var e=this.$.expenses,t=this.filters.merchant,r=this.filters.min,i=this.filters.max,n=this.filters.status,s=this.filters.start,o=this.filters.end,a="date",f="desc";e.sortOrder&&e.sortOrder[0]&&(a=e.columns[e.sortOrder[0].column].name,f=e.sortOrder[0].direction);var l=this.expenses.filter(function(e){return!(t&&e.merchant.toUpperCase().indexOf(t.toUpperCase())<0)}).filter(function(e){return!(r&&e.total<r)}).filter(function(e){return!(i&&e.total>i)}).filter(function(e){return!!(n&&n.length>0)&&n.indexOf(e.status)>=0}).filter(function(e){if(s){var t=moment(s);return!(!t.isValid()||!moment(e.date).isAfter(t))}return!0}).filter(function(e){if(o){var t=moment(o);return!(!t.isValid()||!moment(e.date).isBefore(t))}return!0});if(a){var u=a,c=f||"desc",d=/^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/;l.sort(function(e,t){var r;return r=isNaN(e[u])?d.test(e[u])?moment(e[u]).isBefore(moment(t[u]))?1:-1:e[u].localeCompare(t[u]):parseInt(e[u],10)-parseInt(t[u],10),"desc"===c&&(r*=-1),r})}l.length>0&&(e.dataSource=function(e,t){var r=e.page*e.pageSize,i=Math.min(r+e.pageSize,l.length);t(l.slice(r,i))},e.size!==l.length?e.size=l.length:e.clearCache())}}})}();</script>
-</dom-module>
-</body></html>
+  <script>!function(){"use strict";Polymer({is:"expenses-list",properties:{expenses:Array,_filteredExpenses:Array,filters:Object,activeItem:{observer:"_activeItemChanged"}},observers:["_update(filters, expenses)","_filtersChanged(filters.*)","_update(expenses.*)","_isLargeScreen(_largeScreen)"],_showExpenseEditor:function(){this.fire("edit-expense",{})},_filtersChanged:function(){this.$.expenses.items&&this.debounce("_filtersChanged",function(){this._update()},300)},_update:function(){if(!this.filters)return void(this._filteredExpenses=this.expenses);var e=this.filters.merchant,t=this.filters.min,i=this.filters.max,s=this.filters.status,r=this.filters.start,n=this.filters.end;this._filteredExpenses=this.expenses.filter(function(t){return!(e&&t.merchant.toUpperCase().indexOf(e.toUpperCase())<0)}).filter(function(e){return!(t&&e.total<t)}).filter(function(e){return!(i&&e.total>i)}).filter(function(e){return!!(s&&s.length>0)&&s.indexOf(e.status)>=0}).filter(function(e){if(r){var t=moment(r);return!(!t.isValid()||!moment(e.date).isAfter(t))}return!0}).filter(function(e){if(n){var t=moment(n);return!(!t.isValid()||!moment(e.date).isBefore(t))}return!0})},_activeItemChanged:function(e){this.$.expenses.selectedItems=e?[e]:[],e&&this.fire("edit-expense",e)},_formatTotal:function(e){if(e)return"$"+e.toFixed(2)},_formatStatus:function(e){if(e)return e.replace("_"," ")},_formatDate:function(e){if(e)return moment(e).format("MM/DD/YYYY")},_isLargeScreen:function(){this.updateStyles()}})}();</script>
+</dom-module></body></html>

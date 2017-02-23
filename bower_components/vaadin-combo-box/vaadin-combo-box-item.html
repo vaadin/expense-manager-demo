@@ -1,0 +1,11 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+
+</head><body><dom-module id="vaadin-combo-box-item">
+  <template>
+    <style>:host{display:block;}</style>
+    [[label]]
+  </template>
+</dom-module>
+
+<script>Polymer({is:"vaadin-combo-box-item",properties:{index:Number,item:Object,label:String,selected:{type:Boolean,value:!1,reflectToAttribute:!0},focused:{type:Boolean,value:!1,reflectToAttribute:!0},_itemTemplateInstance:Object},observers:['_updateTemplateInstanceVariable("index", index, _itemTemplateInstance)','_updateTemplateInstanceVariable("item", item, _itemTemplateInstance)','_updateTemplateInstanceVariable("selected", selected, _itemTemplateInstance)','_updateTemplateInstanceVariable("focused", focused, _itemTemplateInstance)'],attached:function(){if(!this._itemTemplateInstance){var e=this.domHost.dataHost;e._ensureTemplatized(),e._itemTemplate&&(this._itemTemplateInstance=e.stamp(),Polymer.dom(this.root).textContent="",Polymer.dom(this.root).appendChild(this._itemTemplateInstance.root))}},_updateTemplateInstanceVariable:function(e,t,a){this._itemTemplateInstance[e]=t}});</script>
+</body></html>

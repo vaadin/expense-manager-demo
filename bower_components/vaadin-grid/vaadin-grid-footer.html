@@ -1,4 +1,0 @@
-<html><head></head><body><dom-module id="vaadin-grid-footer">
-  <script>Polymer({is:"vaadin-grid-footer",extends:"tfoot",properties:{columns:Array,frozenColumns:Number,_rows:Array},observers:["_columnsChanged(columns.*, frozenColumns)"],_columnsChanged:function(){Polymer.dom(this).innerHTML="";for(var o=[],e=Math.max.apply(Math,this.columns.map(function(o){return Polymer.dom(o).querySelectorAll('[is="footer"]').length}));o.length<e;){var r=document.createElement("tr","vaadin-grid-footer-row");r.footerIndex=o.length,r.frozenColumns=this.frozenColumns,r.target=this.domHost.domHost,r.columns=this.columns,o.push(r),Polymer.dom(this).appendChild(r)}this._rows=o}});</script>
-</dom-module>
-</body></html>

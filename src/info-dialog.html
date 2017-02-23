@@ -5,61 +5,7 @@
 
 </head><body><dom-module id="info-dialog">
   <template>
-    <style>
-      :host {
-        display: block;
-      }
-
-      paper-dialog {
-        overflow: auto;
-      }
-
-      paper-button {
-        background: var(--primary-color);
-        color: var(--text-primary-color);
-      }
-
-      #dialog {
-        max-width: 600px;
-      }
-
-      code {
-        font-weight: 600;
-        color: var(--paper-pink-a400);
-        background: #eee;
-        padding: 5px;
-      }
-
-      .highlight {
-        font-weight: 600;
-      }
-
-      .instructions {
-        display: flex;
-      }
-
-      #close-button {
-        margin: 0 16px 16px 0;
-      }
-
-      #qr {
-        align-self: center;
-        margin-left: 32px;
-        height: 150px;
-        width: 150px;
-      }
-
-      a {
-        text-decoration: none;
-        color: var(--primary-color);
-      }
-
-      @media (max-width: 600px) {
-        #qr {
-          display: none;
-        }
-      }
-    </style>
+    <style>:host{display:block;}paper-dialog{overflow:auto;}paper-button{background:var(--primary-color);color:var(--text-primary-color);}#dialog{max-width:600px;}code{font-weight:600;color:var(--paper-pink-a400);background:#eee;padding:5px;}.highlight{font-weight:600;}.instructions{display:flex;}#close-button{margin:0 16px 16px 0;}#qr{align-self:center;margin-left:32px;height:150px;width:150px;}a{text-decoration:none;color:var(--primary-color);}@media (max-width: 600px){#qr{display:none;}}</style>
 
     <paper-dialog id="dialog" modal="">
       <h2>Welcome to Expense Manager</h2>

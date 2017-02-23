@@ -1,26 +1,14 @@
-<html><head></head><body><dom-module id="vaadin-grid-sizer">
+<html><head><link rel="import" href="vaadin-grid-table-cell.html">
+
+</head><body><dom-module id="vaadin-grid-sizer">
   <template>
-    <style>
-      :host {
-        display: flex;
-        position: relative;
-        width: 100%;
-        visibility: hidden;
-        transform: translateY(-100%);
-      }
+    <style>:host{display:flex;position:relative;width:100%;visibility:hidden;}.cell{display:block;flex-shrink:0;line-height:0;font-size:1px;margin-top:-1em;}.cell[hidden]{display:none;}</style>
 
-      .cell {
-        flex-basis: 100px;
-        flex-shrink: 0;
-        flex-grow: 1;
-      }
-    </style>
-
-    <template is="dom-repeat" items="[[columns]]">
-      <div class="cell" style$="[[_getStyle(item.width, item.flex)]]">&nbsp;</div>
+    <template is="dom-repeat" items="[[_columns]]" as="column">
+      <vaadin-grid-sizer-cell class="cell" column="[[column]]">&nbsp;</vaadin-grid-sizer-cell>
     </template>
 
   </template>
-  <script>Polymer({is:"vaadin-grid-sizer",extends:"div",properties:{columns:Array,scrollHeight:Number},observers:["_scrollHeightChanged(scrollHeight)","_columnsChanged(columns.*)"],_columnsChanged:function(){this.columns.forEach(function(n){this.listen(n,"flex-changed","_notifyColumn"),this.listen(n,"width-changed","_notifyColumn")},this)},_notifyColumn:function(n){var t=Polymer.dom(n).rootTarget,i=this.columns.indexOf(t);this.notifyPath("columns."+i+".flex",t.flex),this.notifyPath("columns."+i+".width",t.width)},_getStyle:function(n,t){return"flex-basis: "+n+"; flex-grow: "+t},_scrollHeightChanged:function(n){this.style.top=n+"px"}});</script>
+  <script>Polymer({is:"vaadin-grid-sizer",extends:"div",properties:{columnTree:Array,top:Number,_columns:Array},observers:["_columnTreeChanged(columnTree)","_topChanged(top)"],_columnTreeChanged:function(e){this._columns=e[e.length-1]},_topChanged:function(e){this.style.top=e+"px"}});</script>
 </dom-module>
 </body></html>

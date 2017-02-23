@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="120px" height="120px" viewBox="0 0 120 120" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 3.7.2 (28276) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 3</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="120" height="120" rx="26"></rect>
+        <ellipse id="path-3" cx="48.5711806" cy="71.5433437" rx="34.1927083" ry="34.1099071"></ellipse>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-4">
+            <feOffset dx="-1" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.2 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <ellipse id="path-5" cx="56.2864583" cy="65.5959752" rx="34.1927083" ry="34.1099071"></ellipse>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-6">
+            <feOffset dx="-1" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <ellipse id="path-7" cx="66.8072917" cy="62.4473684" rx="34.1927083" ry="34.1099071"></ellipse>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-8">
+            <feOffset dx="-1" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="splash,-login" transform="translate(-2526.000000, -984.000000)">
+            <g id="Group-3" transform="translate(2526.000000, 984.000000)">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <use id="Rectangle-331" fill="#33383A" xlink:href="#path-1"></use>
+                <g id="Group-4" mask="url(#mask-2)">
+                    <g transform="translate(58.500000, 46.500000) rotate(20.000000) translate(-58.500000, -46.500000) translate(8.000000, -10.000000)">
+                        <g id="Oval-67">
+                            <use fill="black" fill-opacity="1" filter="url(#filter-4)" xlink:href="#path-3"></use>
+                            <use fill="#FF3A39" fill-rule="evenodd" xlink:href="#path-3"></use>
+                        </g>
+                        <g id="Oval-67-Copy">
+                            <use fill="black" fill-opacity="1" filter="url(#filter-6)" xlink:href="#path-5"></use>
+                            <use fill="#FF3A39" fill-rule="evenodd" xlink:href="#path-5"></use>
+                        </g>
+                        <g id="Oval-67-Copy-2">
+                            <use fill="black" fill-opacity="1" filter="url(#filter-8)" xlink:href="#path-7"></use>
+                            <use fill="#FF3A39" fill-rule="evenodd" xlink:href="#path-7"></use>
+                        </g>
+                        <g id="Group" stroke-width="1" fill-rule="evenodd" transform="translate(49.035034, 56.499254) rotate(-22.000000) translate(-49.035034, -56.499254) translate(15.368368, 9.445075)" font-size="50.4" font-family="Roboto-Regular, Roboto" font-weight="normal">
+                            <text id="$-copy" transform="translate(47.814707, 60.141996) rotate(-11.000000) translate(-47.814707, -60.141996) " fill="#FFFFFF">
+                                <tspan x="33.2859367" y="77.6550434">$</tspan>
+                            </text>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

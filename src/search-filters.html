@@ -7,97 +7,9 @@
 
 </head><body><dom-module id="search-filters">
   <template>
-    <style>
-      :host {
-        display: block;
-        padding: 0 16px;
-      }
-
-      .col {
-        width: 100%;
-        box-sizing: border-box;
-      }
-
-      .col.total,
-      .col.date {
-        display: flex;
-        align-items: flex-end;
-      }
-
-      .col span:not(.caption) {
-        padding: 0 4px 12px;
-        color: rgba(0, 0, 0, 0.3);
-      }
-
-      .date span:not(.caption) {
-        padding: 0 4px 4px;
-      }
-
-      .date vaadin-date-picker {
-        display: block;
-        flex: 1;
-      }
-
-      .col.total div[prefix] {
-        margin-right: 6px;
-      }
-
-      .col.total paper-input {
-        flex: 1;
-      }
-
-      .row {
-        margin-bottom: 16px;
-      }
-
-      .filters {
-        padding-bottom: 16px;
-      }
-
-      .status .caption {
-        display: block;
-        font-size: 12px;
-        margin: 32px 0 14px;
-        color: rgba(0, 0, 0, 0.54);
-      }
-
-      .checkboxes {
-        display: inline-block;
-        margin-left: 8px;
-      }
-
-      .checkboxes> paper-checkbox {
-        margin-right: 8px;
-      }
-
-      .title {
-        display: none;
-      }
-
-      @media (min-width: 900px) {
-        .title {
-          display: block;
-          padding: 14px 0;
-          @apply(--section-title);
-        }
-        .checkboxes,
-        .checkboxes> paper-checkbox {
-          display: block;
-        }
-        .checkboxes> paper-checkbox {
-          margin-bottom: 16px;
-        }
-        .filters {
-          padding: 0 24px;
-          position: absolute;
-          left: -308px;
-          width: 260px;
-          background: #f8f9f9;
-          height: calc(100vh - 64px);
-          box-shadow: inset -4px 0 16px -9px rgba(0, 0, 0, 0.5);
-        }
-      }
-    </style>
+    <style>:host{display:block;padding:0 16px;}.col{width:100%;box-sizing:border-box;}.col.total,
+      .col.date{display:flex;align-items:flex-end;}.col span:not(.caption){padding:0 4px 12px;color:rgba(0, 0, 0, 0.3);}.date span:not(.caption){padding:0 4px 4px;}.date vaadin-date-picker{display:block;flex:1;}.col.total div[prefix]{margin-right:6px;}.col.total paper-input{flex:1;}.row{margin-bottom:16px;}.filters{padding-bottom:16px;}.status .caption{display:block;font-size:12px;margin:32px 0 14px;color:rgba(0, 0, 0, 0.54);}.checkboxes{display:inline-block;margin-left:8px;}.checkboxes> paper-checkbox{margin-right:8px;}.title{display:none;}@media (min-width: 900px){.title{display:block;padding:14px 0;@apply (--section-title);}.checkboxes,
+        .checkboxes> paper-checkbox{display:block;}.checkboxes> paper-checkbox{margin-bottom:16px;}.filters{padding:0 24px;position:absolute;left:-308px;width:260px;background:#f8f9f9;height:calc(100vh - 64px);box-shadow:inset -4px 0 16px -9px rgba(0, 0, 0, 0.5);}}</style>
 
     <div id="content">
       <div class="filters">
@@ -105,9 +17,9 @@
 
         <div class="row">
           <div class="date col">
-            <vaadin-date-picker id="from" auto-validate="" label="From" value="{{filters.start}}"></vaadin-date-picker>
+            <vaadin-date-picker id="from" auto-validate="" label="From" value="{{filters.start}}" max="{{filters.end}}"></vaadin-date-picker>
             <span>–</span>
-            <vaadin-date-picker id="to" auto-validate="" label="To" value="{{filters.end}}"></vaadin-date-picker>
+            <vaadin-date-picker id="to" auto-validate="" label="To" value="{{filters.end}}" min="{{filters.start}}"></vaadin-date-picker>
           </div>
         </div>
 

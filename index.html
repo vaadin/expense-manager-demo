@@ -10,91 +10,16 @@
   <link rel="manifest" href="manifest.json">
 
   
-  <link rel="apple-touch-icon" href="images/app-icon-192.png">
+  <link rel="apple-touch-icon" href="images/app-icon-144.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="Expense Manager">
+  <meta name="apple-mobile-web-app-title" content="Expenses">
 
   <script type="text/javascript">function _isLocalhost(o){return!("localhost"!==o&&"[::1]"!==o&&!o.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/))}"http:"!==window.location.protocol||_isLocalhost(window.location.hostname)||(window.location.href="https:"+window.location.href.substring(window.location.protocol.length)),window.Polymer={lazyRegister:!0,dom:"shadow"};</script>
 
   <link id="bundle" rel="import" href="src/expense-app.html" async="">
 
-  <style>
-    html {
-      height: 100%;
-    }
-
-    body {
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      margin: 0;
-      height: 100%;
-      background: #33383a;
-      font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .loading {
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    #loadingScreen {
-      width: 100%;
-    }
-
-    #loadingScreen {
-      position: absolute;
-      top: 36%;
-      left: 0;
-      color: rgba(255, 255, 255, 0.56);
-      text-align: center;
-      line-height: 10;
-      font-weight: 400;
-      font-family: arial, sans-serif;
-    }
-
-    #loadingScreen .spinner {
-      content: "";
-      position: absolute;
-      height: 2px;
-      background: #ff3a39;
-      top: 0;
-      left: 0;
-      width: 100%;
-      animation: 1.2s loading infinite;
-      transform-origin: 100% 0;
-    }
-
-    @keyframes loading {
-      50% {
-        transform: scalex(0);
-      }
-      51% {
-        transform: translatex(-100vw);
-      }
-    }
-
-    #loadingScreen.animation-stop .spinner {
-      animation-name: none;
-    }
-
-    .loading expense-app {
-      opacity: 0;
-    }
-
-    .ready expense-app {
-      animation: fade-in 0.25s;
-    }
-
-    @keyframes fade-in {
-      0% {
-        opacity: 0;
-      }
-    }
-  </style>
+  <style>html{height:100%;}body{overflow:hidden;display:flex;flex-direction:column;margin:0;height:100%;background:#33383a;font-family:'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;-webkit-tap-highlight-color:transparent;}.loading{width:100vw;height:100vh;overflow:hidden;}#loadingScreen{width:100%;}#loadingScreen{position:absolute;top:36%;left:0;color:rgba(255, 255, 255, 0.56);text-align:center;line-height:10;font-weight:400;font-family:arial, sans-serif;}#loadingScreen .spinner{content:"";position:absolute;height:2px;background:#ff3a39;top:0;left:0;width:100%;animation:1.2s loading infinite;transform-origin:100% 0;}@keyframes loading{50%{transform:scalex(0);}51%{transform:translatex(-100vw);}}#loadingScreen.animation-stop .spinner{animation-name:none;}.loading expense-app{opacity:0;}.ready expense-app{animation:fade-in 0.25s;}@keyframes fade-in{0%{opacity:0;}}</style>
 
 </head>
 

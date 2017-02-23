@@ -1,0 +1,11 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+</head><body><dom-module id="vaadin-grid-table-outer-scroller">
+  <template>
+    <style>:host{display:block;height:100%;width:100%;position:absolute;top:0;box-sizing:border-box;overflow:auto;}:host([passthrough]){pointer-events:none;}:host([ios]){pointer-events:all;z-index:-3;}:host([ios][scrolling]){z-index:0;}</style>
+
+    <content></content>
+
+  </template>
+  <script>Polymer({is:"vaadin-grid-table-outer-scroller",properties:{scrollTarget:{observer:"_scrollTargetChanged"},passthrough:{reflectToAttribute:!0,value:!0}},listeners:{scroll:"_syncScrollTarget"},attached:function(){this.listen(this.domHost,"mousemove","_onMouseMove"),this.style.webkitOverflowScrolling="touch"},detached:function(){this.unlisten(this.domHost,"mousemove","_onMouseMove")},_scrollTargetChanged:function(t,s){s&&this.unlisten(s,"scroll","_syncOuterScroller"),this.listen(t,"scroll","_syncOuterScroller")},_onMouseMove:function(t){this.passthrough=t.offsetY<=this.clientHeight&&t.offsetX<=this.clientWidth},_syncOuterScroller:function(){this._syncingScrollTarget||(this._syncingOuterScroller=!0,this.scrollTop=this.domHost._scrollTop,this.scrollLeft=this.domHost._scrollLeft),this._syncingScrollTarget=!1},_syncScrollTarget:function(){this._syncingOuterScroller||(this._syncingScrollTarget=!0,this.scrollTarget.scrollTop=this.scrollTop,this.scrollTarget.scrollLeft=this.scrollLeft,this.domHost._scrollHandler()),this._syncingOuterScroller=!1}});</script>
+</dom-module>
+</body></html>
