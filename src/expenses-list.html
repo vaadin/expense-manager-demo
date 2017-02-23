@@ -45,84 +45,168 @@
         color: var(--primary-text-color);
       }
 
-      @media (max-width: 1124px) {
-        #expenses {
-          font-size: 15px;
-        }
+      vaadin-grid .status {
+        text-transform: capitalize;
       }
 
-      #expenses /deep/ thead.vaadin-grid-header {
-        box-shadow: 0 -9px 2px 10px rgba(0, 0, 0, 0.1), 0 -8px 3px 10px rgba(204, 204, 204, 0.20);
-      }
-
-      #expenses /deep/ thead.vaadin-grid-header th {
-        text-transform: uppercase;
-        font-size: 12px;
-        font-weight: 500;
-        color: var(--primary-text-color);
-      }
-
-      vaadin-grid /deep/ .total {
-        flex-direction: row-reverse;
-      }
-
-      vaadin-grid /deep/ td.status-new {
+      vaadin-grid .status-new {
         color: var(--accent-color);
         font-weight: 500;
       }
 
-      vaadin-grid /deep/ td.status-in_progress {
+      vaadin-grid .status-in_progress {
         font-weight: 500;
         font-style: italic;
         text-transform: capitalize;
       }
 
-      vaadin-grid /deep/ td.comment {
-        position: relative;
+      vaadin-grid .total {
+        text-align: right;
       }
 
-      vaadin-grid /deep/ td.comment span {
-        width: 100%;
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        padding-right: 35px;
-        box-sizing: border-box;
+      vaadin-grid#expenses {
+        font-family: Roboto, sans-serif;
+        --divider-color: rgba(0, 0, 0, var(--dark-divider-opacity));
+
+        --vaadin-grid-cell: {
+          padding: 0;
+        };
+
+        --vaadin-grid-header-cell: {
+          height: 64px;
+          color: var(--primary-text-color);
+          text-transform: uppercase;
+          font-size: 12px;
+          font-weight: 500;
+          color: rgba(0, 0, 0, 0.87);
+          padding: 0 24px 0 24px;
+          box-shadow: 0 -9px 0px 0px rgba(0, 0, 0, 0.1), 0 2px 0px 0px rgba(204, 204, 204, 0.20);
+        };
+
+        --vaadin-grid-body-cell: {
+          height: 48px;
+          color: rgba(0, 0, 0, var(--dark-primary-opacity));
+          font-size: 15px;
+          padding: 0 24px 0 24px;
+          cursor: pointer;
+        };
+
+        --vaadin-grid-body-row-hover-cell: {
+          background-color: var(--paper-grey-200);
+        };
+
+        --vaadin-grid-body-row-selected-cell: {
+          background-color: var(--paper-grey-100);
+        };
+
+        --vaadin-grid-focused-cell: {
+          box-shadow: none;
+          font-weight: bold;
+        };
       }
 
-      #expenses /deep/ .vaadin-grid-header [class*="sort-"]:after {
-        content: "";
-        border-width: 5px;
-        border-style: solid;
-        border-color: transparent;
-        width: 0;
-        padding: 0;
-        min-width: 0;
-        margin: 0 10px;
+      vaadin-grid#expenses .cell {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-right: 56px;
       }
 
-      #expenses /deep/ .vaadin-grid-header.vaadin-grid .sort-desc.vaadin-grid:after {
-        border-top-color: var(--accent-color);
-        transform: translateY(25%);
+      vaadin-grid#expenses .cell.last {
+        padding-right: 24px;
       }
 
-      #expenses /deep/ .vaadin-grid-header.vaadin-grid .sort-asc.vaadin-grid:after {
-        border-bottom-color: var(--accent-color);
-        transform: translateY(-25%);
+      vaadin-grid#expenses .cell.numeric {
+        text-align: right;
+      }
+
+      vaadin-grid-sorter {
+        --vaadin-grid-sorter-arrow: {
+          color: #ff3a39;
+        };
+      }
+
+      @media (min-width: 1125px) {
+        vaadin-grid#expenses {
+          --vaadin-grid-body-cell: {
+            height: 48px;
+            color: rgba(0, 0, 0, var(--dark-primary-opacity));
+            font-size: 13px;
+            padding: 0 24px 0 24px;
+            cursor: pointer;
+          };
+        }
       }
     </style>
 
+    <!-- https://github.com/Polymer/polymer/issues/2149#issuecomment-240884786 -->
+    <iron-media-query query="min-width: 1125px" query-matches="{{_largeScreen}}"></iron-media-query>
+    <vaadin-grid items="[[_filteredExpenses]]" id="expenses" active-item="{{activeItem}}">
 
-    <vaadin-grid id="expenses" frozen-columns="1">
-      <table>
-        <colgroup>
-          <col name="date" width="120" sortable sort-direction="desc" />
-          <col name="merchant" flex="1" min-width="145" sortable/>
-          <col name="total" width="90" sortable/>
-          <col name="status" width="120" sortable/>
-          <col name="comment" flex="2" min-width="260" sortable/>
-        </colgroup>
-      </table>
+      <vaadin-grid-column width="120px" flex="0" frozen>
+        <template class="header">
+          <vaadin-grid-sorter path="date" direction="desc">
+            <div class="header-cell">
+              Date
+            </div>
+          </vaadin-grid-sorter>
+        </template>
+        <template>
+          [[_formatDate(item.date)]]
+        </template>
+      </vaadin-grid-column>
+
+      <vaadin-grid-column flex="2">
+        <template class="header">
+          <vaadin-grid-sorter path="merchant">
+            <div class="header-cell">
+              Merchant
+            </div>
+          </vaadin-grid-sorter>
+        </template>
+        <template>
+          [[item.merchant]]
+        </template>
+      </vaadin-grid-column>
+
+      <vaadin-grid-column width="90px" flex="0">
+        <template class="header">
+          <vaadin-grid-sorter path="total">
+            <div class="header-cell">
+              Total
+            </div>
+          </vaadin-grid-sorter>
+        </template>
+        <template>
+          <span class="total">[[_formatTotal(item.total)]]</span>
+        </template>
+      </vaadin-grid-column>
+
+      <vaadin-grid-column width="120px" flex="0">
+        <template class="header">
+          <vaadin-grid-sorter path="status">
+            <div class="header-cell">
+              Status
+            </div>
+          </vaadin-grid-sorter>
+        </template>
+        <template>
+          <span class$="status-[[item.status]] status">[[_formatStatus(item.status)]]</span>
+        </template>
+      </vaadin-grid-column>
+
+      <vaadin-grid-column width="260px" flex="2">
+        <template class="header">
+          <vaadin-grid-sorter path="comment">
+            <div class="header-cell">
+              Comment
+            </div>
+          </vaadin-grid-sorter>
+        </template>
+        <template>
+          [[item.comment]]
+        </template>
+      </vaadin-grid-column>
+
     </vaadin-grid>
     <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
   </template>
@@ -135,64 +219,19 @@
 
         properties: {
           expenses: Array,
-          sortColumn: String,
-          sortDirection: String,
-          filters: Object
+          _filteredExpenses: Array,
+          filters: Object,
+          activeItem: {
+            observer: '_activeItemChanged'
+          }
         },
 
         observers: [
           '_update(filters, expenses)',
           '_filtersChanged(filters.*)',
           '_update(expenses.*)',
-          '_update(sortColumn)',
-          '_update(sortDirection)'
+          '_isLargeScreen(_largeScreen)'
         ],
-
-        ready: function() {
-          var grid = this.$.expenses;
-
-          grid.addEventListener('sort-order-changed', function() {
-            if (grid.size > 0) {
-              grid.scrollToStart();
-              this._update();
-            }
-          }.bind(this));
-
-          grid.addEventListener('selected-items-changed', function() {
-            var selection = grid.selection.selected();
-            if (selection.length === 1) {
-              grid.getItem(selection[0], function(err, item) {
-                this.fire('edit-expense', item);
-              }.bind(this));
-            }
-          }.bind(this));
-
-          grid.cellClassGenerator = function(cell) {
-            if (cell.columnName === 'status') {
-              return 'status-' + cell.data.replace(/ /g, '-').toLowerCase();
-            } else if (cell.columnName === 'total') {
-              return 'total';
-            } else if (cell.columnName === 'comment') {
-              return 'comment';
-            }
-          };
-
-          grid.then(function() {
-            grid.columns[0].renderer = function(cell) {
-              cell.element.innerHTML = moment(cell.data).format('MM/DD/YYYY');
-            };
-            grid.columns[2].renderer = function(cell) {
-              cell.element.innerHTML = '$' + cell.data.toFixed(2);
-            };
-            grid.columns[3].renderer = function(cell) {
-              var status = cell.data.replace(/_/g, ' ');
-              status = status.charAt(0).toUpperCase() + status.slice(1);
-              cell.element.textContent = status;
-            };
-
-            grid.header.getCell(0, 2).className = 'total';
-          });
-        },
 
         _showExpenseEditor: function() {
           this.fire('edit-expense', {});
@@ -208,24 +247,19 @@
 
         _update: function() {
           if (!this.filters) {
+            this._filteredExpenses = this.expenses;
             return;
           }
-          var grid = this.$.expenses;
+
           var merchant = this.filters.merchant;
           var min = this.filters.min;
           var max = this.filters.max;
           var status = this.filters.status;
           var start = this.filters.start;
           var end = this.filters.end;
-          var sort;
-          var direction;
-          if (grid.sortOrder && grid.sortOrder[0]) {
-            sort = grid.columns[grid.sortOrder[0].column].name;
-            direction = grid.sortOrder[0].direction;
-          }
 
           // Filter
-          var result = this.expenses
+          this._filteredExpenses = this.expenses
             .filter(function(expense) {
               return !(merchant && expense.merchant
                 .toUpperCase().indexOf(merchant.toUpperCase()) < 0);
@@ -259,32 +293,33 @@
                 return true;
               }
             });
+        },
 
-          // Sort
-          if (sort) {
-            var sortProperty = sort;
-            var sortDirection = direction || 'desc';
-            var datePattern = /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/;
-            result.sort(function(a, b) {
-              var res;
-              if (!isNaN(a[sortProperty])) {
-                res = parseInt(a[sortProperty], 10) - parseInt(b[sortProperty], 10);
-              } else if (datePattern.test(a[sortProperty])) {
-                // Sort dates with moment.js.
-                res = moment(a[sortProperty]).isBefore(moment(b[sortProperty])) ? 1 : -1;
-              } else {
-                // Let's pretend everything that's not a number or date is a string.
-                res = a[sortProperty].localeCompare(b[sortProperty]);
-              }
+        _activeItemChanged: function(item) {
+          this.$.expenses.selectedItems = item ? [item] : [];
+          this.fire('edit-expense', item);
+        },
 
-              if ('desc' === sortDirection) {
-                res *= -1;
-              }
-              return res;
-            });
+        _formatTotal: function(total) {
+          if (total) {
+            return '$' + total.toFixed(2);
           }
+        },
 
-          grid.items = result;
+        _formatStatus: function(status) {
+          if (status) {
+            return status.replace('_', ' ')
+          }
+        },
+
+        _formatDate: function(date) {
+          if (date) {
+            return moment(date).format('MM/DD/YYYY');
+          }
+        },
+        
+        _isLargeScreen: function() {
+          this.updateStyles();
         }
       });
     })();
