@@ -25954,28 +25954,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       :host {
         display: block;
       }
-
+      
       paper-toolbar {
         background: var(--dark-primary-color);
         --paper-toolbar-content: {
           padding: 0 24px;
         }
       }
-
+      
       paper-toolbar h1 {
         font-weight: 300;
         font-size: 24px;
       }
-
+      
       paper-toolbar .logo {
         color: var(--default-primary-color);
         margin-left: 16px;
       }
-
+      
       .flex {
         flex: 1;
       }
-
+      
       .content {
         position: absolute;
         top: 0;
@@ -25985,7 +25985,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: flex;
         flex-direction: column;
       }
-
+      
       @media (min-width: 900px) {
         .content {
           /* Make room for filters panel on the left. */
@@ -25993,39 +25993,39 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           padding-right: 298px;
         }
       }
-
+      
       @media (max-width: 1124px) {
         .content {
           padding-right: 0;
         }
       }
-
+      
       #content-panel {
         flex: 1;
       }
-
+      
       #sync {
         margin-left: 8px;
         animation: spin 0.8s linear infinite;
       }
-
+      
       #sync[hidden] {
         display: none;
         animation: none;
       }
-
+      
       @keyframes spin {
         100% {
           transform: rotate(-360deg);
         }
       }
-
+      
       .logout-button,
       .about-button {
         font-size: 14px;
         color: var(--primary-color);
       }
-
+      
       @media (max-width: 600px) {
         paper-toolbar {
           --paper-toolbar-content: {
@@ -26071,7 +26071,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <script>
-    (function() {
+    (function () {
       'use strict';
       Polymer({
         is: 'overview-page',
@@ -26096,7 +26096,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           attachments: Object,
           filters: {
             type: Object,
-            value: function() {
+            value: function () {
               return {
                 start: '',
                 end: '',
@@ -26122,57 +26122,57 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           '_route(route)'
         ],
 
-        ready: function() {
-          Polymer.RenderStatus.afterNextRender(this, function() {
+        ready: function () {
+          Polymer.RenderStatus.afterNextRender(this, function () {
             this._setupDB();
           }.bind(this));
           this._db = this.$.db;
         },
 
-        _calculateTotal: function() {
+        _calculateTotal: function () {
           if (this.expenses) {
-            var total = this.expenses.filter(function(exp) {
-                return exp.status === 'new';
-              }).map(function(exp) {
-                return exp.total;
-              })
-              .reduce(function(a, b) {
+            var total = this.expenses.filter(function (exp) {
+              return exp.status === 'new';
+            }).map(function (exp) {
+              return exp.total;
+            })
+              .reduce(function (a, b) {
                 return a + b;
               }, 0);
             this.totalOwed = '$' + total.toFixed(2);
           }
         },
 
-        _showInfoDialog: function() {
+        _showInfoDialog: function () {
           if (this.loggedIn && this._showInfo) {
-            this.async(function() {
+            this.async(function () {
               this._openInfoWindow();
               this._showInfo = false;
             }.bind(this), 1000);
           }
         },
 
-        _openInfoWindow: function() {
+        _openInfoWindow: function () {
           this.$.info.open();
         },
 
-        _getUniqueMerchants: function() {
+        _getUniqueMerchants: function () {
           if (this.expenses) {
-            this.merchants = this.expenses.map(function(e) {
+            this.merchants = this.expenses.map(function (e) {
               return e.merchant;
-            }).filter(function(val, index, self) {
+            }).filter(function (val, index, self) {
               return self.indexOf(val) === index;
             });
           }
         },
 
-        _teardownDB: function() {
+        _teardownDB: function () {
           this.dbId = this.dbLocal = this.dbRemote = null;
           this.set('route.path', '');
           this.routeData = {};
         },
 
-        _setupDB: function() {
+        _setupDB: function () {
           if (this.routeData && this.routeData.dbId) {
             this.dbId = this.routeData.dbId;
           }
@@ -26186,14 +26186,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.$.ajax.generateRequest();
         },
 
-        _update: function() {
-          console.log('update');
-          this.debounce('update', function() {
+        _update: function () {
+          this.debounce('update', function () {
             this._db.query();
           }.bind(this), 10);
         },
 
-        _handleBackendResponse: function(evt) {
+        _handleBackendResponse: function (evt) {
           // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
           var rsp = evt.detail.response;
           if (rsp && rsp.backend_db_id) {
@@ -26209,7 +26208,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
 
             // We update the entire UI on any change for simplicity.
-            this._db.changes(function() {
+            this._db.changes(function () {
               this._update();
             }.bind(this));
             // First hit
@@ -26221,28 +26220,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         },
 
-        _handleBackendError: function() {
+        _handleBackendError: function () {
           // Make sure we at least populate from our local DB if the backend is unavailable
           this._update();
         },
 
-        _editExpense: function(evt) {
+        _editExpense: function (evt) {
           if (evt && evt.detail) {
             var expense = evt.detail;
             this.$.expenseEditor.open(expense);
           }
         },
 
-        _hideSyncIcon: function() {
+        _hideSyncIcon: function () {
           return this.status !== 'syncing';
         },
 
-        _saveExpense: function(evt) {
+        _saveExpense: function (evt) {
           var expense = evt.detail;
           this._db.save(expense);
           this.fire('expenses-updated');
         },
-        _deleteExpense: function(evt) {
+        _deleteExpense: function (evt) {
           var expense = evt.detail;
           this._db.remove(expense);
           this.fire('expenses-updated', {
@@ -26250,7 +26249,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           });
         },
 
-        _expensesUpdated: function(evt) {
+        _expensesUpdated: function (evt) {
           this.$.expenseEditor.close();
           if (evt.detail.reason === 'deleted') {
             this.$.saveNotification.text = 'Expense was deleted';
@@ -26260,11 +26259,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.$.saveNotification.show();
         },
 
-        _logout: function() {
+        _logout: function () {
           this.loggedIn = false;
         },
 
-        _loginStateChanged: function() {
+        _loginStateChanged: function () {
           if (!this.loggedIn) {
             this._teardownDB();
           } else if (this.loggedIn && !this.dbLocal) {
@@ -26272,7 +26271,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         },
 
-        _route: function() {
+        _route: function () {
           var id = this.route.path.replace(/^\//, '');
           if (id && id !== this.dbId) {
             this.loggedIn = false;
@@ -26282,5 +26281,4 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       });
     })();
   </script>
-</dom-module>
-</body></html>
+</dom-module></body></html>
