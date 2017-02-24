@@ -44,6 +44,25 @@
       #expenses {
         flex: 1;
         color: var(--primary-text-color);
+        max-height: calc(100vh - 64px);
+      }
+
+      @media (max-width: 1124px) {
+        #expenses {
+          max-height: calc(100vh - 64px - 290px);
+        }
+      }
+
+      @media (max-width: 900px) {
+        #expenses {
+          max-height: calc(100vh - 64px - 52px);
+        }
+      }
+
+      @media (max-width: 600px) {
+        #expenses {
+          max-height: calc(100vh - 56px - 48px);
+        }
       }
 
       vaadin-grid .status {
