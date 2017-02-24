@@ -1,0 +1,17 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="vaadin-grid-cell-click-behavior.html">
+
+</head><body><dom-module id="vaadin-grid-sorter">
+  <template>
+    <style>:host{display:inline-flex;justify-content:space-between;align-items:center;cursor:pointer;}#indicators{position:relative;}:host(:not([direction])) #order,
+      :host(:not([direction])) #indicators::before{opacity:0.2;}#order{position:absolute;right:0;top:0;transform:translateY(-4px) scale(0.7);@apply (--vaadin-grid-sorter-order);}#indicators::before{content:"▲";display:block;padding:0 8px;@apply (--vaadin-grid-sorter-arrow);}:host([direction=desc]) #indicators::before{transform:rotateZ(180deg);}</style>
+
+    <content></content>
+    <div id="indicators">
+      <div id="order">[[_getDisplayOrder(_order)]]</div>
+    </div>
+
+  </template>
+  <script>Polymer({is:"vaadin-grid-sorter",properties:{path:String,direction:{type:String,reflectToAttribute:!0,notify:!0,value:null},_order:Number},observers:["_propertiesChanged(path, direction, isAttached)"],behaviors:[vaadin.elements.grid.CellClickBehavior],_propertiesChanged:function(e,i,r){r&&this.fire("sorter-changed")},_getDisplayOrder:function(e){return null===e?"":e+1},_cellClick:function(e){"asc"===this.direction?this.direction="desc":"desc"===this.direction?this.direction=null:this.direction="asc"}});</script>
+</dom-module>
+</body></html>

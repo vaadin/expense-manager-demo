@@ -1,18 +1,19 @@
 <html><head><link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-sorter.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="moment-js.html">
 
 </head><body><dom-module id="expenses-list">
   <template>
-    <style>:host{position:relative;display:flex;flex-direction:column;background:#fff;}#add-button{position:absolute;right:32px;bottom:32px;z-index:2;}@media (max-width: 1124px){#add-button{bottom:-28px;}}@media (min-width: 1125px){#add-button{bottom:auto;top:-29px;}}@media (max-width: 900px){#add-button{bottom:32px;}}#expenses{flex:1;color:var(--primary-text-color);}vaadin-grid .status{text-transform:capitalize;}vaadin-grid .status-new{color:var(--accent-color);font-weight:500;}vaadin-grid .status-in_progress{font-weight:500;font-style:italic;text-transform:capitalize;}vaadin-grid .total{text-align:right;}vaadin-grid#expenses{font-family:Roboto, sans-serif;--divider-color:rgba(0, 0, 0, var(--dark-divider-opacity));--vaadin-grid-cell:{padding:0;};--vaadin-grid-header-cell:{height:64px;color:var(--primary-text-color);text-transform:uppercase;font-size:12px;font-weight:500;color:rgba(0, 0, 0, 0.87);padding:0 24px 0 24px;box-shadow:0 -9px 0px 0px rgba(0, 0, 0, 0.1), 0 2px 0px 0px rgba(204, 204, 204, 0.20);};--vaadin-grid-body-cell:{height:48px;color:rgba(0, 0, 0, var(--dark-primary-opacity));font-size:15px;padding:0 24px 0 24px;cursor:pointer;};--vaadin-grid-body-row-hover-cell:{background-color:var(--paper-grey-200);};--vaadin-grid-body-row-selected-cell:{background-color:var(--paper-grey-100);};--vaadin-grid-focused-cell:{box-shadow:none;font-weight:bold;};}vaadin-grid#expenses .cell{overflow:hidden;text-overflow:ellipsis;padding-right:56px;}vaadin-grid#expenses .cell.last{padding-right:24px;}vaadin-grid#expenses .cell.numeric{text-align:right;}vaadin-grid-sorter{--vaadin-grid-sorter-arrow:{color:#ff3a39;};}@media (min-width: 1125px){vaadin-grid#expenses{--vaadin-grid-body-cell:{height:48px;color:rgba(0, 0, 0, var(--dark-primary-opacity));font-size:13px;padding:0 24px 0 24px;cursor:pointer;};}}</style>
+    <style>:host{position:relative;display:flex;flex-direction:column;background:#fff;}#add-button{position:absolute;right:32px;bottom:32px;z-index:2;}@media (max-width: 1124px){#add-button{bottom:-28px;}}@media (min-width: 1125px){#add-button{bottom:auto;top:-29px;}}@media (max-width: 900px){#add-button{bottom:32px;}}#expenses{flex:1;color:var(--primary-text-color);max-height:calc(100vh - 64px);}@media (max-width: 1124px){#expenses{max-height:calc(100vh - 64px - 290px);}}@media (max-width: 900px){#expenses{max-height:calc(100vh - 64px - 52px);}}@media (max-width: 600px){#expenses{max-height:calc(100vh - 56px - 48px);}}vaadin-grid .status{text-transform:capitalize;}vaadin-grid .status-new{color:var(--accent-color);font-weight:500;}vaadin-grid .status-in_progress{font-weight:500;font-style:italic;text-transform:capitalize;}vaadin-grid .total{text-align:right;}vaadin-grid#expenses{font-family:Roboto, sans-serif;--divider-color:rgba(0, 0, 0, var(--dark-divider-opacity));--vaadin-grid-cell:{padding:0;};--vaadin-grid-header-cell:{height:64px;color:var(--primary-text-color);text-transform:uppercase;font-size:12px;font-weight:500;color:rgba(0, 0, 0, 0.87);padding:0 24px 0 24px;box-shadow:0 -9px 0px 0px rgba(0, 0, 0, 0.1), 0 2px 0px 0px rgba(204, 204, 204, 0.20);};--vaadin-grid-body-cell:{height:48px;color:rgba(0, 0, 0, var(--dark-primary-opacity));font-size:15px;padding:0 24px 0 24px;cursor:pointer;};--vaadin-grid-body-row-hover-cell:{background-color:var(--paper-grey-200);};--vaadin-grid-body-row-selected-cell:{background-color:var(--paper-grey-100);};--vaadin-grid-focused-cell:{box-shadow:none;font-weight:bold;};}vaadin-grid#expenses .cell{overflow:hidden;text-overflow:ellipsis;padding-right:56px;}vaadin-grid#expenses .cell.last{padding-right:24px;}vaadin-grid#expenses .cell.numeric{text-align:right;}vaadin-grid-sorter{--vaadin-grid-sorter-arrow:{color:#ff3a39;};}@media (min-width: 1125px){vaadin-grid#expenses{--vaadin-grid-body-cell:{height:48px;color:rgba(0, 0, 0, var(--dark-primary-opacity));font-size:13px;padding:0 24px 0 24px;cursor:pointer;};}}</style>
 
     
     <iron-media-query query="min-width: 1125px" query-matches="{{_largeScreen}}"></iron-media-query>
-    <vaadin-grid items="[[_filteredExpenses]]" id="expenses" active-item="{{activeItem}}" column-reordering-allowed="">
+    <vaadin-grid items="[[_filteredExpenses]]" id="expenses" active-item="{{activeItem}}">
 
-      <vaadin-grid-column width="120px" flex="0" frozen="" resizable="">
+      <vaadin-grid-column width="120px" flex="0" frozen="">
         <template class="header">
           <vaadin-grid-sorter path="date" direction="desc">
             <div class="header-cell">
@@ -25,7 +26,7 @@
         </template>
       </vaadin-grid-column>
 
-      <vaadin-grid-column flex="2" resizable="">
+      <vaadin-grid-column flex="2">
         <template class="header">
           <vaadin-grid-sorter path="merchant">
             <div class="header-cell">
@@ -38,7 +39,7 @@
         </template>
       </vaadin-grid-column>
 
-      <vaadin-grid-column width="90px" flex="0" resizable="">
+      <vaadin-grid-column width="90px" flex="0">
         <template class="header">
           <vaadin-grid-sorter path="total">
             <div class="header-cell">
@@ -51,7 +52,7 @@
         </template>
       </vaadin-grid-column>
 
-      <vaadin-grid-column width="120px" flex="0" resizable="">
+      <vaadin-grid-column width="120px" flex="0">
         <template class="header">
           <vaadin-grid-sorter path="status">
             <div class="header-cell">
@@ -64,7 +65,7 @@
         </template>
       </vaadin-grid-column>
 
-      <vaadin-grid-column width="260px" flex="2" resizable="">
+      <vaadin-grid-column width="260px" flex="2">
         <template class="header">
           <vaadin-grid-sorter path="comment">
             <div class="header-cell">
@@ -80,5 +81,6 @@
     </vaadin-grid>
     <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
   </template>
-  <script>!function(){"use strict";Polymer({is:"expenses-list",properties:{expenses:Array,_filteredExpenses:Array,filters:Object,activeItem:{observer:"_activeItemChanged"}},observers:["_update(filters, expenses)","_filtersChanged(filters.*)","_update(expenses.*)","_isLargeScreen(_largeScreen)"],_showExpenseEditor:function(){this.fire("edit-expense",{})},_filtersChanged:function(){this.$.expenses.items&&this.debounce("_filtersChanged",function(){this._update()},300)},_update:function(){if(!this.filters)return void(this._filteredExpenses=this.expenses);var e=this.filters.merchant,t=this.filters.min,i=this.filters.max,s=this.filters.status,r=this.filters.start,n=this.filters.end;this._filteredExpenses=this.expenses.filter(function(t){return!(e&&t.merchant.toUpperCase().indexOf(e.toUpperCase())<0)}).filter(function(e){return!(t&&e.total<t)}).filter(function(e){return!(i&&e.total>i)}).filter(function(e){return!!(s&&s.length>0)&&s.indexOf(e.status)>=0}).filter(function(e){if(r){var t=moment(r);return!(!t.isValid()||!moment(e.date).isAfter(t))}return!0}).filter(function(e){if(n){var t=moment(n);return!(!t.isValid()||!moment(e.date).isBefore(t))}return!0})},_activeItemChanged:function(e){this.$.expenses.selectedItems=e?[e]:[],e&&this.fire("edit-expense",e)},_formatTotal:function(e){if(e)return"$"+e.toFixed(2)},_formatStatus:function(e){if(e)return e.replace("_"," ")},_formatDate:function(e){if(e)return moment(e).format("MM/DD/YYYY")},_isLargeScreen:function(){this.updateStyles()}})}();</script>
-</dom-module></body></html>
+  <script>!function(){"use strict";Polymer({is:"expenses-list",properties:{expenses:Array,_filteredExpenses:{type:Array,value:function(){return[]}},filters:Object,activeItem:{observer:"_activeItemChanged"}},observers:["_update(filters, expenses)","_filtersChanged(filters.*)","_update(expenses.*)","_isLargeScreen(_largeScreen)"],_showExpenseEditor:function(){this.fire("edit-expense",{})},_filtersChanged:function(){this.$.expenses.items&&this.debounce("_filtersChanged",function(){this._update()},300)},_update:function(){if(!this.filters)return void(this._filteredExpenses=this.expenses);var e=this.filters.merchant,t=this.filters.min,i=this.filters.max,r=this.filters.status,s=this.filters.start,n=this.filters.end;this._filteredExpenses=this.expenses.filter(function(t){return!(e&&t.merchant.toUpperCase().indexOf(e.toUpperCase())<0)}).filter(function(e){return!(t&&e.total<t)}).filter(function(e){return!(i&&e.total>i)}).filter(function(e){return!!(r&&r.length>0)&&r.indexOf(e.status)>=0}).filter(function(e){if(s){var t=moment(s);return!(!t.isValid()||!moment(e.date).isAfter(t))}return!0}).filter(function(e){if(n){var t=moment(n);return!(!t.isValid()||!moment(e.date).isBefore(t))}return!0})},_activeItemChanged:function(e){this.$.expenses.selectedItems=e?[e]:[],this.fire("edit-expense",e)},_formatTotal:function(e){if(e)return"$"+e.toFixed(2)},_formatStatus:function(e){if(e)return e.replace("_"," ")},_formatDate:function(e){if(e)return moment(e).format("MM/DD/YYYY")},_isLargeScreen:function(){this.updateStyles()}})}();</script>
+</dom-module>
+</body></html>
