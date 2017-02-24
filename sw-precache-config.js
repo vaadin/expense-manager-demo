@@ -5,5 +5,7 @@ module.exports = {
     'bower_components/webcomponentsjs/webcomponents-lite.min.js',
     'images/default-receipt.png'
   ],
-  navigateFallback: 'index.html'
+  navigateFallback: 'index.html',
+  stripPrefix: '',
+  replacePrefix: '.'
 };
