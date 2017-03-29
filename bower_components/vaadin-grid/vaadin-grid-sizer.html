@@ -1,14 +1,1 @@
-<html><head><link rel="import" href="vaadin-grid-table-cell.html">
-
-</head><body><dom-module id="vaadin-grid-sizer">
-  <template>
-    <style>:host{display:flex;position:relative;width:100%;visibility:hidden;}.cell{display:block;flex-shrink:0;line-height:0;font-size:1px;margin-top:-1em;}.cell[hidden]{display:none;}</style>
-
-    <template is="dom-repeat" items="[[_columns]]" as="column">
-      <vaadin-grid-sizer-cell class="cell" column="[[column]]">&nbsp;</vaadin-grid-sizer-cell>
-    </template>
-
-  </template>
-  <script>Polymer({is:"vaadin-grid-sizer",extends:"div",properties:{columnTree:Array,top:Number,_columns:Array},observers:["_columnTreeChanged(columnTree)","_topChanged(top)"],_columnTreeChanged:function(e){this._columns=e[e.length-1]},_topChanged:function(e){this.style.top=e+"px"}});</script>
-</dom-module>
-</body></html>
+<html><head><link rel="import" href="vaadin-grid-table-cell.html"></head><body><dom-module id="vaadin-grid-sizer"><template><style>:host{display:flex;position:relative;width:100%;visibility:hidden;}.cell{display:block;flex-shrink:0;line-height:0;font-size:1px;margin-top:-1em;}.cell[hidden]{display:none;}</style><template is="dom-repeat" items="[[_columns]]" as="column"><vaadin-grid-sizer-cell class="cell" column="[[column]]">&nbsp;</vaadin-grid-sizer-cell></template></template><script>Polymer({is:'vaadin-grid-sizer',extends:'div',properties:{columnTree:Array,top:Number,_columns:Array},observers:['_columnTreeChanged(columnTree)','_topChanged(top)'],_columnTreeChanged:function(b){this._columns=b[b.length-1]},_topChanged:function(b){this.style.top=b+'px'}});</script></dom-module></body></html>

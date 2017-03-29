@@ -1,16 +1,1 @@
-<html><head><link rel="import" href="vaadin-grid-templatizer.html">
-
-</head><body><dom-module id="vaadin-grid-row-details-styles">
-  <template>
-    <style>[detailscell]{position:absolute;bottom:0;left:0;width:100%;}</style>
-  </template>
-</dom-module>
-<dom-module id="vaadin-grid-row-details-themability-styles">
-  <template>
-    <style>td[detailscell] ::content > .cell-content{background:#fff;@apply (--vaadin-grid-body-row-details-cell);}</style>
-  </template>
-</dom-module>
-
-
-<script>window.vaadin=window.vaadin||{},vaadin.elements=vaadin.elements||{},vaadin.elements.grid=vaadin.elements.grid||{},vaadin.elements.grid.RowDetailsBehavior={properties:{expandedItems:{value:function(){return[]}}},listeners:{"template-instance-changed":"_templateInstanceChangedExpanded"},observers:["_expandedItemsChanged(expandedItems.*, dataProvider)","_rowDetailsTemplateChanged(_rowDetailsTemplate)"],_expandedItemsChanged:function(e,t){this._flushItemsDebouncer(),this.$.scroller._physicalItems&&this.$.scroller._physicalItems.forEach(function(e){e.expanded=this._isExpanded(e.item)}.bind(this))},_rowDetailsTemplateChanged:function(e){var t=new vaadin.elements.grid.Templatizer(this.dataHost);t._instanceProps={expanded:!0,item:!0,selected:!0},Polymer.dom(this.root).appendChild(t),t.template=e},_isExpanded:function(e){return this.expandedItems&&this.expandedItems.indexOf(e)!==-1},expandItem:function(e){this._isExpanded(e)||this.push("expandedItems",e)},collapseItem:function(e){this._isExpanded(e)&&this.splice("expandedItems",this.expandedItems.indexOf(e),1)},_templateInstanceChangedExpanded:function(e){"expanded"===e.detail.prop&&(e.detail.value?this.expandItem(e.detail.inst.item):this.collapseItem(e.detail.inst.item),e.stopPropagation())}};</script>
-</body></html>
+<html><head><link rel="import" href="vaadin-grid-templatizer.html"></head><body><dom-module id="vaadin-grid-row-details-styles"><template><style>[detailscell]{position:absolute;bottom:0;left:0;width:100%;}</style></template></dom-module><dom-module id="vaadin-grid-row-details-themability-styles"><template><style>td[detailscell] ::content > .cell-content{background:#fff;@apply (--vaadin-grid-body-row-details-cell);}</style></template></dom-module><script>window.vaadin=window.vaadin||{},vaadin.elements=vaadin.elements||{},vaadin.elements.grid=vaadin.elements.grid||{},vaadin.elements.grid.RowDetailsBehavior={properties:{expandedItems:{value:function(){return[]}}},listeners:{'template-instance-changed':'_templateInstanceChangedExpanded'},observers:['_expandedItemsChanged(expandedItems.*, dataProvider)','_rowDetailsTemplateChanged(_rowDetailsTemplate)'],_expandedItemsChanged:function(){this._flushItemsDebouncer(),this.$.scroller._physicalItems&&this.$.scroller._physicalItems.forEach(function(d){d.expanded=this._isExpanded(d.item)}.bind(this))},_rowDetailsTemplateChanged:function(b){var c=new vaadin.elements.grid.Templatizer(this.dataHost);c._instanceProps={expanded:!0,item:!0,selected:!0},Polymer.dom(this.root).appendChild(c),c.template=b},_isExpanded:function(b){return this.expandedItems&&-1!==this.expandedItems.indexOf(b)},expandItem:function(b){this._isExpanded(b)||this.push('expandedItems',b)},collapseItem:function(b){this._isExpanded(b)&&this.splice('expandedItems',this.expandedItems.indexOf(b),1)},_templateInstanceChangedExpanded:function(b){'expanded'===b.detail.prop&&(b.detail.value?this.expandItem(b.detail.inst.item):this.collapseItem(b.detail.inst.item),b.stopPropagation())}};</script></body></html>
