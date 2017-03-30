@@ -1,12 +1,27 @@
 {
   "entrypoint": "index.html",
   "shell": "src/expense-app.html",
-  "includeDependencies": [
+  "extraDependencies": [
     "bower_components/webcomponentsjs/webcomponents-lite.min.js",
     "images/*",
     "manifest.json"
   ],
   "fragments": [
     "src/overview-page.html"
-  ]
+  ],
+  "builds": [{
+    "name": "bundled",
+    "addServiceWorker": true,
+    "bundle": true,
+    "js": {
+      "compile": true,
+      "minify": true
+    },
+    "css": {
+      "minify": true
+    },
+    "html": {
+      "minify": true
+    }
+  }]
 }

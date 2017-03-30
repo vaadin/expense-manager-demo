@@ -54,8 +54,27 @@ if you open the license dialog. -->
       #expenses {
         flex: 1;
         color: var(--primary-text-color);
+        max-height: calc(100vh - 64px);
         border: 0;
         height: 100%;
+      }
+
+      @media (max-width: 1124px) {
+        #expenses {
+          max-height: calc(100vh - 64px - 290px);
+        }
+      }
+
+      @media (max-width: 900px) {
+        #expenses {
+          max-height: calc(100vh - 64px - 52px);
+        }
+      }
+
+      @media (max-width: 600px) {
+        #expenses {
+          max-height: calc(100vh - 56px - 48px);
+        }
       }
 
       vaadin-grid .status {
@@ -151,7 +170,7 @@ if you open the license dialog. -->
 
     <!-- https://github.com/Polymer/polymer/issues/2149#issuecomment-240884786 -->
     <iron-media-query query="min-width: 1125px" query-matches="{{_largeScreen}}"></iron-media-query>
-    <vaadin-grid items="[[_filteredExpenses]]" id="expenses" active-item="{{activeItem}}">
+    <vaadin-grid items="[[_filteredExpenses]]" id="expenses" active-item="{{activeItem}}" multi-sort>
 
       <vaadin-grid-column width="8em" frozen>
         <template class="header">
@@ -230,7 +249,12 @@ if you open the license dialog. -->
 
         properties: {
           expenses: Array,
-          _filteredExpenses: Array,
+          _filteredExpenses: {
+            type: Array,
+            value: function() {
+              return [];
+            }
+          },
           filters: Object,
           activeItem: {
             observer: '_activeItemChanged'
