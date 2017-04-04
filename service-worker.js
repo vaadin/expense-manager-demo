@@ -37,7 +37,7 @@
 /* eslint-disable indent, no-unused-vars, no-multiple-empty-lines, max-nested-callbacks, space-before-function-paren, quotes, comma-spacing */
 'use strict';
 
-var precacheConfig = [["./bower_components/webcomponentsjs/webcomponents-lite.min.js","32b5a9b7ada86304bec6b43d3f2194f0"],["./images/default-receipt.png","14ef509ae3504333529fc5686906de39"],["./index.html","7066a8af3884c163cf09cbb5752f1bce"],["./manifest.json","9e43914aa202ed4d72ec02718281f030"],["./src/expense-app.html","777e14c60c97d3f4daa8bbc0bebc3f7d"],["./src/overview-page.html","3d4e30b8e1266fa659bd3f374ff0a4a7"]];
+var precacheConfig = [["./bower_components/webcomponentsjs/webcomponents-lite.min.js","32b5a9b7ada86304bec6b43d3f2194f0"],["./images/default-receipt.png","14ef509ae3504333529fc5686906de39"],["./index.html","7066a8af3884c163cf09cbb5752f1bce"],["./manifest.json","9e43914aa202ed4d72ec02718281f030"],["./src/expense-app.html","8fef20f35e24cda8acb260ef475d6354"],["./src/overview-page.html","cb5922218d03398c8a5aaf07df166514"]];
 var cacheName = 'sw-precache-v2--' + (self.registration ? self.registration.scope : '');
 
 
