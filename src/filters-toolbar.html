@@ -279,7 +279,7 @@
       _hideFilters() {
         // add delay or tap will go through and hit grid
         if (this.expanded) {
-          this.async(function () {
+          setTimeout(() => {
             this._toggleFilters();
           }, 100);
         }

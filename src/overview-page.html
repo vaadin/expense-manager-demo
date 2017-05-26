@@ -212,10 +212,10 @@
 
       _showInfoDialog() {
         if (this.active && this._showInfo) {
-          this.async(function () {
+          setTimeout(() => {
             this._openInfoWindow();
             this._showInfo = false;
-          }.bind(this), 1000);
+          }, 1000);
         }
       }
 

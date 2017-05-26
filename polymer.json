@@ -15,18 +15,7 @@
   ],
   "builds": [{
     "name": "bundled",
-    "addServiceWorker": true,
-    "bundle": true,
-    "js": {
-      "compile": true,
-      "minify": true
-    },
-    "css": {
-      "minify": true
-    },
-    "html": {
-      "minify": true
-    }
+    "preset": "es6-bundled"
   }],
   "lint": {
     "rules": ["polymer-2"]
