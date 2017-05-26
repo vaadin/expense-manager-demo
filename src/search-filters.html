@@ -1,4 +1,4 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
@@ -8,7 +8,7 @@
 <dom-module id="search-filters">
   <template>
     <style>
-      :host {
+       :host {
         display: block;
         padding: 0 16px;
       }
@@ -66,7 +66,7 @@
         margin-left: 8px;
       }
 
-      .checkboxes> paper-checkbox {
+      .checkboxes>paper-checkbox {
         margin-right: 8px;
       }
 
@@ -81,10 +81,10 @@
           @apply(--section-title);
         }
         .checkboxes,
-        .checkboxes> paper-checkbox {
+        .checkboxes>paper-checkbox {
           display: block;
         }
-        .checkboxes> paper-checkbox {
+        .checkboxes>paper-checkbox {
           margin-bottom: 16px;
         }
         .filters {
@@ -97,6 +97,7 @@
           box-shadow: inset -4px 0 16px -9px rgba(0, 0, 0, 0.5);
         }
       }
+
     </style>
 
     <div id="content">
@@ -146,13 +147,13 @@
   </template>
 
   <script>
-    (function() {
-      'use strict';
+    class SearchFilters extends Polymer.Element {
+      static get is() {
+        return 'search-filters';
+      }
 
-      Polymer({
-        is: 'search-filters',
-
-        properties: {
+      static get properties() {
+        return {
           filters: {
             type: Object,
             notify: true
@@ -162,81 +163,54 @@
             observer: '_merchantsChanged'
           },
           statusOptions: Array
-        },
+        };
+      }
 
-        ready: function() {
-          this._registerValidators();
+      ready() {
+        super.ready();
 
-          // Select all status options by default.
-          this.statusOptions.forEach(function(status) {
-            this._addStatus(status.name);
-          }.bind(this));
-        },
+        // Select all status options by default.
+        this.statusOptions.forEach(function (status) {
+          this._addStatus(status.name);
+        }.bind(this));
+      }
 
-        _registerValidators: function() {
-          // Define validators for from/to fields.
-          new Polymer.IronMeta({
-            type: 'validator',
-            key: 'from-validator',
-            value: {
-              validate: this._validateFrom.bind(this)
-            }
-          });
-          new Polymer.IronMeta({
-            type: 'validator',
-            key: 'to-validator',
-            value: {
-              validate: this._validateTo.bind(this)
-            }
-          });
-          this.$.from.validator = 'from-validator';
-          this.$.to.validator = 'to-validator';
-        },
+      _merchantsChanged(merchants) {
+        this.$.merchantsSelect.items = merchants;
+      }
 
-        _validateFrom: function(from) {
-          return from === '' ||  this.$.to.value === '' ||
-            moment(this.$.to.value, 'YYYY-MM-DD').isAfter(moment(from, 'YYYY-MM-DD'));
-        },
+      _updateStatus(evt) {
+        var checkbox = evt.target;
 
-        _validateTo: function(to) {
-          return to === '' ||  this.$.from.value === '' ||
-            moment(this.$.from.value, 'YYYY-MM-DD').isBefore(moment(to, 'YYYY-MM-DD'));
-        },
-
-        _merchantsChanged: function(merchants) {
-          this.$.merchantsSelect.items = merchants;
-        },
-
-        _updateStatus: function(evt) {
-          var checkbox = evt.target;
-
-          if (checkbox.checked) {
-            this._addStatus(checkbox.name);
-          } else {
-            this._removeStatus(checkbox.name);
-          }
-        },
-
-        _addStatus: function(status) {
-          var statuses = this.filters.status;
-          if (statuses && statuses.indexOf(status) < 0) {
-            this.push('filters.status', status);
-          } else {
-            this.set('filters.status', [status]);
-          }
-        },
-
-        _removeStatus: function(status) {
-          var statusIndex = this.filters.status.indexOf(status);
-          if (this.filters.status && statusIndex >= 0) {
-            this.splice('filters.status', statusIndex, 1);
-          }
-        },
-
-        _filtersContain: function(name, filters) {
-          return filters && filters.base.status && filters.base.status.indexOf(name) >= 0;
+        if (checkbox.checked) {
+          this._addStatus(checkbox.name);
+        } else {
+          this._removeStatus(checkbox.name);
         }
-      });
-    })();
+      }
+
+      _addStatus(status) {
+        var statuses = this.filters.status;
+        if (statuses && statuses.indexOf(status) < 0) {
+          this.push('filters.status', status);
+        } else {
+          this.set('filters.status', [status]);
+        }
+      }
+
+      _removeStatus(status) {
+        var statusIndex = this.filters.status.indexOf(status);
+        if (this.filters.status && statusIndex >= 0) {
+          this.splice('filters.status', statusIndex, 1);
+        }
+      }
+
+      _filtersContain(name, filters) {
+        return filters && filters.base.status && filters.base.status.indexOf(name) >= 0;
+      }
+    }
+
+    window.customElements.define(SearchFilters.is, SearchFilters);
+
   </script>
 </dom-module>

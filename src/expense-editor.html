@@ -1,4 +1,4 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
@@ -41,7 +41,7 @@
         flex: 2;
       }
 
-      #form> * {
+      #form>* {
         margin-bottom: 8px;
       }
 
@@ -104,7 +104,7 @@
         color: red;
       }
 
-      :host> .wrapper {
+       :host>.wrapper {
         height: 100%;
         width: 100%;
         padding: 0;
@@ -162,6 +162,7 @@
           overflow-y: scroll;
         }
       }
+
     </style>
 
     <app-route route="{{route}}" pattern="/:action" data="{{routeData}}"></app-route>
@@ -176,16 +177,19 @@
 
       <div class="wrapper">
         <div class="form">
-          <form is="iron-form" id="form">
-            <iron-a11y-keys keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
-            <vaadin-combo-box name="merchant" id="merchant" items="[[merchants]]" value="{{expense.merchant}}" label="Merchant" allow-custom-value required></vaadin-combo-box>
-            <paper-input name="total" id="total" value="{{expense.total}}" type="number" max="10000" label="Total" required step="any">
-              <div prefix>$</div>
-            </paper-input>
+          <iron-form id="form">
+            <form on-iron-form-invalid="_formInvalid">
+              <iron-a11y-keys keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
+              <vaadin-combo-box name="merchant" id="merchant" items="[[merchants]]" value="{{expense.merchant}}" label="Merchant" allow-custom-value
+                required></vaadin-combo-box>
+              <paper-input name="total" id="total" value="{{expense.total}}" type="number" max="10000" label="Total" required step="any">
+                <div prefix>$</div>
+              </paper-input>
 
-            <vaadin-date-picker label="Date" value="{{expense.date}}" id="date" name="date" required></vaadin-date-picker>
-            <paper-textarea id="comment" name="comment" label="Comment" value="{{expense.comment}}"></paper-textarea>
-          </form>
+              <vaadin-date-picker label="Date" value="{{expense.date}}" id="date" name="date" required></vaadin-date-picker>
+              <paper-textarea id="comment" name="comment" label="Comment" value="{{expense.comment}}"></paper-textarea>
+            </form>
+          </iron-form>
         </div>
         <div class="receipt">
           <vaadin-upload id="upload" accept="image/*" max-files="1" on-upload-before="_handleUpload" required>
@@ -207,19 +211,19 @@
   </template>
 
   <script>
-    (function() {
-      'use strict';
+    class ExpenseEditor extends Polymer.Element {
+      static get is() {
+        return 'expense-editor';
+      }
 
-      Polymer({
-        is: 'expense-editor',
-
-        properties: {
+      static get properties() {
+        return {
           service: Object,
           merchants: Array,
           expense: {
             type: Object,
             notify: true,
-            value: function() {
+            value: () => {
               return {};
             }
           },
@@ -236,192 +240,205 @@
           },
           route: Object,
           routeData: Object
-        },
+        };
+      }
 
-        observers: ['_updateReceiptURL(expense._attachments.*)'],
+      static get observers() {
+        return ['_updateReceiptURL(expense._attachments.*)'];
+      }
 
-        ready: function() {
+      ready() {
+        super.ready();
+        window.requestAnimationFrame(() => {
           this.$.upload.set('i18n.dropFiles.one', 'Drop receipt here...');
           this.$.upload.set('i18n.addFiles.one', 'Select receipt');
-        },
+        });
+      }
 
-        attached: function() {
-          this._boundOnResize = this._onResize.bind(this);
-          window.addEventListener('resize', this._boundOnResize);
-        },
+      connectedCallback() {
+        super.connectedCallback();
+        this._boundOnResize = this._onResize.bind(this);
+        window.addEventListener('resize', this._boundOnResize);
+      }
 
-        detached: function() {
-          window.removeEventListener('resize', this._boundOnResize);
-        },
+      disconnectedCallback() {
+        super.disconnectedCallback();
+        window.removeEventListener('resize', this._boundOnResize);
+      }
 
-        _onResize: function() {
-          this.$.dialog.notifyResize();
-        },
+      open(expense) {
 
-        _showDialog: function() {
-          return this.expense && this.route.path && this.route.path === '/edit';
-        },
-
-        _getCaption: function(expense) {
-          if (expense._id) {
-            return 'Edit Expense';
-          } else {
-            return 'Add Expense';
-          }
-        },
-
-        _showReceipt: function() {
-          return this.expense._id && this.expense.status !== 'new' ||
-            this.expense._attachments && this.expense._attachments.receipt;
-        },
-
-        _updateReceiptURL: function() {
-          if (this.expense._attachments && this.expense._attachments.receipt) {
-            if (this.expense._attachments.receipt.data instanceof File ||  
-              this.expense._attachments.receipt.data instanceof Blob) {
-              this._receiptURL = URL.createObjectURL(this.expense._attachments.receipt.data);
-            } else {
-              this.db.getAttachment(this.expense._id, 'receipt')
-                .then(function(blob) {
-                  this._receiptURL = URL.createObjectURL(blob);
-                }.bind(this))
-                .catch(function(err) {
-                  console.log(err);
-                });
-            }
-          } else {
-            this._receiptURL = 'images/default-receipt.png';
-          }
-          this.$.dialog.notifyResize();
-        },
-
-        listeners: {
-          'iron-form-invalid': '_formInvalid'
-        },
-
-        // Read canvas content and returns a Blob.
-        // For browsers not supporting canvas.toBlob
-        _canvasToBlob: function(canvas) {
-          var reg = new RegExp('^data:(.*);.*,(.*)');
-          var arr = reg.exec(canvas.toDataURL());
-          var bstr = atob(arr[2]);
-          var n = bstr.length;
-          var u8arr = new Uint8Array(n);
-          while (n--) {
-            u8arr[n] = bstr.charCodeAt(n);
-          }
-          return new Blob([u8arr], {
-            type: arr[1]
-          });
-        },
-
-        // Read a file and return a Blob. If it's an image it converts and
-        // resizes using a canvas.
-        // TODO: move this to vaadin-upload as a utility method
-        _resizeImage: function(file, callback, mimeType, maxWidth, maxHeight) {
-          var img = document.createElement('img');
-          var reader = new FileReader();
-          reader.onload = function() {
-            if (!/^image/.test(file.type)) {
-              callback(reader.result);
-            } else if (file.type === mimeType && (!maxWidth || !maxWidth)) {
-              callback(reader.result);
-            } else {
-              img.addEventListener('load', function() {
-                var canvas = document.createElement('canvas');
-                var ctx = canvas.getContext('2d');
-                if (img.width > img.height && img.width > maxWidth) {
-                  canvas.width = maxWidth;
-                  canvas.height = img.height * maxWidth / img.width;
-                } else if (img.height > img.width && img.height > maxHeight) {
-                  canvas.height = maxHeight;
-                  canvas.width = img.width * maxHeight / img.height;
-                } else {
-                  canvas.height = img.height;
-                  canvas.width = img.width;
-                }
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                if (canvas.toBlob) {
-                  canvas.toBlob(callback, mimeType, 0.9);
-                } else {
-                  callback(this._canvasToBlob(canvas));
-                }
-              }.bind(this));
-              img.src = reader.result;
-            }
-          }.bind(this);
-          reader.readAsDataURL(file);
-        },
-
-        _handleUpload: function(e) {
-          var file = e.detail.file;
-          this._resizeImage(file, function(data) {
-            this.expense._attachments = this.expense._attachments || {};
-            this.set('expense._attachments.receipt', {
-              type: 'image/jpeg',
-              data: data
-            });
-          }.bind(this), 'image/jpeg', 1000, 1000);
-
-          this.$.upload.files = [];
-          e.preventDefault();
-        },
-
-        _save: function() {
-          this.$.error.innerText = '';
-          var form = this.$.form;
-          if (form.validate()) {
-            this.expense.total = parseFloat(this.expense.total);
-            this.fire('expense-saved', this.expense);
-          } else {
-            console.log('Form validation failed');
-            this.$.dialog.scrollTop = 0;
-            this.errorText = 'Please fill all required fields';
-          }
-        },
-
-        open: function(expense) {
-
-          // Create a copy of the expense to be edited so we don't automatically flush changes to db
-          this.expense = JSON.parse(JSON.stringify(expense));
-          // File objects don't survive the JSON dance, so copy that over manually
-          if (expense._attachments) {
-            this.set('expense._attachments', expense._attachments);
-          }
-
-          this.$.upload.files = [];
-
-          if (!expense.status) {
-            this.expense.status = 'new';
-          }
-
-          if (expense.total) {
-            this.$.total.value = expense.total.toFixed(2);
-          }
-
-          this.$.delete.hidden = !(this.expense._id && this.expense.status === 'new');
-
-          // Ensure that the scroll is returned to top on mobile
-          this.async(function() {
-            this.$.dialog.scrollTop = 0;
-          });
-
-          this.set('route.path', '/edit');
-        },
-
-        close: function() {
-          var _this = this;
-          this.async(function() {
-            // Prevent tap from leaking through to underlying page
-            _this.set('route.path', '');
-            _this.expense = {};
-          }, 100);
-        },
-
-        _delete: function() {
-          this.fire('delete-expense', this.expense);
+        // Create a copy of the expense to be edited so we don't automatically flush changes to db
+        this.expense = Object.assign({}, expense);
+        // File objects don't survive the JSON dance, so copy that over manually
+        if (expense._attachments) {
+          this.set('expense._attachments', expense._attachments);
         }
-      });
-    })();
+
+        this.$.upload.files = [];
+
+        if (!expense.status) {
+          this.expense.status = 'new';
+        }
+
+        if (expense.total) {
+          this.$.total.value = expense.total.toFixed(2);
+        }
+
+        this.$.delete.hidden = !(this.expense._id && this.expense.status === 'new');
+
+        // Ensure that the scroll is returned to top on mobile
+        setTimeout(() => {
+          this.$.dialog.scrollTop = 0;
+        }, 0);
+
+        this.set('route.path', '/edit');
+      }
+
+      close() {
+        setTimeout(() => {
+          // Prevent tap from leaking through to underlying page
+          this.set('route.path', '');
+          this.expense = {};
+        }, 100);
+      }
+
+      _onResize() {
+        this.$.dialog.notifyResize();
+      }
+
+      _showDialog() {
+        return this.expense && this.route.path && this.route.path === '/edit';
+      }
+
+      _getCaption(expense) {
+        if (expense._id) {
+          return 'Edit Expense';
+        } else {
+          return 'Add Expense';
+        }
+      }
+
+      _showReceipt() {
+        return this.expense._id && this.expense.status !== 'new' ||
+          this.expense._attachments && this.expense._attachments.receipt;
+      }
+
+      _updateReceiptURL() {
+        if (this.expense._attachments && this.expense._attachments.receipt) {
+          if (this.expense._attachments.receipt.data instanceof File ||  
+            this.expense._attachments.receipt.data instanceof Blob) {
+            this._receiptURL = URL.createObjectURL(this.expense._attachments.receipt.data);
+          } else {
+            this.db.getAttachment(this.expense._id, 'receipt')
+              .then(function (blob) {
+                this._receiptURL = URL.createObjectURL(blob);
+              }.bind(this))
+              .catch(function (err) {
+                console.log(err);
+              });
+          }
+        } else {
+          this._receiptURL = 'images/default-receipt.png';
+        }
+        this.$.dialog.notifyResize();
+      }
+
+      // Read canvas content and returns a Blob.
+      // For browsers not supporting canvas.toBlob
+      _canvasToBlob(canvas) {
+        var reg = new RegExp('^data:(.*);.*,(.*)');
+        var arr = reg.exec(canvas.toDataURL());
+        var bstr = atob(arr[2]);
+        var n = bstr.length;
+        var u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], {
+          type: arr[1]
+        });
+      }
+
+      // Read a file and return a Blob. If it's an image it converts and
+      // resizes using a canvas.
+      // TODO: move this to vaadin-upload as a utility method
+      _resizeImage(file, callback, mimeType, maxWidth, maxHeight) {
+        var img = document.createElement('img');
+        var reader = new FileReader();
+        reader.onload = function () {
+          if (!/^image/.test(file.type)) {
+            callback(reader.result);
+          } else if (file.type === mimeType && (!maxWidth || !maxWidth)) {
+            callback(reader.result);
+          } else {
+            img.addEventListener('load', function () {
+              var canvas = document.createElement('canvas');
+              var ctx = canvas.getContext('2d');
+              if (img.width > img.height && img.width > maxWidth) {
+                canvas.width = maxWidth;
+                canvas.height = img.height * maxWidth / img.width;
+              } else if (img.height > img.width && img.height > maxHeight) {
+                canvas.height = maxHeight;
+                canvas.width = img.width * maxHeight / img.height;
+              } else {
+                canvas.height = img.height;
+                canvas.width = img.width;
+              }
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              if (canvas.toBlob) {
+                canvas.toBlob(callback, mimeType, 0.9);
+              } else {
+                callback(this._canvasToBlob(canvas));
+              }
+            }.bind(this));
+            img.src = reader.result;
+          }
+        }.bind(this);
+        reader.readAsDataURL(file);
+      }
+
+      _handleUpload(e) {
+        var file = e.detail.file;
+        this._resizeImage(file, function (data) {
+          this.expense._attachments = this.expense._attachments || {};
+          this.set('expense._attachments.receipt', {
+            type: 'image/jpeg',
+            data: data
+          });
+        }.bind(this), 'image/jpeg', 1000, 1000);
+
+        this.$.upload.files = [];
+        e.preventDefault();
+      }
+
+      _save() {
+        this.$.error.innerText = '';
+        var form = this.$.form;
+        if (form.validate()) {
+          this.expense.total = parseFloat(this.expense.total);
+          this.dispatchEvent(new CustomEvent('expense-saved', {
+            detail: this.expense,
+            bubbles: true,
+            composed: true
+          }));
+        } else {
+          console.log('Form validation failed');
+          this.$.dialog.scrollTop = 0;
+          this.errorText = 'Please fill all required fields';
+        }
+      }
+
+      _delete() {
+        this.dispatchEvent(new CustomEvent('delete-expense', {
+          detail: this.expense,
+          bubbles: true,
+          composed: true
+        }));
+      }
+    }
+
+    window.customElements.define(ExpenseEditor.is, ExpenseEditor);
+
   </script>
 </dom-module>

@@ -1,15 +1,18 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/polymer/lib/utils/flattened-nodes-observer.html">
 <link rel="import" href="login-page.html">
+<link rel="lazy-import" href="overview-page.html">
+
 <dom-module id="expense-app">
   <template>
     <style>
-      :host {
+       :host {
         display: block;
       }
 
       #pages,
-      #pages> * {
+      #pages>* {
         position: absolute;
         top: 0;
         right: 0;
@@ -17,7 +20,7 @@
         left: 0;
       }
 
-      :root {
+       :host>* {
         --dark-primary-color: #33383a;
         --primary-color: #00b4f0;
         --light-primary-color: #F2FAF9;
@@ -64,28 +67,32 @@
         }
 
         --paper-input-container-underline: {
-          border-color: rgba(0,0,0,0.2);
+          border-color: rgba(0, 0, 0, 0.2);
         }
       }
+
     </style>
 
-    <iron-pages id="pages" selected="[[selected]]">
-      <login-page id="login" logged-in="{{loggedIn}}"></login-page>
-      <overview-page id="overview" logged-in="{{loggedIn}}"></overview-page>
+    <iron-pages id="pages" selected="[[selected]]" selected-attribute="active">
+      <login-page id="login" on-log-in="_logIn"></login-page>
+      <overview-page id="overview" on-log-out="_logOut"></overview-page>
     </iron-pages>
 
   </template>
 
   <script>
-    (function() {
-      'use strict';
+    class ExpenseApp extends Polymer.Element {
+      static get is() {
+        return 'expense-app'
+      };
 
-      Polymer({
-        is: 'expense-app',
-        properties: {
+      static get properties() {
+        return {
           loggedIn: {
             type: Boolean,
-            value: false,
+            value: function () {
+              return !!window.localStorage.getItem('expense-manager-db-id');
+            },
             notify: true,
             observer: '_selectPage'
           },
@@ -93,20 +100,34 @@
             type: Number,
             notify: true
           }
-        },
+        };
+      }
 
-        ready: function() {
-          // Start downloading and initializing the overview page once the login page has rendered
-          Polymer.RenderStatus.afterNextRender(this.$.login, function() {
-            this.importHref(this.resolveUrl('overview-page.html'),
-              null, null, true);
-          }.bind(this));
-        },
+      ready() {
+        super.ready();
+        Polymer.RenderStatus.afterNextRender(this, () => {
+          Polymer.importHref(
+            this.resolveUrl('overview-page.html'), null, null, true);
+        });
+      }
 
-        _selectPage: function() {
-          this.selected = this.loggedIn ? 1 : 0;
+      _logIn() {
+        this.loggedIn = true;
+      }
+
+      _logOut() {
+        this.loggedIn = false;
+      }
+
+      _selectPage() {
+        if (this.loggedIn === undefined) {
+          return;
         }
-      });
-    })();
+
+        this.selected = this.loggedIn ? 1 : 0;
+      }
+    }
+    window.customElements.define(ExpenseApp.is, ExpenseApp);
+
   </script>
 </dom-module>

@@ -1,4 +1,4 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-sorter.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
@@ -13,12 +13,13 @@ if you open the license dialog. -->
     padding: 0;
     margin: 0;
   }
+
 </style>
 
 <dom-module id="expenses-list">
   <template>
     <style>
-      :host {
+       :host {
         position: relative;
         display: flex;
         flex-direction: column;
@@ -102,7 +103,8 @@ if you open the license dialog. -->
 
         --vaadin-grid-cell: {
           padding: 0;
-        };
+        }
+        ;
 
         --vaadin-grid-header-cell: {
           height: 56px;
@@ -112,7 +114,8 @@ if you open the license dialog. -->
           font-weight: 500;
           color: rgba(0, 0, 0, 0.87);
           padding: 0 24px 0 24px;
-        };
+        }
+        ;
 
         --vaadin-grid-body-cell: {
           color: rgba(0, 0, 0, var(--dark-primary-opacity));
@@ -121,20 +124,24 @@ if you open the license dialog. -->
           cursor: pointer;
           overflow: hidden;
           text-overflow: ellipsis;
-        };
+        }
+        ;
 
         --vaadin-grid-body-row-hover-cell: {
           background-color: var(--paper-grey-200);
-        };
+        }
+        ;
 
         --vaadin-grid-body-row-selected-cell: {
           background-color: var(--paper-grey-100);
-        };
+        }
+        ;
 
         --vaadin-grid-focused-cell: {
           box-shadow: none;
           font-weight: bold;
-        };
+        }
+        ;
       }
 
       vaadin-grid#expenses .cell.last {
@@ -163,9 +170,11 @@ if you open the license dialog. -->
             font-size: 13px;
             padding: 3px 24px;
             cursor: pointer;
-          };
+          }
+          ;
         }
       }
+
     </style>
 
     <!-- https://github.com/Polymer/polymer/issues/2149#issuecomment-240884786 -->
@@ -241,17 +250,17 @@ if you open the license dialog. -->
     <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
   </template>
   <script>
-    (function() {
-      'use strict';
+    class ExpensesList extends Polymer.Element {
+      static get is() {
+        return 'expenses-list';
+      }
 
-      Polymer({
-        is: 'expenses-list',
-
-        properties: {
+      static get properties() {
+        return {
           expenses: Array,
           _filteredExpenses: {
             type: Array,
-            value: function() {
+            value: function () {
               return [];
             }
           },
@@ -259,104 +268,117 @@ if you open the license dialog. -->
           activeItem: {
             observer: '_activeItemChanged'
           }
-        },
+        };
+      }
 
-        observers: [
+      static get observers() {
+        return [
           '_update(filters, expenses)',
           '_filtersChanged(filters.*)',
           '_update(expenses.*)',
           '_isLargeScreen(_largeScreen)'
-        ],
+        ];
+      }
 
-        _showExpenseEditor: function() {
-          this.fire('edit-expense', {});
-        },
+      _showExpenseEditor() {
+        this.dispatchEvent(new CustomEvent('edit-expense', {
+          bubbles: true,
+          composed: true
+        }));
+      }
 
-        _filtersChanged: function() {
-          if (this.$.expenses.items) {
-            this.debounce('_filtersChanged', function() {
-              this._update();
-            }, 300);
-          }
-        },
-
-        _update: function() {
-          if (!this.filters) {
-            this._filteredExpenses = this.expenses;
-            return;
-          }
-
-          var merchant = this.filters.merchant;
-          var min = this.filters.min;
-          var max = this.filters.max;
-          var status = this.filters.status;
-          var start = this.filters.start;
-          var end = this.filters.end;
-
-          // Filter
-          this._filteredExpenses = this.expenses
-            .filter(function(expense) {
-              return !(merchant && expense.merchant
-                .toUpperCase().indexOf(merchant.toUpperCase()) < 0);
-            })
-            .filter(function(expense) {
-              return !(min && expense.total < min);
-            })
-            .filter(function(expense) {
-              return !(max && expense.total > max);
-            })
-            .filter(function(expense) {
-              if (status && status.length > 0) {
-                return status.indexOf(expense.status) >= 0;
-              } else {
-                return false;
-              }
-            })
-            .filter(function(expense) {
-              if (start) {
-                var startDate = moment(start);
-                return !!(startDate.isValid() && moment(expense.date).isAfter(startDate));
-              } else {
-                return true;
-              }
-            })
-            .filter(function(expense) {
-              if (end) {
-                var endDate = moment(end);
-                return !!(endDate.isValid() && moment(expense.date).isBefore(endDate));
-              } else {
-                return true;
-              }
-            });
-        },
-
-        _activeItemChanged: function(item) {
-          this.$.expenses.selectedItems = item ? [item] : [];
-          this.fire('edit-expense', item);
-        },
-
-        _formatTotal: function(total) {
-          if (total) {
-            return '$' + total.toFixed(2);
-          }
-        },
-
-        _formatStatus: function(status) {
-          if (status) {
-            return status.replace('_', ' ')
-          }
-        },
-
-        _formatDate: function(date) {
-          if (date) {
-            return moment(date).format('MM/DD/YYYY');
-          }
-        },
-
-        _isLargeScreen: function() {
-          this.updateStyles();
+      _filtersChanged() {
+        if (this.$.expenses.items) {
+          this._update();
         }
-      });
-    })();
+      }
+
+      _update() {
+        if (this.expenses === undefined) {
+          return;
+        }
+        if (!this.filters) {
+          this._filteredExpenses = this.expenses;
+          return;
+        }
+
+        var merchant = this.filters.merchant;
+        var min = this.filters.min;
+        var max = this.filters.max;
+        var status = this.filters.status;
+        var start = this.filters.start;
+        var end = this.filters.end;
+
+        // Filter
+        this._filteredExpenses = this.expenses
+          .filter(function (expense) {
+            return !(merchant && expense.merchant
+              .toUpperCase().indexOf(merchant.toUpperCase()) < 0);
+          })
+          .filter(function (expense) {
+            return !(min && expense.total < min);
+          })
+          .filter(function (expense) {
+            return !(max && expense.total > max);
+          })
+          .filter(function (expense) {
+            if (status && status.length > 0) {
+              return status.indexOf(expense.status) >= 0;
+            } else {
+              return false;
+            }
+          })
+          .filter(function (expense) {
+            if (start) {
+              var startDate = moment(start);
+              return !!(startDate.isValid() && moment(expense.date).isAfter(startDate));
+            } else {
+              return true;
+            }
+          })
+          .filter(function (expense) {
+            if (end) {
+              var endDate = moment(end);
+              return !!(endDate.isValid() && moment(expense.date).isBefore(endDate));
+            } else {
+              return true;
+            }
+          });
+      }
+
+      _activeItemChanged(item) {
+        this.$.expenses.selectedItems = item ? [item] : [];
+        this.dispatchEvent(new CustomEvent('edit-expense', {
+          detail: item,
+          bubbles: true,
+          composed: true
+        }));
+      }
+
+      _formatTotal(total) {
+        if (total) {
+          return '$' + total.toFixed(2);
+        }
+      }
+
+      _formatStatus(status) {
+        if (status) {
+          return status.replace('_', ' ')
+        }
+      }
+
+      _formatDate(date) {
+        if (date) {
+          return moment(date).format('MM/DD/YYYY');
+        }
+      }
+
+      _isLargeScreen() {
+        this.updateStyles();
+      }
+    }
+
+    window.customElements.define(ExpensesList.is, ExpensesList);
+
   </script>
 </dom-module>

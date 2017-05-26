@@ -1,13 +1,17 @@
 {
   "entrypoint": "index.html",
   "shell": "src/expense-app.html",
-  "extraDependencies": [
-    "bower_components/webcomponentsjs/webcomponents-lite.min.js",
-    "images/*",
-    "manifest.json"
-  ],
   "fragments": [
     "src/overview-page.html"
+  ],
+  "sources": [
+    "src/**/*",
+    "images/**/*",
+    "bower.json"
+  ],
+  "extraDependencies": [
+    "bower_components/webcomponentsjs/*.js",
+    "manifest.json"
   ],
   "builds": [{
     "name": "bundled",
@@ -23,5 +27,8 @@
     "html": {
       "minify": true
     }
-  }]
+  }],
+  "lint": {
+    "rules": ["polymer-2"]
+  }
 }

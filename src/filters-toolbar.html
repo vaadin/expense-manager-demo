@@ -1,11 +1,11 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="search-filters.html">
 
 <dom-module id="filters-toolbar">
   <template>
     <style>
-      :host {
+       :host {
         display: flex;
         position: relative;
         z-index: 10;
@@ -91,7 +91,7 @@
       }
 
       @media (min-width: 901px) {
-        :host {
+         :host {
           height: 0;
         }
         #filters {
@@ -114,7 +114,7 @@
       }
 
       @media (max-width: 900px) {
-        :host {
+         :host {
           flex-direction: column-reverse;
         }
         #filters-toggle {
@@ -135,7 +135,7 @@
           display: flex;
           flex-direction: column;
         }
-        #total> span:first-child {
+        #total>span:first-child {
           font-size: 12px;
         }
         #total .sum {
@@ -155,7 +155,7 @@
         #done-button {
           display: block;
         }
-        :host([expanded]) #filters-caption {
+         :host([expanded]) #filters-caption {
           display: block;
           padding: 0;
           margin: 16px;
@@ -165,7 +165,7 @@
       }
 
       @media (min-width: 1125px) {
-        #total> span:first-child {
+        #total>span:first-child {
           @apply(--section-title);
         }
         #toolbar {
@@ -185,6 +185,7 @@
           padding: 40px 0;
         }
       }
+
     </style>
     <search-filters filters="{{filters}}" status-options="[[_statusOptions]]" merchants="[[merchants]]" id="filters">
       <div id="buttons">
@@ -207,43 +208,48 @@
     </div>
   </template>
   <script>
-    Polymer({
-      is: 'filters-toolbar',
-      properties: {
-        filters: Object,
-        expenses: Array,
-        totalOwed: Number,
-        merchants: Array,
-        expanded: {
-          type: Boolean,
-          value: false,
-          reflectToAttribute: true
-        },
-        appliedFilters: Number,
-        _statusOptions: {
-          type: Array,
-          value: [{
-            name: 'new',
-            label: 'New'
-          }, {
-            name: 'in_progress',
-            label: 'In Progress'
-          }, {
-            name: 'reimbursed',
-            label: 'Reimbursed'
-          }]
-        }
-      },
+    class FiltersToolbar extends Polymer.Element {
+      static get is() {
+        return 'filters-toolbar';
+      }
 
-      observers: [
-        '_calculateNumFilters(filters.*)'
-      ],
+      static get properties() {
+        return {
+          filters: Object,
+          expenses: Array,
+          totalOwed: Number,
+          merchants: Array,
+          expanded: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          },
+          appliedFilters: Number,
+          _statusOptions: {
+            type: Array,
+            value: [{
+              name: 'new',
+              label: 'New'
+            }, {
+              name: 'in_progress',
+              label: 'In Progress'
+            }, {
+              name: 'reimbursed',
+              label: 'Reimbursed'
+            }]
+          }
+        };
+      }
 
-      _hasFilters: function(appliedFilters) {
+      static get observers() {
+        return ['_calculateNumFilters(filters.*)']
+      }
+
+      _hasFilters(appliedFilters) {
         return appliedFilters > 0;
-      },
+      }
 
-      _calculateNumFilters: function() {
+      _calculateNumFilters() {
         var numFilters = 0;
         for (var f in this.filters) {
           if (this.filters.hasOwnProperty(f)) {
@@ -259,37 +265,39 @@
         }
 
         this.appliedFilters = numFilters ? numFilters : '';
-      },
+      }
 
-      _toggleFilters: function() {
+      _toggleFilters() {
         this.expanded = !this.expanded;
         if (this.expanded) {
           this.$.filters.style.maxHeight = this.$.filters.scrollHeight + 'px';
         } else {
           this.$.filters.style.maxHeight = '4px';
         }
-      },
+      }
 
-      _hideFilters: function() {
+      _hideFilters() {
         // add delay or tap will go through and hit grid
         if (this.expanded) {
-          this.async(function() {
+          this.async(function () {
             this._toggleFilters();
           }, 100);
         }
-      },
+      }
 
-      _clearFilters: function() {
+      _clearFilters() {
         this.set('filters.start', '');
         this.set('filters.end', '');
         this.set('filters.min', '');
         this.set('filters.max', '');
         this.set('filters.merchant', '');
-        this.set('filters.status', this._statusOptions.map(function(option) {
+        this.set('filters.status', this._statusOptions.map(function (option) {
           return option.name;
         }));
         this._hideFilters();
       }
-    });
+    }
+    window.customElements.define(FiltersToolbar.is, FiltersToolbar);
+
   </script>
 </dom-module>

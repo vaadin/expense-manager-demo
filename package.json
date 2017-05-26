@@ -1,16 +1,22 @@
 {
   "name": "vaadin-expense-manager",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Sample PWA showcasing Vaadin Elements",
   "main": "service-worker.js",
   "dependencies": {},
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-gh-pages": "^0.5.4",
-    "http2-push-manifest": "^1.0.0"
+    "http2-push-manifest": "^1.0.0",
+    "eslint": "^3.19.0",
+    "eslint-config-google": "^0.7.0",
+    "eslint-plugin-html": "^2.0.0"
   },
   "scripts": {
-    "test": "mocha"
+    "lint": "npm run lint:javascript",
+    "lint:javascript": "eslint . --ext js,html --ignore-path .gitignore",
+    "test": "polymer test",
+    "test:integration": "polymer build # test that psk builds without error with the CLI"
   },
   "repository": {
     "type": "git",

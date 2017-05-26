@@ -1,4 +1,4 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <script src="../bower_components/qr-js/qr.min.js"></script>
@@ -6,7 +6,7 @@
 <dom-module id="info-dialog">
   <template>
     <style>
-      :host {
+       :host {
         display: block;
       }
 
@@ -59,6 +59,7 @@
           display: none;
         }
       }
+
     </style>
 
     <paper-dialog id="dialog" modal>
@@ -73,7 +74,8 @@
             </p>
             <code>{{url}}</code>
             <p>
-              to test <span class="highlight">photo upload</span>, <span class="highlight">live synchronization</span> and <span class="highlight">offline</span> functionality.
+              to test <span class="highlight">photo upload</span>, <span class="highlight">live synchronization</span> and
+              <span class="highlight">offline</span> functionality.
             </p>
 
             <p>
@@ -84,7 +86,8 @@
         </div>
         <div class="about">
           <p>
-            This demo is built using <a href="https://www.polymer-project.org" target="_blank">Polymer</a> and <a href="https://vaadin.com/elements" target="_blank">Vaadin Elements</a>. You can find the source code and fork the project on <a href="https://github.com/vaadin/expense-manager-demo">GitHub</a>.
+            This demo is built using <a href="https://www.polymer-project.org" target="_blank">Polymer</a> and <a href="https://vaadin.com/elements"
+              target="_blank">Vaadin Elements</a>. You can find the source code and fork the project on <a href="https://github.com/vaadin/expense-manager-demo">GitHub</a>.
           </p>
         </div>
       </div>
@@ -95,33 +98,41 @@
 
   </template>
   <script>
-    (function() {
-      'use strict';
+    class InfoDialog extends Polymer.Element {
+      static get is() {
+        return 'info-dialog';
+      }
 
-      Polymer({
-        is: 'info-dialog',
-        properties: {
-          url: String
-        },
-        open: function() {
+      static get properties() {
+        return {
+          url: String,
+          open: {
+            type: Boolean,
+            reflectToAttribute: true,
+            observer: '_openStateChanged'
+          }
+        }
+      }
+
+      _openStateChanged(open) {
+        if (open) {
           this.url = window.location.href;
           this._updateQR();
           this.$.dialog.open();
-        },
-        close: function() {
-          var _this = this;
-          this.async(function() {
-            _this.$.dialog.close();
-          }, 10);
-        },
-        _updateQR: function() {
-          qr.canvas({
-            canvas: this.$.qr,
-            value: this.url,
-            size: 6
-          });
+        } else {
+          this.$.dialog.close();
         }
-      });
-    })();
+      }
+
+      _updateQR() {
+        qr.canvas({
+          canvas: this.$.qr,
+          value: this.url,
+          size: 6
+        });
+      }
+    }
+    window.customElements.define(InfoDialog.is, InfoDialog);
+
   </script>
 </dom-module>

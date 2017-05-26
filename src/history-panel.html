@@ -1,4 +1,4 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/vaadin-charts/vaadin-bar-chart.html">
 <link rel="import" href="../bower_components/vaadin-charts/vaadin-column-chart.html">
 <link rel="import" href="moment-js.html">
@@ -6,7 +6,7 @@
 <dom-module id="history-panel">
   <template>
     <style>
-      :host {
+       :host {
         display: block;
         background: #f8f9f9;
         padding: 20px 24px;
@@ -18,7 +18,7 @@
       }
 
       .chart-title {
-        @apply(--section-title);
+        @apply --section-title;
       }
 
       #barchart::content text {
@@ -36,8 +36,6 @@
         }
         .total {
           height: 64px;
-          -ms-flex-direction: row;
-          -webkit-flex-direction: row;
           flex-direction: row;
         }
         .total .sum {
@@ -56,8 +54,8 @@
           display: block;
           width: 450px;
         }
-        #total > span:first-child {
-          @apply(--section-title);
+        #total>span:first-child {
+          @apply --section-title;
         }
         #total {
           flex: 1;
@@ -80,6 +78,7 @@
           margin-top: 200px;
         }
       }
+
     </style>
     <div id="container">
 
@@ -149,76 +148,80 @@
     </div>
   </template>
   <script>
-    (function() {
-      'use strict';
-      Polymer({
-        is: 'history-panel',
+    class HistoryPanel extends Polymer.Element {
 
-        properties: {
-          expenses: Array,
+      static get is() {
+        return 'history-panel';
+      }
+
+      static get properties() {
+        return {
+          expenses: {
+            type: Array,
+            observer: 'update'
+          },
           seriesData: {
             type: Array,
             notify: true
           }
-        },
+        };
+      }
 
-        observers: [
-          'update(expenses.*)'
-        ],
-
-        update: function() {
-          var expenses = this.expenses;
-
-          function findMonth(rawDate, history) {
-            var date = moment(rawDate);
-            var month;
-
-            history.forEach(function(m) {
-              if (m.month === date.month() && m.year === date.year()) {
-                month = m;
-              }
-            });
-
-            if (!month) {
-              month = {
-                month: date.month(),
-                year: date.year(),
-                total: 0
-              };
-              history.push(month);
-            }
-            return month;
-          }
-
-          function getHistoryLabel(item, index) {
-            var label = moment().year(item.year).month(item.month);
-            var format = (index === 0 || item.month === 11) ? 'YYYY MMM' : 'MMM';
-            return label.format(format);
-          }
-
-          var history = [];
-          var oneYearAgo = moment().subtract(1, 'years');
-
-          expenses.filter(function(expense) {
-            return moment(expense.date).isAfter(oneYearAgo);
-          }).forEach(function(expense) {
-            findMonth(expense.date, history).total += expense.total;
-          });
-
-          this.seriesData = history.map(function(month) {
-            return month.total;
-          });
-
-          this.async(function() {
-            this.$.barchart.chart.xAxis[0].setCategories(history.map(getHistoryLabel));
-            this.$.barchart.chart.reflow();
-            this.$.columnchart.chart.xAxis[0].setCategories(history.map(getHistoryLabel));
-            this.$.columnchart.chart.reflow();
-          }, 50);
-
+      update(expenses) {
+        if (expenses === undefined) {
+          return;
         }
 
-      });
-    })();
+        function findMonth(rawDate, history) {
+          var date = moment(rawDate);
+          var month;
+
+          history.forEach(function (m) {
+            if (m.month === date.month() && m.year === date.year()) {
+              month = m;
+            }
+          });
+
+          if (!month) {
+            month = {
+              month: date.month(),
+              year: date.year(),
+              total: 0
+            };
+            history.push(month);
+          }
+          return month;
+        }
+
+        function getHistoryLabel(item, index) {
+          var label = moment().year(item.year).month(item.month);
+          var format = (index === 0 || item.month === 11) ? 'YYYY MMM' : 'MMM';
+          return label.format(format);
+        }
+
+        var history = [];
+        var oneYearAgo = moment().subtract(1, 'years');
+
+        expenses.filter(function (expense) {
+          return moment(expense.date).isAfter(oneYearAgo);
+        }).forEach(function (expense) {
+          findMonth(expense.date, history).total += expense.total;
+        });
+
+        this.seriesData = history.map(function (month) {
+          return month.total;
+        });
+
+        window.requestAnimationFrame(() => {
+          this.$.barchart.chart.xAxis[0].setCategories(history.map(getHistoryLabel));
+          this.$.barchart.chart.reflow();
+          this.$.columnchart.chart.xAxis[0].setCategories(history.map(getHistoryLabel));
+          this.$.columnchart.chart.reflow();
+        });
+      }
+    }
+
+    window.customElements.define(HistoryPanel.is, HistoryPanel);
+
   </script>
 </dom-module>

@@ -1,10 +1,10 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="history-panel.html">
 <link rel="import" href="expenses-list.html">
 <dom-module id="content-panel">
   <template>
     <style>
-      :host {
+       :host {
         display: flex;
         height: 100%;
       }
@@ -57,18 +57,26 @@
           height: 100%;
         }
       }
+
     </style>
     <expenses-list id="list" expenses="[[expenses]]" filters="[[filters]]"></expenses-list>
     <history-panel id="history-panel" total-owed="[[totalOwed]]" expenses="[[expenses]]"></history-panel>
   </template>
   <script>
-    Polymer({
-      is: 'content-panel',
-      properties: {
-        expenses: Array,
-        totalOwed: Number,
-        filters: Object
+    class ContentPanel extends Polymer.Element {
+      static get is() {
+        return 'content-panel';
       }
-    });
+
+      static get properties() {
+        return {
+          expenses: Array,
+          totalOwed: Number,
+          filters: Object
+        };
+      }
+    }
+    window.customElements.define(ContentPanel.is, ContentPanel);
+
   </script>
 </dom-module>
