@@ -106,7 +106,7 @@
 
     <vaadin-pouchdb id="db" dbname="{{dbLocal}}" remote="{{dbRemote}}" data="{{expenses}}" status="{{status}}"></vaadin-pouchdb>
 
-    <app-location route="{{route}}" use-hash-as-path></app-location>
+    <app-location route="{{route}}"></app-location>
     <app-route route="{{route}}" pattern="/:dbId" data="{{routeData}}" tail="{{subroute}}">
     </app-route>
 
@@ -134,7 +134,7 @@
     <expense-editor id="expenseEditor" merchants="[[merchants]]" db="[[_db]]" route="{{subroute}}" on-expense-saved="_saveExpense"
       on-delete-expense="_deleteExpense"></expense-editor>
     <paper-toast id="saveNotification"></paper-toast>
-    <info-dialog id="info"></info-dialog>
+    <info-dialog id="info" open="{{showInfo}}"></info-dialog>
     <iron-localstorage name="expense-manager-db-id" value="{{dbId}}"></iron-localstorage>
   </template>
 
@@ -156,7 +156,7 @@
           dbLocal: String,
           dbRemote: String,
           dbId: String,
-          _showInfo: Boolean,
+          showInfo: Boolean,
           status: String,
           expenses: Array,
           totalOwed: Number,
@@ -225,22 +225,19 @@
         if (this.active && this._showInfo) {
           setTimeout(() => {
             this._openInfoWindow();
-            this._showInfo = false;
           }, 1000);
         }
       }
 
       _openInfoWindow() {
-        this.$.info.open();
+        this.showInfo = true;
       }
 
       _getUniqueMerchants() {
         if (this.expenses) {
-          this.merchants = this.expenses.map(function (e) {
-            return e.merchant;
-          }).filter(function (val, index, self) {
-            return self.indexOf(val) === index;
-          });
+          this.merchants = this.expenses
+            .map(e => e.merchant)
+            .filter((val, index, self) => self.indexOf(val) === index);
         }
       }
 

@@ -114,6 +114,10 @@
         }
       }
 
+      close() {
+        this.open = false;
+      }
+
       _openStateChanged(open) {
         if (open) {
           this.url = window.location.href;
