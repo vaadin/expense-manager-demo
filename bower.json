@@ -29,5 +29,10 @@
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"
+  },
+  "resolutions": {
+    "iron-localstorage": "^2.0.0",
+    "iron-form": "^2.0.0",
+    "iron-ajax": "1 - 2"
   }
 }
