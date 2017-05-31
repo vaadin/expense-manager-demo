@@ -47,6 +47,7 @@
       .content {
         display: flex;
         flex-direction: column;
+        height: 100%;
       }
 
       @media (min-width: 900px) {
@@ -183,6 +184,16 @@
           '_calculateTotal(expenses.*)',
           '_route(route)'
         ];
+      }
+
+      ready() {
+        super.ready();
+        setTimeout(() => {
+          // Fix issue on Safari 10.1.
+          const headerPanel = this.shadowRoot.querySelector('app-header-layout');
+          headerPanel.$.wrapper.style.height = '100%';
+          headerPanel.$.contentContainer.style.height = '100%';
+        }, 0);
       }
 
       _activeStateChanged(active) {
