@@ -38,6 +38,7 @@
         color: var(--light-primary-color);
         font-weight: 300;
         font-size: 24px;
+        flex: inherit;
       }
 
       .flex {
@@ -222,7 +223,7 @@
       }
 
       _showInfoDialog() {
-        if (this.active && this._showInfo) {
+        if (this.active && this.showInfo) {
           setTimeout(() => {
             this._openInfoWindow();
           }, 1000);
