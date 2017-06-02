@@ -3,6 +3,7 @@
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-sorter.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="moment-js.html">
 
 <!-- Guard against vaadin-license-dialog styles. For some reason the #header styles are not scoped
@@ -282,6 +283,7 @@ if you open the license dialog. -->
 
       _showExpenseEditor() {
         this.dispatchEvent(new CustomEvent('edit-expense', {
+          detail: {},
           bubbles: true,
           composed: true
         }));
