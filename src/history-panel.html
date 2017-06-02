@@ -212,12 +212,15 @@
           return month.total;
         });
 
-        window.requestAnimationFrame(() => {
-          this.$.barchart.chart.xAxis[0].setCategories(history.map(getHistoryLabel));
-          this.$.barchart.chart.reflow();
-          this.$.columnchart.chart.xAxis[0].setCategories(history.map(getHistoryLabel));
-          this.$.columnchart.chart.reflow();
-        });
+        if (this.$.barchart.chart.xAxis) {
+          window.requestAnimationFrame(() => {
+            this.$.barchart.chart.xAxis[0].setCategories(history.map(getHistoryLabel));
+            this.$.barchart.chart.reflow();
+            this.$.columnchart.chart.xAxis[0].setCategories(history.map(getHistoryLabel));
+            this.$.columnchart.chart.reflow();
+          });
+        }
+
       }
     }
 
