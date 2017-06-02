@@ -103,14 +103,6 @@
         };
       }
 
-      ready() {
-        super.ready();
-        Polymer.RenderStatus.afterNextRender(this, () => {
-          Polymer.importHref(
-            this.resolveUrl('overview-page.html'), null, null, true);
-        });
-      }
-
       _logIn() {
         this.loggedIn = true;
       }
@@ -120,13 +112,22 @@
       }
 
       _selectPage() {
-        if (this.loggedIn === undefined) {
-          return;
+        if (this.loggedIn !== undefined) {
+          this.selected = this.loggedIn ? 1 : 0;
+          if (this.selected) {
+            this._lazyLoadMainPage();
+          }
         }
+      }
 
-        this.selected = this.loggedIn ? 1 : 0;
+      _lazyLoadMainPage() {
+        Polymer.RenderStatus.afterNextRender(this, () => {
+          Polymer.importHref(
+            this.resolveUrl('overview-page.html'), null, null, true);
+        });
       }
     }
+
     window.customElements.define(ExpenseApp.is, ExpenseApp);
 
   </script>
