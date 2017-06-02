@@ -12,7 +12,7 @@
     "vaadin-upload": "vaadin/vaadin-upload#^2.0.0",
     "vaadin-icons": "vaadin/vaadin-icons#^4.0.0",
     "vaadin-charts": "vaadin/vaadin-charts#^5.0.0",
-    "vaadin-pouchdb": "manolo/vaadin-pouchdb#master",
+    "vaadin-pouchdb": "manolo/vaadin-pouchdb#em-2",
     "app-layout": "polymerelements/app-layout#^2.0.0",
     "app-route": "polymerelements/app-route#^2.0.0",
     "iron-a11y-keys": "polymerelements/iron-a11y-keys#^2.0.0",
