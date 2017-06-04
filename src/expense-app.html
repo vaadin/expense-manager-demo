@@ -6,10 +6,12 @@
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
-
-<link rel="import" href="login-page.html">
+<link rel="import" href="../bower_components/lazy-imports/lazy-imports-mixin.html">
 
 <dom-module id="expense-app">
+  <link rel="lazy-import" group="page-0" href="login-page.html">
+  <link rel="lazy-import" group="page-1" href="overview-page.html">
+
   <template>
     <style>
        :host {
@@ -90,24 +92,17 @@
     </iron-pages>
 
     <paper-toast id="networkStatus"></paper-toast>
-
   </template>
 
   <script>
-    class ExpenseApp extends Polymer.Element {
+    class ExpenseApp extends Polymer.LazyImportsMixin(Polymer.Element)  {
       static get is() {
         return 'expense-app'
       };
 
-      static get properties() {
-        return {
-          _loggedIn: {
-            type: Boolean,
-            value: false,
-            observer: '_onLoginChanged'
-          }
-        };
-      }
+      static get observers() {
+        return ['_onLoginChanged(_loggedIn)'];
+      };
 
       ready() {
         super.ready();
@@ -115,54 +110,55 @@
           window.addEventListener('online',  this._networkStatusMessage.bind(this));
           window.addEventListener('offline', this._networkStatusMessage.bind(this));
           this._networkStatusMessage();
+          this._setupDB();
         });
       }
 
       _logIn() {
         this._autoLogin = true;
+        // setup sets the _loggedIn flag appropriatelly
         this._setupDB();
       }
 
       _logOut() {
         this.routeData.id = null;
-        // Force to create a new ddbb (development)
-        // this._dbId = this._dbLocal = this._dbRemote = null;
         this._autoLogin = this._loggedIn = false;
       }
 
       _onLoginChanged(login) {
         Polymer.RenderStatus.afterNextRender(this, () => {
-          if (login) {
-            Polymer.RenderStatus.afterNextRender(this, () =>
-              Polymer.importHref(this.resolveUrl('overview-page.html'), null, null, true)
-            );
-          } else {
+          if (!login) {
             this._setupDB();
           }
-          this._selected = login ? 1 : 0;
-          this.set('route.path', '/' + (login ? this._dbId : ''));
+          if (login !== undefined) {
+            this._selected = login ? 1 : 0;
+            this.set('route.path', '/' + (login ? this._dbId : ''));
+            this.importLazyGroup('page-' + this._selected);
+          }
         });
       }
 
       _setupDB() {
         var id = this.routeData.id;
-        if (id || this._autoLogin) {
-          if (id && this._dbLocal && this._dbId !== id) {
-            // User wants to change their ddbb because URL changed
-            this._tearDownDB();
-          } else if (!id && this._dbId) {
-            // Re-use the saved ddbb
-            id = this._dbId;
-          }
-          if (id) {
-            // Check that ddbb still exists in the server
-            this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/db/' + id;
-          } else {
-            // Create a new ddbb in server with new demo data
-            this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/create';
-          }
-          this.$.ajax.generateRequest();
+        if (!id && !this._autoLogin) {
+          this._loggedIn = false;
+          return;
         }
+        if (id && this._dbLocal && this._dbId !== id) {
+          // User wants to change their ddbb because URL changed
+          this._dbId = this._dbLocal = this._dbRemote
+        } else if (!id && this._dbId) {
+          // Re-use the saved ddbb
+          id = this._dbId;
+        }
+        if (id) {
+          // Check that ddbb still exists in the server
+          this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/db/' + id;
+        } else {
+          // Create a new ddbb in server with new demo data
+          this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/create';
+        }
+        this.$.ajax.generateRequest();
       }
 
       _handleBackendResponse(evt) {

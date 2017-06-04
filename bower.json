@@ -25,7 +25,8 @@
     "paper-checkbox": "polymerelements/paper-checkbox#^2.0.0",
     "paper-dialog": "polymerelements/paper-dialog#^2.0.0",
     "paper-toast": "polymerelements/paper-toast#^2.0.0",
-    "qr-js": "^1.1.4"
+    "qr-js": "^1.1.4",
+    "lazy-imports": "^2.0.0"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"
