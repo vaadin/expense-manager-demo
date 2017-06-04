@@ -4,10 +4,6 @@
 <link rel="import" href="../bower_components/app-layout/app-layout.html">
 <link rel="import" href="../bower_components/iron-icons/notification-icons.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
-<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
-<link rel="import" href="../bower_components/app-route/app-route.html">
-<link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/vaadin-pouchdb/vaadin-pouchdb.html">
 <link rel="import" href="../bower_components/polymer/lib/utils/debounce.html">
 <link rel="import" href="expense-editor.html">
@@ -105,13 +101,7 @@
 
     </style>
 
-    <vaadin-pouchdb id="db" dbname="{{dbLocal}}" remote="{{dbRemote}}" data="{{expenses}}" status="{{status}}"></vaadin-pouchdb>
-
-    <app-location route="{{route}}"></app-location>
-    <app-route route="{{route}}" pattern="/:dbId" data="{{routeData}}" tail="{{subroute}}">
-    </app-route>
-
-    <iron-ajax id="ajax" handle-as="json" on-response="_handleBackendResponse" on-error="_handleBackendError"></iron-ajax>
+    <vaadin-pouchdb id="db" dbname="[[dbLocal]]" remote="[[dbRemote]]" data="{{expenses}}" status="{{status}}"></vaadin-pouchdb>
 
     <app-header-layout fullbleed>
       <app-header slot="header" fixed condenses>
@@ -121,7 +111,7 @@
 
           <span class="flex"></span>
 
-          <paper-button on-tap="_openInfoWindow" class="about-button">Info</paper-button>
+          <paper-button on-tap="_showInfoDialog" class="about-button">Info</paper-button>
           <paper-button on-tap="_logout" class="logout-button">Logout</paper-button>
         </app-toolbar>
       </app-header>
@@ -132,11 +122,12 @@
       </div>
     </app-header-layout>
 
-    <expense-editor id="expenseEditor" merchants="[[merchants]]" db="[[_db]]" route="{{subroute}}" on-expense-saved="_saveExpense"
+    <expense-editor id="expenseEditor" merchants="[[merchants]]" db="[[$.db]]"
+      on-expense-saved="_saveExpense"
       on-delete-expense="_deleteExpense"></expense-editor>
+
     <paper-toast id="saveNotification"></paper-toast>
     <info-dialog id="info" open="{{showInfo}}"></info-dialog>
-    <iron-localstorage name="expense-manager-db-id" value="{{dbId}}"></iron-localstorage>
   </template>
 
   <script>
@@ -147,16 +138,9 @@
 
       static get properties() {
         return {
-          active: {
-            type: Boolean,
-            observer: '_activeStateChanged'
-          },
-          _db: Object,
           route: Object,
-          routeData: Object,
           dbLocal: String,
           dbRemote: String,
-          dbId: String,
           showInfo: Boolean,
           status: String,
           expenses: Array,
@@ -180,10 +164,9 @@
 
       static get observers() {
         return [
-          '_showInfoDialog(active, _showInfo)',
           '_getUniqueMerchants(expenses.*)',
           '_calculateTotal(expenses.*)',
-          '_route(route)'
+          '_dbNameChanged(dbLocal, dbRemote)'
         ];
       }
 
@@ -194,19 +177,16 @@
           const headerPanel = this.shadowRoot.querySelector('app-header-layout');
           headerPanel.$.wrapper.style.height = '100%';
           headerPanel.$.contentContainer.style.height = '100%';
-          headerPanel.$.contentContainer.style.zIndex = '3';
+          // headerPanel.$.contentContainer.style.zIndex = '3';
         }, 0);
       }
 
-      _activeStateChanged(active) {
-        if (active) {
-          window.requestAnimationFrame(() => {
-            this._setupDB()
-          });
-          this._db = this.$.db;
-        } else {
-          this._teardownDB();
-        }
+      _dbNameChanged() {
+        Polymer.RenderStatus.afterNextRender(this, () => {
+          this.$.db.changes(() => this._update());
+          this._update();
+          window.db = this.$.db;
+        });
       }
 
       _calculateTotal() {
@@ -224,14 +204,7 @@
       }
 
       _showInfoDialog() {
-        if (this.active && this.showInfo) {
-          setTimeout(() => {
-            this._openInfoWindow();
-          }, 1000);
-        }
-      }
-
-      _openInfoWindow() {
+        this.showInfo = false;
         this.showInfo = true;
       }
 
@@ -243,66 +216,13 @@
         }
       }
 
-      _teardownDB() {
-        this.dbId = this.dbLocal = this.dbRemote = null;
-        this.set('route.path', '');
-        this.routeData = {};
-      }
-
-      _setupDB() {
-        if (this.routeData && this.routeData.dbId) {
-          this.dbId = this.routeData.dbId;
-        }
-        if (this.dbId) {
-          this.dbLocal = 'db_' + this.dbId;
-          this.set('route.path', '/' + this.dbId);
-          this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/db/' + this.dbId;
-        } else {
-          this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/create';
-        }
-        this.$.ajax.generateRequest();
-      }
-
       _update() {
         this._debouncer = Polymer.Debouncer.debounce(this._debouncer,
           Polymer.Async.timeOut.after(250),
           () => {
             console.log(`Update called()`);
-            this._db.query();
+            this.$.db.query();
           });
-      }
-
-      _handleBackendResponse(evt) {
-        // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-        var rsp = evt.detail.response;
-        if (rsp && rsp.backend_db_id) {
-          this.dbId = rsp.backend_db_id;
-          this.set('route.path', '/' + this.dbId);
-
-          // Setting these, makes couchdb connect to local & remote DB and start syncing
-          this.dbLocal = 'db_' + this.dbId;
-          this.dbRemote = rsp.couchdb_db_url;
-
-          if (rsp.new_db) {
-            this._showInfo = true;
-          }
-
-          // We update the entire UI on any change for simplicity.
-          this._db.changes(function () {
-            this._update();
-          }.bind(this));
-          // First hit
-          this._update();
-        } else {
-          this.dbId = null;
-          this.set('route.path', '');
-          this._setupDB();
-        }
-      }
-
-      _handleBackendError() {
-        // Make sure we at least populate from our local DB if the backend is unavailable
-        this._update();
       }
 
       _editExpense(evt) {
@@ -318,13 +238,13 @@
 
       _saveExpense(evt) {
         var expense = evt.detail;
-        this._db.save(expense);
+        this.$.db.save(expense);
         this._expensesUpdated('saved');
       }
 
       _deleteExpense(evt) {
         var expense = evt.detail;
-        this._db.remove(expense);
+        this.$.db.remove(expense);
         this._expensesUpdated('deleted');
       }
 
@@ -335,23 +255,15 @@
         } else {
           this.$.saveNotification.text = 'Expense was saved';
         }
+        this._update();
         this.$.saveNotification.show();
       }
 
       _logout() {
-        this._teardownDB();
         this.dispatchEvent(new CustomEvent('log-out', {
           bubbles: true,
           composed: true
         }));
-      }
-
-      _route() {
-        const id = this.route.path.replace(/^\//, '');
-        if (id && id !== this.dbId) {
-          this._teardownDB();
-          this._setupDB();
-        }
       }
     }
     window.customElements.define(OverviewPage.is, OverviewPage);

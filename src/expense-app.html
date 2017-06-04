@@ -1,6 +1,12 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/polymer/lib/utils/flattened-nodes-observer.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+
 <link rel="import" href="login-page.html">
 
 <dom-module id="expense-app">
@@ -69,13 +75,21 @@
           border-color: rgba(0, 0, 0, 0.2);
         }
       }
-
     </style>
 
-    <iron-pages id="pages" selected="[[selected]]" selected-attribute="active">
+    <app-location route="{{route}}"></app-location>
+    <app-route route="{{route}}" pattern="/:id" data="{{routeData}}" tail="{{subroute}}"></app-route>
+    <iron-ajax id="ajax" handle-as="json" on-response="_handleBackendResponse" on-error="_handleBackendError"></iron-ajax>
+    <iron-localstorage name="expense-manager-db-id" value="{{_dbId}}"></iron-localstorage>
+    <iron-localstorage name="expense-manager-db-remote" value="{{_dbRemote}}"></iron-localstorage>
+    <iron-localstorage name="expense-manager-autologin" value="{{_autoLogin}}"></iron-localstorage>
+
+    <iron-pages id="pages" selected="[[_selected]]" selected-attribute="active">
       <login-page id="login" on-log-in="_logIn"></login-page>
-      <overview-page id="overview" on-log-out="_logOut"></overview-page>
+      <overview-page id="overview" on-log-out="_logOut" db-local="[[_dbLocal]]" db-remote="[[_dbRemote]]" show-info="[[_showInfo]]"></overview-page>
     </iron-pages>
+
+    <paper-toast id="networkStatus"></paper-toast>
 
   </template>
 
@@ -87,43 +101,107 @@
 
       static get properties() {
         return {
-          loggedIn: {
+          _loggedIn: {
             type: Boolean,
-            value: function () {
-              return !!window.localStorage.getItem('expense-manager-db-id');
-            },
-            notify: true,
-            observer: '_selectPage'
-          },
-          selected: {
-            type: Number,
-            notify: true
+            value: false,
+            observer: '_onLoginChanged'
           }
         };
       }
 
+      ready() {
+        super.ready();
+        Polymer.RenderStatus.afterNextRender(this, () => {
+          window.addEventListener('online',  this._networkStatusMessage.bind(this));
+          window.addEventListener('offline', this._networkStatusMessage.bind(this));
+          this._networkStatusMessage();
+        });
+      }
+
       _logIn() {
-        this.loggedIn = true;
+        this._autoLogin = true;
+        this._setupDB();
       }
 
       _logOut() {
-        this.loggedIn = false;
+        this.routeData.id = null;
+        // Force to create a new ddbb (development)
+        // this._dbId = this._dbLocal = this._dbRemote = null;
+        this._autoLogin = this._loggedIn = false;
       }
 
-      _selectPage() {
-        if (this.loggedIn !== undefined) {
-          this.selected = this.loggedIn ? 1 : 0;
-          if (this.selected) {
-            this._lazyLoadMainPage();
+      _onLoginChanged(login) {
+        Polymer.RenderStatus.afterNextRender(this, () => {
+          if (login) {
+            Polymer.RenderStatus.afterNextRender(this, () =>
+              Polymer.importHref(this.resolveUrl('overview-page.html'), null, null, true)
+            );
+          } else {
+            this._setupDB();
           }
+          this._selected = login ? 1 : 0;
+          this.set('route.path', '/' + (login ? this._dbId : ''));
+        });
+      }
+
+      _setupDB() {
+        var id = this.routeData.id;
+        if (id || this._autoLogin) {
+          if (id && this._dbLocal && this._dbId !== id) {
+            // User wants to change their ddbb because URL changed
+            this._tearDownDB();
+          } else if (!id && this._dbId) {
+            // Re-use the saved ddbb
+            id = this._dbId;
+          }
+          if (id) {
+            // Check that ddbb still exists in the server
+            this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/db/' + id;
+          } else {
+            // Create a new ddbb in server with new demo data
+            this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/create';
+          }
+          this.$.ajax.generateRequest();
         }
       }
 
-      _lazyLoadMainPage() {
-        Polymer.RenderStatus.afterNextRender(this, () => {
-          Polymer.importHref(
-            this.resolveUrl('overview-page.html'), null, null, true);
-        });
+      _handleBackendResponse(evt) {
+        var rsp = evt.detail.response;
+        if (rsp && rsp.backend_db_id) {
+          // ddbb in server is correct
+          this._dbId = rsp.backend_db_id;
+          this._dbLocal = 'db_' + this._dbId;
+          this.set('route.path', '/' + this._dbId);
+          this._dbRemote = rsp.couchdb_db_url;
+          this._loggedIn = true;
+          // ddbb was just created
+          this._showInfo = rsp.new_db;
+        } else {
+          // ddbb does not exist anymore
+          this._dbId = null;
+          this._setupDB();
+        }
+      }
+
+      _handleBackendError(e, d) {
+        if (this.dbId && this._dbRemote) {
+          // We can work offline and have a local instance of the ddbb.
+          this._dbLocal = 'db_' + this._dbId;
+          this._loggedIn = true;
+        } else {
+          // Network failure and we dont have local any ddbb yet to work offline
+          this._dbId = null;
+          this._networkStatusMessage(null, 'experimenting problems, try latter.');
+          this.$.networkStatus.opened = true;
+        }
+      }
+
+      // Show a toast with network status. We migh have a paper-badge for this.
+      _networkStatusMessage(e, text) {
+        text = text ? text : navigator.onLine ? 'online': 'offline';
+        this.$.networkStatus.opened = false;
+        this.$.networkStatus.text = 'Network is ' + text;
+        this.$.networkStatus.opened = true;
       }
     }
 
