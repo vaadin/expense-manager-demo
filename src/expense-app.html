@@ -7,10 +7,10 @@
 <link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../bower_components/lazy-imports/lazy-imports-mixin.html">
+<link rel="import" href="login-page.html">
 
 <dom-module id="expense-app">
-  <link rel="lazy-import" group="page-0" href="login-page.html">
-  <link rel="lazy-import" group="page-1" href="overview-page.html">
+  <link rel="lazy-import" group="overview" href="overview-page.html">
 
   <template>
     <style>
@@ -77,6 +77,7 @@
           border-color: rgba(0, 0, 0, 0.2);
         }
       }
+
     </style>
 
     <app-location route="{{route}}"></app-location>
@@ -95,7 +96,7 @@
   </template>
 
   <script>
-    class ExpenseApp extends Polymer.LazyImportsMixin(Polymer.Element)  {
+    class ExpenseApp extends Polymer.LazyImportsMixin(Polymer.Element) {
       static get is() {
         return 'expense-app'
       };
@@ -107,10 +108,10 @@
       ready() {
         super.ready();
         Polymer.RenderStatus.afterNextRender(this, () => {
-          window.addEventListener('online',  this._networkStatusMessage.bind(this));
+          window.addEventListener('online', this._networkStatusMessage.bind(this));
           window.addEventListener('offline', this._networkStatusMessage.bind(this));
-          this._networkStatusMessage();
-          this._setupDB();
+          this._setupDB()
+          setTimeout(() => this.importLazyGroup('overview'), 100);
         });
       }
 
@@ -133,7 +134,6 @@
           if (login !== undefined) {
             this._selected = login ? 1 : 0;
             this.set('route.path', '/' + (login ? this._dbId : ''));
-            this.importLazyGroup('page-' + this._selected);
           }
         });
       }
@@ -187,14 +187,14 @@
         } else {
           // Network failure and we dont have local any ddbb yet to work offline
           this._dbId = null;
-          this._networkStatusMessage(null, 'experimenting problems, try latter.');
+          this._networkStatusMessage(null, 'Experiencing some issues, try again in a bit.');
           this.$.networkStatus.opened = true;
         }
       }
 
       // Show a toast with network status. We migh have a paper-badge for this.
       _networkStatusMessage(e, text) {
-        text = text ? text : navigator.onLine ? 'online': 'offline';
+        text = text ? text : navigator.onLine ? 'online' : 'offline';
         this.$.networkStatus.opened = false;
         this.$.networkStatus.text = 'Network is ' + text;
         this.$.networkStatus.opened = true;

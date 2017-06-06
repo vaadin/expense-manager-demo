@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0">
 
   <title>Expense Manager</title>
 
@@ -19,23 +19,6 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <meta name="apple-mobile-web-app-title" content="Expenses">
-
-  <script>
-    // Register the base URL
-    const baseUrl = document.querySelector('base').href;
-
-    // Load and register pre-caching Service Worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function () {
-        navigator.serviceWorker.register(baseUrl + 'service-worker.js');
-      });
-    }
-
-  </script>
-
-  <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
-  <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
-  <link rel="import" href="src/expense-app.html">
 
   <style>
     html {
@@ -59,10 +42,89 @@
     }
 
   </style>
+
+  <!-- Inlined polyfill loader to check and load any polyfills your browser needs -->
+  <script>
+    (function () {
+      'use strict';
+      // global for (1) existence means `WebComponentsReady` will file,
+      // (2) WebComponents.ready == true means event has fired.
+      window.WebComponents = window.WebComponents || {};
+      // Feature detect which polyfill needs to be imported.
+      var polyfills = [];
+      if (!('import' in document.createElement('link'))) {
+        polyfills.push('hi');
+      }
+      if (!('attachShadow' in Element.prototype && 'getRootNode' in Element.prototype) ||
+        (window.ShadyDOM && window.ShadyDOM.force)) {
+        polyfills.push('sd');
+      }
+      if (!window.customElements || window.customElements.forcePolyfill) {
+        polyfills.push('ce');
+      }
+      // NOTE: any browser that does not have template or ES6 features
+      // must load the full suite (called `lite` for legacy reasons) of polyfills.
+      if (!('content' in document.createElement('template')) || !window.Promise || !Array.from ||
+        // Edge has broken fragment cloning which means you cannot clone template.content
+        !(document.createDocumentFragment().cloneNode() instanceof DocumentFragment)) {
+        polyfills = ['lite'];
+      }
+
+      if (polyfills.length) {
+        var newScript = document.createElement('script');
+        newScript.src = '/bower_components/webcomponentsjs/webcomponents-' + polyfills.join('-') + '.js';
+        // NOTE: this is required to ensure the polyfills are loaded before
+        // *native* html imports load on older Chrome versions. This *is* CSP
+        // compliant since CSP rules must have allowed this script to run.
+        // In all other cases, this can be async.
+        if (document.readyState === 'loading' && ('import' in document.createElement('link'))) {
+          document.write(newScript.outerHTML);
+        } else {
+          document.head.appendChild(newScript);
+        }
+      } else {
+        // Ensure `WebComponentsReady` is fired also when there are no polyfills loaded.
+        // however, we have to wait for the document to be in 'interactive' state,
+        // otherwise a rAF may fire before scripts in <body>
+
+        var fire = function () {
+          requestAnimationFrame(function () {
+            window.WebComponents.ready = true;
+            document.dispatchEvent(new CustomEvent('WebComponentsReady', {
+              bubbles: true
+            }));
+          });
+        };
+
+        if (document.readyState !== 'loading') {
+          fire();
+        } else {
+          document.addEventListener('readystatechange', function wait() {
+            fire();
+            document.removeEventListener('readystatechange', wait);
+          });
+        }
+      }
+    })();
+
+  </script>
+  <script>
+    // Register the base URL
+    const baseUrl = document.querySelector('base').href;
+
+    // Load and register pre-caching Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register(baseUrl + 'service-worker.js');
+      });
+    }
+
+  </script>
+  <link rel="import" href="src/expense-app.html">
 </head>
 
 <body>
-  <expense-app>Vaadin Expense Manager</expense-app>
+  <expense-app></expense-app>
 </body>
 
 </html>

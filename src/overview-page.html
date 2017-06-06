@@ -122,9 +122,7 @@
       </div>
     </app-header-layout>
 
-    <expense-editor id="expenseEditor" merchants="[[merchants]]" db="[[$.db]]"
-      on-expense-saved="_saveExpense"
-      on-delete-expense="_deleteExpense"></expense-editor>
+    <expense-editor id="expenseEditor" merchants="[[merchants]]" db="[[$.db]]" on-expense-saved="_saveExpense" on-delete-expense="_deleteExpense"></expense-editor>
 
     <paper-toast id="saveNotification"></paper-toast>
     <info-dialog id="info" open="{{showInfo}}"></info-dialog>
