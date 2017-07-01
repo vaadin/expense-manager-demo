@@ -101,7 +101,8 @@
 
     </style>
 
-    <vaadin-pouchdb id="db" dbname="[[dbLocal]]" remote="[[dbRemote]]" data="{{expenses}}" status="{{status}}" no-auto-save no-auto-changes></vaadin-pouchdb>
+    <vaadin-pouchdb id="db" dbname="[[dbLocal]]" remote="[[dbRemote]]" data="{{expenses}}" status="{{status}}"
+      no-auto-save no-auto-changes></vaadin-pouchdb>
 
     <app-header-layout fullbleed>
       <app-header slot="header" fixed condenses>
@@ -117,12 +118,15 @@
       </app-header>
 
       <div class="content">
-        <filters-toolbar id="filters-toolbar" total-owed="[[totalOwed]]" merchants="[[merchants]]" filters="{{filters}}" expenses="[[expenses]]"></filters-toolbar>
-        <content-panel id="content-panel" filters="{{filters}}" total-owed="[[totalOwed]]" expenses="[[expenses]]" on-edit-expense="_editExpense"></content-panel>
+        <filters-toolbar id="filters-toolbar" total-owed="[[totalOwed]]" merchants="[[merchants]]"
+          filters="{{filters}}" expenses="[[expenses]]"></filters-toolbar>
+        <content-panel id="content-panel" filters="{{filters}}" total-owed="[[totalOwed]]" expenses="[[expenses]]"
+          on-edit-expense="_editExpense"></content-panel>
       </div>
     </app-header-layout>
 
-    <expense-editor id="expenseEditor" merchants="[[merchants]]" db="[[$.db]]" on-expense-saved="_saveExpense" on-delete-expense="_deleteExpense"></expense-editor>
+    <expense-editor id="expenseEditor" merchants="[[merchants]]" db="[[$.db]]" on-expense-saved="_saveExpense"
+      on-delete-expense="_deleteExpense"></expense-editor>
 
     <paper-toast id="saveNotification"></paper-toast>
     <info-dialog id="info" open="{{showInfo}}"></info-dialog>
@@ -171,11 +175,12 @@
       ready() {
         super.ready();
         setTimeout(() => {
-          // Fix issue on Safari 10.1.
+          // Workaround app layout bugs
           const headerPanel = this.shadowRoot.querySelector('app-header-layout');
           headerPanel.$.wrapper.style.height = '100%';
           headerPanel.$.contentContainer.style.height = '100%';
           // headerPanel.$.contentContainer.style.zIndex = '3';
+          headerPanel.resetLayout();
         }, 0);
       }
 
@@ -190,10 +195,10 @@
       _calculateTotal() {
         if (this.expenses) {
           var total = this.expenses.filter(function (exp) {
-              return exp.status === 'new';
-            }).map(function (exp) {
-              return exp.total;
-            })
+            return exp.status === 'new';
+          }).map(function (exp) {
+            return exp.total;
+          })
             .reduce(function (a, b) {
               return a + b;
             }, 0);
@@ -265,6 +270,5 @@
       }
     }
     window.customElements.define(OverviewPage.is, OverviewPage);
-
   </script>
 </dom-module>
