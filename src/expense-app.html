@@ -139,6 +139,10 @@
       }
 
       _setupDB() {
+        if(this._subDBCalled === true) {
+          return;
+        }
+
         var id = this.routeData.id;
         if (!id && !this._autoLogin) {
           this._loggedIn = false;
@@ -158,6 +162,8 @@
           // Create a new ddbb in server with new demo data
           this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/create';
         }
+
+        this._subDBCalled = true;
         this.$.ajax.generateRequest();
       }
 
