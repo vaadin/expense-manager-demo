@@ -21,6 +21,10 @@
     "src": "images/app-icon.svg",
     "sizes": "384x384",
     "type": "image/svg"
+  }, {
+    "src": "images/app-icon.svg",
+    "sizes": "512x512",
+    "type": "image/svg"
   }],
   "start_url": "./",
   "display": "standalone",
