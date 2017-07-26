@@ -110,8 +110,8 @@
         Polymer.RenderStatus.afterNextRender(this, () => {
           window.addEventListener('online', this._networkStatusMessage.bind(this));
           window.addEventListener('offline', this._networkStatusMessage.bind(this));
-          this._setupDB()
-          setTimeout(() => this.importLazyGroup('overview'), 100);
+          this._setupDB();
+          setTimeout(() => this.importLazyGroup('overview'), 2000);
         });
       }
 
@@ -165,6 +165,7 @@
 
         this._subDBCalled = true;
         this.$.ajax.generateRequest();
+        this.importLazyGroup('overview');
       }
 
       _handleBackendResponse(evt) {
