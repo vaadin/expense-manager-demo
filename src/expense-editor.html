@@ -178,12 +178,12 @@
             <form on-iron-form-invalid="_formInvalid">
               <iron-a11y-keys keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
               <vaadin-combo-box name="merchant" id="merchant" items="[[merchants]]" value="{{expense.merchant}}" label="Merchant" allow-custom-value
-                required></vaadin-combo-box>
-              <paper-input name="total" id="total" value="{{expense.total}}" type="number" max="10000" label="Total" required step="any">
+                required invalid={{merchantInvalid}}></vaadin-combo-box>
+              <paper-input name="total" id="total" value="{{expense.total}}" type="number" max="10000" label="Total" required step="any" invalid={{totalInvalid}}>
                 <div prefix>$</div>
               </paper-input>
 
-              <vaadin-date-picker label="Date" value="{{expense.date}}" id="date" name="date" required></vaadin-date-picker>
+              <vaadin-date-picker label="Date" value="{{expense.date}}" id="date" name="date" required invalid={{dateInvalid}}></vaadin-date-picker>
               <paper-textarea id="comment" name="comment" label="Comment" value="{{expense.comment}}"></paper-textarea>
             </form>
           </iron-form>
@@ -262,6 +262,11 @@
       }
 
       open(expense) {
+        // Make sure old invalid states are cleared before setting new expense in
+        this.merchantInvalid = false;
+        this.totalInvalid = false;
+        this.dateInvalid = false;
+
         // Create a copy of the expense to be edited so we don't automatically flush changes to db
         this.expense = Object.assign({}, expense);
         // File objects don't survive the JSON dance, so copy that over manually
