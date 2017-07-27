@@ -190,7 +190,7 @@
       }
 
       _handleBackendError(e, d) {
-        if (this.dbId && this._dbRemote) {
+        if (this._dbId && this._dbRemote) {
           // We can work offline and have a local instance of the ddbb.
           this._dbLocal = 'db_' + this._dbId;
           this._loggedIn = true;
