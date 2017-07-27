@@ -81,7 +81,7 @@
     </style>
 
     <app-location route="{{route}}"></app-location>
-    <app-route route="{{route}}" pattern="/:id" data="{{routeData}}" tail="{{subroute}}"></app-route>
+    <app-route route="{{route}}" pattern=":id" data="{{routeData}}" tail="{{subroute}}"></app-route>
     <iron-ajax id="ajax" handle-as="json" on-response="_handleBackendResponse" on-error="_handleBackendError"></iron-ajax>
     <iron-localstorage name="expense-manager-db-id" value="{{_dbId}}"></iron-localstorage>
     <iron-localstorage name="expense-manager-db-remote" value="{{_dbRemote}}"></iron-localstorage>
@@ -89,7 +89,8 @@
 
     <iron-pages id="pages" selected="[[_selected]]" selected-attribute="active">
       <login-page id="login" on-log-in="_logIn"></login-page>
-      <overview-page id="overview" on-log-out="_logOut" db-local="[[_dbLocal]]" db-remote="[[_dbRemote]]" show-info="[[_showInfo]]"></overview-page>
+      <overview-page id="overview" on-log-out="_logOut" db-local="[[_dbLocal]]" db-remote="[[_dbRemote]]"
+        show-info="[[_showInfo]]"></overview-page>
     </iron-pages>
 
     <paper-toast id="networkStatus"></paper-toast>
@@ -107,6 +108,7 @@
 
       ready() {
         super.ready();
+        this.baseHref = document.querySelector('base').getAttribute('href');
         Polymer.RenderStatus.afterNextRender(this, () => {
           window.addEventListener('online', this._networkStatusMessage.bind(this));
           window.addEventListener('offline', this._networkStatusMessage.bind(this));
@@ -124,6 +126,7 @@
       _logOut() {
         this.routeData.id = null;
         this._autoLogin = this._loggedIn = false;
+        this._dbSetupComplete = false;
       }
 
       _onLoginChanged(login) {
@@ -133,13 +136,13 @@
           }
           if (login !== undefined) {
             this._selected = login ? 1 : 0;
-            this.set('route.path', '/' + (login ? this._dbId : ''));
+            this.set('route.path', (login ? this.baseHref + this._dbId : this.baseHref));
           }
         });
       }
 
       _setupDB() {
-        if(this._subDBCalled === true) {
+        if (this._dbSetupComplete === true) {
           return;
         }
 
@@ -163,7 +166,7 @@
           this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/create';
         }
 
-        this._subDBCalled = true;
+        this._dbSetupComplete = true;
         this.$.ajax.generateRequest();
         this.importLazyGroup('overview');
       }
@@ -174,7 +177,7 @@
           // ddbb in server is correct
           this._dbId = rsp.backend_db_id;
           this._dbLocal = 'db_' + this._dbId;
-          this.set('route.path', '/' + this._dbId);
+          this.set('route.path', this.baseHref + this._dbId);
           this._dbRemote = rsp.couchdb_db_url;
           this._loggedIn = true;
           // ddbb was just created
@@ -209,6 +212,5 @@
     }
 
     window.customElements.define(ExpenseApp.is, ExpenseApp);
-
   </script>
 </dom-module>

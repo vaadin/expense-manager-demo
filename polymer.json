@@ -13,12 +13,19 @@
     "bower_components/webcomponentsjs/*.js",
     "manifest.json"
   ],
-  "builds": [{
-    "preset": "es5-bundled"
-  }, {
-    "preset": "es6-bundled"
-  }],
+  "builds": [
+    {
+      "preset": "es5-bundled",
+      "basePath": "/expense-manager"
+    },
+    {
+      "preset": "es6-bundled",
+      "basePath": "/expense-manager"
+    }
+  ],
   "lint": {
-    "rules": ["polymer-2"]
+    "rules": [
+      "polymer-2"
+    ]
   }
 }

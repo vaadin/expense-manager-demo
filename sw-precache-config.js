@@ -7,5 +7,9 @@ module.exports = {
   ],
   navigateFallback: 'index.html',
   stripPrefix: '',
-  replacePrefix: './'
+  replacePrefix: './',
+  runtimeCaching: [{
+    urlPattern: /https:\/\/fonts\.googleapis\.com.*/,
+    handler: 'cacheFirst'
+  }]
 };
