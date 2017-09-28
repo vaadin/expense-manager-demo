@@ -15,12 +15,26 @@
   ],
   "builds": [
     {
+      "name": "es5-bundled",
       "preset": "es5-bundled",
-      "basePath": "/expense-manager"
+      "basePath": true
     },
     {
+      "name": "es6-bundled",
       "preset": "es6-bundled",
-      "basePath": "/expense-manager"
+      "basePath": true,
+      "browserCapabilities": [
+        "es2015"
+      ]
+    },
+    {
+      "name": "es6-unbundled",
+      "preset": "es6-unbundled",
+      "basePath": true,
+      "browserCapabilities": [
+        "es2015",
+        "push"
+      ]
     }
   ],
   "lint": {
