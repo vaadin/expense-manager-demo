@@ -1,11 +1,16 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-text-field.html">
+<link rel="import" href="../bower_components/vaadin-text-field/vaadin-text-field.html">
+<link rel="import" href="../bower_components/vaadin-text-field/vaadin-password-field.html">
+<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-button.html">
+<link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
 <link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
 
 <dom-module id="login-page">
   <template>
+
     <style>
        :host {
         background: var(--dark-primary-color);
@@ -87,11 +92,11 @@
     <div id="header" class="header">
       <h1>Expense Manager</h1>
     </div>
-    <div class="login">
-      <paper-input value={{username}} label="Username" name="username"></paper-input>
-      <paper-input value="{{password}}" label="Password" name="password" type="password"></paper-input>
+    <div class="login" theme="dark">
+      <vaadin-text-field value={{username}} label="Username" name="username"></vaadin-text-field>
+      <vaadin-password-field value="{{password}}" label="Password" name="password"></vaadin-password-field>
       <span class="error-message">[[errorMessage]]</span>
-      <paper-button id="login-button" on-tap="_logIn" raised>Login</paper-button>
+      <vaadin-button id="login-button" on-tap="_logIn">Login</vaadin-button>
     </div>
     <div id="footer">
       <span class="fork-me">
@@ -130,6 +135,5 @@
       }
     }
     window.customElements.define(LoginPage.is, LoginPage);
-
   </script>
 </dom-module>
