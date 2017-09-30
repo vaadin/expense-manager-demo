@@ -1,7 +1,12 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-text-field.html">
+<link rel="import" href="../bower_components/vaadin-text-field/vaadin-text-field.html">
+<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-checkbox.html">
+<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-checkbox.html">
+<link rel="import" href="../bower_components/vaadin-checkbox/vaadin-checkbox.html">
+<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-combo-box.html">
 <link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-date-picker.html">
 <link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
 <link rel="import" href="moment-js.html">
 
@@ -38,16 +43,8 @@
         flex: 1;
       }
 
-      .col.total div[prefix] {
-        margin-right: 6px;
-      }
-
-      .col.total paper-input {
+      .col.total vaadin-text-field {
         flex: 1;
-      }
-
-      .row {
-        margin-bottom: 16px;
       }
 
       .filters {
@@ -66,7 +63,7 @@
         margin-left: 8px;
       }
 
-      .checkboxes>paper-checkbox {
+      .checkboxes>vaadin-checkbox {
         margin-right: 8px;
       }
 
@@ -74,17 +71,21 @@
         display: none;
       }
 
+      #merchant-select {
+        width: 100%;
+      }
+
       @media (min-width: 900px) {
         .title {
           display: block;
           padding: 14px 0;
-          @apply(--section-title);
+          @apply --section-title;
         }
         .checkboxes,
-        .checkboxes>paper-checkbox {
+        .checkboxes>vaadin-checkbox {
           display: block;
         }
-        .checkboxes>paper-checkbox {
+        .checkboxes>vaadin-checkbox {
           margin-bottom: 16px;
         }
         .filters {
@@ -107,24 +108,28 @@
         <div class="row">
           <div class="date col">
             <vaadin-date-picker id="from" auto-validate label="From" value="{{filters.start}}" max="{{filters.end}}"></vaadin-date-picker>
-            <span>–</span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="date col">
             <vaadin-date-picker id="to" auto-validate label="To" value="{{filters.end}}" min="{{filters.start}}"></vaadin-date-picker>
           </div>
         </div>
 
         <div class="row">
           <div class="total col">
-            <paper-input label="Min" value="{{filters.min}}" type="number" required step="any">
-              <div prefix>$</div>
-            </paper-input>
+            <vaadin-text-field label="Min" value="{{filters.min}}" type="number" required step="any">
+              <div slot="prefix">$</div>
+            </vaadin-text-field>
             <span>–</span>
-            <paper-input label="Max" value="{{filters.max}}" type="number" required step="any"></paper-input>
+            <vaadin-text-field label="Max" value="{{filters.max}}" type="number" required step="any"></vaadin-text-field>
           </div>
         </div>
 
         <div class="row">
           <div class="merchants col">
-            <vaadin-combo-box label="Merchant" items="{{merchants}}" value="{{filters.merchant}}" id="merchantsSelect"></vaadin-combo-box>
+            <vaadin-combo-box id="merchant-select" label="Merchant" items="{{merchants}}" value="{{filters.merchant}}"
+              id="merchantsSelect"></vaadin-combo-box>
           </div>
         </div>
 
@@ -133,7 +138,8 @@
             <span class="caption">Status</span>
             <div class="checkboxes">
               <template is="dom-repeat" items="[[statusOptions]]">
-                <paper-checkbox on-change="_updateStatus" checked="[[_filtersContain(item.name, filters.*)]]" name$="[[item.name]]">[[item.label]]</paper-checkbox>
+                <vaadin-checkbox on-change="_updateStatus" checked="[[_filtersContain(item.name, filters.*)]]"
+                  name$="[[item.name]]">[[item.label]]</vaadin-checkbox>
               </template>
             </div>
           </div>
@@ -211,6 +217,5 @@
     }
 
     window.customElements.define(SearchFilters.is, SearchFilters);
-
   </script>
 </dom-module>
