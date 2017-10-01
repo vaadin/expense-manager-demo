@@ -8,6 +8,7 @@
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../bower_components/lazy-imports/lazy-imports-mixin.html">
 <link rel="import" href="../bower_components/vaadin-valo-theme/color.html">
+<link rel="import" href="../bower_components/vaadin-valo-theme/typography.html">
 <link rel="import" href="login-page.html">
 
 <dom-module id="expense-app">
@@ -16,6 +17,10 @@
   <template>
     <custom-style>
       <style include="valo-colors"></style>
+      <style include="valo-typography">
+        /* The <style> tag needs to be non-empty for IE11 */
+
+      </style>
     </custom-style>
     <style>
        :host {
@@ -33,7 +38,7 @@
 
        :host>* {
         --dark-primary-color: var(--valo-base-color);
-        --primary-color: #00b4f0;
+        --primary-color: var(--valo-primary-color);
         --light-primary-color: #F2FAF9;
         --text-primary-color: #FFFFFF;
         --accent-color: #ff3a39;
