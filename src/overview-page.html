@@ -1,6 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
-<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-button.html">
+<link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
 <link rel="import" href="../bower_components/app-layout/app-layout.html">
 <link rel="import" href="../bower_components/iron-icons/notification-icons.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
@@ -85,7 +86,8 @@
       .logout-button,
       .about-button {
         font-size: 14px;
-        color: var(--primary-color);
+        color: var(--valo-primary-contrast-color);
+        text-transform: uppercase;
       }
 
       @media (max-width: 600px) {
@@ -104,7 +106,7 @@
     <vaadin-pouchdb id="db" dbname="[[dbLocal]]" remote="[[dbRemote]]" data="{{expenses}}" status="{{status}}"
       no-auto-save no-auto-changes></vaadin-pouchdb>
 
-    <app-header-layout fullbleed>
+    <app-header-layout fullbleed theme="dark">
       <app-header slot="header" fixed condenses>
         <app-toolbar>
           <h1 main-title>Expense Manager</h1>
@@ -112,8 +114,8 @@
 
           <span class="flex"></span>
 
-          <paper-button on-tap="_showInfoDialog" class="about-button">Info</paper-button>
-          <paper-button on-tap="_logout" class="logout-button">Logout</paper-button>
+          <vaadin-button on-tap="_showInfoDialog" theme="tertiary" class="about-button">Info</vaadin-button>
+          <vaadin-button on-tap="_logout" theme="tertiary" class="logout-button">Logout</vaadin-button>
         </app-toolbar>
       </app-header>
 
