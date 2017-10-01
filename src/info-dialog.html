@@ -1,5 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-button.html">
+<link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <script src="../bower_components/qr-js/qr.min.js"></script>
 
@@ -62,7 +63,7 @@
 
     </style>
 
-    <paper-dialog id="dialog" modal>
+    <paper-dialog id="dialog" modal opened="[[open]]">
       <h2>Welcome to Expense Manager</h2>
 
       <div class="dialog-body">
@@ -74,25 +75,26 @@
             </p>
             <code>{{url}}</code>
             <p>
-              to test <span class="highlight">photo upload</span>, <span class="highlight">live synchronization</span> and
+              to test <span class="highlight">photo upload</span>, <span class="highlight">live synchronization</span>              and
               <span class="highlight">offline</span> functionality.
             </p>
 
             <p>
-              Databases are cleared out after 1 hour. Accessing the URL later will give you a fresh set of test data.
+              Databases are cleared out after 1 hour. Accessing the URL later will give you a fresh set of
+              test data.
             </p>
           </div>
           <canvas id="qr"></canvas>
         </div>
         <div class="about">
           <p>
-            This demo is built using <a href="https://www.polymer-project.org" target="_blank">Polymer</a> and <a href="https://vaadin.com/elements"
-              target="_blank">Vaadin Elements</a>. You can find the source code and fork the project on <a href="https://github.com/vaadin/expense-manager-demo">GitHub</a>.
+            This demo is built using <a href="https://www.polymer-project.org" target="_blank">Polymer</a>            and <a href="https://vaadin.com/elements" target="_blank">Vaadin Elements</a>.
+            You can find the source code and fork the project on <a href="https://github.com/vaadin/expense-manager-demo">GitHub</a>.
           </p>
         </div>
       </div>
       <div class="buttons">
-        <paper-button id="close-button" raised on-tap="close">Got it!</paper-button>
+        <vaadin-button id="close-button" theme="primary" on-tap="close">Got it!</vaadin-button>
       </div>
     </paper-dialog>
 
@@ -122,9 +124,6 @@
         if (open) {
           this.url = window.location.href;
           this._updateQR();
-          this.$.dialog.open();
-        } else {
-          this.$.dialog.close();
         }
       }
 
@@ -137,6 +136,5 @@
       }
     }
     window.customElements.define(InfoDialog.is, InfoDialog);
-
   </script>
 </dom-module>
