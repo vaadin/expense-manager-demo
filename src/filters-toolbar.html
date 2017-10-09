@@ -201,12 +201,12 @@
     <div id="toolbar">
       <div id="total">
         <span>To be reimbursed</span>
-        <span class="sum">[[totalOwed]]</span>
+        <span class="sum">$[[totalOwed]]</span>
       </div>
 
       <div id="filters-toggle" on-tap="_toggleFilters">
         <span>Filters</span>
-        <div class="count" has-filters$="[[appliedFilters]]">[[appliedFilters]]</div>
+        <div class="count" has-filters$="[[_hasFilters(appliedFilters)]]">[[appliedFilters]]</div>
         <paper-icon-button icon="filter-list"></paper-icon-button>
       </div>
     </div>
@@ -238,9 +238,13 @@
         this.dispatch('toggleFilters');
       }
 
+      _hasFilters(appliedFilters) {
+        return appliedFilters > 0;
+      }
+
       _updateVisibilty() {
         if (this.expanded) {
-          this.$.filters.style.maxHeight = this.$.filters.scrollHeight + 'px';
+          requestAnimationFrame(() => this.$.filters.style.maxHeight = this.$.filters.scrollHeight + 'px');
         } else {
           this.$.filters.style.maxHeight = '4px';
         }

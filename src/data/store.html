@@ -17,10 +17,8 @@
 
     store.subscribe(() => {
       const state = store.getState();
-      localStorage.setItem('ExpenseManagerState', JSON.stringify({
-        authenticated: state.authenticated,
-        expenses: state.expenses
-      }));
+      localStorage.setItem('ExpenseManagerState', JSON.stringify(state));
+      //{authenticated: state.authenticated, expenses: state.expenses}));
     });
 
     const reduxMixin = PolymerRedux(store);
