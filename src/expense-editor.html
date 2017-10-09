@@ -288,7 +288,7 @@
         const reg = new RegExp('^data:(.*);.*,(.*)');
         const arr = reg.exec(canvas.toDataURL());
         const bstr = atob(arr[2]);
-        const n = bstr.length;
+        let n = bstr.length;
         const u8arr = new Uint8Array(n);
         while (n--) {
           u8arr[n] = bstr.charCodeAt(n);
