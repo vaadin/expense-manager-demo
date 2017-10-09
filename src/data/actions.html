@@ -1,0 +1,89 @@
+<script>
+  (() => {
+    const uuid = () => ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, a => (a ^ Math.random() * 16 >> a / 4).toString(16));
+
+    const login = () => {
+      return { type: 'LOGIN' };
+    };
+
+    const logout = () => {
+      return { type: 'LOGOUT' };
+    };
+
+    const editExpense = (expense = {}) => {
+      return {
+        type: 'EDIT_EXPENSE',
+        expense
+      };
+    };
+
+    const deleteExpense = expense => {
+      return {
+        type: 'DELETE_EXPENSE',
+        expense
+      };
+    };
+
+    const saveExpense = expense => {
+      if (expense.id) {
+        return {
+          type: 'UPDATE_EXPENSE',
+          expense
+        };
+      } else {
+        return {
+          type: 'ADD_EXPENSE',
+          expense: Object.assign({}, expense, { id: uuid(), status: 'new' })
+        }
+      }
+    };
+
+    const cancelEdit = () => {
+      return { type: 'CANCEL_EDIT' };
+    };
+
+    const clearFilters = () => {
+      return { type: 'CLEAR_FILTERS' };
+    };
+
+    const toggleFilters = () => {
+      return { type: 'TOGGLE_FILTERS' };
+    };
+
+    const hideFilters = () => {
+      return { type: 'HIDE_FILTERS' };
+    };
+
+    const filtersUpdated = filters => {
+      return {
+        type: 'FILTERS_UPDATED',
+        filters
+      };
+    };
+
+    const showInfoDialog = () => {
+      return { type: 'SHOW_INFO_DIALOG' };
+    };
+
+    const hideInfoDialog = () => {
+      return { type: 'HIDE_INFO_DIALOG' };
+    };
+
+    window.ExpenseManager = window.ExpenseManager || {};
+    window.ExpenseManager.actions = {
+      login,
+      logout,
+      editExpense,
+      deleteExpense,
+      saveExpense,
+      cancelEdit,
+      clearFilters,
+      toggleFilters,
+      hideFilters,
+      filtersUpdated,
+      showInfoDialog,
+      hideInfoDialog
+    }
+  })();
+
+</script>

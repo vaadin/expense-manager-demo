@@ -1,0 +1,132 @@
+<link rel="import" href="constants.html">
+<script src="../../node_modules/reselect/dist/reselect.js"></script>
+<script src="../moment.min.js"></script>
+
+<script>
+  (() => {
+
+    const getExpenses = state => state.expenses;
+    const getFilters = state => state.filters;
+
+    const expenses = Reselect.createSelector(
+      [getExpenses, getFilters],
+      (expenses, filters) => {
+
+        var merchant = filters.merchant;
+        var min = filters.min;
+        var max = filters.max;
+        var status = filters.status;
+        var start = filters.start;
+        var end = filters.end;
+
+        return expenses
+          .filter(function (expense) {
+            return !(merchant && expense.merchant
+              .toUpperCase().indexOf(merchant.toUpperCase()) < 0);
+          })
+          .filter(function (expense) {
+            return !(min && expense.total < min);
+          })
+          .filter(function (expense) {
+            return !(max && expense.total > max);
+          })
+          .filter(function (expense) {
+            if (status && status.length > 0) {
+              return status.indexOf(expense.status) >= 0;
+            } else {
+              return false;
+            }
+          })
+          .filter(function (expense) {
+            if (start) {
+              var startDate = moment(start);
+              return !!(startDate.isValid() && moment(expense.date).isAfter(startDate));
+            } else {
+              return true;
+            }
+          })
+          .filter(function (expense) {
+            if (end) {
+              var endDate = moment(end);
+              return !!(endDate.isValid() && moment(expense.date).isBefore(endDate));
+            } else {
+              return true;
+            }
+          });
+      });
+
+
+    const total = Reselect.createSelector([getExpenses], expenses => {
+      return expenses
+        .filter(exp => exp.status === 'new')
+        .map(exp => exp.total)
+        .reduce((sum, current) => sum + current, 0)
+        .toFixed(2);
+    });
+
+    const merchants = Reselect.createSelector([getExpenses], expenses => {
+      return expenses
+        .map(e => e.merchant)
+        .filter((val, index, self) => self.indexOf(val) === index);
+    });
+
+    const appliedFilters = Reselect.createSelector([getFilters], filters => {
+      let numFilters = 0;
+
+      Object.keys(filters).forEach(f => {
+        var filter = filters[f];
+        if (filter) {
+          if (Array.isArray(filter)) {
+            numFilters += ExpenseManager.constants.statuses.length - filter.length;
+          } else {
+            numFilters++;
+          }
+        }
+      });
+      return numFilters;
+    });
+
+    const history = Reselect.createSelector([getExpenses], expenses => {
+      const historyData = [];
+      function findMonth(rawDate, historyData) {
+        let date = moment(rawDate);
+        let month;
+
+        historyData.forEach(m => {
+          if (m.month === date.month() && m.year === date.year()) {
+            month = m;
+          }
+        });
+
+        if (!month) {
+          month = {
+            month: date.month(),
+            year: date.year(),
+            total: 0
+          };
+          historyData.push(month);
+        }
+        return month;
+      }
+
+      const oneYearAgo = moment().subtract(1, 'years');
+      expenses.filter(expense => {
+        return moment(expense.date).isAfter(oneYearAgo);
+      }).forEach(expense => {
+        findMonth(expense.date, historyData).total += expense.total;
+      });
+
+      return historyData;
+    });
+
+    window.ExpenseManager = window.ExpenseManager || {};
+    window.ExpenseManager.select = {
+      expenses,
+      merchants,
+      appliedFilters,
+      total,
+      history
+    };
+  })();
+
+</script>

@@ -59,24 +59,13 @@
       }
 
     </style>
-    <expenses-list id="list" expenses="[[expenses]]" filters="[[filters]]"></expenses-list>
-    <history-panel id="history-panel" total-owed="[[totalOwed]]" expenses="[[expenses]]"></history-panel>
+    <expenses-list id="list"></expenses-list>
+    <history-panel id="history-panel"></history-panel>
   </template>
   <script>
     class ContentPanel extends Polymer.Element {
-      static get is() {
-        return 'content-panel';
-      }
-
-      static get properties() {
-        return {
-          expenses: Array,
-          totalOwed: Number,
-          filters: Object
-        };
-      }
+      static get is() { return 'content-panel'; }
     }
-    window.customElements.define(ContentPanel.is, ContentPanel);
-
+    customElements.define(ContentPanel.is, ContentPanel);
   </script>
 </dom-module>

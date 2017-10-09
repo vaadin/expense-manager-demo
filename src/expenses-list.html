@@ -1,4 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
 <link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-grid.html">
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-sorter.html">
@@ -6,6 +7,9 @@
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="moment-js.html">
+<link rel="import" href="data/store.html">
+
+
 
 <!-- Guard against vaadin-license-dialog styles. For some reason the #header styles are not scoped
 if the license checker is collapsed to the top right corner on page load, and the scoping is fixed
@@ -36,41 +40,29 @@ if you open the license dialog. -->
         --paper-fab-background: var(--valo-error-color);
       }
 
-      @media (max-width: 1124px) {
-        #add-button {
-          bottom: -28px;
-        }
-      }
-      /* Broke with change from paper-header-layout to app-header-layout
-      @media (min-width: 1125px) {
-        #add-button {
-          bottom: auto;
-          top: -29px;
-        }
-      }*/
-
-      @media (max-width: 900px) {
-        #add-button {
-          bottom: 32px;
-        }
-      }
-
       #expenses {
         flex: 1;
         max-height: calc(100vh - 64px);
         border: 0;
         height: 100%;
+        font-weight: 300;
       }
 
       @media (max-width: 1124px) {
         #expenses {
           max-height: calc(100vh - 64px - 290px);
         }
+        #add-button {
+          bottom: -28px;
+        }
       }
 
       @media (max-width: 900px) {
         #expenses {
           max-height: calc(100vh - 64px - 52px);
+        }
+        #add-button {
+          bottom: 32px;
         }
       }
 
@@ -115,7 +107,7 @@ if you open the license dialog. -->
 
     <!-- https://github.com/Polymer/polymer/issues/2149#issuecomment-240884786 -->
     <iron-media-query query="min-width: 1125px" query-matches="{{_largeScreen}}"></iron-media-query>
-    <vaadin-grid items="[[_filteredExpenses]]" id="expenses" active-item="{{activeItem}}">
+    <vaadin-grid items="[[expenses]]" id="expenses" active-item="{{activeItem}}">
 
       <vaadin-grid-column width="8em" frozen>
         <template class="header">
@@ -186,110 +178,36 @@ if you open the license dialog. -->
     <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
   </template>
   <script>
-    class ExpensesList extends Polymer.Element {
+    class ExpensesList extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
       static get is() {
         return 'expenses-list';
       }
-
       static get properties() {
         return {
-          expenses: Array,
-          _filteredExpenses: {
+          expenses: {
             type: Array,
-            value: function () {
-              return [];
-            }
+            statePath: ExpenseManager.select.expenses
           },
-          filters: Object,
           activeItem: {
             observer: '_activeItemChanged'
-          }
+          },
+          _largeScreen: Boolean
         };
       }
 
       static get observers() {
-        return [
-          '_update(filters, expenses)',
-          '_filtersChanged(filters.*)',
-          '_update(expenses.*)',
-          '_isLargeScreen(_largeScreen)'
-        ];
+        return ['_isLargeScreen(_largeScreen)'];
       }
 
       _showExpenseEditor() {
-        this.dispatchEvent(new CustomEvent('edit-expense', {
-          detail: {},
-          bubbles: true,
-          composed: true
-        }));
+        this.dispatch('editExpense');
       }
 
-      _filtersChanged() {
-        if (this.$.expenses.items) {
-          this._update();
+      _activeItemChanged(expense) {
+        if (this.expenses && this.expenses.length > 0) { // don't trigger on init
+          this.$.expenses.selectedItems = expense ? [expense] : [];
+          this.dispatch('editExpense', expense);
         }
-      }
-
-      _update() {
-        if (this.expenses === undefined) {
-          return;
-        }
-        if (!this.filters) {
-          this._filteredExpenses = this.expenses;
-          return;
-        }
-
-        var merchant = this.filters.merchant;
-        var min = this.filters.min;
-        var max = this.filters.max;
-        var status = this.filters.status;
-        var start = this.filters.start;
-        var end = this.filters.end;
-
-        // Filter
-        this._filteredExpenses = this.expenses
-          .filter(function (expense) {
-            return !(merchant && expense.merchant
-              .toUpperCase().indexOf(merchant.toUpperCase()) < 0);
-          })
-          .filter(function (expense) {
-            return !(min && expense.total < min);
-          })
-          .filter(function (expense) {
-            return !(max && expense.total > max);
-          })
-          .filter(function (expense) {
-            if (status && status.length > 0) {
-              return status.indexOf(expense.status) >= 0;
-            } else {
-              return false;
-            }
-          })
-          .filter(function (expense) {
-            if (start) {
-              var startDate = moment(start);
-              return !!(startDate.isValid() && moment(expense.date).isAfter(startDate));
-            } else {
-              return true;
-            }
-          })
-          .filter(function (expense) {
-            if (end) {
-              var endDate = moment(end);
-              return !!(endDate.isValid() && moment(expense.date).isBefore(endDate));
-            } else {
-              return true;
-            }
-          });
-      }
-
-      _activeItemChanged(item) {
-        this.$.expenses.selectedItems = item ? [item] : [];
-        this.dispatchEvent(new CustomEvent('edit-expense', {
-          detail: item,
-          bubbles: true,
-          composed: true
-        }));
       }
 
       _formatTotal(total) {
@@ -315,6 +233,6 @@ if you open the license dialog. -->
       }
     }
 
-    window.customElements.define(ExpensesList.is, ExpensesList);
+    customElements.define(ExpensesList.is, ExpensesList);
   </script>
 </dom-module>

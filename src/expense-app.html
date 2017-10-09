@@ -1,15 +1,10 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
-<link rel="import" href="../bower_components/polymer/lib/utils/flattened-nodes-observer.html">
-<link rel="import" href="../bower_components/app-route/app-route.html">
-<link rel="import" href="../bower_components/app-route/app-location.html">
-<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
-<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
-<link rel="import" href="../bower_components/lazy-imports/lazy-imports-mixin.html">
 <link rel="import" href="../bower_components/vaadin-valo-theme/color.html">
 <link rel="import" href="../bower_components/vaadin-valo-theme/typography.html">
 <link rel="import" href="login-page.html">
+<link rel="import" href="overview-page.html">
+<link rel="import" href="data/store.html">
 
 <dom-module id="expense-app">
   <link rel="lazy-import" group="overview" href="overview-page.html">
@@ -89,137 +84,31 @@
 
     </style>
 
-    <app-location route="{{route}}"></app-location>
-    <app-route route="{{route}}" pattern=":id" data="{{routeData}}" tail="{{subroute}}"></app-route>
-    <iron-ajax id="ajax" handle-as="json" on-response="_handleBackendResponse" on-error="_handleBackendError"></iron-ajax>
-    <iron-localstorage name="expense-manager-db-id" value="{{_dbId}}"></iron-localstorage>
-    <iron-localstorage name="expense-manager-db-remote" value="{{_dbRemote}}"></iron-localstorage>
-    <iron-localstorage name="expense-manager-autologin" value="{{_autoLogin}}"></iron-localstorage>
-
-    <iron-pages id="pages" selected="[[_selected]]" selected-attribute="active">
-      <login-page theme="dark" id="login" on-log-in="_logIn"></login-page>
-      <overview-page id="overview" on-log-out="_logOut" db-local="[[_dbLocal]]" db-remote="[[_dbRemote]]"
-        show-info="[[_showInfo]]"></overview-page>
+    <iron-pages id="pages" selected="[[activePage]]" selected-attribute="active">
+      <login-page theme="dark" id="login"></login-page>
+      <overview-page id="overview"></overview-page>
     </iron-pages>
-
-    <paper-toast id="networkStatus"></paper-toast>
   </template>
 
   <script>
-    class ExpenseApp extends Polymer.LazyImportsMixin(Polymer.Element) {
-      static get is() {
-        return 'expense-app'
-      };
-
-      static get observers() {
-        return ['_onLoginChanged(_loggedIn)'];
-      };
-
-      ready() {
-        super.ready();
-        this.baseHref = document.querySelector('base').getAttribute('href');
-        Polymer.RenderStatus.afterNextRender(this, () => {
-          window.addEventListener('online', this._networkStatusMessage.bind(this));
-          window.addEventListener('offline', this._networkStatusMessage.bind(this));
-          this._setupDB();
-          setTimeout(() => this.importLazyGroup('overview'), 2000);
-        });
-      }
-
-      _logIn() {
-        this._autoLogin = true;
-        // setup sets the _loggedIn flag appropriatelly
-        this._setupDB();
-      }
-
-      _logOut() {
-        this.routeData.id = null;
-        this._autoLogin = this._loggedIn = false;
-        this._dbSetupComplete = false;
-      }
-
-      _onLoginChanged(login) {
-        Polymer.RenderStatus.afterNextRender(this, () => {
-          if (!login) {
-            this._setupDB();
+    class ExpenseApp extends ExpenseManager.ReduxMixin(Polymer.Element) {
+      static get is() { return 'expense-app' };
+      static get properties() {
+        return {
+          activePage: Number,
+          authenticated: {
+            type: Boolean,
+            statePath: 'authenticated',
+            observer: '_updatePage'
           }
-          if (login !== undefined) {
-            this._selected = login ? 1 : 0;
-            this.set('route.path', (login ? this.baseHref + this._dbId : this.baseHref));
-          }
-        });
+        };
       }
 
-      _setupDB() {
-        if (this._dbSetupComplete === true) {
-          return;
-        }
-
-        var id = this.routeData.id;
-        if (!id && !this._autoLogin) {
-          this._loggedIn = false;
-          return;
-        }
-        if (id && this._dbLocal && this._dbId !== id) {
-          // User wants to change their ddbb because URL changed
-          this._dbId = this._dbLocal = this._dbRemote
-        } else if (!id && this._dbId) {
-          // Re-use the saved ddbb
-          id = this._dbId;
-        }
-        if (id) {
-          // Check that ddbb still exists in the server
-          this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/db/' + id;
-        } else {
-          // Create a new ddbb in server with new demo data
-          this.$.ajax.url = 'https://expense-manager.demo.vaadin.com/api/create';
-        }
-
-        this._dbSetupComplete = true;
-        this.$.ajax.generateRequest();
-        this.importLazyGroup('overview');
-      }
-
-      _handleBackendResponse(evt) {
-        var rsp = evt.detail.response;
-        if (rsp && rsp.backend_db_id) {
-          // ddbb in server is correct
-          this._dbId = rsp.backend_db_id;
-          this._dbLocal = 'db_' + this._dbId;
-          this.set('route.path', this.baseHref + this._dbId);
-          this._dbRemote = rsp.couchdb_db_url;
-          this._loggedIn = true;
-          // ddbb was just created
-          this._showInfo = rsp.new_db;
-        } else {
-          // ddbb does not exist anymore
-          this._dbId = null;
-          this._setupDB();
-        }
-      }
-
-      _handleBackendError(e, d) {
-        if (this._dbId && this._dbRemote) {
-          // We can work offline and have a local instance of the ddbb.
-          this._dbLocal = 'db_' + this._dbId;
-          this._loggedIn = true;
-        } else {
-          // Network failure and we dont have local any ddbb yet to work offline
-          this._dbId = null;
-          this._networkStatusMessage(null, 'Experiencing some issues, try again in a bit.');
-          this.$.networkStatus.opened = true;
-        }
-      }
-
-      // Show a toast with network status. We migh have a paper-badge for this.
-      _networkStatusMessage(e, text) {
-        text = text ? text : navigator.onLine ? 'online' : 'offline';
-        this.$.networkStatus.opened = false;
-        this.$.networkStatus.text = 'Network is ' + text;
-        this.$.networkStatus.opened = true;
+      _updatePage() {
+        this.activePage = this.authenticated ? 1 : 0;
       }
     }
 
-    window.customElements.define(ExpenseApp.is, ExpenseApp);
+    customElements.define(ExpenseApp.is, ExpenseApp);
   </script>
 </dom-module>

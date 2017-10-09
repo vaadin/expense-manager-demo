@@ -2,6 +2,8 @@
 <link rel="import" href="../bower_components/vaadin-charts/vaadin-bar-chart.html">
 <link rel="import" href="../bower_components/vaadin-charts/vaadin-column-chart.html">
 <link rel="import" href="moment-js.html">
+<link rel="import" href="data/store.html">
+
 
 <dom-module id="history-panel">
   <template>
@@ -137,14 +139,14 @@
           </div>
           <div id="total">
             <span>To be reimbursed</span>
-            <span class="sum">[[totalOwed]]</span>
+            <span class="sum">$ [[totalOwed]]</span>
           </div>
         </div>
       </div>
     </div>
   </template>
   <script>
-    class HistoryPanel extends Polymer.Element {
+    class HistoryPanel extends ExpenseManager.ReduxMixin(Polymer.Element) {
 
       static get is() {
         return 'history-panel';
@@ -152,8 +154,9 @@
 
       static get properties() {
         return {
-          expenses: {
+          historyData: {
             type: Array,
+            statePath: ExpenseManager.select.history,
             observer: 'update'
           },
           seriesData: {
@@ -164,50 +167,16 @@
         };
       }
 
-      update(expenses) {
-        if (expenses === undefined) {
-          return;
-        }
-
-        function findMonth(rawDate, history) {
-          var date = moment(rawDate);
-          var month;
-
-          history.forEach(function (m) {
-            if (m.month === date.month() && m.year === date.year()) {
-              month = m;
-            }
-          });
-
-          if (!month) {
-            month = {
-              month: date.month(),
-              year: date.year(),
-              total: 0
-            };
-            history.push(month);
-          }
-          return month;
-        }
+      update(history) {
+        this.seriesData = history.map(function (month) {
+          return month.total;
+        });
 
         function getHistoryLabel(item, index) {
           var label = moment().year(item.year).month(item.month);
           var format = (index === 0 || item.month === 11) ? 'YYYY MMM' : 'MMM';
           return label.format(format);
         }
-
-        var history = [];
-        var oneYearAgo = moment().subtract(1, 'years');
-
-        expenses.filter(function (expense) {
-          return moment(expense.date).isAfter(oneYearAgo);
-        }).forEach(function (expense) {
-          findMonth(expense.date, history).total += expense.total;
-        });
-
-        this.seriesData = history.map(function (month) {
-          return month.total;
-        });
 
         if (this.$.barchart.chart.xAxis) {
           window.requestAnimationFrame(() => {

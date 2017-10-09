@@ -1,17 +1,13 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
 <link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-button.html">
 <link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
 <link rel="import" href="../bower_components/app-layout/app-layout.html">
-<link rel="import" href="../bower_components/iron-icons/notification-icons.html">
-<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
-<link rel="import" href="../bower_components/vaadin-pouchdb/vaadin-pouchdb.html">
-<link rel="import" href="../bower_components/polymer/lib/utils/debounce.html">
 <link rel="import" href="expense-editor.html">
 <link rel="import" href="info-dialog.html">
 <link rel="import" href="content-panel.html">
 <link rel="import" href="filters-toolbar.html">
-<link rel="import" href="moment-js.html">
+<link rel="import" href="data/store.html">
 
 <dom-module id="overview-page">
   <template>
@@ -103,174 +99,52 @@
 
     </style>
 
-    <vaadin-pouchdb id="db" dbname="[[dbLocal]]" remote="[[dbRemote]]" data="{{expenses}}" status="{{status}}"
-      no-auto-save no-auto-changes></vaadin-pouchdb>
-
     <app-header-layout fullbleed theme="dark">
       <app-header slot="header" fixed condenses>
         <app-toolbar>
           <h1 main-title>Expense Manager</h1>
-          <iron-icon id="sync" icon="notification:sync" hidden$="[[_hideSyncIcon(status)]]" title="Syncing…"></iron-icon>
-
           <span class="flex"></span>
-
           <vaadin-button on-tap="_showInfoDialog" theme="tertiary" class="about-button">Info</vaadin-button>
           <vaadin-button on-tap="_logout" theme="tertiary" class="logout-button">Logout</vaadin-button>
         </app-toolbar>
       </app-header>
 
       <div class="content">
-        <filters-toolbar id="filters-toolbar" total-owed="[[totalOwed]]" merchants="[[merchants]]"
-          filters="{{filters}}" expenses="[[expenses]]"></filters-toolbar>
-        <content-panel id="content-panel" filters="{{filters}}" total-owed="[[totalOwed]]" expenses="[[expenses]]"
-          on-edit-expense="_editExpense"></content-panel>
+        <filters-toolbar id="filters-toolbar"></filters-toolbar>
+        <content-panel id="content-panel"></content-panel>
       </div>
     </app-header-layout>
 
-    <expense-editor id="expenseEditor" merchants="[[merchants]]" db="[[$.db]]" on-expense-saved="_saveExpense"
-      on-delete-expense="_deleteExpense"></expense-editor>
-
-    <paper-toast id="saveNotification"></paper-toast>
-    <info-dialog id="info" open="{{showInfo}}"></info-dialog>
+    <expense-editor></expense-editor>
+    <info-dialog></info-dialog>
   </template>
 
   <script>
-    class OverviewPage extends Polymer.Element {
-      static get is() {
-        return 'overview-page';
-      }
+    class OverviewPage extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
+      static get is() { return 'overview-page'; }
 
-      static get properties() {
-        return {
-          route: Object,
-          dbLocal: String,
-          dbRemote: String,
-          showInfo: Boolean,
-          status: String,
-          expenses: Array,
-          totalOwed: Number,
-          merchants: Array,
-          attachments: Object,
-          filters: {
-            type: Object,
-            value: function () {
-              return {
-                start: '',
-                end: '',
-                merchant: ''
-              };
-            },
+      // ready() {
+      //   super.ready();
+      //   setTimeout(() => {
+      //     // Workaround app layout bugs
+      //     const headerPanel = this.shadowRoot.querySelector('app-header-layout');
+      //     headerPanel.$.wrapper.style.height = '100%';
+      //     headerPanel.$.contentContainer.style.height = '100%';
+      //     // headerPanel.$.contentContainer.style.zIndex = '3';
+      //     headerPanel.resetLayout();
+      //   }, 0);
+      // }
 
-            notify: true
-          }
-        };
-      }
 
-      static get observers() {
-        return [
-          '_getUniqueMerchants(expenses.*)',
-          '_calculateTotal(expenses.*)',
-          '_dbNameChanged(dbLocal, dbRemote)'
-        ];
-      }
-
-      ready() {
-        super.ready();
-        setTimeout(() => {
-          // Workaround app layout bugs
-          const headerPanel = this.shadowRoot.querySelector('app-header-layout');
-          headerPanel.$.wrapper.style.height = '100%';
-          headerPanel.$.contentContainer.style.height = '100%';
-          // headerPanel.$.contentContainer.style.zIndex = '3';
-          headerPanel.resetLayout();
-        }, 0);
-      }
-
-      _dbNameChanged() {
-        Polymer.RenderStatus.afterNextRender(this, () => {
-          this.$.db.changes(() => this._update());
-          this._update();
-          window.db = this.$.db;
-        });
-      }
-
-      _calculateTotal() {
-        if (this.expenses) {
-          var total = this.expenses.filter(function (exp) {
-            return exp.status === 'new';
-          }).map(function (exp) {
-            return exp.total;
-          })
-            .reduce(function (a, b) {
-              return a + b;
-            }, 0);
-          this.totalOwed = '$' + total.toFixed(2);
-        }
-      }
 
       _showInfoDialog() {
-        this.showInfo = false;
-        this.showInfo = true;
-      }
-
-      _getUniqueMerchants() {
-        if (this.expenses) {
-          this.merchants = this.expenses
-            .map(e => e.merchant)
-            .filter((val, index, self) => self.indexOf(val) === index);
-        }
-      }
-
-      _update() {
-        this._debouncer = Polymer.Debouncer.debounce(this._debouncer,
-          Polymer.Async.timeOut.after(250),
-          () => {
-            console.log(`Update called()`);
-            this.$.db.query();
-          });
-      }
-
-      _editExpense(evt) {
-        if (evt && evt.detail) {
-          var expense = evt.detail;
-          this.$.expenseEditor.open(expense);
-        }
-      }
-
-      _hideSyncIcon() {
-        return this.status !== 'syncing';
-      }
-
-      _saveExpense(evt) {
-        var expense = evt.detail;
-        this.$.db.save(expense);
-        this._expensesUpdated('saved');
-      }
-
-      _deleteExpense(evt) {
-        var expense = evt.detail;
-        this.$.db.remove(expense);
-        this._expensesUpdated('deleted');
-      }
-
-      _expensesUpdated(reason) {
-        this.$.expenseEditor.close();
-        if (reason === 'deleted') {
-          this.$.saveNotification.text = 'Expense was deleted';
-        } else {
-          this.$.saveNotification.text = 'Expense was saved';
-        }
-        this._update();
-        this.$.saveNotification.show();
+        this.dispatch('showInfoDialog');
       }
 
       _logout() {
-        this.dispatchEvent(new CustomEvent('log-out', {
-          bubbles: true,
-          composed: true
-        }));
+        this.dispatch('logout');
       }
     }
-    window.customElements.define(OverviewPage.is, OverviewPage);
+    customElements.define(OverviewPage.is, OverviewPage);
   </script>
 </dom-module>

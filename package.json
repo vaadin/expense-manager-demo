@@ -3,7 +3,11 @@
   "version": "3.0.0",
   "description": "Sample PWA showcasing Vaadin Elements",
   "main": "service-worker.js",
-  "dependencies": {},
+  "dependencies": {
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0",
+    "reselect": "^3.0.1"
+  },
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-gh-pages": "^0.5.4",

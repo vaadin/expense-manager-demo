@@ -18,27 +18,17 @@
     "vaadin-text-field": "vaadin/vaadin-text-field#1.1.0-beta1",
     "vaadin-upload": "vaadin/vaadin-upload#2.1.2",
     "vaadin-valo-theme": "vaadin/vaadin-valo-theme#2.0.0-alpha2",
-    "vaadin-pouchdb": "manolo/vaadin-pouchdb#master",
     "app-layout": "polymerelements/app-layout#^2.0.0",
-    "app-route": "polymerelements/app-route#^2.0.0",
     "iron-a11y-keys": "polymerelements/iron-a11y-keys#^2.0.0",
     "iron-icons": "polymerelements/iron-icons#^2.0.0",
-    "iron-localstorage": "polymerelements/iron-localstorage#^2.0.0",
     "iron-pages": "polymerelements/iron-pages#^2.0.0",
-    "iron-form": "polymerelements/iron-form#2.0-preview",
     "iron-media-query": "polymerelements/iron-media-query#^2.0.0",
     "paper-fab": "polymerelements/paper-fab#^2.0.0",
-    "paper-checkbox": "polymerelements/paper-checkbox#^2.0.0",
     "paper-dialog": "polymerelements/paper-dialog#^2.0.0",
-    "paper-toast": "polymerelements/paper-toast#^2.0.0",
-    "qr-js": "^1.1.4",
-    "lazy-imports": "^2.0.0"
+    "polymer-redux": "^1.0.3"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"
   },
-  "resolutions": {
-    "iron-localstorage": "^2.0.0",
-    "iron-ajax": "1 - 2"
-  }
+  "resolutions": {}
 }

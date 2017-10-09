@@ -2,7 +2,6 @@
 <link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-button.html">
 <link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
-<script src="../bower_components/qr-js/qr.min.js"></script>
 
 <dom-module id="info-dialog">
   <template>
@@ -71,20 +70,12 @@
 
           <div class="text">
             <p>
-              A private test database has been created for you. Connect other browsers and devices to
+              This is a sample Progressive Web App.
             </p>
-            <code>{{url}}</code>
             <p>
-              to test <span class="highlight">photo upload</span>, <span class="highlight">live synchronization</span>              and
-              <span class="highlight">offline</span> functionality.
-            </p>
-
-            <p>
-              Databases are cleared out after 1 hour. Accessing the URL later will give you a fresh set of
-              test data.
+              Try adding it to your home screen and using it offline.
             </p>
           </div>
-          <canvas id="qr"></canvas>
         </div>
         <div class="about">
           <p>
@@ -100,7 +91,7 @@
 
   </template>
   <script>
-    class InfoDialog extends Polymer.Element {
+    class InfoDialog extends ExpenseManager.ReduxMixin(Polymer.Element) {
       static get is() {
         return 'info-dialog';
       }
@@ -110,31 +101,15 @@
           url: String,
           open: {
             type: Boolean,
-            reflectToAttribute: true,
-            observer: '_openStateChanged'
+            statePath: 'uiState.infoDialogVisible'
           }
         }
       }
 
       close() {
-        this.open = false;
-      }
-
-      _openStateChanged(open) {
-        if (open) {
-          this.url = window.location.href;
-          this._updateQR();
-        }
-      }
-
-      _updateQR() {
-        qr.canvas({
-          canvas: this.$.qr,
-          value: this.url,
-          size: 6
-        });
+        this.dispatch('hideInfoDialog');
       }
     }
-    window.customElements.define(InfoDialog.is, InfoDialog);
+    customElements.define(InfoDialog.is, InfoDialog);
   </script>
 </dom-module>

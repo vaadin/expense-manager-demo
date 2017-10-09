@@ -1,4 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
 
 <link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-text-field.html">
 <link rel="import" href="../bower_components/vaadin-text-field/vaadin-text-field.html">
@@ -6,7 +7,8 @@
 <link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-button.html">
 <link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
 <link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
-<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="data/store.html">
+
 
 <dom-module id="login-page">
   <template>
@@ -114,10 +116,9 @@
   </template>
 
   <script>
-    class LoginPage extends Polymer.Element {
-      static get is() {
-        return 'login-page';
-      }
+    class LoginPage extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
+      static get is() { return 'login-page'; }
+
       static get properties() {
         return {
           username: {
@@ -133,12 +134,9 @@
       }
 
       _logIn() {
-        this.dispatchEvent(new CustomEvent('log-in', {
-          bubbles: true,
-          composed: true
-        }));
+        this.dispatch('login');
       }
     }
-    window.customElements.define(LoginPage.is, LoginPage);
+    customElements.define(LoginPage.is, LoginPage);
   </script>
 </dom-module>

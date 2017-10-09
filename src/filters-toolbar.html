@@ -1,8 +1,10 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-button.html">
 <link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
 <link rel="import" href="search-filters.html">
+<link rel="import" href="data/store.html">
 
 <dom-module id="filters-toolbar">
   <template>
@@ -189,8 +191,7 @@
       }
 
     </style>
-    <search-filters filters="{{filters}}" status-options="[[_statusOptions]]" merchants="[[merchants]]"
-      id="filters">
+    <search-filters id="filters">
       <div id="buttons">
         <vaadin-button id="clear-button" on-tap="_clearFilters" theme="tertiary">Clear Filters</vaadin-button>
         <vaadin-button id="done-button" on-tap="_hideFilters" raised>Done</vaadin-button>
@@ -205,73 +206,39 @@
 
       <div id="filters-toggle" on-tap="_toggleFilters">
         <span>Filters</span>
-        <div class="count" has-filters$="[[_hasFilters(appliedFilters)]]">[[appliedFilters]]</div>
+        <div class="count" has-filters$="[[appliedFilters]]">[[appliedFilters]]</div>
         <paper-icon-button icon="filter-list"></paper-icon-button>
       </div>
     </div>
   </template>
   <script>
-    class FiltersToolbar extends Polymer.Element {
-      static get is() {
-        return 'filters-toolbar';
-      }
+    class FiltersToolbar extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
+      static get is() { return 'filters-toolbar'; }
 
       static get properties() {
         return {
-          filters: Object,
-          expenses: Array,
-          totalOwed: Number,
-          merchants: Array,
+          totalOwed: {
+            type: Number,
+            statePath: ExpenseManager.select.total
+          },
           expanded: {
             type: Boolean,
             value: false,
-            reflectToAttribute: true
+            statePath: 'uiState.filtersVisible',
+            observer: '_updateVisibilty'
           },
-          appliedFilters: Number,
-          _statusOptions: {
-            type: Array,
-            value: [{
-              name: 'new',
-              label: 'New'
-            }, {
-              name: 'in_progress',
-              label: 'In Progress'
-            }, {
-              name: 'reimbursed',
-              label: 'Reimbursed'
-            }]
+          appliedFilters: {
+            type: Number,
+            statePath: ExpenseManager.select.appliedFilters
           }
         };
       }
 
-      static get observers() {
-        return ['_calculateNumFilters(filters.*)']
-      }
-
-      _hasFilters(appliedFilters) {
-        return appliedFilters > 0;
-      }
-
-      _calculateNumFilters() {
-        var numFilters = 0;
-        for (var f in this.filters) {
-          if (this.filters.hasOwnProperty(f)) {
-            var filter = this.filters[f];
-            if (filter) {
-              if (Array.isArray(filter)) {
-                numFilters += this._statusOptions.length - filter.length;
-              } else {
-                numFilters++;
-              }
-            }
-          }
-        }
-
-        this.appliedFilters = numFilters ? numFilters : '';
-      }
-
       _toggleFilters() {
-        this.expanded = !this.expanded;
+        this.dispatch('toggleFilters');
+      }
+
+      _updateVisibilty() {
         if (this.expanded) {
           this.$.filters.style.maxHeight = this.$.filters.scrollHeight + 'px';
         } else {
@@ -280,26 +247,13 @@
       }
 
       _hideFilters() {
-        // add delay or tap will go through and hit grid
-        if (this.expanded) {
-          setTimeout(() => {
-            this._toggleFilters();
-          }, 100);
-        }
+        this.dispatch('hideFilters');
       }
 
       _clearFilters() {
-        this.set('filters.start', '');
-        this.set('filters.end', '');
-        this.set('filters.min', '');
-        this.set('filters.max', '');
-        this.set('filters.merchant', '');
-        this.set('filters.status', this._statusOptions.map(function (option) {
-          return option.name;
-        }));
-        this._hideFilters();
+        this.dispatch('clearFilters');
       }
     }
-    window.customElements.define(FiltersToolbar.is, FiltersToolbar);
+    customElements.define(FiltersToolbar.is, FiltersToolbar);
   </script>
 </dom-module>
