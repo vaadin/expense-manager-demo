@@ -3,34 +3,17 @@
 
 <script>
   (() => {
-    // No-dependency UUID generator https://gist.github.com/jed/982883, good enough for this demo
-    const uuid = () => ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, a => (a ^ Math.random() * 16 >> a / 4).toString(16));
+
+    let savedState = localStorage.getItem('ExpenseManagerState');
+    if (savedState) { savedState = JSON.parse(savedState); }
 
 
-    // TODO: get from localstorage, combine with initial
-
-    let initialState = {
-      authenticated: false,
-      expenses: generateDemoExpenses(100),
-      selectedExpense: undefined,
-      filters: {
-        status: ['new', 'in_progress', 'reimbursed']
-      },
-      uiState: {
-        infoDialogVisible: false,
-        filtersVisible: false
-      },
-    };
-
-    const savedState = localStorage.getItem('ExpenseManagerState');
-    if (savedState) {
-      initialState = Object.assign({}, initialState, JSON.parse(savedState));
-    }
-
-
-    window.ExpenseManager = window.ExpenseManager || {};
-    window.ExpenseManager.rootReducer = function (state = initialState, action) {
+    function uiReducer(state = {
+      authenticated: savedState ? savedState.uiState.authenticated : false,
+      infoDialogVisible: false
+    }, action) {
       switch (action.type) {
+
         case 'LOGIN':
           return Object.assign({}, state, { authenticated: true });
 
@@ -38,10 +21,22 @@
           return Object.assign({}, state, { authenticated: false });
 
         case 'SHOW_INFO_DIALOG':
-          return Object.assign({}, state, { uiState: Object.assign({}, state.uiState, { infoDialogVisible: true }) });
+          return Object.assign({}, state, { infoDialogVisible: true });
 
         case 'HIDE_INFO_DIALOG':
-          return Object.assign({}, state, { uiState: Object.assign({}, state.uiState, { infoDialogVisible: false }) });
+          return Object.assign({}, state, { infoDialogVisible: false });
+
+        default:
+          return state;
+      }
+    }
+
+
+    function expensesReducer(state = {
+      expenses: savedState ? savedState.expenses.expenses : _generateDemoExpenses(100),
+      selectedExpense: undefined
+    }, action) {
+      switch (action.type) {
 
         case 'EDIT_EXPENSE':
           return Object.assign({}, state, { selectedExpense: action.expense });
@@ -67,11 +62,21 @@
         case 'CANCEL_EDIT':
           return Object.assign({}, state, { selectedExpense: undefined });
 
+        default:
+          return state;
+      }
+    }
+
+    function filtersReducer(state = {
+      filters: { status: ['new', 'in_progress', 'reimbursed'] }
+    }, action) {
+      switch (action.type) {
+
         case 'TOGGLE_FILTERS':
-          return Object.assign({}, state, { uiState: Object.assign({}, state.uiState, { filtersVisible: !state.uiState.filtersVisible }) });
+          return Object.assign({}, state, { filtersVisible: !state.filtersVisible });
 
         case 'HIDE_FILTERS':
-          return Object.assign({}, state, { uiState: Object.assign({}, state.uiState, { filtersVisible: false }) });
+          return Object.assign({}, state, { filtersVisible: false });
 
         case 'FILTERS_UPDATED':
           return Object.assign({}, state, { filters: action.filters });
@@ -84,14 +89,22 @@
         default:
           return state;
       }
-    };
-
-    function getRandomPrice() {
-      const price = Math.random() * (Math.random() * 3) * 300 + 10;
-      return parseFloat(price.toFixed(2));
     }
 
-    function generateDemoExpenses(num) {
+    window.ExpenseManager = window.ExpenseManager || {};
+    window.ExpenseManager.rootReducer = Redux.combineReducers({
+      uiState: uiReducer,
+      expenses: expensesReducer,
+      filters: filtersReducer
+    });
+
+
+    // No-dependency UUID generator https://gist.github.com/jed/982883, good enough for this demo
+    function uuid() {
+      return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, a => (a ^ Math.random() * 16 >> a / 4).toString(16));
+    }
+
+    function _generateDemoExpenses(num) {
       let date = moment();
       const expenses = [];
       for (let i = 0; i < num; i++) {
@@ -111,13 +124,18 @@
             'Parking', 'Breakfast', 'Shuttle'
           ]
           [Math.floor(Math.random() * 12)],
-          total: getRandomPrice(),
+          total: _getRandomPrice(),
           status: status,
           receipt: status === 'new' ? '' : '/images/default-receipt.png',
           comment: 'Expense from my business trip.'
         });
       }
       return expenses;
+    }
+
+    function _getRandomPrice() {
+      const price = Math.random() * (Math.random() * 3) * 300 + 10;
+      return parseFloat(price.toFixed(2));
     }
   })();
 

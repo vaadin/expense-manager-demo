@@ -5,8 +5,8 @@
 <script>
   (() => {
 
-    const getExpenses = state => state.expenses;
-    const getFilters = state => state.filters;
+    const getExpenses = state => state.expenses.expenses;
+    const getFilters = state => state.filters.filters;
 
     const expenses = Reselect.createSelector(
       [getExpenses, getFilters],

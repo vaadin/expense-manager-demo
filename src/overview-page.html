@@ -123,20 +123,6 @@
     class OverviewPage extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
       static get is() { return 'overview-page'; }
 
-      // ready() {
-      //   super.ready();
-      //   setTimeout(() => {
-      //     // Workaround app layout bugs
-      //     const headerPanel = this.shadowRoot.querySelector('app-header-layout');
-      //     headerPanel.$.wrapper.style.height = '100%';
-      //     headerPanel.$.contentContainer.style.height = '100%';
-      //     // headerPanel.$.contentContainer.style.zIndex = '3';
-      //     headerPanel.resetLayout();
-      //   }, 0);
-      // }
-
-
-
       _showInfoDialog() {
         this.dispatch('showInfoDialog');
       }
