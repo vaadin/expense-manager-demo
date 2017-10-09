@@ -2,8 +2,8 @@
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/vaadin-valo-theme/color.html">
 <link rel="import" href="../bower_components/vaadin-valo-theme/typography.html">
-<link rel="import" href="login-page.html">
-<link rel="import" href="overview-page.html">
+<!-- <link rel="import" href="login-page.html">
+<link rel="import" href="overview-page.html"> -->
 <link rel="import" href="data/store.html">
 
 <dom-module id="expense-app">
@@ -106,6 +106,13 @@
 
       _updatePage() {
         this.activePage = this.authenticated ? 1 : 0;
+        if (this.authenticated) {
+          Polymer.importHref(this.importPath + 'overview-page.html', null, null, true);
+        } else {
+          Polymer.importHref(this.importPath + 'login-page.html', () => {
+            setTimeout(() => Polymer.importHref(this.importPath + 'overview-page.html', null, null, true), 500);
+          }, null, true);
+        }
       }
     }
 
