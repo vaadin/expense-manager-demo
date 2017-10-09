@@ -322,11 +322,7 @@
                 canvas.width = img.width;
               }
               ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-              if (canvas.toBlob) {
-                canvas.toBlob(callback, mimeType, 0.9);
-              } else {
-                callback(this._canvasToBlob(canvas));
-              }
+              callback(canvas.toDataURL());
             });
             img.src = reader.result;
           }
@@ -338,7 +334,7 @@
         e.preventDefault();
         const file = e.detail.file;
         this._resizeImage(file, data => {
-          this.set('_expense.receipt', URL.createObjectURL(data));
+          this.set('_expense.receipt', data);
         }, 'image/jpeg', 1000, 1000);
 
         this.$.upload.files = [];
