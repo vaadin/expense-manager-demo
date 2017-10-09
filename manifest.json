@@ -3,8 +3,8 @@
   "short_name": "Expenses",
   "icons": [
     {
-      "src": "images/app-icon-32.png",
-      "type": "image/png",
+      "src": "images/app-icon.svg",
+      "type": "image/svg",
       "sizes": "32x32"
     },
     {
@@ -13,9 +13,9 @@
       "type": "image/svg"
     },
     {
-      "src": "images/app-icon-144.png",
+      "src": "images/app-icon.svg",
       "sizes": "144x144",
-      "type": "image/png"
+      "type": "image/svg"
     },
     {
       "src": "images/app-icon.svg",
