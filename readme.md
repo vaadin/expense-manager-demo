@@ -17,6 +17,9 @@ Install all  dependencies with `bower install && npm install`.
 ## Run development server
 `polymer serve` will run the application locally
 
+## Docker container for production
+You can use the included `Dockerfile` to deploy the built app using [prpl-server](https://github.com/Polymer/prpl-server-node).
+
 ## Other build targets
 You can build the app with `polymer build`. Other options are listed in the [Polymer CLI](https://www.polymer-project.org/1.0/docs/tools/polymer-cli) documentation.
 
