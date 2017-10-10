@@ -7,32 +7,25 @@
 <link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-button.html">
 <link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
 <link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="../bower_components/vaadin-valo-theme/color.html">
 <link rel="import" href="data/store.html">
 
 
 <dom-module id="login-page">
   <template>
 
-    <style>
+    <style include="valo-dark">
        :host {
-        background: var(--dark-primary-color);
+        /* does not work on IE/EDGE var(--dark-primary-color);*/
+        background: var(--valo-base-color);
         min-height: 400px;
       }
 
-      .login paper-input {
-        width: 100%;
-        --paper-input-container-input-color: var(--text-primary-color);
-        --paper-input-container-underline: {
-          background: rgba(255, 255, 255, 0.2);
-        }
-      }
 
       #login-button {
         margin: 20px 0 0 0;
         padding-left: 30px;
         padding-right: 30px;
-        background: var(--primary-color);
-        color: var(--text-primary-color);
       }
 
       .error-message {
@@ -103,7 +96,7 @@
       <vaadin-text-field value={{username}} label="Username" name="username"></vaadin-text-field>
       <vaadin-password-field value="{{password}}" label="Password" name="password"></vaadin-password-field>
       <span class="error-message">[[errorMessage]]</span>
-      <vaadin-button id="login-button" on-tap="_logIn">Login</vaadin-button>
+      <vaadin-button theme="primary" id="login-button" on-tap="_logIn">Login</vaadin-button>
     </div>
     <div id="footer">
       <span class="fork-me">

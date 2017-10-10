@@ -2,8 +2,6 @@
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/vaadin-valo-theme/color.html">
 <link rel="import" href="../bower_components/vaadin-valo-theme/typography.html">
-<!-- <link rel="import" href="login-page.html">
-<link rel="import" href="overview-page.html"> -->
 <link rel="import" href="data/store.html">
 
 <dom-module id="expense-app">
@@ -85,7 +83,7 @@
     </style>
 
     <iron-pages id="pages" selected="[[activePage]]" selected-attribute="active">
-      <login-page theme="dark" id="login"></login-page>
+      <login-page id="login"></login-page>
       <overview-page id="overview"></overview-page>
     </iron-pages>
   </template>
