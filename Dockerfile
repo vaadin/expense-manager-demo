@@ -10,6 +10,6 @@ COPY . /app
 
 WORKDIR /app
 
-RUN bower install --allow-root && polymer build
+RUN bower install --allow-root && npm install && polymer build
 EXPOSE 8080
 CMD ["prpl-server", "--root", "build", "--config", "polymer.json", "--bot-proxy"]
