@@ -3,6 +3,8 @@
 <link rel="import" href="../bower_components/vaadin-valo-theme/color.html">
 <link rel="import" href="../bower_components/vaadin-valo-theme/typography.html">
 <link rel="import" href="data/store.html">
+<link rel="import" href="login-page.html">
+
 
 <dom-module id="expense-app">
   <link rel="lazy-import" group="overview" href="overview-page.html">
@@ -16,7 +18,7 @@
       </style>
     </custom-style>
     <style>
-       :host {
+      :host {
         display: block;
       }
 
@@ -29,7 +31,7 @@
         left: 0;
       }
 
-       :host>* {
+      :host>* {
         --dark-primary-color: var(--valo-base-color);
         --primary-color: var(--valo-primary-color);
         --light-primary-color: #F2FAF9;
@@ -104,13 +106,16 @@
 
       _updatePage() {
         this.activePage = this.authenticated ? 1 : 0;
-        if (this.authenticated) {
-          Polymer.importHref(this.importPath + 'overview-page.html', null, null, true);
-        } else {
-          Polymer.importHref(this.importPath + 'login-page.html', () => {
-            setTimeout(() => Polymer.importHref(this.importPath + 'overview-page.html', null, null, true), 500);
-          }, null, true);
-        }
+      }
+
+      ready() {
+        super.ready();
+
+        // Start loading the overview page after we're done showing the login page.
+        requestAnimationFrame(() => {
+          setTimeout(() =>
+            Polymer.importHref(this.importPath + 'overview-page.html', null, null, true), 0);
+        });
       }
     }
 
