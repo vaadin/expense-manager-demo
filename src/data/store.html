@@ -1,4 +1,3 @@
-<script src="../../node_modules/redux-thunk/dist/redux-thunk.min.js"></script>
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/polymer-redux/polymer-redux.html">
 <link rel="import" href="actions.html">
@@ -12,7 +11,7 @@
       ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})
       : Redux.compose;
 
-    const enhancer = composeEnhancers(Redux.applyMiddleware(ReduxThunk.default));
+    const enhancer = composeEnhancers();
     const store = Redux.createStore(ExpenseManager.rootReducer, enhancer);
 
     store.subscribe(() => {
