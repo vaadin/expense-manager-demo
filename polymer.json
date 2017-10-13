@@ -2,7 +2,6 @@
   "entrypoint": "index.html",
   "shell": "src/expense-app.html",
   "fragments": [
-    "src/login-page.html",
     "src/overview-page.html"
   ],
   "sources": [
@@ -12,7 +11,8 @@
   ],
   "extraDependencies": [
     "bower_components/webcomponentsjs/*.js",
-    "manifest.json"
+    "manifest.json",
+    "images/default-receipt.png"
   ],
   "builds": [
     {
@@ -26,15 +26,6 @@
       "basePath": true,
       "browserCapabilities": [
         "es2015"
-      ]
-    },
-    {
-      "name": "es6-unbundled",
-      "preset": "es6-unbundled",
-      "basePath": true,
-      "browserCapabilities": [
-        "es2015",
-        "push"
       ]
     }
   ],
