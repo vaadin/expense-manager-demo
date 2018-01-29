@@ -1,23 +1,20 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
 
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-text-field.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-password-field.html">
 <link rel="import" href="../bower_components/vaadin-text-field/vaadin-text-field.html">
 <link rel="import" href="../bower_components/vaadin-text-field/vaadin-password-field.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-button.html">
 <link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
 <link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/color.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
 <link rel="import" href="data/store.html">
 
 
 <dom-module id="login-page">
   <template>
 
-    <style include="valo-dark">
+    <style include="lumo-dark">
        :host {
-        background: var(--valo-base-color);
+        background: var(--lumo-base-color);
         min-height: 400px;
       }
 
@@ -47,7 +44,7 @@
         position: absolute;
         width: 100%;
         top: 36%;
-        border-bottom: 4px solid var(--valo-primary-color-50pct);
+        border-bottom: 4px solid var(--lumo-primary-color-50pct);
       }
 
       .header h1 {

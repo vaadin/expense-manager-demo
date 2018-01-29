@@ -26,7 +26,8 @@
     "paper-fab": "polymerelements/paper-fab#^2.0.0",
     "paper-dialog": "polymerelements/paper-dialog#^2.0.0",
     "polymer-redux": "^1.0.3",
-    "paper-icon-button": "PolymerElements/paper-icon-button#^2.0.1"
+    "paper-icon-button": "PolymerElements/paper-icon-button#^2.0.1",
+    "vaadin-lumo-styles": "^1.0.0-alpha3"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"
