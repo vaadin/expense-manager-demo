@@ -19,10 +19,6 @@
         flex-direction: column;
       }
 
-      .chart-title {
-        @apply --section-title;
-      }
-
       #horizontal {
         display: none;
       }
@@ -32,10 +28,12 @@
         #horizontal {
           display: none;
         }
+
         .total {
           height: 64px;
           flex-direction: row;
         }
+        
         .total .sum {
           margin-left: 12px;
         }
@@ -45,20 +43,21 @@
         #horizontal {
           display: flex;
         }
+
         .chart-title {
           display: none;
         }
+
         #horizontal .chart-title {
           display: block;
           width: 450px;
         }
-        #total>span:first-child {
-          @apply --section-title;
-        }
+
         #total {
           flex: 1;
           margin-left: 16px;
         }
+
         #total .sum {
           display: block;
           text-align: center;
@@ -66,6 +65,7 @@
           font-size: 32px;
           line-height: 100px;
         }
+
         #barchart {
           display: none;
         }

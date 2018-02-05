@@ -1,7 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/color.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/typography.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/typography.html">
 <link rel="import" href="data/store.html">
 <link rel="import" href="login-page.html">
 
@@ -32,8 +32,7 @@
       }
 
       :host>* {
-        --dark-primary-color: var(--valo-base-color);
-        --primary-color: var(--valo-primary-color);
+        --primary-color: var(--lumo-primary-color);
         --light-primary-color: #F2FAF9;
         --text-primary-color: #FFFFFF;
         --accent-color: var(--valo-error-color);
@@ -43,42 +42,17 @@
         --primary-background-color: #FFFFFF;
         --disabled-text-color: #BDBDBD;
         --divider-color: #B6B6B6;
-        --paper-menu-background-color: #fff;
         --menu-link-color: #111111;
-        --paper-input-container-underline: {
-          background: #dbdbdb;
-        }
-        --paper-header-panel-shadow: {
-          display: none;
-        }
-        --paper-header-panel-standard-container: {
-          overflow: visible;
-        }
+
         --vaadin-upload-button-add: {
           background: transparent;
           color: var(--primary-color);
           box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
         }
+
         --vaadin-upload-buttons-primary: {
           flex-direction: column;
           align-items: center;
-        }
-        --section-title: {
-          font-weight: 400;
-          font-size: 13px;
-          display: block;
-          border-bottom: 1px solid rgba(0, 0, 0, 0.13);
-          padding-bottom: 6px;
-          margin-bottom: 18px;
-          margin-top: 4px;
-          color: rgba(0, 0, 0, 0.54);
-        }
-        iron-overlay-backdrop {
-          --iron-overlay-backdrop-background-color: #33383A;
-        }
-
-        --paper-input-container-underline: {
-          border-color: rgba(0, 0, 0, 0.2);
         }
       }
 

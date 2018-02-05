@@ -1,5 +1,4 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-checkbox.html">
 <link rel="import" href="../bower_components/vaadin-checkbox/vaadin-checkbox.html">
 
 <dom-module id="option-group">
@@ -26,7 +25,7 @@
           valuePath: String,
           value: {
             type: Array,
-            notifies: true,
+            notify: true,
             value: () => []
           }
         };
@@ -50,11 +49,6 @@
         this.value = [...this.root.querySelectorAll('vaadin-checkbox')]
           .filter(cb => cb.checked)
           .map(cb => cb.dataset.value);
-
-        // TODO: This should not be needed as value has `notify: true`.
-        // Figure out why it's not dispatching the event
-        this.dispatchEvent(new CustomEvent('value-changed',
-          { bubbles: true, composed: true }))
       }
     }
 

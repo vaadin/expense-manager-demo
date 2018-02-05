@@ -1,9 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-text-field.html">
 <link rel="import" href="../bower_components/vaadin-text-field/vaadin-text-field.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-combo-box.html">
 <link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-date-picker.html">
 <link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
 <link rel="import" href="option-group.html">
 <link rel="import" href="moment-js.html">
@@ -14,7 +11,7 @@
 <dom-module id="search-filters">
   <template>
     <style>
-       :host {
+      :host {
         display: block;
         padding: 0 16px;
       }
@@ -80,15 +77,17 @@
         .title {
           display: block;
           padding: 14px 0;
-          @apply --section-title;
         }
+
         .checkboxes,
         .checkboxes>vaadin-checkbox {
           display: block;
         }
+
         .checkboxes>vaadin-checkbox {
           margin-bottom: 16px;
         }
+
         /* 🙈 Fix.. */
         .filters {
           padding: 0 24px;
