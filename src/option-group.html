@@ -25,7 +25,7 @@
           valuePath: String,
           value: {
             type: Array,
-            notifies: true,
+            notify: true,
             value: () => []
           }
         };
@@ -49,11 +49,6 @@
         this.value = [...this.root.querySelectorAll('vaadin-checkbox')]
           .filter(cb => cb.checked)
           .map(cb => cb.dataset.value);
-
-        // TODO: This should not be needed as value has `notify: true`.
-        // Figure out why it's not dispatching the event
-        this.dispatchEvent(new CustomEvent('value-changed',
-          { bubbles: true, composed: true }))
       }
     }
 
