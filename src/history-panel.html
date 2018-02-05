@@ -142,7 +142,7 @@
     </div>
   </template>
   <script>
-    class HistoryPanel extends ExpenseManager.ReduxMixin(Polymer.Element) {
+    class HistoryPanelElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
 
       static get is() {
         return 'history-panel';
@@ -190,6 +190,12 @@
       }
     }
 
-    window.customElements.define(HistoryPanel.is, HistoryPanel);
+    window.customElements.define(HistoryPanelElement.is, HistoryPanelElement);
+
+    /**
+     * @namespace ExpenseManager
+     */
+    window.ExpenseManager = window.ExpenseManager || {};
+    ExpenseManager.HistoryPanelElement = HistoryPanelElement;
   </script>
 </dom-module>

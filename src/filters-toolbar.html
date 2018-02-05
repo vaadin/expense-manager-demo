@@ -212,7 +212,7 @@
     </div>
   </template>
   <script>
-    class FiltersToolbar extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
+    class FiltersToolbarElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
       static get is() { return 'filters-toolbar'; }
 
       static get properties() {
@@ -258,6 +258,13 @@
         this.dispatch('clearFilters');
       }
     }
-    customElements.define(FiltersToolbar.is, FiltersToolbar);
+
+    customElements.define(FiltersToolbarElement.is, FiltersToolbarElement);
+
+    /**
+     * @namespace ExpenseManager
+     */
+    window.ExpenseManager = window.ExpenseManager || {};
+    ExpenseManager.FiltersToolbarElement = FiltersToolbarElement;
   </script>
 </dom-module>

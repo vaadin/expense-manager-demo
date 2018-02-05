@@ -201,7 +201,7 @@
   </template>
 
   <script>
-    class ExpenseEditor extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
+    class ExpenseEditorElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
       static get is() { return 'expense-editor'; }
 
       static get properties() {
@@ -357,6 +357,12 @@
       }
     }
 
-    customElements.define(ExpenseEditor.is, ExpenseEditor);
+    customElements.define(ExpenseEditorElement.is, ExpenseEditorElement);
+
+    /**
+     * @namespace ExpenseManager
+     */
+    window.ExpenseManager = window.ExpenseManager || {};
+    ExpenseManager.ExpenseEditorElement = ExpenseEditorElement;
   </script>
 </dom-module>

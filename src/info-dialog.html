@@ -91,7 +91,7 @@
 
   </template>
   <script>
-    class InfoDialog extends ExpenseManager.ReduxMixin(Polymer.Element) {
+    class InfoDialogElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
       static get is() {
         return 'info-dialog';
       }
@@ -110,6 +110,13 @@
         this.dispatch('hideInfoDialog');
       }
     }
-    customElements.define(InfoDialog.is, InfoDialog);
+
+    customElements.define(InfoDialogElement.is, InfoDialogElement);
+
+    /**
+     * @namespace ExpenseManager
+     */
+    window.ExpenseManager = window.ExpenseManager || {};
+    ExpenseManager.InfoDialogElement = InfoDialogElement;
   </script>
 </dom-module>

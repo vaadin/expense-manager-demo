@@ -24,13 +24,16 @@
 
     /* @mixinFunction */
     const actionsMixin = (superClass) => {
-      return class extends reduxMixin(superClass) {
+      return class ReduxMixin extends reduxMixin(superClass) {
         static get actions() {
           return window.ExpenseManager.actions;
         }
       }
     }
 
+    /**
+     * @namespace ExpenseManager
+     */
     window.ExpenseManager = window.ExpenseManager || {};
     /* @mixinFunction */
     window.ExpenseManager.ReduxMixin = Polymer.dedupingMixin(actionsMixin);

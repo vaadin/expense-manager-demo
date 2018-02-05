@@ -109,7 +109,7 @@
   </template>
 
   <script>
-    class LoginPage extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
+    class LoginPageElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
       static get is() { return 'login-page'; }
 
       static get properties() {
@@ -130,6 +130,12 @@
         this.dispatch('login');
       }
     }
-    customElements.define(LoginPage.is, LoginPage);
+    customElements.define(LoginPageElement.is, LoginPageElement);
+
+    /**
+     * @namespace ExpenseManager
+     */
+    window.ExpenseManager = window.ExpenseManager || {};
+    ExpenseManager.LoginPageElement = LoginPageElement;
   </script>
 </dom-module>

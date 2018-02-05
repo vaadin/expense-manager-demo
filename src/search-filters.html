@@ -150,7 +150,7 @@
   </template>
 
   <script>
-    class SearchFilters extends ExpenseManager.ReduxMixin(Polymer.Element) {
+    class SearchFiltersElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
       static get is() { return 'search-filters'; }
 
       static get properties() {
@@ -188,6 +188,12 @@
       }
     }
 
-    customElements.define(SearchFilters.is, SearchFilters);
+    customElements.define(SearchFiltersElement.is, SearchFiltersElement);
+
+    /**
+     * @namespace ExpenseManager
+     */
+    window.ExpenseManager = window.ExpenseManager || {};
+    ExpenseManager.SearchFiltersElement = SearchFiltersElement;
   </script>
 </dom-module>

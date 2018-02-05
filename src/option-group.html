@@ -17,7 +17,7 @@
 
   </template>
   <script>
-    class OptionGroup extends Polymer.Element {
+    class OptionGroupElement extends Polymer.Element {
       static get is() { return 'option-group' }
       static get properties() {
         return {
@@ -58,6 +58,12 @@
       }
     }
 
-    customElements.define(OptionGroup.is, OptionGroup);
+    customElements.define(OptionGroupElement.is, OptionGroupElement);
+
+    /**
+     * @namespace ExpenseManager
+     */
+    window.ExpenseManager = window.ExpenseManager || {};
+    ExpenseManager.OptionGroupElement = OptionGroupElement;
   </script>
 </dom-module>

@@ -178,7 +178,7 @@ if you open the license dialog. -->
     <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
   </template>
   <script>
-    class ExpensesList extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
+    class ExpensesListElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
       static get is() {
         return 'expenses-list';
       }
@@ -233,6 +233,12 @@ if you open the license dialog. -->
       }
     }
 
-    customElements.define(ExpensesList.is, ExpensesList);
+    customElements.define(ExpensesListElement.is, ExpensesListElement);
+
+    /**
+     * @namespace ExpenseManager
+     */
+    window.ExpenseManager = window.ExpenseManager || {};
+    ExpenseManager.ExpensesListElement = ExpensesListElement;
   </script>
 </dom-module>

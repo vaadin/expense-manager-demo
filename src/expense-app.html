@@ -91,7 +91,7 @@
   </template>
 
   <script>
-    class ExpenseApp extends ExpenseManager.ReduxMixin(Polymer.Element) {
+    class ExpenseAppElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
       static get is() { return 'expense-app' };
       static get properties() {
         return {
@@ -119,6 +119,12 @@
       }
     }
 
-    customElements.define(ExpenseApp.is, ExpenseApp);
+    customElements.define(ExpenseAppElement.is, ExpenseAppElement);
+
+    /**
+     * @namespace ExpenseManager
+     */
+    window.ExpenseManager = window.ExpenseManager || {};
+    ExpenseManager.ExpenseAppElement = ExpenseAppElement;
   </script>
 </dom-module>
