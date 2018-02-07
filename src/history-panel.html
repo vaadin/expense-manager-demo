@@ -11,7 +11,7 @@
        :host {
         display: block;
         background: #f8f9f9;
-        padding: 20px 24px;
+        padding: 12px 24px;
       }
 
       #container {
@@ -25,6 +25,37 @@
 
       #horizontal {
         display: none;
+      }
+
+      #toolbar {
+        display: block;
+      }
+
+      #total {
+        width: 250px;
+        font-weight: 500;
+        font-size: 18px;
+        line-height: 1.4;
+        padding-bottom: 30px;
+      }
+
+      #total>span:first-child {
+        font-weight: 400;
+        font-size: 13px;
+        display: block;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.13);
+        padding-bottom: 6px;
+        margin-bottom: 18px;
+        margin-top: 4px;
+        color: rgba(0, 0, 0, 0.54);
+      }
+
+      #total .sum {
+        display: block;
+        text-align: center;
+        padding: 40px 0;
+        font-size: 32px;
+        font-weight: 300;
       }
 
       @media (max-width: 600px) {
@@ -52,9 +83,7 @@
           display: block;
           width: 450px;
         }
-        #total>span:first-child {
-          @apply --section-title;
-        }
+
         #total {
           flex: 1;
           margin-left: 16px;
@@ -71,14 +100,12 @@
         }
       }
 
-      @media (min-width: 1125px) {
-        .chart-title {
-          margin-top: 200px;
-        }
-      }
-
     </style>
     <div id="container">
+      <div id="total">
+        <span>To be reimbursed</span>
+        <span class="sum">$[[totalOwed]]</span>
+      </div>
 
       <div class="chart">
         <h2 class="chart-title section-title">Last 12 Months in total</h2>
@@ -150,6 +177,10 @@
 
       static get properties() {
         return {
+          totalOwed: {
+            type: Number,
+            statePath: ExpenseManager.select.total
+          },
           historyData: {
             type: Array,
             statePath: ExpenseManager.select.history,

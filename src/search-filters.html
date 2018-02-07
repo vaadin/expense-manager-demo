@@ -14,9 +14,8 @@
 <dom-module id="search-filters">
   <template>
     <style>
-       :host {
+      :host {
         display: block;
-        padding: 0 16px;
       }
 
       .col {
@@ -52,11 +51,19 @@
         padding-bottom: 16px;
       }
 
-      .status .caption {
+      .filters>* {
+        width: 100%;
+      }
+
+      .caption {
         display: block;
         font-size: 12px;
         margin: 32px 0 14px;
         color: rgba(0, 0, 0, 0.54);
+      }
+
+      .title {
+        display: flex;
       }
 
       .checkboxes {
@@ -68,19 +75,39 @@
         margin-right: 8px;
       }
 
-      .title {
-        display: none;
-      }
-
       #merchant-select {
         width: 100%;
       }
 
+      .title>span:first-child {
+        flex: 1;
+      }
+
+      .row {
+        display: flex;
+        align-items: baseline;
+      }
+
+      .row vaadin-text-field {
+        min-width: 0px;
+      }
+
+      .row .delimeter {
+        padding: 0 10px;
+      }
+
       @media (min-width: 900px) {
         .title {
-          display: block;
+          display: flex;
+          align-items: baseline;
           padding: 14px 0;
-          @apply --section-title;
+          font-weight: 400;
+          font-size: 13px;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.13);
+          padding-bottom: 6px;
+          margin-bottom: 18px;
+          margin-top: 4px;
+          color: rgba(0, 0, 0, 0.54);
         }
         .checkboxes,
         .checkboxes>vaadin-checkbox {
@@ -92,8 +119,6 @@
         /* 🙈 Fix.. */
         .filters {
           padding: 0 24px;
-          position: absolute;
-          left: -308px;
           width: 260px;
           background: #f8f9f9;
           height: calc(100vh - 64px);
@@ -105,43 +130,25 @@
 
     <div id="content">
       <div class="filters">
-        <div class="title">Filter Expenses</div>
-
-        <div class="row">
-          <div class="date col">
-            <vaadin-date-picker id="from" auto-validate label="From" value="{{filters.start}}" max="{{filters.end}}"></vaadin-date-picker>
-          </div>
+        <div class="title">
+          <span>Filter Expenses</span>
+          <vaadin-button id="clear-button" on-tap="_clearFilters" theme="tertiary-inline">Clear Filters</vaadin-button>
         </div>
+        <vaadin-date-picker id="from" auto-validate label="From" value="{{filters.start}}" max="{{filters.end}}"></vaadin-date-picker>
+        <vaadin-date-picker id="to" auto-validate label="To" value="{{filters.end}}" min="{{filters.start}}"></vaadin-date-picker>
         <div class="row">
-          <div class="date col">
-            <vaadin-date-picker id="to" auto-validate label="To" value="{{filters.end}}" min="{{filters.start}}"></vaadin-date-picker>
-          </div>
+          <vaadin-text-field label="Min" value="{{filters.min}}" type="number" step="any">
+            <div slot="prefix">$</div>
+          </vaadin-text-field>
+          <span class="delimeter">–</span>
+          <vaadin-text-field label="Max" value="{{filters.max}}" type="number" step="any"></vaadin-text-field>
         </div>
-
-        <div class="row">
-          <div class="total col">
-            <vaadin-text-field label="Min" value="{{filters.min}}" type="number" step="any">
-              <div slot="prefix">$</div>
-            </vaadin-text-field>
-            <span>–</span>
-            <vaadin-text-field label="Max" value="{{filters.max}}" type="number" step="any"></vaadin-text-field>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="merchants col">
-            <vaadin-combo-box id="merchant-select" label="Merchant" items="{{merchants}}" value="{{filters.merchant}}"
-              id="merchantsSelect"></vaadin-combo-box>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="status col">
+        <vaadin-combo-box id="merchant-select" label="Merchant" items="{{merchants}}" value="{{filters.merchant}}"
+          id="merchantsSelect"></vaadin-combo-box>
+        <div>
             <span class="caption">Status</span>
             <option-group value="{{filters.status}}" items="[[statusOptions]]" label-path="label" value-path="name"></option-group>
-          </div>
         </div>
-
       </div>
     </div>
     <div id="footer">
@@ -185,6 +192,10 @@
         if (JSON.stringify(this.filters) !== JSON.stringify(this.srcFilters)) {
           this.dispatch('filtersUpdated', this.filters);
         }
+      }
+
+      _clearFilters() {
+        this.dispatch('clearFilters');
       }
     }
 
