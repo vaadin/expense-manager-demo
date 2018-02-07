@@ -31,25 +31,11 @@
         color: var(--light-primary-color);
         font-weight: 300;
         font-size: 24px;
-        flex: inherit;
-      }
-
-      .flex {
-        flex: 1;
       }
 
       .content {
         display: flex;
-        flex-direction: column;
         height: 100%;
-      }
-
-      @media (min-width: 900px) {
-        .content {
-          /* Make room for filters panel on the left. */
-          padding-left: 308px;
-          padding-right: 298px;
-        }
       }
 
       @media (max-width: 1124px) {
@@ -103,7 +89,6 @@
       <app-header slot="header" fixed condenses>
         <app-toolbar>
           <h1 main-title>Expense Manager</h1>
-          <span class="flex"></span>
           <vaadin-button on-tap="_showInfoDialog" theme="tertiary" class="about-button">Info</vaadin-button>
           <vaadin-button on-tap="_logout" theme="tertiary" class="logout-button">Logout</vaadin-button>
         </app-toolbar>
