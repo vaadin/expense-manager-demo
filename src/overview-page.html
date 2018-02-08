@@ -1,6 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-button.html">
 <link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
 <link rel="import" href="../bower_components/app-layout/app-layout.html">
 <link rel="import" href="expense-editor.html">
@@ -8,6 +7,7 @@
 <link rel="import" href="content-panel.html">
 <link rel="import" href="filters-toolbar.html">
 <link rel="import" href="data/store.html">
+<link rel="import" href="../../iron-media-query/iron-media-query.html">
 
 <dom-module id="overview-page">
   <template>
@@ -68,7 +68,7 @@
       .logout-button,
       .about-button {
         font-size: 14px;
-        color: var(--valo-primary-contrast-color);
+        color: var(--lumo-primary-contrast-color);
         text-transform: uppercase;
       }
 
@@ -94,11 +94,21 @@
         </app-toolbar>
       </app-header>
 
-      <div class="content">
+      <div class="content" phone="{{_phone}}" tablet="{{_tablet}}">
         <filters-toolbar id="filters-toolbar"></filters-toolbar>
         <content-panel id="content-panel"></content-panel>
       </div>
     </app-header-layout>
+
+    <iron-media-query
+      query="[[_phoneMediaQuery]]"
+      query-matches="{{_phone}}">
+    </iron-media-query>
+
+    <iron-media-query
+      query="[[_tabletMediaQuery]]"
+      query-matches="{{_tablet}}">
+    </iron-media-query>
 
     <expense-editor></expense-editor>
     <info-dialog></info-dialog>
@@ -108,6 +118,18 @@
     (function() {
       class OverviewPageElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
         static get is() { return 'overview-page'; }
+
+        static get properties() {
+          return {
+            _phoneMediaQuery: {
+              value: '(max-width: 420px), (max-height: 420px)'
+            },
+
+            _tabletMediaQuery: {
+              value: '(max-width: 1124px)'
+            }
+          };
+        }
 
         _showInfoDialog() {
           this.dispatch('showInfoDialog');
