@@ -201,168 +201,170 @@
   </template>
 
   <script>
-    class ExpenseEditorElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
-      static get is() { return 'expense-editor'; }
+    (function() {
+      class ExpenseEditorElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
+        static get is() { return 'expense-editor'; }
 
-      static get properties() {
-        return {
-          _merchants: {
-            type: Array,
-            statePath: ExpenseManager.select.merchants
-          },
-          _sourceExpense: {
-            type: Object,
-            statePath: 'expenses.selectedExpense',
-            observer: '_expenseChanged'
-          },
-          _expense: Object,
-          _errorText: String
-        };
-      }
-
-      ready() {
-        super.ready();
-        window.requestAnimationFrame(() => {
-          this.$.upload.set('i18n.dropFiles.one', 'Drop receipt here...');
-          this.$.upload.set('i18n.addFiles.one', 'Select receipt');
-        });
-      }
-
-      connectedCallback() {
-        super.connectedCallback();
-        this._boundOnResize = this._onResize.bind(this);
-        window.addEventListener('resize', this._boundOnResize);
-      }
-
-      disconnectedCallback() {
-        super.disconnectedCallback();
-        window.removeEventListener('resize', this._boundOnResize);
-      }
-
-      _expenseChanged(srcExpense) {
-        if (srcExpense) {
-          this._expense = Object.assign({}, srcExpense);
-          this.$.upload.files = [];
-
-          // Ensure that the scroll is returned to top on mobile
-          setTimeout(() => {
-            this.$.dialog.scrollTop = 0;
-            this._onResize();
-          }, 0);
-        } else {
-          this._expense = undefined;
+        static get properties() {
+          return {
+            _merchants: {
+              type: Array,
+              statePath: ExpenseManager.select.merchants
+            },
+            _sourceExpense: {
+              type: Object,
+              statePath: 'expenses.selectedExpense',
+              observer: '_expenseChanged'
+            },
+            _expense: Object,
+            _errorText: String
+          };
         }
-      }
 
-      _isValid() {
-        return this._getFormFields().every(el => el.validate());
-      }
-
-      _getFormFields() {
-        return Array.from(this.$.form.childNodes).filter(el => 'validate' in el);
-      }
-
-      _showDelete() {
-        return this.expense && !(this.expense._id && this.expense.status === 'new');
-      }
-
-      close() {
-        this.dispatch('cancelEdit');
-      }
-
-      _onResize() {
-        this.$.dialog.notifyResize();
-      }
-
-      _getCaption(expense) {
-        if (expense && expense.id) {
-          return 'Edit Expense';
-        } else {
-          return 'Add Expense';
+        ready() {
+          super.ready();
+          window.requestAnimationFrame(() => {
+            this.$.upload.set('i18n.dropFiles.one', 'Drop receipt here...');
+            this.$.upload.set('i18n.addFiles.one', 'Select receipt');
+          });
         }
-      }
 
-      // Read canvas content and returns a Blob.
-      // For browsers not supporting canvas.toBlob
-      _canvasToBlob(canvas) {
-        const reg = new RegExp('^data:(.*);.*,(.*)');
-        const arr = reg.exec(canvas.toDataURL());
-        const bstr = atob(arr[2]);
-        let n = bstr.length;
-        const u8arr = new Uint8Array(n);
-        while (n--) {
-          u8arr[n] = bstr.charCodeAt(n);
+        connectedCallback() {
+          super.connectedCallback();
+          this._boundOnResize = this._onResize.bind(this);
+          window.addEventListener('resize', this._boundOnResize);
         }
-        return new Blob([u8arr], { type: arr[1] });
-      }
 
-      // Read a file and return a Blob. If it's an image it converts and
-      // resizes using a canvas.
-      // TODO: move this to vaadin-upload as a utility method
-      _resizeImage(file, callback, mimeType, maxWidth, maxHeight) {
-        const img = document.createElement('img');
-        const reader = new FileReader();
-        reader.onload = () => {
-          if (!/^image/.test(file.type)) {
-            callback(reader.result);
-          } else if (file.type === mimeType && (!maxWidth || !maxWidth)) {
-            callback(reader.result);
+        disconnectedCallback() {
+          super.disconnectedCallback();
+          window.removeEventListener('resize', this._boundOnResize);
+        }
+
+        _expenseChanged(srcExpense) {
+          if (srcExpense) {
+            this._expense = Object.assign({}, srcExpense);
+            this.$.upload.files = [];
+
+            // Ensure that the scroll is returned to top on mobile
+            setTimeout(() => {
+              this.$.dialog.scrollTop = 0;
+              this._onResize();
+            }, 0);
           } else {
-            img.addEventListener('load', () => {
-              const canvas = document.createElement('canvas');
-              const ctx = canvas.getContext('2d');
-              if (img.width > img.height && img.width > maxWidth) {
-                canvas.width = maxWidth;
-                canvas.height = img.height * maxWidth / img.width;
-              } else if (img.height > img.width && img.height > maxHeight) {
-                canvas.height = maxHeight;
-                canvas.width = img.width * maxHeight / img.height;
-              } else {
-                canvas.height = img.height;
-                canvas.width = img.width;
-              }
-              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-              callback(canvas.toDataURL());
-            });
-            img.src = reader.result;
+            this._expense = undefined;
           }
-        };
-        reader.readAsDataURL(file);
-      }
+        }
 
-      _handleUpload(e) {
-        e.preventDefault();
-        const file = e.detail.file;
-        this._resizeImage(file, data => {
-          this.set('_expense.receipt', data);
-        }, 'image/jpeg', 1000, 1000);
+        _isValid() {
+          return this._getFormFields().every(el => el.validate());
+        }
 
-        this.$.upload.files = [];
-      }
+        _getFormFields() {
+          return Array.from(this.$.form.childNodes).filter(el => 'validate' in el);
+        }
 
-      _save() {
-        this._errorText = '';
-        if (this._isValid()) {
-          this._expense.total = parseFloat(this._expense.total);
-          this.dispatch('saveExpense', this._expense);
-        } else {
-          console.log('Form validation failed');
-          this.$.dialog.scrollTop = 0;
-          this._errorText = 'Please fill all required fields';
+        _showDelete() {
+          return this.expense && !(this.expense._id && this.expense.status === 'new');
+        }
+
+        close() {
+          this.dispatch('cancelEdit');
+        }
+
+        _onResize() {
+          this.$.dialog.notifyResize();
+        }
+
+        _getCaption(expense) {
+          if (expense && expense.id) {
+            return 'Edit Expense';
+          } else {
+            return 'Add Expense';
+          }
+        }
+
+        // Read canvas content and returns a Blob.
+        // For browsers not supporting canvas.toBlob
+        _canvasToBlob(canvas) {
+          const reg = new RegExp('^data:(.*);.*,(.*)');
+          const arr = reg.exec(canvas.toDataURL());
+          const bstr = atob(arr[2]);
+          let n = bstr.length;
+          const u8arr = new Uint8Array(n);
+          while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+          }
+          return new Blob([u8arr], { type: arr[1] });
+        }
+
+        // Read a file and return a Blob. If it's an image it converts and
+        // resizes using a canvas.
+        // TODO: move this to vaadin-upload as a utility method
+        _resizeImage(file, callback, mimeType, maxWidth, maxHeight) {
+          const img = document.createElement('img');
+          const reader = new FileReader();
+          reader.onload = () => {
+            if (!/^image/.test(file.type)) {
+              callback(reader.result);
+            } else if (file.type === mimeType && (!maxWidth || !maxWidth)) {
+              callback(reader.result);
+            } else {
+              img.addEventListener('load', () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                if (img.width > img.height && img.width > maxWidth) {
+                  canvas.width = maxWidth;
+                  canvas.height = img.height * maxWidth / img.width;
+                } else if (img.height > img.width && img.height > maxHeight) {
+                  canvas.height = maxHeight;
+                  canvas.width = img.width * maxHeight / img.height;
+                } else {
+                  canvas.height = img.height;
+                  canvas.width = img.width;
+                }
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                callback(canvas.toDataURL());
+              });
+              img.src = reader.result;
+            }
+          };
+          reader.readAsDataURL(file);
+        }
+
+        _handleUpload(e) {
+          e.preventDefault();
+          const file = e.detail.file;
+          this._resizeImage(file, data => {
+            this.set('_expense.receipt', data);
+          }, 'image/jpeg', 1000, 1000);
+
+          this.$.upload.files = [];
+        }
+
+        _save() {
+          this._errorText = '';
+          if (this._isValid()) {
+            this._expense.total = parseFloat(this._expense.total);
+            this.dispatch('saveExpense', this._expense);
+          } else {
+            console.log('Form validation failed');
+            this.$.dialog.scrollTop = 0;
+            this._errorText = 'Please fill all required fields';
+          }
+        }
+
+        _delete() {
+          this.dispatch('deleteExpense', this._expense);
         }
       }
 
-      _delete() {
-        this.dispatch('deleteExpense', this._expense);
-      }
-    }
+      customElements.define(ExpenseEditorElement.is, ExpenseEditorElement);
 
-    customElements.define(ExpenseEditorElement.is, ExpenseEditorElement);
-
-    /**
-     * @namespace ExpenseManager
-     */
-    window.ExpenseManager = window.ExpenseManager || {};
-    ExpenseManager.ExpenseEditorElement = ExpenseEditorElement;
+      /**
+       * @namespace ExpenseManager
+       */
+      window.ExpenseManager = window.ExpenseManager || {};
+      ExpenseManager.ExpenseEditorElement = ExpenseEditorElement;
+    })();
   </script>
 </dom-module>

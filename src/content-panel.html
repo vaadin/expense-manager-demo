@@ -63,16 +63,18 @@
     <history-panel id="history-panel"></history-panel>
   </template>
   <script>
-    class ContentPanelElement extends Polymer.Element {
-      static get is() { return 'content-panel'; }
-    }
+    (function() {
+      class ContentPanelElement extends Polymer.Element {
+        static get is() { return 'content-panel'; }
+      }
 
-    customElements.define(ContentPanelElement.is, ContentPanelElement);
+      customElements.define(ContentPanelElement.is, ContentPanelElement);
 
-    /**
-     * @namespace ExpenseManager
-     */
-    window.ExpenseManager = window.ExpenseManager || {};
-    ExpenseManager.ContentPanelElement = ContentPanelElement;
+      /**
+       * @namespace ExpenseManager
+       */
+      window.ExpenseManager = window.ExpenseManager || {};
+      ExpenseManager.ContentPanelElement = ContentPanelElement;
+    })();
   </script>
 </dom-module>

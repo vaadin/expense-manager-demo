@@ -212,59 +212,61 @@
     </div>
   </template>
   <script>
-    class FiltersToolbarElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
-      static get is() { return 'filters-toolbar'; }
+    (function() {
+      class FiltersToolbarElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
+        static get is() { return 'filters-toolbar'; }
 
-      static get properties() {
-        return {
-          totalOwed: {
-            type: Number,
-            statePath: ExpenseManager.select.total
-          },
-          expanded: {
-            type: Boolean,
-            value: false,
-            statePath: 'filters.filtersVisible',
-            observer: '_updateVisibilty'
-          },
-          appliedFilters: {
-            type: Number,
-            statePath: ExpenseManager.select.appliedFilters
+        static get properties() {
+          return {
+            totalOwed: {
+              type: Number,
+              statePath: ExpenseManager.select.total
+            },
+            expanded: {
+              type: Boolean,
+              value: false,
+              statePath: 'filters.filtersVisible',
+              observer: '_updateVisibilty'
+            },
+            appliedFilters: {
+              type: Number,
+              statePath: ExpenseManager.select.appliedFilters
+            }
+          };
+        }
+
+        _toggleFilters() {
+          this.dispatch('toggleFilters');
+        }
+
+        _hasFilters(appliedFilters) {
+          return appliedFilters > 0;
+        }
+
+        _updateVisibilty() {
+          if (this.expanded) {
+            requestAnimationFrame(() => this.$.filters.style.maxHeight = this.$.filters.scrollHeight + 'px');
+          } else {
+            this.$.filters.style.maxHeight = '4px';
           }
-        };
-      }
+        }
 
-      _toggleFilters() {
-        this.dispatch('toggleFilters');
-      }
+        _hideFilters() {
+          this.dispatch('hideFilters');
+        }
 
-      _hasFilters(appliedFilters) {
-        return appliedFilters > 0;
-      }
-
-      _updateVisibilty() {
-        if (this.expanded) {
-          requestAnimationFrame(() => this.$.filters.style.maxHeight = this.$.filters.scrollHeight + 'px');
-        } else {
-          this.$.filters.style.maxHeight = '4px';
+        _clearFilters() {
+          this.dispatch('clearFilters');
         }
       }
 
-      _hideFilters() {
-        this.dispatch('hideFilters');
-      }
+      customElements.define(FiltersToolbarElement.is, FiltersToolbarElement);
 
-      _clearFilters() {
-        this.dispatch('clearFilters');
-      }
-    }
-
-    customElements.define(FiltersToolbarElement.is, FiltersToolbarElement);
-
-    /**
-     * @namespace ExpenseManager
-     */
-    window.ExpenseManager = window.ExpenseManager || {};
-    ExpenseManager.FiltersToolbarElement = FiltersToolbarElement;
+      /**
+       * @namespace ExpenseManager
+       */
+      window.ExpenseManager = window.ExpenseManager || {};
+      ExpenseManager.FiltersToolbarElement = FiltersToolbarElement;
+    })();
   </script>
 </dom-module>

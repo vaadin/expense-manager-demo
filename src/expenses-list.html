@@ -178,67 +178,69 @@ if you open the license dialog. -->
     <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
   </template>
   <script>
-    class ExpensesListElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
-      static get is() {
-        return 'expenses-list';
-      }
-      static get properties() {
-        return {
-          expenses: {
-            type: Array,
-            statePath: ExpenseManager.select.expenses
-          },
-          activeItem: {
-            observer: '_activeItemChanged'
-          },
-          _largeScreen: Boolean
-        };
-      }
+    (function() {
+      class ExpensesListElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
+        static get is() {
+          return 'expenses-list';
+        }
+        static get properties() {
+          return {
+            expenses: {
+              type: Array,
+              statePath: ExpenseManager.select.expenses
+            },
+            activeItem: {
+              observer: '_activeItemChanged'
+            },
+            _largeScreen: Boolean
+          };
+        }
 
-      static get observers() {
-        return ['_isLargeScreen(_largeScreen)'];
-      }
+        static get observers() {
+          return ['_isLargeScreen(_largeScreen)'];
+        }
 
-      _showExpenseEditor() {
-        this.dispatch('editExpense');
-      }
+        _showExpenseEditor() {
+          this.dispatch('editExpense');
+        }
 
-      _activeItemChanged(expense) {
-        if (this.expenses && this.expenses.length > 0) { // don't trigger on init
-          this.$.expenses.selectedItems = expense ? [expense] : [];
-          this.dispatch('editExpense', expense);
+        _activeItemChanged(expense) {
+          if (this.expenses && this.expenses.length > 0) { // don't trigger on init
+            this.$.expenses.selectedItems = expense ? [expense] : [];
+            this.dispatch('editExpense', expense);
+          }
+        }
+
+        _formatTotal(total) {
+          if (total) {
+            return '$' + total.toFixed(2);
+          }
+        }
+
+        _formatStatus(status) {
+          if (status) {
+            return status.replace('_', ' ')
+          }
+        }
+
+        _formatDate(date) {
+          if (date) {
+            return moment(date).format('MM/DD/YYYY');
+          }
+        }
+
+        _isLargeScreen() {
+          this.updateStyles();
         }
       }
 
-      _formatTotal(total) {
-        if (total) {
-          return '$' + total.toFixed(2);
-        }
-      }
+      customElements.define(ExpensesListElement.is, ExpensesListElement);
 
-      _formatStatus(status) {
-        if (status) {
-          return status.replace('_', ' ')
-        }
-      }
-
-      _formatDate(date) {
-        if (date) {
-          return moment(date).format('MM/DD/YYYY');
-        }
-      }
-
-      _isLargeScreen() {
-        this.updateStyles();
-      }
-    }
-
-    customElements.define(ExpensesListElement.is, ExpensesListElement);
-
-    /**
-     * @namespace ExpenseManager
-     */
-    window.ExpenseManager = window.ExpenseManager || {};
-    ExpenseManager.ExpensesListElement = ExpensesListElement;
+      /**
+       * @namespace ExpenseManager
+       */
+      window.ExpenseManager = window.ExpenseManager || {};
+      ExpenseManager.ExpensesListElement = ExpensesListElement;
+    })();
   </script>
 </dom-module>

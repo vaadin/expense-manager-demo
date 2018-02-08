@@ -142,60 +142,62 @@
     </div>
   </template>
   <script>
-    class HistoryPanelElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
+    (function() {
+      class HistoryPanelElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
 
-      static get is() {
-        return 'history-panel';
-      }
-
-      static get properties() {
-        return {
-          historyData: {
-            type: Array,
-            statePath: ExpenseManager.select.history,
-            observer: 'update'
-          },
-          seriesData: {
-            type: Array,
-            notify: true
-          }
-        };
-      }
-
-      update(history) {
-        this.seriesData = history.map(function (month) {
-          return month.total;
-        });
-
-        function getHistoryLabel(item, index) {
-          var label = moment().year(item.year).month(item.month);
-          var format = (index === 0 || item.month === 11) ? 'YYYY MMM' : 'MMM';
-          return label.format(format);
+        static get is() {
+          return 'history-panel';
         }
 
-        // If at first you don't succeed, try again
-        const configureAxes = () => {
-          if (this.$.barchart.chart.xAxis) {
-            const historyLabels = history.map(getHistoryLabel);
-            this.$.barchart.chart.xAxis[0].setCategories(historyLabels);
-            this.$.barchart.chart.reflow();
-            this.$.columnchart.chart.xAxis[0].setCategories(historyLabels);
-            this.$.columnchart.chart.reflow();
-          } else {
-            setTimeout(configureAxes, 50);
-          }
+        static get properties() {
+          return {
+            historyData: {
+              type: Array,
+              statePath: ExpenseManager.select.history,
+              observer: 'update'
+            },
+            seriesData: {
+              type: Array,
+              notify: true
+            }
+          };
         }
 
-        configureAxes();
+        update(history) {
+          this.seriesData = history.map(function (month) {
+            return month.total;
+          });
+
+          function getHistoryLabel(item, index) {
+            var label = moment().year(item.year).month(item.month);
+            var format = (index === 0 || item.month === 11) ? 'YYYY MMM' : 'MMM';
+            return label.format(format);
+          }
+
+          // If at first you don't succeed, try again
+          const configureAxes = () => {
+            if (this.$.barchart.chart.xAxis) {
+              const historyLabels = history.map(getHistoryLabel);
+              this.$.barchart.chart.xAxis[0].setCategories(historyLabels);
+              this.$.barchart.chart.reflow();
+              this.$.columnchart.chart.xAxis[0].setCategories(historyLabels);
+              this.$.columnchart.chart.reflow();
+            } else {
+              setTimeout(configureAxes, 50);
+            }
+          }
+
+          configureAxes();
+        }
       }
-    }
 
-    window.customElements.define(HistoryPanelElement.is, HistoryPanelElement);
+      window.customElements.define(HistoryPanelElement.is, HistoryPanelElement);
 
-    /**
-     * @namespace ExpenseManager
-     */
-    window.ExpenseManager = window.ExpenseManager || {};
-    ExpenseManager.HistoryPanelElement = HistoryPanelElement;
+      /**
+       * @namespace ExpenseManager
+       */
+      window.ExpenseManager = window.ExpenseManager || {};
+      ExpenseManager.HistoryPanelElement = HistoryPanelElement;
+    })();
   </script>
 </dom-module>

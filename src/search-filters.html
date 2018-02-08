@@ -150,50 +150,52 @@
   </template>
 
   <script>
-    class SearchFiltersElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
-      static get is() { return 'search-filters'; }
+    (function() {
+      class SearchFiltersElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
+        static get is() { return 'search-filters'; }
 
-      static get properties() {
-        return {
-          srcFilters: {
-            type: Object,
-            statePath: 'filters.filters',
-            observer: '_srcFiltersChanged'
-          },
-          filters: Object,
-          merchants: {
-            type: Array,
-            statePath: ExpenseManager.select.merchants
-          },
-          statusOptions: {
-            type: Array,
-            value: () => ExpenseManager.constants.statuses
+        static get properties() {
+          return {
+            srcFilters: {
+              type: Object,
+              statePath: 'filters.filters',
+              observer: '_srcFiltersChanged'
+            },
+            filters: Object,
+            merchants: {
+              type: Array,
+              statePath: ExpenseManager.select.merchants
+            },
+            statusOptions: {
+              type: Array,
+              value: () => ExpenseManager.constants.statuses
+            }
+          };
+        }
+
+        static get observers() {
+          return ['_filtersChanged(filters.*)'];
+        }
+
+        _srcFiltersChanged(srcFilters) {
+          this.filters = Object.assign({}, srcFilters);
+        }
+
+        _filtersChanged() {
+          // Ugh. Will do as a object equals
+          if (JSON.stringify(this.filters) !== JSON.stringify(this.srcFilters)) {
+            this.dispatch('filtersUpdated', this.filters);
           }
-        };
-      }
-
-      static get observers() {
-        return ['_filtersChanged(filters.*)'];
-      }
-
-      _srcFiltersChanged(srcFilters) {
-        this.filters = Object.assign({}, srcFilters);
-      }
-
-      _filtersChanged() {
-        // Ugh. Will do as a object equals
-        if (JSON.stringify(this.filters) !== JSON.stringify(this.srcFilters)) {
-          this.dispatch('filtersUpdated', this.filters);
         }
       }
-    }
 
-    customElements.define(SearchFiltersElement.is, SearchFiltersElement);
+      customElements.define(SearchFiltersElement.is, SearchFiltersElement);
 
-    /**
-     * @namespace ExpenseManager
-     */
-    window.ExpenseManager = window.ExpenseManager || {};
-    ExpenseManager.SearchFiltersElement = SearchFiltersElement;
+      /**
+       * @namespace ExpenseManager
+       */
+      window.ExpenseManager = window.ExpenseManager || {};
+      ExpenseManager.SearchFiltersElement = SearchFiltersElement;
+    })();
   </script>
 </dom-module>

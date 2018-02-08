@@ -91,40 +91,42 @@
   </template>
 
   <script>
-    class ExpenseAppElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
-      static get is() { return 'expense-app' };
-      static get properties() {
-        return {
-          activePage: Number,
-          authenticated: {
-            type: Boolean,
-            statePath: 'uiState.authenticated',
-            observer: '_updatePage'
-          }
-        };
+    (function() {
+      class ExpenseAppElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
+        static get is() { return 'expense-app' };
+        static get properties() {
+          return {
+            activePage: Number,
+            authenticated: {
+              type: Boolean,
+              statePath: 'uiState.authenticated',
+              observer: '_updatePage'
+            }
+          };
+        }
+
+        _updatePage() {
+          this.activePage = this.authenticated ? 1 : 0;
+        }
+
+        ready() {
+          super.ready();
+
+          // Start loading the overview page after we're done showing the login page.
+          requestAnimationFrame(() => {
+            setTimeout(() =>
+              Polymer.importHref(this.importPath + 'overview-page.html', null, null, true), 0);
+          });
+        }
       }
 
-      _updatePage() {
-        this.activePage = this.authenticated ? 1 : 0;
-      }
+      customElements.define(ExpenseAppElement.is, ExpenseAppElement);
 
-      ready() {
-        super.ready();
-
-        // Start loading the overview page after we're done showing the login page.
-        requestAnimationFrame(() => {
-          setTimeout(() =>
-            Polymer.importHref(this.importPath + 'overview-page.html', null, null, true), 0);
-        });
-      }
-    }
-
-    customElements.define(ExpenseAppElement.is, ExpenseAppElement);
-
-    /**
-     * @namespace ExpenseManager
-     */
-    window.ExpenseManager = window.ExpenseManager || {};
-    ExpenseManager.ExpenseAppElement = ExpenseAppElement;
+      /**
+       * @namespace ExpenseManager
+       */
+      window.ExpenseManager = window.ExpenseManager || {};
+      ExpenseManager.ExpenseAppElement = ExpenseAppElement;
+    })();
   </script>
 </dom-module>

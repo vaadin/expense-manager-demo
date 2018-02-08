@@ -91,32 +91,34 @@
 
   </template>
   <script>
-    class InfoDialogElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
-      static get is() {
-        return 'info-dialog';
-      }
+    (function() {
+      class InfoDialogElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
+        static get is() {
+          return 'info-dialog';
+        }
 
-      static get properties() {
-        return {
-          url: String,
-          open: {
-            type: Boolean,
-            statePath: 'uiState.infoDialogVisible'
+        static get properties() {
+          return {
+            url: String,
+            open: {
+              type: Boolean,
+              statePath: 'uiState.infoDialogVisible'
+            }
           }
+        }
+
+        close() {
+          this.dispatch('hideInfoDialog');
         }
       }
 
-      close() {
-        this.dispatch('hideInfoDialog');
-      }
-    }
+      customElements.define(InfoDialogElement.is, InfoDialogElement);
 
-    customElements.define(InfoDialogElement.is, InfoDialogElement);
-
-    /**
-     * @namespace ExpenseManager
-     */
-    window.ExpenseManager = window.ExpenseManager || {};
-    ExpenseManager.InfoDialogElement = InfoDialogElement;
+      /**
+       * @namespace ExpenseManager
+       */
+      window.ExpenseManager = window.ExpenseManager || {};
+      ExpenseManager.InfoDialogElement = InfoDialogElement;
+    })();
   </script>
 </dom-module>

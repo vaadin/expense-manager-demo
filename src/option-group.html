@@ -17,53 +17,55 @@
 
   </template>
   <script>
-    class OptionGroupElement extends Polymer.Element {
-      static get is() { return 'option-group' }
-      static get properties() {
-        return {
-          items: Array,
-          labelPath: String,
-          valuePath: String,
-          value: {
-            type: Array,
-            notifies: true,
-            value: () => []
-          }
-        };
+    (function() {
+      class OptionGroupElement extends Polymer.Element {
+        static get is() { return 'option-group' }
+        static get properties() {
+          return {
+            items: Array,
+            labelPath: String,
+            valuePath: String,
+            value: {
+              type: Array,
+              notifies: true,
+              value: () => []
+            }
+          };
+        }
+
+        _isChecked(item) {
+          return this.value.some(val => {
+            return val === this._getValue(item);
+          });
+        }
+
+        _getValue(item) {
+          return this.valuePath ? item[this.valuePath] : item;
+        }
+
+        _getLabel(item) {
+          return this.labelPath ? item[this.labelPath] : item;
+        }
+
+        _updateValue() {
+          this.value = [...this.root.querySelectorAll('vaadin-checkbox')]
+            .filter(cb => cb.checked)
+            .map(cb => cb.dataset.value);
+
+          // TODO: This should not be needed as value has `notify: true`.
+          // Figure out why it's not dispatching the event
+          this.dispatchEvent(new CustomEvent('value-changed',
+            { bubbles: true, composed: true }))
+        }
       }
 
-      _isChecked(item) {
-        return this.value.some(val => {
-          return val === this._getValue(item);
-        });
-      }
+      customElements.define(OptionGroupElement.is, OptionGroupElement);
 
-      _getValue(item) {
-        return this.valuePath ? item[this.valuePath] : item;
-      }
-
-      _getLabel(item) {
-        return this.labelPath ? item[this.labelPath] : item;
-      }
-
-      _updateValue() {
-        this.value = [...this.root.querySelectorAll('vaadin-checkbox')]
-          .filter(cb => cb.checked)
-          .map(cb => cb.dataset.value);
-
-        // TODO: This should not be needed as value has `notify: true`.
-        // Figure out why it's not dispatching the event
-        this.dispatchEvent(new CustomEvent('value-changed',
-          { bubbles: true, composed: true }))
-      }
-    }
-
-    customElements.define(OptionGroupElement.is, OptionGroupElement);
-
-    /**
-     * @namespace ExpenseManager
-     */
-    window.ExpenseManager = window.ExpenseManager || {};
-    ExpenseManager.OptionGroupElement = OptionGroupElement;
+      /**
+       * @namespace ExpenseManager
+       */
+      window.ExpenseManager = window.ExpenseManager || {};
+      ExpenseManager.OptionGroupElement = OptionGroupElement;
+    })();
   </script>
 </dom-module>
