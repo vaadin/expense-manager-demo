@@ -4,10 +4,20 @@
 <dom-module id="content-panel">
   <template>
     <style>
-       :host {
+      :host {
         display: flex;
         height: 100%;
       }
+
+      :host([tablet]) {
+        flex-direction: column;
+      }
+
+      :host([tablet]) #history-panel {
+        width: initial;
+        box-shadow: rgba(0, 0, 0, 0.2) 0px 6px 16px -10px inset;
+      }
+
 
       #list {
         flex: 1;
@@ -21,7 +31,11 @@
         z-index: 1;
       }
 
-      @media (max-width: 1124px) {
+      :host([phone]) #history-panel {
+        display: none;
+      }
+
+      /* @media (max-width: 1124px) {
         #history-panel {
           width: auto;
           position: absolute;
@@ -37,13 +51,9 @@
           margin-bottom: 290px;
           height: calc(100% - 290px);
         }
-      }
+      } */
 
-      @media (min-width: 1125px) {
-        /* Nothing */
-      }
-
-      @media (max-width: 900px) {
+      /* @media (max-width: 900px) {
         #history-panel {
           display: none;
         }
@@ -51,16 +61,25 @@
           margin-bottom: 0;
           height: 100%;
         }
-      }
+      } */
 
     </style>
     <expenses-list id="list"></expenses-list>
-    <history-panel id="history-panel"></history-panel>
+    <history-panel id="history-panel" tablet$="[[tablet]]"></history-panel>
   </template>
   <script>
     (function() {
       class ContentPanelElement extends Polymer.Element {
         static get is() { return 'content-panel'; }
+
+        static get properties() {
+          return {
+            tablet: {
+              type: Boolean,
+              reflectToAttribute: true
+            }
+          };
+        }
       }
 
       customElements.define(ContentPanelElement.is, ContentPanelElement);

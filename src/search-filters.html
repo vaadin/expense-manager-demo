@@ -15,6 +15,18 @@
         display: block;
       }
 
+      :host([phone]) {
+        width: 100%;
+      }
+
+      :host([phone]) .filters {
+        width: initial;
+      }
+
+      :host([phone]) .title {
+        display: none;
+      }
+
       .col {
         width: 100%;
         box-sizing: border-box;
@@ -93,7 +105,32 @@
         padding: 0 10px;
       }
 
-      @media (min-width: 900px) {
+      .filters {
+        padding: 0 24px;
+        width: 260px;
+        background: #f8f9f9;
+        height: 100%;
+        box-shadow: inset -4px 0 16px -9px rgba(0, 0, 0, 0.5);
+      }
+
+      .title {
+        display: flex;
+        align-items: baseline;
+        padding: 14px 0;
+        font-weight: 400;
+        font-size: 13px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.13);
+        padding-bottom: 6px;
+        margin-bottom: 18px;
+        margin-top: 4px;
+        color: rgba(0, 0, 0, 0.54);
+      }
+
+      #content {
+        height: 100%;
+      }
+
+      /* @media (min-width: 900px) {
         .title {
           display: flex;
           align-items: baseline;
@@ -113,7 +150,6 @@
         .checkboxes>vaadin-checkbox {
           margin-bottom: 16px;
         }
-        /* 🙈 Fix.. */
         .filters {
           padding: 0 24px;
           width: 260px;
@@ -121,7 +157,7 @@
           height: calc(100vh - 64px);
           box-shadow: inset -4px 0 16px -9px rgba(0, 0, 0, 0.5);
         }
-      }
+      } */
 
     </style>
 

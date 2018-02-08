@@ -8,7 +8,7 @@
 <dom-module id="history-panel">
   <template>
     <style>
-       :host {
+      :host {
         display: block;
         background: #f8f9f9;
         padding: 12px 24px;
@@ -59,11 +59,11 @@
         color: var(--lumo-body-text-color);
       }
 
+      :host([tablet]) #total{
+        display: none;
+      }
+
       @media (max-width: 600px) {
-        .chart,
-        #horizontal {
-          display: none;
-        }
         .total {
           height: 64px;
           flex-direction: row;
@@ -77,14 +77,6 @@
         #horizontal {
           display: flex;
         }
-        .chart-title {
-          display: none;
-        }
-        #horizontal .chart-title {
-          display: block;
-          width: 450px;
-        }
-
         #total {
           flex: 1;
           margin-left: 16px;
@@ -95,9 +87,6 @@
           font-weight: 200;
           font-size: 32px;
           line-height: 100px;
-        }
-        #barchart {
-          display: none;
         }
       }
 
@@ -110,62 +99,7 @@
 
       <div class="chart">
         <h2 class="chart-title section-title">Last 12 Months in total</h2>
-        <vaadin-bar-chart id="barchart">
-          <title>
-            <style display="none"></style>
-          </title>
-          <chart background-color="transparent" height="400" width="250"></chart>
-          <exporting enabled="false"></exporting>
-          <x-axis>
-            <title>
-              <style display="none"></style>
-            </title>
-            <labels>
-              <chart-style>{"color": "#000"}</chart-style>
-            </labels>
-          </x-axis>
-          <y-axis>
-            <title>
-              <style display="none"></style>
-            </title>
-          </y-axis>
-          <tooltip formatter="function() { return '$' + this.y.toFixed(2); }"></tooltip>
-          <data-series name="$" data="[[seriesData]]">
-            <color>#ffc13f</color>
-          </data-series>
-          <legend enabled="false"></legend>
-        </vaadin-bar-chart>
-
-        <div id="horizontal">
-          <div>
-            <h2 class="chart-title section-title">Last 12 Months in Total</h2>
-            <vaadin-column-chart id="columnchart">
-              <title>
-                <style display="none"></style>
-              </title>
-              <chart background-color="transparent" height="200" width="450"></chart>
-              <exporting enabled="false"></exporting>
-              <x-axis>
-                <title>
-                  <style display="none"></style>
-                </title>
-                <labels>
-                  <chart-style>{"color": "#000"}</chart-style>
-                </labels>
-              </x-axis>
-              <y-axis>
-                <title>
-                  <style display="none"></style>
-                </title>
-              </y-axis>
-              <tooltip formatter="function() { return '$' + this.y.toFixed(2); }"></tooltip>
-              <data-series name="$" data="[[seriesData]]">
-                <color>#ffc13f</color>
-              </data-series>
-              <legend enabled="false"></legend>
-            </vaadin-column-chart>
-          </div>
-        </div>
+        <h3> Vaadin Charts will be displayed in Pro version </h3>
       </div>
     </div>
   </template>
@@ -205,21 +139,6 @@
             var format = (index === 0 || item.month === 11) ? 'YYYY MMM' : 'MMM';
             return label.format(format);
           }
-
-          // If at first you don't succeed, try again
-          const configureAxes = () => {
-            if (this.$.barchart.chart.xAxis) {
-              const historyLabels = history.map(getHistoryLabel);
-              this.$.barchart.chart.xAxis[0].setCategories(historyLabels);
-              this.$.barchart.chart.reflow();
-              this.$.columnchart.chart.xAxis[0].setCategories(historyLabels);
-              this.$.columnchart.chart.reflow();
-            } else {
-              setTimeout(configureAxes, 50);
-            }
-          }
-
-          configureAxes();
         }
       }
 

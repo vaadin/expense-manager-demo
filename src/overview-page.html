@@ -7,12 +7,12 @@
 <link rel="import" href="content-panel.html">
 <link rel="import" href="filters-toolbar.html">
 <link rel="import" href="data/store.html">
-<link rel="import" href="../../iron-media-query/iron-media-query.html">
+<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 
 <dom-module id="overview-page">
   <template>
     <style>
-       :host {
+      :host {
         display: block;
       }
 
@@ -31,6 +31,10 @@
         color: var(--light-primary-color);
         font-weight: 300;
         font-size: 24px;
+      }
+
+      .content[phone] {
+        flex-direction: column;
       }
 
       .content {
@@ -94,9 +98,9 @@
         </app-toolbar>
       </app-header>
 
-      <div class="content" phone="{{_phone}}" tablet="{{_tablet}}">
-        <filters-toolbar id="filters-toolbar"></filters-toolbar>
-        <content-panel id="content-panel"></content-panel>
+      <div class="content" phone$="{{_phone}}" tablet$="{{_tablet}}">
+        <filters-toolbar phone$="{{_phone}}" tablet$="{{_tablet}}" id="filters-toolbar"></filters-toolbar>
+        <content-panel phone$="{{_phone}}" tablet$="{{_tablet}}" id="content-panel"></content-panel>
       </div>
     </app-header-layout>
 
@@ -122,12 +126,16 @@
         static get properties() {
           return {
             _phoneMediaQuery: {
-              value: '(max-width: 420px), (max-height: 420px)'
+              value: '(max-width: 600px)'
             },
 
             _tabletMediaQuery: {
               value: '(max-width: 1124px)'
-            }
+            },
+
+            _phone: Boolean,
+
+            _tablet: Boolean
           };
         }
 
