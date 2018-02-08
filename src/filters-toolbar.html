@@ -8,7 +8,7 @@
 <dom-module id="filters-toolbar">
   <template>
     <style>
-       :host {
+      :host {
         display: flex;
         position: relative;
         z-index: 10;
@@ -19,9 +19,15 @@
       }
 
       #toolbar {
-        display: flex;
+        display: none;
         align-items: center;
         background: #f8f9f9;
+        height: 48px;
+        padding: 0 16px;
+      }
+
+      :host([phone]) #toolbar{
+        display: block;
       }
 
       #total {
@@ -106,7 +112,7 @@
         }
       }
 
-      @media (max-width: 900px) {
+      /* @media (max-width: 900px) {
          :host {
           flex-direction: column-reverse;
         }
@@ -160,16 +166,9 @@
         #total>span:first-child {
           @apply --section-title;
         }
-      }
+      } */
 
     </style>
-    <search-filters id="filters">
-      <div id="buttons">
-        <vaadin-button id="clear-button" on-tap="_clearFilters" theme="tertiary">Clear Filters</vaadin-button>
-        <vaadin-button id="done-button" on-tap="_hideFilters" raised>Done</vaadin-button>
-      </div>
-    </search-filters>
-
     <div id="toolbar">
       <div id="filters-toggle" on-tap="_toggleFilters">
         <span>Filters</span>
@@ -177,6 +176,13 @@
         <paper-icon-button icon="filter-list"></paper-icon-button>
       </div>
     </div>
+
+    <search-filters phone$="[[phone]]" tablet$="[[tablet]]" id="filters">
+      <div id="buttons">
+        <vaadin-button id="clear-button" on-tap="_clearFilters" theme="tertiary">Clear Filters</vaadin-button>
+        <vaadin-button id="done-button" on-tap="_hideFilters" raised>Done</vaadin-button>
+      </div>
+    </search-filters>
   </template>
   <script>
     class FiltersToolbar extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
@@ -190,9 +196,20 @@
             statePath: 'filters.filtersVisible',
             observer: '_updateVisibilty'
           },
+
           appliedFilters: {
             type: Number,
             statePath: ExpenseManager.select.appliedFilters
+          },
+
+          tablet: {
+            type: Boolean,
+            reflectToAttribute: true
+          },
+
+          phone: {
+            type: Boolean,
+            reflectToAttribute: true
           }
         };
       }
