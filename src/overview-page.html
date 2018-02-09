@@ -120,17 +120,26 @@
   </template>
 
   <script>
-    class OverviewPage extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
-      static get is() { return 'overview-page'; }
+    (function() {
+      class OverviewPageElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
+        static get is() { return 'overview-page'; }
 
-      _showInfoDialog() {
-        this.dispatch('showInfoDialog');
+        _showInfoDialog() {
+          this.dispatch('showInfoDialog');
+        }
+
+        _logout() {
+          this.dispatch('logout');
+        }
       }
 
-      _logout() {
-        this.dispatch('logout');
-      }
-    }
-    customElements.define(OverviewPage.is, OverviewPage);
+      customElements.define(OverviewPageElement.is, OverviewPageElement);
+
+      /**
+       * @namespace ExpenseManager
+       */
+      window.ExpenseManager = window.ExpenseManager || {};
+      ExpenseManager.OverviewPageElement = OverviewPageElement;
+    })();
   </script>
 </dom-module>

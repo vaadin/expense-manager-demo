@@ -109,27 +109,35 @@
   </template>
 
   <script>
-    class LoginPage extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
-      static get is() { return 'login-page'; }
+    (function() {
+      class LoginPageElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
+        static get is() { return 'login-page'; }
 
-      static get properties() {
-        return {
-          username: {
-            type: String,
-            value: 'demo'
-          },
-          password: {
-            type: String,
-            value: 'demo'
-          },
-          errorMessage: String
-        };
-      }
+        static get properties() {
+          return {
+            username: {
+              type: String,
+              value: 'demo'
+            },
+            password: {
+              type: String,
+              value: 'demo'
+            },
+            errorMessage: String
+          };
+        }
 
-      _logIn() {
-        this.dispatch('login');
+        _logIn() {
+          this.dispatch('login');
+        }
       }
-    }
-    customElements.define(LoginPage.is, LoginPage);
+      customElements.define(LoginPageElement.is, LoginPageElement);
+
+      /**
+       * @namespace ExpenseManager
+       */
+      window.ExpenseManager = window.ExpenseManager || {};
+      ExpenseManager.LoginPageElement = LoginPageElement;
+    })();
   </script>
 </dom-module>

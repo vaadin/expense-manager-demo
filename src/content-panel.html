@@ -63,9 +63,18 @@
     <history-panel id="history-panel"></history-panel>
   </template>
   <script>
-    class ContentPanel extends Polymer.Element {
-      static get is() { return 'content-panel'; }
-    }
-    customElements.define(ContentPanel.is, ContentPanel);
+    (function() {
+      class ContentPanelElement extends Polymer.Element {
+        static get is() { return 'content-panel'; }
+      }
+
+      customElements.define(ContentPanelElement.is, ContentPanelElement);
+
+      /**
+       * @namespace ExpenseManager
+       */
+      window.ExpenseManager = window.ExpenseManager || {};
+      ExpenseManager.ContentPanelElement = ContentPanelElement;
+    })();
   </script>
 </dom-module>
