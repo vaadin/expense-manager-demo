@@ -11,11 +11,11 @@
       :host {
         display: flex;
         position: relative;
-        z-index: 10;
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
+        background: #f8f9f9;
       }
 
       :host([phone]) {
@@ -28,6 +28,10 @@
         height: 48px;
         padding: 0 16px;
         align-items: center;
+      }
+
+      #filters {
+        transition: max-height 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
       }
 
       :host([phone]) #toolbar{
@@ -50,8 +54,8 @@
 
       #filters-toggle .count {
         position: absolute;
-        top: 6px;
-        right: 0;
+        top: 10px;
+        right: 16px;
         z-index: 1;
         width: 16px;
         height: 16px;
@@ -92,86 +96,16 @@
         display: flex;
         flex-direction: column;
         flex: 1;
+        line-height: initial;
       }
 
-      @media (max-width: 1124px) {
-        #total {
-          display: none;
-        }
+      .total>span:first-child {
+        font-size: 12px;
       }
 
-      @media (min-width: 901px) {
-        #buttons {
-          position: absolute;
-          left: -248px;
-          width: 234px;
-          text-align: right;
-          padding: 9px 0;
-        }
-        #done-button {
-          display: none;
-        }
-        #clear-button {
-          font-size: 13px;
-          text-transform: none;
-        }
+      .total .sum {
+        font-weight: 300;
       }
-
-      /* @media (max-width: 900px) {
-         :host {
-          flex-direction: column-reverse;
-        }
-        #filters-toggle {
-          display: flex;
-          align-items: center;
-          cursor: pointer;
-        }
-        #filters-toggle span {
-          margin-right: 4px;
-        }
-        #toolbar {
-          height: 48px;
-          padding: 0 16px;
-          flex-shrink: 0;
-        }
-        #total {
-          width: 100%;
-          display: flex;
-          flex-direction: column;
-        }
-        #total>span:first-child {
-          font-size: 12px;
-        }
-        #total .sum {
-          font-size: inherit;
-        }
-        #filters {
-          background: #f8f9f9;
-          overflow: auto;
-          transition: max-height 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
-          box-shadow: rgba(0, 0, 0, 0.2) 0px -10px 6px -10px inset;
-        }
-        #buttons {
-          display: flex;
-          margin: 0 0 32px;
-        }
-        #done-button {
-          display: block;
-        }
-         :host([expanded]) #filters-caption {
-          display: block;
-          padding: 0;
-          margin: 16px;
-          font-size: 16px;
-          font-weight: 400;
-        }
-      }
-
-      @media (min-width: 1125px) {
-        #total>span:first-child {
-          @apply --section-title;
-        }
-      } */
 
     </style>
     <div id="toolbar">
@@ -201,6 +135,11 @@
             observer: '_updateVisibilty'
           },
 
+          totalOwed: {
+            type: Number,
+            statePath: ExpenseManager.select.total
+          },
+
           appliedFilters: {
             type: Number,
             statePath: ExpenseManager.select.appliedFilters
@@ -213,7 +152,8 @@
 
           phone: {
             type: Boolean,
-            reflectToAttribute: true
+            reflectToAttribute: true,
+            observer: '_phoneChanged'
           }
         };
       }
@@ -226,13 +166,19 @@
         return appliedFilters > 0;
       }
 
+      _phoneChanged() {
+        if (!this.phone) {
+          this.$.filters.style.maxHeight = 'initial';
+        } else {
+          this.$.filters.style.maxHeight = '4px';
+        }
+      }
+
       _updateVisibilty() {
         if (this.expanded) {
           requestAnimationFrame(() => this.$.filters.style.maxHeight = this.$.filters.scrollHeight + 'px');
-          // this.$.filters.setAttribute('opened', '');
-        } else {
+        } else if (this.phone) {
           this.$.filters.style.maxHeight = '4px';
-          // this.$.filters.removeAttribute('opened');
         }
       }
 
