@@ -42,6 +42,15 @@
         height: 100%;
       }
 
+      #filters-toolbar[phone] {
+        width: auto;
+      }
+
+      #filters-toolbar {
+        width: 260px;
+        padding: 0 16px;
+      }
+
       @media (max-width: 1124px) {
         .content {
           padding-right: 0;
@@ -105,12 +114,12 @@
     </app-header-layout>
 
     <iron-media-query
-      query="[[_phoneMediaQuery]]"
+      query="(max-width: 600px)"
       query-matches="{{_phone}}">
     </iron-media-query>
 
     <iron-media-query
-      query="[[_tabletMediaQuery]]"
+      query="(max-width: 1124px)"
       query-matches="{{_tablet}}">
     </iron-media-query>
 
@@ -124,14 +133,6 @@
 
       static get properties() {
         return {
-          _phoneMediaQuery: {
-            value: '(max-width: 600px)'
-          },
-
-          _tabletMediaQuery: {
-            value: '(max-width: 1124px)'
-          },
-
           _phone: Boolean,
 
           _tablet: Boolean
