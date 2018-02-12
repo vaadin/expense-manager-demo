@@ -4,12 +4,19 @@
 <dom-module id="option-group">
   <template>
     <style>
-       :host {
+      :host {
         display: block;
       }
 
+      .caption {
+        display: block;
+        font-size: 12px;
+        margin: 32px 0 14px;
+        color: rgba(0, 0, 0, 0.54);
+      }
     </style>
 
+    <span class="caption">[[caption]]</span>
     <template is="dom-repeat" items="[[items]]">
       <vaadin-checkbox checked="[[_isChecked(item, value)]]" data-value$="[[_getValue(item)]]" on-checked-changed="_updateValue">[[_getLabel(item)]]</vaadin-checkbox>
     </template>
@@ -28,7 +35,8 @@
               type: Array,
               notifies: true,
               value: () => []
-            }
+            },
+            caption: String
           };
         }
 
