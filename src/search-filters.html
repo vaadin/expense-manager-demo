@@ -13,10 +13,11 @@
     <style>
       :host {
         display: block;
+        width: inherit;
       }
 
       :host([phone]) {
-        width: 100%;
+        width: auto;
       }
 
       :host([phone]) .filters {
@@ -65,11 +66,9 @@
       }
 
       .filters {
+        display: flex;
+        flex-direction: column;
         padding-bottom: 16px;
-      }
-
-      .filters > * {
-        width: 100%;
       }
 
       .checkboxes {
@@ -97,11 +96,6 @@
 
       .row .delimiter {
         padding: 0 10px;
-      }
-
-      .filters {
-        padding: 0 16px;
-        width: 260px;
       }
 
       .title {
@@ -140,9 +134,7 @@
       </div>
       <vaadin-combo-box id="merchant-select" label="Merchant" items="{{merchants}}" value="{{filters.merchant}}"
         id="merchantsSelect"></vaadin-combo-box>
-      <div>
-        <option-group caption="Status" value="{{filters.status}}" items="[[statusOptions]]" label-path="label" value-path="name"></option-group>
-      </div>
+      <option-group caption="Status" value="{{filters.status}}" items="[[statusOptions]]" label-path="label" value-path="name"></option-group>
       <div id="buttons">
         <vaadin-button class="clear-button" on-tap="_clearFilters" theme="tertiary">Clear Filters</vaadin-button>
         <vaadin-button id="done-button" on-tap="_hideFilters">Done</vaadin-button>
