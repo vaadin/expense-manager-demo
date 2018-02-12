@@ -20,7 +20,7 @@
       }
 
       :host([phone]) .filters {
-        width: initial;
+        width: auto;
       }
 
       :host([phone]) .title {
@@ -31,8 +31,8 @@
         display: none;
       }
 
-      #clear-button-container {
-        flex: 1;
+      #done-button {
+        margin-left: auto;
       }
 
       .col {
@@ -68,7 +68,7 @@
         padding-bottom: 16px;
       }
 
-      .filters>* {
+      .filters > * {
         width: 100%;
       }
 
@@ -79,10 +79,6 @@
         color: rgba(0, 0, 0, 0.54);
       }
 
-      .title {
-        display: flex;
-      }
-
       .checkboxes {
         display: inline-block;
         margin-left: 8px;
@@ -90,10 +86,6 @@
 
       .checkboxes>vaadin-checkbox {
         margin-right: 8px;
-      }
-
-      #merchant-select {
-        width: 100%;
       }
 
       .title>span:first-child {
@@ -110,7 +102,7 @@
         flex: auto;
       }
 
-      .row .delimeter {
+      .row .delimiter {
         padding: 0 10px;
       }
 
@@ -151,7 +143,7 @@
           <vaadin-text-field label="Min" value="{{filters.min}}" type="number" step="any">
             <div slot="prefix">$</div>
           </vaadin-text-field>
-          <span class="delimeter">–</span>
+          <span class="delimiter">–</span>
           <vaadin-text-field label="Max" value="{{filters.max}}" type="number" step="any"></vaadin-text-field>
         </div>
         <vaadin-combo-box id="merchant-select" label="Merchant" items="{{merchants}}" value="{{filters.merchant}}"
@@ -161,12 +153,8 @@
             <option-group value="{{filters.status}}" items="[[statusOptions]]" label-path="label" value-path="name"></option-group>
         </div>
         <div id="buttons">
-          <div id="clear-button-container">
-            <vaadin-button id="clear-button" on-tap="_clearFilters" theme="tertiary">Clear Filters</vaadin-button>
-          </div>
-          <div id="done-button-container">
-            <vaadin-button id="done-button" on-tap="_hideFilters" raised>Done</vaadin-button>
-          </div>
+          <vaadin-button id="clear-button" on-tap="_clearFilters" theme="tertiary">Clear Filters</vaadin-button>
+          <vaadin-button id="done-button" on-tap="_hideFilters">Done</vaadin-button>
         </div>
       </div>
     </div>
