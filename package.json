@@ -12,13 +12,13 @@
     "gulp": "^3.9.1",
     "gulp-gh-pages": "^0.5.4",
     "http2-push-manifest": "^1.0.0",
-    "eslint": "^3.19.0",
-    "eslint-config-google": "^0.7.0",
-    "eslint-plugin-html": "^2.0.0"
+    "eslint": "^4.0.0",
+    "eslint-config-vaadin": "latest",
+    "eslint-plugin-html": "^4.0.0"
   },
   "scripts": {
     "lint": "npm run lint:javascript",
-    "lint:javascript": "eslint . --ext js,html --ignore-path .gitignore",
+    "lint:javascript": "eslint . --ext html --ignore-path .gitignore",
     "test": "polymer test",
     "test:integration": "polymer build # test that psk builds without error with the CLI"
   },
