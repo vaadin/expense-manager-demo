@@ -190,7 +190,7 @@
       <div class="buttons-layout">
         <vaadin-button on-tap="_save" theme="primary" class="save-button">Save</vaadin-button>
         <vaadin-button on-tap="close" class="cancel-button">Cancel</vaadin-button>
-        <vaadin-button on-tap="_delete" id="delete" theme="tertiary danger" class="delete-button" hidden="[[!_showDelete(expense)]]">Delete</vaadin-button>
+        <vaadin-button on-tap="_delete" id="delete" theme="tertiary danger" class="delete-button" hidden="[[!_showDelete(_expense)]]">Delete</vaadin-button>
       </div>
       <span>[[_errorText]]</span>
     </paper-dialog>
@@ -199,7 +199,9 @@
   <script>
     (function() {
       class ExpenseEditorElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
-        static get is() { return 'expense-editor'; }
+        static get is() {
+          return 'expense-editor';
+        }
 
         static get properties() {
           return {
@@ -256,7 +258,7 @@
         }
 
         _getFormFields() {
-          return Array.from(this.$.form.childNodes).filter(el => 'validate' in el);
+          return Array.from(this.$.form.children).filter(el => typeof el.validate === 'function');
         }
 
         _showDelete() {
@@ -279,23 +281,6 @@
           }
         }
 
-        // Read canvas content and returns a Blob.
-        // For browsers not supporting canvas.toBlob
-        _canvasToBlob(canvas) {
-          const reg = new RegExp('^data:(.*);.*,(.*)');
-          const arr = reg.exec(canvas.toDataURL());
-          const bstr = atob(arr[2]);
-          let n = bstr.length;
-          const u8arr = new Uint8Array(n);
-          while (n--) {
-            u8arr[n] = bstr.charCodeAt(n);
-          }
-          return new Blob([u8arr], { type: arr[1] });
-        }
-
-        // Read a file and return a Blob. If it's an image it converts and
-        // resizes using a canvas.
-        // TODO: move this to vaadin-upload as a utility method
         _resizeImage(file, callback, mimeType, maxWidth, maxHeight) {
           const img = document.createElement('img');
           const reader = new FileReader();
@@ -343,7 +328,6 @@
             this._expense.total = parseFloat(this._expense.total);
             this.dispatch('saveExpense', this._expense);
           } else {
-            console.log('Form validation failed');
             this.$.dialog.scrollTop = 0;
             this._errorText = 'Please fill all required fields';
           }

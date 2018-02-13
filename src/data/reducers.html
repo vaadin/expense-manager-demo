@@ -5,7 +5,9 @@
   (() => {
 
     let savedState = localStorage.getItem('ExpenseManagerState');
-    if (savedState) { savedState = JSON.parse(savedState); }
+    if (savedState) {
+      savedState = JSON.parse(savedState);
+    }
 
 
     function uiReducer(state = {
@@ -15,16 +17,16 @@
       switch (action.type) {
 
         case 'LOGIN':
-          return Object.assign({}, state, { authenticated: true });
+          return Object.assign({}, state, {authenticated: true});
 
         case 'LOGOUT':
-          return Object.assign({}, state, { authenticated: false });
+          return Object.assign({}, state, {authenticated: false});
 
         case 'SHOW_INFO_DIALOG':
-          return Object.assign({}, state, { infoDialogVisible: true });
+          return Object.assign({}, state, {infoDialogVisible: true});
 
         case 'HIDE_INFO_DIALOG':
-          return Object.assign({}, state, { infoDialogVisible: false });
+          return Object.assign({}, state, {infoDialogVisible: false});
 
         default:
           return state;
@@ -39,11 +41,13 @@
       switch (action.type) {
 
         case 'EDIT_EXPENSE':
-          return Object.assign({}, state, { selectedExpense: action.expense });
+          return Object.assign({}, state, {selectedExpense: action.expense});
 
         case 'UPDATE_EXPENSE':
           return Object.assign({}, state, {
-            expenses: state.expenses.map(e => e.id === action.expense.id ? action.expense : e),
+            expenses: state.expenses.map(e => {
+              return e.id === action.expense.id ? action.expense : e;
+            }),
             selectedExpense: undefined
           });
 
@@ -60,7 +64,7 @@
           });
 
         case 'CANCEL_EDIT':
-          return Object.assign({}, state, { selectedExpense: undefined });
+          return Object.assign({}, state, {selectedExpense: undefined});
 
         default:
           return state;
@@ -68,22 +72,22 @@
     }
 
     function filtersReducer(state = {
-      filters: { status: ['new', 'in_progress', 'reimbursed'] }
+      filters: {status: ['new', 'in_progress', 'reimbursed']}
     }, action) {
       switch (action.type) {
 
         case 'TOGGLE_FILTERS':
-          return Object.assign({}, state, { filtersVisible: !state.filtersVisible });
+          return Object.assign({}, state, {filtersVisible: !state.filtersVisible});
 
         case 'HIDE_FILTERS':
-          return Object.assign({}, state, { filtersVisible: false });
+          return Object.assign({}, state, {filtersVisible: false});
 
         case 'FILTERS_UPDATED':
-          return Object.assign({}, state, { filters: action.filters });
+          return Object.assign({}, state, {filters: action.filters});
 
         case 'CLEAR_FILTERS':
           return Object.assign({}, state, {
-            filters: { status: ['new', 'in_progress', 'reimbursed'] }
+            filters: {status: ['new', 'in_progress', 'reimbursed']}
           });
 
         default:
@@ -122,8 +126,7 @@
             'Office supplies', 'Electronics', 'Rental car', 'Airline',
             'Hotel', 'Restaurant', 'Taxi', 'Ride sharing', 'Fast food',
             'Parking', 'Breakfast', 'Shuttle'
-          ]
-          [Math.floor(Math.random() * 12)],
+          ][Math.floor(Math.random() * 12)],
           total: _getRandomPrice(),
           status: status,
           receipt: status === 'new' ? '' : '/images/default-receipt.png',

@@ -90,7 +90,10 @@
   <script>
     (function() {
       class ExpenseAppElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
-        static get is() { return 'expense-app' };
+        static get is() {
+          return 'expense-app';
+        }
+
         static get properties() {
           return {
             activePage: Number,

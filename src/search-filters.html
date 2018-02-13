@@ -145,7 +145,9 @@
   <script>
     (function() {
       class SearchFiltersElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
-        static get is() { return 'search-filters'; }
+        static get is() {
+          return 'search-filters';
+        }
 
         static get properties() {
           return {

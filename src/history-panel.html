@@ -150,15 +150,7 @@
         }
 
         update(history) {
-          this.seriesData = history.map(function (month) {
-            return month.total;
-          });
-
-          function getHistoryLabel(item, index) {
-            var label = moment().year(item.year).month(item.month);
-            var format = (index === 0 || item.month === 11) ? 'YYYY MMM' : 'MMM';
-            return label.format(format);
-          }
+          this.seriesData = history.map(month => month.total);
         }
       }
 

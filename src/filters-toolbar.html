@@ -123,15 +123,16 @@
   <script>
     (function() {
       class FiltersToolbarElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
-        static get is() { return 'filters-toolbar'; }
+        static get is() {
+          return 'filters-toolbar';
+        }
 
         static get properties() {
           return {
             expanded: {
               type: Boolean,
               value: false,
-              statePath: 'filters.filtersVisible',
-              observer: '_updateVisibilty'
+              statePath: 'filters.filtersVisible'
             },
 
             totalOwed: {
@@ -158,8 +159,8 @@
 
         static get observers() {
           return [
-              '_updateVisibilty(phone, tablet, expanded)'
-          ]
+            '_updateVisibility(phone, tablet, expanded)'
+          ];
         }
 
         _toggleFilters() {
@@ -170,7 +171,7 @@
           return appliedFilters > 0;
         }
 
-        _updateVisibilty(phone, tablet, expanded) {
+        _updateVisibility(phone, tablet, expanded) {
           if (phone) {
             if (expanded) {
               requestAnimationFrame(() => this.$.filters.style.maxHeight = this.$.filters.scrollHeight + 'px');

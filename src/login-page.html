@@ -108,7 +108,9 @@
   <script>
     (function() {
       class LoginPageElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
-        static get is() { return 'login-page'; }
+        static get is() {
+          return 'login-page';
+        }
 
         static get properties() {
           return {

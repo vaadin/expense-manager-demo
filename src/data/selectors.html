@@ -12,43 +12,32 @@
       [getExpenses, getFilters],
       (expenses, filters) => {
 
-        var merchant = filters.merchant;
-        var min = filters.min;
-        var max = filters.max;
-        var status = filters.status;
-        var start = filters.start;
-        var end = filters.end;
+        const merchant = filters.merchant;
+        const min = filters.min;
+        const max = filters.max;
+        const status = filters.status;
+        const start = filters.start;
+        const end = filters.end;
 
         return expenses
-          .filter(function (expense) {
-            return !(merchant && expense.merchant
-              .toUpperCase().indexOf(merchant.toUpperCase()) < 0);
+          .filter(exp => !(merchant && exp.merchant.toUpperCase().indexOf(merchant.toUpperCase()) < 0))
+          .filter(exp => !(min && exp.total < min))
+          .filter(exp => !(max && exp.total > max))
+          .filter(exp => {
+            return status && status.length > 0 ? status.indexOf(exp.status) >= 0 : false;
           })
-          .filter(function (expense) {
-            return !(min && expense.total < min);
-          })
-          .filter(function (expense) {
-            return !(max && expense.total > max);
-          })
-          .filter(function (expense) {
-            if (status && status.length > 0) {
-              return status.indexOf(expense.status) >= 0;
-            } else {
-              return false;
-            }
-          })
-          .filter(function (expense) {
+          .filter(exp => {
             if (start) {
-              var startDate = moment(start);
-              return !!(startDate.isValid() && moment(expense.date).isAfter(startDate));
+              const startDate = moment(start);
+              return !!(startDate.isValid() && moment(exp.date).isAfter(startDate));
             } else {
               return true;
             }
           })
-          .filter(function (expense) {
+          .filter(exp => {
             if (end) {
-              var endDate = moment(end);
-              return !!(endDate.isValid() && moment(expense.date).isBefore(endDate));
+              const endDate = moment(end);
+              return !!(endDate.isValid() && moment(exp.date).isBefore(endDate));
             } else {
               return true;
             }
@@ -74,7 +63,7 @@
       let numFilters = 0;
 
       Object.keys(filters).forEach(f => {
-        var filter = filters[f];
+        const filter = filters[f];
         if (filter) {
           if (Array.isArray(filter)) {
             numFilters += ExpenseManager.constants.statuses.length - filter.length;
@@ -89,7 +78,7 @@
     const history = Reselect.createSelector([getExpenses], expenses => {
       const historyData = [];
       function findMonth(rawDate, historyData) {
-        let date = moment(rawDate);
+        const date = moment(rawDate);
         let month;
 
         historyData.forEach(m => {
