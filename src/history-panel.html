@@ -12,6 +12,16 @@
         display: block;
         background: #f8f9f9;
         padding: 12px 24px;
+        width: 250px;
+      }
+
+      :host([phone]) {
+        display: none;
+      }
+
+      :host([tablet]) {
+        width: auto;
+        box-shadow: rgba(0, 0, 0, 0.2) 0px 6px 16px -10px inset;
       }
 
       #container {
@@ -32,7 +42,6 @@
       }
 
       #total {
-        width: 250px;
         font-weight: 500;
         font-size: 18px;
         line-height: 1.4;
@@ -59,8 +68,8 @@
         color: var(--lumo-body-text-color);
       }
 
-      :host([tablet]) #total{
-        display: none;
+      #total:not([hidden]) {
+        display: block;
       }
 
       @media (max-width: 600px) {
@@ -92,7 +101,7 @@
 
     </style>
     <div id="container">
-      <div id="total">
+      <div id="total" hidden="[[tablet]]">
         <span>To be reimbursed</span>
         <span class="sum">$[[totalOwed]]</span>
       </div>
@@ -117,14 +126,26 @@
               type: Number,
               statePath: ExpenseManager.select.total
             },
+
             historyData: {
               type: Array,
               statePath: ExpenseManager.select.history,
               observer: 'update'
             },
+
             seriesData: {
               type: Array,
               notify: true
+            },
+
+            tablet: {
+              type: Boolean,
+              reflectToAttribute: true
+            },
+
+            phone: {
+              type: Boolean,
+              reflectToAttribute: true
             }
           };
         }
