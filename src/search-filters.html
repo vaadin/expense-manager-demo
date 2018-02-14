@@ -13,7 +13,10 @@
     <style>
       :host {
         display: block;
+        padding: 0 16px;
         width: inherit;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
       }
 
       :host([phone]) {
@@ -24,12 +27,12 @@
         width: auto;
       }
 
-      :host([phone]) .title {
-        display: none;
+      .title:not([hidden]) {
+        display: flex;
       }
 
-      :host(:not([phone])) #buttons {
-        display: none;
+      #buttons:not([hidden]) {
+        display: flex;
       }
 
       #done-button {
@@ -99,7 +102,6 @@
       }
 
       .title {
-        display: flex;
         align-items: baseline;
         padding: 14px 0;
         font-weight: 400;
@@ -113,13 +115,12 @@
 
       #buttons {
         margin-top: 32px;
-        display: flex;
       }
 
     </style>
 
     <div class="filters">
-      <div class="title">
+      <div class="title" hidden="[[phone]]">
         <span>Filter Expenses</span>
         <vaadin-button class="clear-button" on-tap="_clearFilters" theme="tertiary-inline">Clear Filters</vaadin-button>
       </div>
@@ -134,7 +135,7 @@
       </div>
       <vaadin-combo-box label="Merchant" items="{{merchants}}" value="{{filters.merchant}}"></vaadin-combo-box>
       <option-group caption="Status" value="{{filters.status}}" items="[[statusOptions]]" label-path="label" value-path="name"></option-group>
-      <div id="buttons">
+      <div id="buttons" hidden="[[!phone]]">
         <vaadin-button class="clear-button" on-tap="_clearFilters" theme="tertiary">Clear Filters</vaadin-button>
         <vaadin-button id="done-button" on-tap="_hideFilters">Done</vaadin-button>
       </div>
@@ -152,14 +153,27 @@
             statePath: 'filters.filters',
             observer: '_srcFiltersChanged'
           },
+
           filters: Object,
+
           merchants: {
             type: Array,
             statePath: ExpenseManager.select.merchants
           },
+
           statusOptions: {
             type: Array,
             value: () => ExpenseManager.constants.statuses
+          },
+
+          phone: {
+            type: Boolean,
+            reflectToAttribute: true
+          },
+
+          tablet: {
+            type: Boolean,
+            reflectToAttribute: true
           }
         };
       }
