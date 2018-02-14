@@ -13,10 +13,6 @@
         flex-direction: column;
       }
 
-      :host([tablet]) #history-panel {
-        width: auto;
-        box-shadow: rgba(0, 0, 0, 0.2) 0px 6px 16px -10px inset;
-      }
 
       #list {
         flex: 1;
@@ -25,18 +21,13 @@
 
       #history-panel {
         border-left: 1px solid #ddd;
-        width: 250px;
         box-shadow: rgba(0, 0, 0, 0.2) 6px 0px 16px -10px inset;
         z-index: 1;
       }
 
-      :host([phone]) #history-panel {
-        display: none;
-      }
-
     </style>
     <expenses-list id="list"></expenses-list>
-    <history-panel id="history-panel" tablet$="[[tablet]]"></history-panel>
+    <history-panel id="history-panel" phone="[[phone]]" tablet="[[tablet]]"></history-panel>
   </template>
   <script>
     class ContentPanel extends Polymer.Element {
@@ -45,6 +36,11 @@
       static get properties() {
         return {
           tablet: {
+            type: Boolean,
+            reflectToAttribute: true
+          },
+
+          phone: {
             type: Boolean,
             reflectToAttribute: true
           }
