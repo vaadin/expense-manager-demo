@@ -45,10 +45,12 @@
 
       #filters-toolbar[phone] {
         width: auto;
+        box-shadow: rgba(0, 0, 0, 0.2) 0px -10px 6px -10px inset;
       }
 
       #filters-toolbar {
-        width: 260px;
+        width: 300px;
+        box-shadow: inset -4px 0 16px -9px rgba(0, 0, 0, 0.5);
       }
 
       @media (max-width: 1124px) {
@@ -85,7 +87,7 @@
         text-transform: uppercase;
       }
 
-      @media (max-width: 600px) {
+      @media (max-width: 900px) {
         app-toolbar {
           --app-toolbar-content: {
             padding: 0 6px 0 16px;
@@ -114,7 +116,7 @@
     </app-header-layout>
 
     <iron-media-query
-      query="(max-width: 600px)"
+      query="(max-width: 900px)"
       query-matches="{{_phone}}">
     </iron-media-query>
 
