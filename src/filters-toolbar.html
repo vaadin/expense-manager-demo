@@ -26,10 +26,13 @@
       #toolbar {
         display: none;
         flex-shrink: 0;
-        background: #f8f9f9;
         height: 48px;
-        padding: 0 16px;
+        padding: 0 24px;
         align-items: center;
+      }
+
+      #toolbar[small-padding] {
+        padding: 0 16px;
       }
 
       #filters {
@@ -107,7 +110,7 @@
       }
 
     </style>
-    <div id="toolbar" hidden="[[!phone]]">
+    <div id="toolbar" hidden="[[!phone]]" small-padding$="[[phone]]">
       <div class="total">
         <small>To be reimbursed</small>
         <span class="sum">$[[totalOwed]]</span>
