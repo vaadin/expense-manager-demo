@@ -1,5 +1,8 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/vaadin-checkbox/vaadin-checkbox.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/spacing.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/typography.html">
 
 <dom-module id="option-group">
   <template>
@@ -9,9 +12,11 @@
       }
 
       .caption {
-        font-size: 12px;
-        margin: 32px 0 14px;
-        color: rgba(0, 0, 0, 0.54);
+        margin-top: var(--lumo-space-m);
+        margin-bottom: var(--lumo-space-xs);
+        color: var(--lumo-secondary-text-color);
+        font-weight: 500;
+        font-size: var(--lumo-font-size-s);
       }
     </style>
 

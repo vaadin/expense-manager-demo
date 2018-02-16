@@ -10,11 +10,7 @@
   <link rel="lazy-import" group="overview" href="overview-page.html">
 
   <template>
-    <custom-style>
-      <style include="lumo-color"></style>
-      <style include="lumo-typography"></style>
-    </custom-style>
-    <style>
+    <style include="lumo-color">
       :host {
         display: block;
       }
@@ -82,7 +78,7 @@
     </style>
 
     <iron-pages id="pages" selected="[[activePage]]" selected-attribute="active">
-      <login-page id="login"></login-page>
+      <login-page id="login" theme="dark"></login-page>
       <overview-page id="overview"></overview-page>
     </iron-pages>
   </template>

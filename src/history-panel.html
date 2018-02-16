@@ -1,16 +1,20 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/vaadin-charts/vaadin-bar-chart.html">
 <link rel="import" href="../bower_components/vaadin-charts/vaadin-column-chart.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/spacing.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/typography.html">
 <link rel="import" href="moment-js.html">
 <link rel="import" href="data/store.html">
 
+<link rel="import" href="shared-styles.html">
 
 <dom-module id="history-panel">
   <template>
-    <style>
+    <style include="shared-styles">
       :host {
         display: block;
-        background: #f8f9f9;
+        background: var(--lumo-shade-5pct);
         padding: 12px 24px;
         width: 250px;
       }
@@ -45,17 +49,6 @@
         font-size: 18px;
         line-height: 1.4;
         padding-bottom: 30px;
-      }
-
-      #total>span:first-child {
-        font-weight: 400;
-        font-size: 13px;
-        display: block;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.13);
-        padding-bottom: 6px;
-        margin-bottom: 18px;
-        margin-top: 4px;
-        color: rgba(0, 0, 0, 0.54);
       }
 
       #total .sum {
@@ -101,12 +94,12 @@
     </style>
     <div id="container">
       <div id="total" hidden="[[tablet]]">
-        <span>To be reimbursed</span>
+        <div class="section-title">To be reimbursed</div>
         <span class="sum">$[[totalOwed]]</span>
       </div>
 
       <div class="chart">
-        <h2 class="chart-title section-title">Last 12 Months in total</h2>
+        <h2 class="section-title">Last 12 Months in total</h2>
         <h3> Vaadin Charts will be displayed in Pro version </h3>
       </div>
     </div>
