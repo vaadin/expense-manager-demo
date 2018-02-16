@@ -3,13 +3,9 @@
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-text-field.html">
 <link rel="import" href="../bower_components/vaadin-text-field/vaadin-text-field.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-button.html">
 <link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-date-picker.html">
 <link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-combo-box.html">
 <link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
 <link rel="import" href="../bower_components/vaadin-upload/vaadin-upload.html">
 
@@ -192,7 +188,7 @@
       </div>
 
       <div class="buttons-layout">
-        <vaadin-button raised on-tap="_save" theme="primary" class="save-button">Save</vaadin-button>
+        <vaadin-button on-tap="_save" theme="primary" class="save-button">Save</vaadin-button>
         <vaadin-button on-tap="close" class="cancel-button">Cancel</vaadin-button>
         <vaadin-button on-tap="_delete" id="delete" theme="tertiary danger" class="delete-button" hidden="[[!_showDelete(expense)]]">Delete</vaadin-button>
       </div>

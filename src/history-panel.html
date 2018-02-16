@@ -8,10 +8,19 @@
 <dom-module id="history-panel">
   <template>
     <style>
-       :host {
+      :host {
         display: block;
         background: #f8f9f9;
-        padding: 20px 24px;
+        padding: 12px 24px;
+        width: 250px;
+      }
+
+      :host([phone]) {
+        display: none;
+      }
+
+      :host([tablet]) {
+        width: auto;
       }
 
       #container {
@@ -27,11 +36,42 @@
         display: none;
       }
 
-      @media (max-width: 600px) {
-        .chart,
-        #horizontal {
-          display: none;
-        }
+      #toolbar {
+        display: block;
+      }
+
+      #total {
+        font-weight: 500;
+        font-size: 18px;
+        line-height: 1.4;
+        padding-bottom: 30px;
+      }
+
+      #total>span:first-child {
+        font-weight: 400;
+        font-size: 13px;
+        display: block;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.13);
+        padding-bottom: 6px;
+        margin-bottom: 18px;
+        margin-top: 4px;
+        color: rgba(0, 0, 0, 0.54);
+      }
+
+      #total .sum {
+        display: block;
+        text-align: center;
+        padding: 40px 0;
+        font-size: 32px;
+        font-weight: 300;
+        color: var(--lumo-body-text-color);
+      }
+
+      #total:not([hidden]) {
+        display: block;
+      }
+
+      @media (max-width: 900px) {
         .total {
           height: 64px;
           flex-direction: row;
@@ -45,16 +85,6 @@
         #horizontal {
           display: flex;
         }
-        .chart-title {
-          display: none;
-        }
-        #horizontal .chart-title {
-          display: block;
-          width: 450px;
-        }
-        #total>span:first-child {
-          @apply --section-title;
-        }
         #total {
           flex: 1;
           margin-left: 16px;
@@ -66,78 +96,18 @@
           font-size: 32px;
           line-height: 100px;
         }
-        #barchart {
-          display: none;
-        }
-      }
-
-      @media (min-width: 1125px) {
-        .chart-title {
-          margin-top: 200px;
-        }
       }
 
     </style>
     <div id="container">
+      <div id="total" hidden="[[tablet]]">
+        <span>To be reimbursed</span>
+        <span class="sum">$[[totalOwed]]</span>
+      </div>
 
       <div class="chart">
         <h2 class="chart-title section-title">Last 12 Months in total</h2>
-        <vaadin-bar-chart id="barchart">
-          <title>
-            <style display="none"></style>
-          </title>
-          <chart background-color="transparent" height="400" width="250"></chart>
-          <exporting enabled="false"></exporting>
-          <x-axis>
-            <title>
-              <style display="none"></style>
-            </title>
-            <labels>
-              <chart-style>{"color": "#000"}</chart-style>
-            </labels>
-          </x-axis>
-          <y-axis>
-            <title>
-              <style display="none"></style>
-            </title>
-          </y-axis>
-          <tooltip formatter="function() { return '$' + this.y.toFixed(2); }"></tooltip>
-          <data-series name="$" data="[[seriesData]]">
-            <color>#ffc13f</color>
-          </data-series>
-          <legend enabled="false"></legend>
-        </vaadin-bar-chart>
-
-        <div id="horizontal">
-          <div>
-            <h2 class="chart-title section-title">Last 12 Months in Total</h2>
-            <vaadin-column-chart id="columnchart">
-              <title>
-                <style display="none"></style>
-              </title>
-              <chart background-color="transparent" height="200" width="450"></chart>
-              <exporting enabled="false"></exporting>
-              <x-axis>
-                <title>
-                  <style display="none"></style>
-                </title>
-                <labels>
-                  <chart-style>{"color": "#000"}</chart-style>
-                </labels>
-              </x-axis>
-              <y-axis>
-                <title>
-                  <style display="none"></style>
-                </title>
-              </y-axis>
-              <tooltip formatter="function() { return '$' + this.y.toFixed(2); }"></tooltip>
-              <data-series name="$" data="[[seriesData]]">
-                <color>#ffc13f</color>
-              </data-series>
-              <legend enabled="false"></legend>
-            </vaadin-column-chart>
-          </div>
-        </div>
+        <h3> Vaadin Charts will be displayed in Pro version </h3>
       </div>
     </div>
   </template>
@@ -151,14 +121,30 @@
 
         static get properties() {
           return {
+            totalOwed: {
+              type: Number,
+              statePath: ExpenseManager.select.total
+            },
+
             historyData: {
               type: Array,
               statePath: ExpenseManager.select.history,
               observer: 'update'
             },
+
             seriesData: {
               type: Array,
               notify: true
+            },
+
+            tablet: {
+              type: Boolean,
+              reflectToAttribute: true
+            },
+
+            phone: {
+              type: Boolean,
+              reflectToAttribute: true
             }
           };
         }
@@ -173,21 +159,6 @@
             var format = (index === 0 || item.month === 11) ? 'YYYY MMM' : 'MMM';
             return label.format(format);
           }
-
-          // If at first you don't succeed, try again
-          const configureAxes = () => {
-            if (this.$.barchart.chart.xAxis) {
-              const historyLabels = history.map(getHistoryLabel);
-              this.$.barchart.chart.xAxis[0].setCategories(historyLabels);
-              this.$.barchart.chart.reflow();
-              this.$.columnchart.chart.xAxis[0].setCategories(historyLabels);
-              this.$.columnchart.chart.reflow();
-            } else {
-              setTimeout(configureAxes, 50);
-            }
-          }
-
-          configureAxes();
         }
       }
 

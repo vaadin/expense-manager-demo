@@ -1,7 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-button.html">
 <link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
 <link rel="import" href="search-filters.html">
 <link rel="import" href="data/store.html">
@@ -9,24 +8,35 @@
 <dom-module id="filters-toolbar">
   <template>
     <style>
-       :host {
+      :host {
         display: flex;
-        position: relative;
-        z-index: 10;
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
+        background: #f8f9f9;
+        position: relative;
+        z-index: 2;
       }
 
-      #filters {
-        flex: 1;
+      :host([phone]) {
+        flex-direction: column;
       }
 
       #toolbar {
-        display: flex;
+        display: none;
+        flex-shrink: 0;
+        padding: 0 16px;
+        height: 48px;
         align-items: center;
-        background: #f8f9f9;
+      }
+
+      #filters {
+        transition: max-height 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
+      }
+
+      #toolbar:not([hidden]) {
+        display: flex;
       }
 
       #total {
@@ -40,18 +50,14 @@
       }
 
       #filters-toggle {
-        position: absolute;
-        top: 4px;
-        right: 16px;
-        display: none;
+        position: relative;
         color: var(--primary-color);
-        z-index: 3;
       }
 
       #filters-toggle .count {
         position: absolute;
         top: 6px;
-        right: 0;
+        right: 0px;
         z-index: 1;
         width: 16px;
         height: 16px;
@@ -84,132 +90,35 @@
         text-align: center;
       }
 
-      #clear-button {
+      .clear-button {
         color: var(--primary-color);
       }
 
-      @media (max-width: 1124px) {
-        #total {
-          display: none;
-        }
+      .total {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        line-height: initial;
       }
 
-      @media (min-width: 901px) {
-         :host {
-          height: 0;
-        }
-        #filters {
-          max-height: none !important;
-        }
-        #buttons {
-          position: absolute;
-          left: -248px;
-          width: 234px;
-          text-align: right;
-          padding: 9px 0;
-        }
-        #done-button {
-          display: none;
-        }
-        #clear-button {
-          font-size: 13px;
-          text-transform: none;
-        }
-      }
-
-      @media (max-width: 900px) {
-         :host {
-          flex-direction: column-reverse;
-        }
-        #filters-toggle {
-          display: flex;
-          align-items: center;
-          cursor: pointer;
-        }
-        #filters-toggle span {
-          margin-right: 4px;
-        }
-        #toolbar {
-          height: 48px;
-          padding: 0 16px;
-          flex-shrink: 0;
-        }
-        #total {
-          width: 100%;
-          display: flex;
-          flex-direction: column;
-        }
-        #total>span:first-child {
-          font-size: 12px;
-        }
-        #total .sum {
-          font-size: inherit;
-        }
-        #filters {
-          background: #f8f9f9;
-          max-height: 4px;
-          overflow: auto;
-          transition: max-height 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
-          box-shadow: rgba(0, 0, 0, 0.2) 0px -10px 6px -10px inset;
-        }
-        #buttons {
-          display: flex;
-          margin: 0 0 32px;
-        }
-        #done-button {
-          display: block;
-        }
-         :host([expanded]) #filters-caption {
-          display: block;
-          padding: 0;
-          margin: 16px;
-          font-size: 16px;
-          font-weight: 400;
-        }
-      }
-
-      @media (min-width: 1125px) {
-        #total>span:first-child {
-          @apply --section-title;
-        }
-        #toolbar {
-          display: block;
-        }
-        #total {
-          position: absolute;
-          width: 250px;
-          font-weight: 500;
-          font-size: 18px;
-          line-height: 1.4;
-          padding: 12px 24px;
-        }
-        #total .sum {
-          display: block;
-          text-align: center;
-          padding: 40px 0;
-        }
+      .total .sum {
+        font-weight: 300;
       }
 
     </style>
-    <search-filters id="filters">
-      <div id="buttons">
-        <vaadin-button id="clear-button" on-tap="_clearFilters" theme="tertiary">Clear Filters</vaadin-button>
-        <vaadin-button id="done-button" on-tap="_hideFilters" raised>Done</vaadin-button>
-      </div>
-    </search-filters>
-
-    <div id="toolbar">
-      <div id="total">
-        <span>To be reimbursed</span>
+    <div id="toolbar" hidden="[[!phone]]">
+      <div class="total">
+        <small>To be reimbursed</small>
         <span class="sum">$[[totalOwed]]</span>
       </div>
-
       <div id="filters-toggle" on-tap="_toggleFilters">
         <span>Filters</span>
         <div class="count" has-filters$="[[_hasFilters(appliedFilters)]]">[[appliedFilters]]</div>
         <paper-icon-button icon="filter-list"></paper-icon-button>
       </div>
     </div>
+
+    <search-filters phone="[[phone]]" tablet="[[tablet]]" id="filters"></search-filters>
   </template>
   <script>
     (function() {
@@ -218,21 +127,39 @@
 
         static get properties() {
           return {
-            totalOwed: {
-              type: Number,
-              statePath: ExpenseManager.select.total
-            },
             expanded: {
               type: Boolean,
               value: false,
               statePath: 'filters.filtersVisible',
               observer: '_updateVisibilty'
             },
+
+            totalOwed: {
+              type: Number,
+              statePath: ExpenseManager.select.total
+            },
+
             appliedFilters: {
               type: Number,
               statePath: ExpenseManager.select.appliedFilters
+            },
+
+            tablet: {
+              type: Boolean,
+              reflectToAttribute: true
+            },
+
+            phone: {
+              type: Boolean,
+              reflectToAttribute: true
             }
           };
+        }
+
+        static get observers() {
+          return [
+              '_updateVisibilty(phone, tablet, expanded)'
+          ]
         }
 
         _toggleFilters() {
@@ -243,20 +170,16 @@
           return appliedFilters > 0;
         }
 
-        _updateVisibilty() {
-          if (this.expanded) {
-            requestAnimationFrame(() => this.$.filters.style.maxHeight = this.$.filters.scrollHeight + 'px');
+        _updateVisibilty(phone, tablet, expanded) {
+          if (phone) {
+            if (expanded) {
+              requestAnimationFrame(() => this.$.filters.style.maxHeight = this.$.filters.scrollHeight + 'px');
+            } else {
+              this.$.filters.style.maxHeight = '0';
+            }
           } else {
-            this.$.filters.style.maxHeight = '4px';
+            this.$.filters.style.maxHeight = 'none';
           }
-        }
-
-        _hideFilters() {
-          this.dispatch('hideFilters');
-        }
-
-        _clearFilters() {
-          this.dispatch('clearFilters');
         }
       }
 

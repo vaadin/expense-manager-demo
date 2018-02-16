@@ -1,9 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-text-field.html">
 <link rel="import" href="../bower_components/vaadin-text-field/vaadin-text-field.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-combo-box.html">
 <link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-date-picker.html">
 <link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
 <link rel="import" href="option-group.html">
 <link rel="import" href="moment-js.html">
@@ -14,9 +11,32 @@
 <dom-module id="search-filters">
   <template>
     <style>
-       :host {
+      :host {
         display: block;
-        padding: 0 16px;
+        padding: 0 24px;
+        width: inherit;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      :host([phone]) {
+        width: auto;
+      }
+
+      :host([phone]) .filters {
+        width: auto;
+      }
+
+      .title:not([hidden]) {
+        display: flex;
+      }
+
+      #buttons:not([hidden]) {
+        display: flex;
+      }
+
+      #done-button {
+        margin-left: auto;
       }
 
       .col {
@@ -49,14 +69,9 @@
       }
 
       .filters {
+        display: flex;
+        flex-direction: column;
         padding-bottom: 16px;
-      }
-
-      .status .caption {
-        display: block;
-        font-size: 12px;
-        margin: 32px 0 14px;
-        color: rgba(0, 0, 0, 0.54);
       }
 
       .checkboxes {
@@ -68,84 +83,62 @@
         margin-right: 8px;
       }
 
+      .title>span:first-child {
+        flex: 1;
+      }
+
+      .row {
+        display: flex;
+        align-items: baseline;
+      }
+
+      .row vaadin-text-field {
+        min-width: 0px;
+        flex: auto;
+      }
+
+      .row .delimiter {
+        padding: 0 10px;
+      }
+
       .title {
-        display: none;
+        align-items: baseline;
+        padding: 14px 0;
+        font-weight: 400;
+        font-size: 13px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.13);
+        padding-bottom: 6px;
+        margin-bottom: 18px;
+        margin-top: 4px;
+        color: rgba(0, 0, 0, 0.54);
       }
 
-      #merchant-select {
-        width: 100%;
-      }
-
-      @media (min-width: 900px) {
-        .title {
-          display: block;
-          padding: 14px 0;
-          @apply --section-title;
-        }
-        .checkboxes,
-        .checkboxes>vaadin-checkbox {
-          display: block;
-        }
-        .checkboxes>vaadin-checkbox {
-          margin-bottom: 16px;
-        }
-        /* 🙈 Fix.. */
-        .filters {
-          padding: 0 24px;
-          position: absolute;
-          left: -308px;
-          width: 260px;
-          background: #f8f9f9;
-          height: calc(100vh - 64px);
-          box-shadow: inset -4px 0 16px -9px rgba(0, 0, 0, 0.5);
-        }
+      #buttons {
+        margin-top: 32px;
       }
 
     </style>
 
-    <div id="content">
-      <div class="filters">
-        <div class="title">Filter Expenses</div>
-
-        <div class="row">
-          <div class="date col">
-            <vaadin-date-picker id="from" auto-validate label="From" value="{{filters.start}}" max="{{filters.end}}"></vaadin-date-picker>
-          </div>
-        </div>
-        <div class="row">
-          <div class="date col">
-            <vaadin-date-picker id="to" auto-validate label="To" value="{{filters.end}}" min="{{filters.start}}"></vaadin-date-picker>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="total col">
-            <vaadin-text-field label="Min" value="{{filters.min}}" type="number" step="any">
-              <div slot="prefix">$</div>
-            </vaadin-text-field>
-            <span>–</span>
-            <vaadin-text-field label="Max" value="{{filters.max}}" type="number" step="any"></vaadin-text-field>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="merchants col">
-            <vaadin-combo-box id="merchant-select" label="Merchant" items="{{merchants}}" value="{{filters.merchant}}"
-              id="merchantsSelect"></vaadin-combo-box>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="status col">
-            <span class="caption">Status</span>
-            <option-group value="{{filters.status}}" items="[[statusOptions]]" label-path="label" value-path="name"></option-group>
-          </div>
-        </div>
-
+    <div class="filters">
+      <div class="title" hidden="[[phone]]">
+        <span>Filter Expenses</span>
+        <vaadin-button class="clear-button" on-tap="_clearFilters" theme="tertiary-inline">Clear Filters</vaadin-button>
       </div>
-    </div>
-    <div id="footer">
-      <slot></slot>
+      <vaadin-date-picker id="from" auto-validate label="From" value="{{filters.start}}" max="[[filters.end]]"></vaadin-date-picker>
+      <vaadin-date-picker id="to" auto-validate label="To" value="{{filters.end}}" min="[[filters.start]]"></vaadin-date-picker>
+      <div class="row">
+        <vaadin-text-field label="Min" value="{{filters.min}}" type="number" step="any">
+          <div slot="prefix">$</div>
+        </vaadin-text-field>
+        <span class="delimiter">–</span>
+        <vaadin-text-field label="Max" value="{{filters.max}}" type="number" step="any"></vaadin-text-field>
+      </div>
+      <vaadin-combo-box label="Merchant" items="{{merchants}}" value="{{filters.merchant}}"></vaadin-combo-box>
+      <option-group caption="Status" value="{{filters.status}}" items="[[statusOptions]]" label-path="label" value-path="name"></option-group>
+      <div id="buttons" hidden="[[!phone]]">
+        <vaadin-button class="clear-button" on-tap="_clearFilters" theme="tertiary">Clear Filters</vaadin-button>
+        <vaadin-button id="done-button" on-tap="_hideFilters">Done</vaadin-button>
+      </div>
     </div>
   </template>
 
@@ -161,14 +154,27 @@
               statePath: 'filters.filters',
               observer: '_srcFiltersChanged'
             },
+
             filters: Object,
+
             merchants: {
               type: Array,
               statePath: ExpenseManager.select.merchants
             },
+
             statusOptions: {
               type: Array,
               value: () => ExpenseManager.constants.statuses
+            },
+
+            phone: {
+              type: Boolean,
+              reflectToAttribute: true
+            },
+
+            tablet: {
+              type: Boolean,
+              reflectToAttribute: true
             }
           };
         }
@@ -186,6 +192,14 @@
           if (JSON.stringify(this.filters) !== JSON.stringify(this.srcFilters)) {
             this.dispatch('filtersUpdated', this.filters);
           }
+        }
+
+        _hideFilters() {
+          this.dispatch('hideFilters');
+        }
+
+        _clearFilters() {
+          this.dispatch('clearFilters');
         }
       }
 

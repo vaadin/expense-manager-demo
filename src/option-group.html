@@ -1,16 +1,21 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-checkbox.html">
 <link rel="import" href="../bower_components/vaadin-checkbox/vaadin-checkbox.html">
 
 <dom-module id="option-group">
   <template>
     <style>
-       :host {
+      :host {
         display: block;
       }
 
+      .caption {
+        font-size: 12px;
+        margin: 32px 0 14px;
+        color: rgba(0, 0, 0, 0.54);
+      }
     </style>
 
+    <div class="caption">[[caption]]</div>
     <template is="dom-repeat" items="[[items]]">
       <vaadin-checkbox checked="[[_isChecked(item, value)]]" data-value$="[[_getValue(item)]]" on-checked-changed="_updateValue">[[_getLabel(item)]]</vaadin-checkbox>
     </template>
@@ -29,7 +34,8 @@
               type: Array,
               notifies: true,
               value: () => []
-            }
+            },
+            caption: String
           };
         }
 

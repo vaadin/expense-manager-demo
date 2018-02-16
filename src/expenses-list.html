@@ -1,6 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-grid.html">
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-sorter.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
@@ -36,40 +35,15 @@ if you open the license dialog. -->
         position: absolute;
         right: 32px;
         bottom: 32px;
-        z-index: 2;
-        --paper-fab-background: var(--valo-error-color);
+        z-index: 1;
+        --paper-fab-background: var(--lumo-error-color);
       }
 
       #expenses {
-        flex: 1;
-        max-height: calc(100vh - 64px);
+        flex: auto;
+        height: 0.001px;
         border: 0;
-        height: 100%;
         font-weight: 300;
-      }
-
-      @media (max-width: 1124px) {
-        #expenses {
-          max-height: calc(100vh - 64px - 290px);
-        }
-        #add-button {
-          bottom: -28px;
-        }
-      }
-
-      @media (max-width: 900px) {
-        #expenses {
-          max-height: calc(100vh - 64px - 52px);
-        }
-        #add-button {
-          bottom: 32px;
-        }
-      }
-
-      @media (max-width: 600px) {
-        #expenses {
-          max-height: calc(100vh - 56px - 48px);
-        }
       }
 
       vaadin-grid .status {
