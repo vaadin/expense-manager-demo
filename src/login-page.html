@@ -11,16 +11,14 @@
 
 <dom-module id="login-page">
   <template>
-
-    <style include="lumo-dark">
+    <style include="lumo-color">
        :host {
         background: var(--lumo-base-color);
         min-height: 400px;
       }
 
-
       #login-button {
-        margin: 20px 0 0 0;
+        margin: 20px 0 0;
         padding-left: 30px;
         padding-right: 30px;
       }
@@ -49,7 +47,7 @@
 
       .header h1 {
         color: var(--text-primary-color);
-        font-size: 24px;
+        font-size: var(--lumo-font-size-xxl);
         font-weight: 300;
         margin: 0 auto 16px;
         width: 300px;
@@ -66,7 +64,7 @@
       }
 
       #footer {
-        font-size: 14px;
+        font-size: var(--lumo-font-size-s);
         background: var(--lumo-shade-20pct);
         padding: 14px 26px;
         width: 100%;
@@ -89,7 +87,7 @@
     <div id="header" class="header">
       <h1>Expense Manager</h1>
     </div>
-    <div class="login" theme="dark">
+    <div class="login">
       <vaadin-text-field value={{username}} label="Username" name="username"></vaadin-text-field>
       <vaadin-password-field value="{{password}}" label="Password" name="password"></vaadin-password-field>
       <vaadin-button theme="primary" id="login-button" on-tap="_logIn">Login</vaadin-button>

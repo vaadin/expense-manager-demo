@@ -1,20 +1,21 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
-<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
 <link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
 <link rel="import" href="search-filters.html">
 <link rel="import" href="data/store.html">
 
 <dom-module id="filters-toolbar">
   <template>
-    <style>
+    <style include="lumo-color">
       :host {
         display: flex;
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
-        background: #f8f9f9;
+        background: var(--lumo-shade-5pct);
         position: relative;
         z-index: 2;
       }

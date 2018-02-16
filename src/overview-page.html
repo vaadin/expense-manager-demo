@@ -30,7 +30,7 @@
       app-toolbar h1 {
         color: var(--light-primary-color);
         font-weight: 300;
-        font-size: 24px;
+        font-size: var(--lumo-font-size-xl);
       }
 
       .content[phone] {
@@ -80,9 +80,8 @@
         }
       }
 
-      .logout-button,
-      .about-button {
-        font-size: 14px;
+      vaadin-button {
+        margin: 0 var(--lumo-space-s);
         color: var(--lumo-primary-contrast-color);
         text-transform: uppercase;
       }
@@ -104,8 +103,8 @@
       <app-header slot="header" fixed condenses>
         <app-toolbar>
           <h1 main-title>Expense Manager</h1>
-          <vaadin-button on-tap="_showInfoDialog" theme="tertiary" class="about-button">Info</vaadin-button>
-          <vaadin-button on-tap="_logout" theme="tertiary" class="logout-button">Logout</vaadin-button>
+          <vaadin-button on-tap="_showInfoDialog" theme="tertiary small">Info</vaadin-button>
+          <vaadin-button on-tap="_logout" theme="tertiary small">Logout</vaadin-button>
         </app-toolbar>
       </app-header>
 

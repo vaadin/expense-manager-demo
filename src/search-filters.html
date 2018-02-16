@@ -2,15 +2,19 @@
 <link rel="import" href="../bower_components/vaadin-text-field/vaadin-text-field.html">
 <link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
 <link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/spacing.html">
 <link rel="import" href="option-group.html">
 <link rel="import" href="moment-js.html">
 
 <link rel="import" href="data/store.html">
 <link rel="import" href="data/constants.html">
 
+<link rel="import" href="shared-styles.html">
+
 <dom-module id="search-filters">
   <template>
-    <style>
+    <style include="shared-styles">
       :host {
         display: block;
         padding: 0 24px;
@@ -71,7 +75,7 @@
       .filters {
         display: flex;
         flex-direction: column;
-        padding-bottom: 16px;
+        padding-bottom: var(--lumo-space-m);
       }
 
       .checkboxes {
@@ -103,14 +107,6 @@
 
       .title {
         align-items: baseline;
-        padding: 14px 0;
-        font-weight: 400;
-        font-size: 13px;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.13);
-        padding-bottom: 6px;
-        margin-bottom: 18px;
-        margin-top: 4px;
-        color: rgba(0, 0, 0, 0.54);
       }
 
       #buttons {
@@ -120,7 +116,7 @@
     </style>
 
     <div class="filters">
-      <div class="title" hidden="[[phone]]">
+      <div class="title section-title" hidden="[[phone]]">
         <span>Filter Expenses</span>
         <vaadin-button class="clear-button" on-tap="_clearFilters" theme="tertiary-inline">Clear Filters</vaadin-button>
       </div>
