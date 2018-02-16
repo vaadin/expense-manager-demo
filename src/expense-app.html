@@ -89,11 +89,26 @@
 
   <script>
     (function() {
+      /**
+       * @memberof ExpenseManager
+       */
       class ExpenseAppElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
-        static get is() { return 'expense-app' };
+        static get is() {
+          return 'expense-app';
+        }
+
         static get properties() {
           return {
+            /**
+             * Index of the active page. Possible values:
+             * 0 - login page,
+             * 1 - overview page.
+             */
             activePage: Number,
+
+            /**
+             * Whether the user is authenticated or not.
+             */
             authenticated: {
               type: Boolean,
               statePath: 'uiState.authenticated',
@@ -102,6 +117,9 @@
           };
         }
 
+        /**
+         * @param {string} authenticated whether the user is authenticated or not.
+         */
         _updatePage() {
           this.activePage = this.authenticated ? 1 : 0;
         }

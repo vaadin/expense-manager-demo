@@ -35,16 +35,27 @@
   </template>
   <script>
     (function() {
+      /**
+       * @memberof ExpenseManager
+       */
       class ContentPanelElement extends Polymer.Element {
-        static get is() { return 'content-panel'; }
+        static get is() {
+          return 'content-panel';
+        }
 
         static get properties() {
           return {
+            /**
+             * Whether the screen matches the tablet breakpoint.
+             */
             tablet: {
               type: Boolean,
               reflectToAttribute: true
             },
 
+            /**
+             * Whether the screen matches the phone breakpoint.
+             */
             phone: {
               type: Boolean,
               reflectToAttribute: true

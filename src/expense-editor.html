@@ -190,7 +190,7 @@
       <div class="buttons-layout">
         <vaadin-button on-tap="_save" theme="primary" class="save-button">Save</vaadin-button>
         <vaadin-button on-tap="close" class="cancel-button">Cancel</vaadin-button>
-        <vaadin-button on-tap="_delete" id="delete" theme="tertiary danger" class="delete-button" hidden="[[!_showDelete(expense)]]">Delete</vaadin-button>
+        <vaadin-button on-tap="_delete" id="delete" theme="tertiary danger" class="delete-button" hidden="[[!_showDelete(_expense)]]">Delete</vaadin-button>
       </div>
       <span>[[_errorText]]</span>
     </paper-dialog>
@@ -198,21 +198,44 @@
 
   <script>
     (function() {
+      /**
+       * @memberof ExpenseManager
+       */
       class ExpenseEditorElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
-        static get is() { return 'expense-editor'; }
+        static get is() {
+          return 'expense-editor';
+        }
 
         static get properties() {
           return {
+            /**
+             * The list of available merchants.
+             * @type {Array<string>}
+             */
             _merchants: {
               type: Array,
               statePath: ExpenseManager.select.merchants
             },
+
+            /**
+             * The originally selected expense.
+             * @type {Object}
+             */
             _sourceExpense: {
               type: Object,
               statePath: 'expenses.selectedExpense',
               observer: '_expenseChanged'
             },
+
+            /**
+             * The expense used for modifications.
+             * @type {Object}
+             */
             _expense: Object,
+
+            /**
+             * The text to show in case if some fields are invalid.
+             */
             _errorText: String
           };
         }
@@ -236,6 +259,9 @@
           window.removeEventListener('resize', this._boundOnResize);
         }
 
+        /**
+         * @param {Object|null} srcExpense the selected expense, if any.
+         */
         _expenseChanged(srcExpense) {
           if (srcExpense) {
             this._expense = Object.assign({}, srcExpense);
@@ -247,22 +273,41 @@
               this._onResize();
             }, 0);
           } else {
-            this._expense = undefined;
+            this._expense = null;
           }
         }
 
+        /**
+         * Checks the form for validity.
+         *
+         * @return {boolean} true if all the fields are valid.
+         */
         _isValid() {
           return this._getFormFields().every(el => el.validate());
         }
 
+        /**
+         * Collects the list of the form fields.
+         *
+         * @return {Array<HTMLElement>} a list of form elements.
+         */
         _getFormFields() {
-          return Array.from(this.$.form.childNodes).filter(el => 'validate' in el);
+          return Array.from(this.$.form.children).filter(el => typeof el.validate === 'function');
         }
 
-        _showDelete() {
-          return this.expense && !(this.expense._id && this.expense.status === 'new');
+        /**
+         * Specifies whether the "delete" button should be displayed or not.
+         *
+         * @param {{id:string, status:string}=} expense optional. The expense to edit.
+         * @return {boolean} true if expense has been changed.
+         */
+        _showDelete(expense) {
+          return expense && !(expense.id && expense.status === 'new');
         }
 
+        /**
+         * Closes the editor.
+         */
         close() {
           this.dispatch('cancelEdit');
         }
@@ -271,6 +316,12 @@
           this.$.dialog.notifyResize();
         }
 
+        /**
+         * Returns the caption for the submit button based on the editing expense state.
+         *
+         * @param {{id:string}} expense optional. The expense to edit.
+         * @return {string} caption for the editor.
+         */
         _getCaption(expense) {
           if (expense && expense.id) {
             return 'Edit Expense';
@@ -279,23 +330,16 @@
           }
         }
 
-        // Read canvas content and returns a Blob.
-        // For browsers not supporting canvas.toBlob
-        _canvasToBlob(canvas) {
-          const reg = new RegExp('^data:(.*);.*,(.*)');
-          const arr = reg.exec(canvas.toDataURL());
-          const bstr = atob(arr[2]);
-          let n = bstr.length;
-          const u8arr = new Uint8Array(n);
-          while (n--) {
-            u8arr[n] = bstr.charCodeAt(n);
-          }
-          return new Blob([u8arr], { type: arr[1] });
-        }
-
-        // Read a file and return a Blob. If it's an image it converts and
-        // resizes using a canvas.
-        // TODO: move this to vaadin-upload as a utility method
+        /**
+         * Reads a file and return a DataURL.
+         * If it's an image it converts and resizes using a canvas.
+         *
+         * @param {File} file uploaded file.
+         * @param {function} callback a callback to invoke on end.
+         * @param {string} mimeType a file type matching image.
+         * @param {number} maxWidth a max width used to resize image.
+         * @param {number} maxHeight a max width used to resize image.
+         */
         _resizeImage(file, callback, mimeType, maxWidth, maxHeight) {
           const img = document.createElement('img');
           const reader = new FileReader();
@@ -327,6 +371,11 @@
           reader.readAsDataURL(file);
         }
 
+        /**
+         * Processes the file submitted by user and cancels the actual upload.
+         *
+         * @param {CustomEvent} e upload event.
+         */
         _handleUpload(e) {
           e.preventDefault();
           const file = e.detail.file;
@@ -337,18 +386,23 @@
           this.$.upload.files = [];
         }
 
+        /**
+         * Saves the expense, if all fields are valid, and sets the error text otherwise.
+         */
         _save() {
           this._errorText = '';
           if (this._isValid()) {
             this._expense.total = parseFloat(this._expense.total);
             this.dispatch('saveExpense', this._expense);
           } else {
-            console.log('Form validation failed');
             this.$.dialog.scrollTop = 0;
             this._errorText = 'Please fill all required fields';
           }
         }
 
+        /**
+         * Deletes the expense.
+         */
         _delete() {
           this.dispatch('deleteExpense', this._expense);
         }

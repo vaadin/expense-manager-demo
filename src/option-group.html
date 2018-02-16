@@ -23,45 +23,87 @@
   </template>
   <script>
     (function() {
+      /**
+       * @memberof ExpenseManager
+       */
       class OptionGroupElement extends Polymer.Element {
-        static get is() { return 'option-group' }
+        static get is() {
+          return 'option-group';
+        }
+
         static get properties() {
           return {
+            /**
+             * The list of available options.
+             * @type {Array<object|string>}
+             */
             items: Array,
+
+            /**
+             * The string indicating the sub-property which should be used as a label of the item.
+             */
             labelPath: String,
+
+            /**
+             * The string indicating the sub-property which should be used as a value of the item.
+             */
             valuePath: String,
+
+            /**
+             * The list of values corresponding to the given options.
+             */
             value: {
               type: Array,
-              notifies: true,
+              notify: true,
               value: () => []
             },
+
+            /**
+             * The caption describing the options group.
+             */
             caption: String
           };
         }
 
+        /**
+         * Detects whether the given item is checked or not.
+         *
+         * @param {Object} item the item to compare.
+         * @return {boolean} true if the option for given item is checked.
+         */
         _isChecked(item) {
           return this.value.some(val => {
             return val === this._getValue(item);
           });
         }
 
+        /**
+         * Evaluates the actual value for given item.
+         *
+         * @param {Object|string} item the item get value from.
+         * @return {string} the item value.
+         */
         _getValue(item) {
           return this.valuePath ? item[this.valuePath] : item;
         }
 
+        /**
+         * Evaluates the actual label for given item.
+         *
+         * @param {Object|string} item the item get label from.
+         * @return {string} the item label.
+         */
         _getLabel(item) {
           return this.labelPath ? item[this.labelPath] : item;
         }
 
+        /**
+         * Fills the list of checked options.
+         */
         _updateValue() {
           this.value = [...this.root.querySelectorAll('vaadin-checkbox')]
             .filter(cb => cb.checked)
             .map(cb => cb.dataset.value);
-
-          // TODO: This should not be needed as value has `notify: true`.
-          // Figure out why it's not dispatching the event
-          this.dispatchEvent(new CustomEvent('value-changed',
-            { bubbles: true, composed: true }))
         }
       }
 

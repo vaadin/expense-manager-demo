@@ -17,7 +17,6 @@
     store.subscribe(() => {
       const state = store.getState();
       localStorage.setItem('ExpenseManagerState', JSON.stringify(state));
-      //{authenticated: state.authenticated, expenses: state.expenses}));
     });
 
     const reduxMixin = PolymerRedux(store);
@@ -28,8 +27,8 @@
         static get actions() {
           return window.ExpenseManager.actions;
         }
-      }
-    }
+      };
+    };
 
     /**
      * @namespace ExpenseManager

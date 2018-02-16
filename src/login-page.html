@@ -92,7 +92,6 @@
     <div class="login" theme="dark">
       <vaadin-text-field value={{username}} label="Username" name="username"></vaadin-text-field>
       <vaadin-password-field value="{{password}}" label="Password" name="password"></vaadin-password-field>
-      <span class="error-message">[[errorMessage]]</span>
       <vaadin-button theme="primary" id="login-button" on-tap="_logIn">Login</vaadin-button>
     </div>
     <div id="footer">
@@ -107,20 +106,31 @@
 
   <script>
     (function() {
+      /**
+       * @memberof ExpenseManager
+       */
       class LoginPageElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
-        static get is() { return 'login-page'; }
+        static get is() {
+          return 'login-page';
+        }
 
         static get properties() {
           return {
+            /**
+             * The user name to authenticate with.
+             */
             username: {
               type: String,
               value: 'demo'
             },
+
+            /**
+             * The password to authenticate with.
+             */
             password: {
               type: String,
               value: 'demo'
-            },
-            errorMessage: String
+            }
           };
         }
 

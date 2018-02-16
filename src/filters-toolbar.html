@@ -122,33 +122,52 @@
   </template>
   <script>
     (function() {
+      /**
+       * @memberof ExpenseManager
+       */
       class FiltersToolbarElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
-        static get is() { return 'filters-toolbar'; }
+        static get is() {
+          return 'filters-toolbar';
+        }
 
         static get properties() {
           return {
+            /**
+             * Whether the filters block is expanded.
+             */
             expanded: {
               type: Boolean,
               value: false,
-              statePath: 'filters.filtersVisible',
-              observer: '_updateVisibilty'
+              statePath: 'filters.filtersVisible'
             },
 
+            /**
+             * The total owed amount.
+             */
             totalOwed: {
               type: Number,
               statePath: ExpenseManager.select.total
             },
 
+            /**
+             * The count of applied filters.
+             */
             appliedFilters: {
               type: Number,
               statePath: ExpenseManager.select.appliedFilters
             },
 
+            /**
+             * Whether the screen matches the tablet breakpoint.
+             */
             tablet: {
               type: Boolean,
               reflectToAttribute: true
             },
 
+            /**
+             * Whether the screen matches the phone breakpoint.
+             */
             phone: {
               type: Boolean,
               reflectToAttribute: true
@@ -158,19 +177,28 @@
 
         static get observers() {
           return [
-              '_updateVisibilty(phone, tablet, expanded)'
-          ]
+            '_updateVisibility(phone, tablet, expanded)'
+          ];
         }
 
         _toggleFilters() {
           this.dispatch('toggleFilters');
         }
 
+        /**
+         * @param {string} appliedFilters a number of applied filters
+         * @return {boolean} true if there s at least one filter applied.
+         */
         _hasFilters(appliedFilters) {
           return appliedFilters > 0;
         }
 
-        _updateVisibilty(phone, tablet, expanded) {
+        /**
+         * @param {string} phone whether the screen matches the phone breakpoint.
+         * @param {string} tablet whether the screen matches the tablet breakpoint.
+         * @param {string} expanded true if the filters block is expanded.
+         */
+        _updateVisibility(phone, tablet, expanded) {
           if (phone) {
             if (expanded) {
               requestAnimationFrame(() => this.$.filters.style.maxHeight = this.$.filters.scrollHeight + 'px');

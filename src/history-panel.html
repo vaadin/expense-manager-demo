@@ -113,6 +113,9 @@
   </template>
   <script>
     (function() {
+      /**
+       * @memberof ExpenseManager
+       */
       class HistoryPanelElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
 
         static get is() {
@@ -121,44 +124,30 @@
 
         static get properties() {
           return {
+            /**
+             * The total owed amount.
+             */
             totalOwed: {
               type: Number,
               statePath: ExpenseManager.select.total
             },
 
-            historyData: {
-              type: Array,
-              statePath: ExpenseManager.select.history,
-              observer: 'update'
-            },
-
-            seriesData: {
-              type: Array,
-              notify: true
-            },
-
+            /**
+             * Whether the screen matches the tablet breakpoint.
+             */
             tablet: {
               type: Boolean,
               reflectToAttribute: true
             },
 
+            /**
+             * Whether the screen matches the phone breakpoint.
+             */
             phone: {
               type: Boolean,
               reflectToAttribute: true
             }
           };
-        }
-
-        update(history) {
-          this.seriesData = history.map(function (month) {
-            return month.total;
-          });
-
-          function getHistoryLabel(item, index) {
-            var label = moment().year(item.year).month(item.month);
-            var format = (index === 0 || item.month === 11) ? 'YYYY MMM' : 'MMM';
-            return label.format(format);
-          }
         }
       }
 
