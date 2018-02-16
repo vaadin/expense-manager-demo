@@ -91,6 +91,9 @@
   </template>
   <script>
     (function() {
+      /**
+       * @memberof ExpenseManager
+       */
       class InfoDialogElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
         static get is() {
           return 'info-dialog';
@@ -98,7 +101,9 @@
 
         static get properties() {
           return {
-            url: String,
+            /**
+             * True if the dialog is opened.
+             */
             open: {
               type: Boolean,
               statePath: 'uiState.infoDialogVisible'
@@ -106,6 +111,9 @@
           };
         }
 
+        /**
+         * Closes the dialog.
+         */
         close() {
           this.dispatch('hideInfoDialog');
         }

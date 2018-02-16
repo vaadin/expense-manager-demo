@@ -4,7 +4,6 @@
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-sorter.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="moment-js.html">
 <link rel="import" href="data/store.html">
 
@@ -153,31 +152,42 @@ if you open the license dialog. -->
   </template>
   <script>
     (function() {
+      /**
+       * @memberof ExpenseManager
+       */
       class ExpensesListElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
         static get is() {
           return 'expenses-list';
         }
+
         static get properties() {
           return {
+            /**
+             * The list of expenses.
+             * @type {Array}
+             */
             expenses: {
               type: Array,
               statePath: ExpenseManager.select.expenses
             },
+
+            /**
+             * The selected expense object.
+             * @type {Array}
+             */
             activeItem: {
               observer: '_activeItemChanged'
-            },
-            _largeScreen: Boolean
+            }
           };
-        }
-
-        static get observers() {
-          return ['_isLargeScreen(_largeScreen)'];
         }
 
         _showExpenseEditor() {
           this.dispatch('editExpense');
         }
 
+        /**
+         * @param {Object|null} expense the selected expense, if any.
+         */
         _activeItemChanged(expense) {
           if (this.expenses && this.expenses.length > 0) { // don't trigger on init
             this.$.expenses.selectedItems = expense ? [expense] : [];
@@ -185,26 +195,34 @@ if you open the license dialog. -->
           }
         }
 
+        /**
+         * @param {number} total an expense amount to format.
+         * @return {string} a formatted amount.
+         */
         _formatTotal(total) {
           if (total) {
             return '$' + total.toFixed(2);
           }
         }
 
+        /**
+         * @param {string} status an expense status to format.
+         * @return {string} a formatted status.
+         */
         _formatStatus(status) {
           if (status) {
             return status.replace('_', ' ');
           }
         }
 
+        /**
+         * @param {string} date an expense date to format.
+         * @return {string} a formatted date.
+         */
         _formatDate(date) {
           if (date) {
             return moment(date).format('MM/DD/YYYY');
           }
-        }
-
-        _isLargeScreen() {
-          this.updateStyles();
         }
       }
 

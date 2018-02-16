@@ -144,6 +144,9 @@
 
   <script>
     (function() {
+      /**
+       * @memberof ExpenseManager
+       */
       class SearchFiltersElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
         static get is() {
           return 'search-filters';
@@ -151,29 +154,49 @@
 
         static get properties() {
           return {
+            /**
+             * The list of original filters.
+             */
             srcFilters: {
               type: Object,
               statePath: 'filters.filters',
               observer: '_srcFiltersChanged'
             },
 
+            /**
+             * The list of filters modified by user.
+             */
             filters: Object,
 
+            /**
+             * The list of available merchants.
+             * @type {Array<string>}
+             */
             merchants: {
               type: Array,
               statePath: ExpenseManager.select.merchants
             },
 
+            /**
+             * The list of available statuses.
+             * @type {Array<{name: string, label: string}>}
+             */
             statusOptions: {
               type: Array,
               value: () => ExpenseManager.constants.statuses
             },
 
+            /**
+             * Whether the screen matches the phone breakpoint.
+             */
             phone: {
               type: Boolean,
               reflectToAttribute: true
             },
 
+            /**
+             * Whether the screen matches the tablet breakpoint.
+             */
             tablet: {
               type: Boolean,
               reflectToAttribute: true

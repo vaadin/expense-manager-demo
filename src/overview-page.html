@@ -131,6 +131,9 @@
 
   <script>
     (function() {
+      /**
+       * @memberof ExpenseManager
+       */
       class OverviewPageElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
         static get is() {
           return 'overview-page';
@@ -138,8 +141,14 @@
 
         static get properties() {
           return {
+            /**
+             * Whether the screen matches the phone breakpoint.
+             */
             _phone: Boolean,
 
+            /**
+             * Whether the screen matches the tablet breakpoint.
+             */
             _tablet: Boolean
           };
         }
