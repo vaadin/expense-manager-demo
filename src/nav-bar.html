@@ -1,0 +1,70 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">">
+
+<link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/spacing.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/typography.html">
+
+<link rel="import" href="data/store.html">
+
+<dom-module id="nav-bar">
+  <template>
+    <style include="lumo-color">
+      :host {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-sizing: border-box;
+        width: 100%;
+        height: 64px;
+        padding: 0 var(--lumo-space-m);
+      }
+
+      h1 {
+        margin-right: auto;
+        font-size: var(--lumo-font-size-xl);
+        font-weight: 300;
+      }
+
+      vaadin-button {
+        margin-left: var(--lumo-space-m);
+        text-transform: uppercase;
+      }
+    </style>
+
+    <h1>Expense Manager</h1>
+
+    <vaadin-button on-click="_showInfoDialog" theme="small">Info</vaadin-button>
+    <vaadin-button on-click="_logout" theme="small">Logout</vaadin-button>
+
+  </template>
+
+  <script>
+    (function() {
+      /**
+       * @memberof ExpenseManager
+       */
+      class NavBarElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
+        static get is() {
+          return 'nav-bar';
+        }
+
+        _showInfoDialog() {
+          this.dispatch('showInfoDialog');
+        }
+
+        _logout() {
+          this.dispatch('logout');
+        }
+      }
+
+      customElements.define(NavBarElement.is, NavBarElement);
+
+      /**
+       * @namespace ExpenseManager
+       */
+      window.ExpenseManager = window.ExpenseManager || {};
+      ExpenseManager.NavBarElement = NavBarElement;
+    })();
+  </script>
+</dom-module>

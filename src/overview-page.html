@@ -1,7 +1,10 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
 <link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
-<link rel="import" href="../bower_components/app-layout/app-layout.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="nav-bar.html">
 <link rel="import" href="expense-editor.html">
 <link rel="import" href="info-dialog.html">
 <link rel="import" href="content-panel.html">
@@ -11,26 +14,9 @@
 
 <dom-module id="overview-page">
   <template>
-    <style>
+    <style include="lumo-color">
       :host {
         display: block;
-      }
-
-      app-header-layout {
-        background-color: var(--primary-background-color);
-      }
-
-      app-header {
-        background-color: hsl(214, 27%, 26%);
-        --app-header-content: {
-          padding: 0 24px;
-        }
-      }
-
-      app-toolbar h1 {
-        color: var(--light-primary-color);
-        font-weight: 300;
-        font-size: var(--lumo-font-size-xl);
       }
 
       .content[phone] {
@@ -45,12 +31,12 @@
 
       #filters-toolbar[phone] {
         width: auto;
-        box-shadow: rgba(0, 0, 0, 0.2) 0px -10px 6px -10px inset;
+        box-shadow: var(--lumo-shade-50pct) 0 -10px 6px -10px inset;
       }
 
       #filters-toolbar {
         width: 300px;
-        box-shadow: inset -4px 0 16px -9px rgba(0, 0, 0, 0.5);
+        box-shadow: inset -4px 0 16px -9px var(--lumo-shade-50pct);
       }
 
       @media (max-width: 1124px) {
@@ -79,33 +65,11 @@
           transform: rotate(-360deg);
         }
       }
-
-      vaadin-button {
-        margin: 0 var(--lumo-space-s);
-        color: var(--lumo-primary-contrast-color);
-        text-transform: uppercase;
-      }
-
-      @media (max-width: 900px) {
-        app-toolbar {
-          --app-toolbar-content: {
-            padding: 0 6px 0 16px;
-          }
-        }
-        app-toolbar h1 {
-          font-size: 20px;
-        }
-      }
-
     </style>
 
-    <app-header-layout fullbleed theme="dark">
+    <app-header-layout fullbleed>
       <app-header slot="header" fixed condenses>
-        <app-toolbar>
-          <h1 main-title>Expense Manager</h1>
-          <vaadin-button on-tap="_showInfoDialog" theme="tertiary small">Info</vaadin-button>
-          <vaadin-button on-tap="_logout" theme="tertiary small">Logout</vaadin-button>
-        </app-toolbar>
+        <nav-bar theme="dark"></nav-bar>
       </app-header>
 
       <div class="content" phone$="[[_phone]]" tablet$="[[_tablet]]">
@@ -150,14 +114,6 @@
              */
             _tablet: Boolean
           };
-        }
-
-        _showInfoDialog() {
-          this.dispatch('showInfoDialog');
-        }
-
-        _logout() {
-          this.dispatch('logout');
         }
       }
 
