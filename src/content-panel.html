@@ -1,6 +1,8 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="history-panel.html">
 <link rel="import" href="expenses-list.html">
+<link rel="import" href="responsive-mixin.html">
+
 <dom-module id="content-panel">
   <template>
     <style>
@@ -36,30 +38,11 @@
     (function() {
       /**
        * @memberof ExpenseManager
+       * @mixes ExpenseManager.ResponsiveMixin
        */
-      class ContentPanelElement extends Polymer.Element {
+      class ContentPanelElement extends ExpenseManager.ResponsiveMixin(Polymer.Element) {
         static get is() {
           return 'content-panel';
-        }
-
-        static get properties() {
-          return {
-            /**
-             * Whether the screen matches the tablet breakpoint.
-             */
-            tablet: {
-              type: Boolean,
-              reflectToAttribute: true
-            },
-
-            /**
-             * Whether the screen matches the phone breakpoint.
-             */
-            phone: {
-              type: Boolean,
-              reflectToAttribute: true
-            }
-          };
         }
       }
 

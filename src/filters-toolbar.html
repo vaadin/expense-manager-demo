@@ -1,9 +1,8 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
-<link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
 <link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
 <link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
 <link rel="import" href="search-filters.html">
+<link rel="import" href="responsive-mixin.html">
 <link rel="import" href="data/store.html">
 
 <dom-module id="filters-toolbar">
@@ -112,7 +111,7 @@
         <small>To be reimbursed</small>
         <span class="sum">$[[totalOwed]]</span>
       </div>
-      <div id="filters-toggle" on-tap="_toggleFilters">
+      <div id="filters-toggle" on-click="_toggleFilters">
         <span>Filters</span>
         <div class="count" has-filters$="[[_hasFilters(appliedFilters)]]">[[appliedFilters]]</div>
         <paper-icon-button icon="filter-list"></paper-icon-button>
@@ -125,8 +124,9 @@
     (function() {
       /**
        * @memberof ExpenseManager
+       * @mixes ExpenseManager.ResponsiveMixin
        */
-      class FiltersToolbarElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
+      class FiltersToolbarElement extends ExpenseManager.ReduxMixin(ExpenseManager.ResponsiveMixin(Polymer.Element)) {
         static get is() {
           return 'filters-toolbar';
         }
@@ -157,22 +157,6 @@
               type: Number,
               statePath: ExpenseManager.select.appliedFilters
             },
-
-            /**
-             * Whether the screen matches the tablet breakpoint.
-             */
-            tablet: {
-              type: Boolean,
-              reflectToAttribute: true
-            },
-
-            /**
-             * Whether the screen matches the phone breakpoint.
-             */
-            phone: {
-              type: Boolean,
-              reflectToAttribute: true
-            }
           };
         }
 

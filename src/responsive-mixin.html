@@ -1,0 +1,31 @@
+<script>
+  window.ExpenseManager = window.ExpenseManager || {};
+
+  /**
+   * @polymerMixin
+   * @memberof ExpenseManager
+   * @param {HTMLElement} subclass
+   * @return {HTMLElement}
+   */
+  ExpenseManager.ResponsiveMixin = subclass => class ResponsiveMixin extends subclass {
+    static get properties() {
+      return {
+        /**
+         * Whether the screen matches the tablet breakpoint.
+         */
+        tablet: {
+          type: Boolean,
+          reflectToAttribute: true
+        },
+
+        /**
+         * Whether the screen matches the phone breakpoint.
+         */
+        phone: {
+          type: Boolean,
+          reflectToAttribute: true
+        }
+      };
+    }
+  };
+</script>
