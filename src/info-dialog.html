@@ -1,92 +1,48 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
-<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/vaadin-dialog/vaadin-dialog.html">
 
 <dom-module id="info-dialog">
   <template>
-    <style>
-       :host {
-        display: block;
-      }
+    <vaadin-dialog id="dialog" no-close-on-esc no-close-on-outside-click opened="[[open]]">
+      <template>
+        <style>
+          p {
+            font-size: 14px;
+          }
 
-      paper-dialog {
-        overflow: auto;
-      }
+          a {
+            text-decoration: none;
+          }
+        </style>
 
-      paper-button {
-        background: var(--primary-color);
-        color: var(--text-primary-color);
-      }
+        <h2>Welcome to Expense Manager</h2>
 
-      #dialog {
-        max-width: 900px;
-      }
+        <div class="dialog-body">
+          <div class="instructions">
 
-      code {
-        font-weight: 600;
-        color: var(--paper-pink-a400);
-        background: #eee;
-        padding: 5px;
-      }
-
-      .highlight {
-        font-weight: 600;
-      }
-
-      .instructions {
-        display: flex;
-      }
-
-      #close-button {
-        margin: 0 16px 16px 0;
-      }
-
-      #qr {
-        align-self: center;
-        margin-left: 32px;
-        height: 150px;
-        width: 150px;
-      }
-
-      a {
-        text-decoration: none;
-        color: var(--primary-color);
-      }
-
-      @media (max-width: 900px) {
-        #qr {
-          display: none;
-        }
-      }
-
-    </style>
-
-    <paper-dialog id="dialog" modal opened="[[open]]">
-      <h2>Welcome to Expense Manager</h2>
-
-      <div class="dialog-body">
-        <div class="instructions">
-
-          <div class="text">
+            <div class="text">
+              <p>
+                This is a sample Progressive Web App.
+              </p>
+              <p>
+                Try adding it to your home screen and using it offline.
+              </p>
+            </div>
+          </div>
+          <div class="about">
             <p>
-              This is a sample Progressive Web App.
-            </p>
-            <p>
-              Try adding it to your home screen and using it offline.
+              This demo is built using <a tabindex="-1" href="https://www.polymer-project.org" target="_blank">Polymer</a><br>
+              and <a tabindex="-1" href="https://vaadin.com/elements" target="_blank">Vaadin Elements</a>.
+              You can find the source code and fork the project on <a tabindex="-1" href="https://github.com/vaadin/expense-manager-demo">GitHub</a>.
             </p>
           </div>
         </div>
-        <div class="about">
-          <p>
-            This demo is built using <a href="https://www.polymer-project.org" target="_blank">Polymer</a>            and <a href="https://vaadin.com/elements" target="_blank">Vaadin Elements</a>.
-            You can find the source code and fork the project on <a href="https://github.com/vaadin/expense-manager-demo">GitHub</a>.
-          </p>
+        <div class="buttons">
+          <vaadin-button id="close-button" theme="primary" on-click="_close">Got it!</vaadin-button>
         </div>
-      </div>
-      <div class="buttons">
-        <vaadin-button id="close-button" theme="primary" on-tap="close">Got it!</vaadin-button>
-      </div>
-    </paper-dialog>
+      </template>
+    </vaadin-dialog>
 
   </template>
   <script>
@@ -114,7 +70,7 @@
         /**
          * Closes the dialog.
          */
-        close() {
+        _close() {
           this.dispatch('hideInfoDialog');
         }
       }
