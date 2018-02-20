@@ -15,7 +15,7 @@
 
 <dom-module id="expense-editor">
   <template>
-    <vaadin-dialog id="dialog" modal no-cancel-on-esc-key="false" opened="[[_expense]]">
+    <vaadin-dialog id="dialog" modal opened="[[_isDialogOpened(_expense)]]">
       <template>
         <style>
           .main-layout {
@@ -68,15 +68,13 @@
         <div class="wrapper">
           <div id="form">
             <iron-a11y-keys keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
-            <vaadin-combo-box name="merchant" id="merchant" items="[[_merchants]]" value="{{_expense.merchant}}"
+            <vaadin-combo-box name="merchant" items="[[_merchants]]" value="{{_expense.merchant}}"
               label="Merchant" allow-custom-value required></vaadin-combo-box>
-            <vaadin-text-field name="total" id="total" value="{{_expense.total}}" type="number" max="10000"
-              label="Total" required step="any">
+            <vaadin-text-field name="total" value="{{_expense.total}}" label="Total" pattern="[0-9]+[.]?[0-9]*" required>
               <div slot="prefix">$</div>
             </vaadin-text-field>
-
-            <vaadin-date-picker label="Date" value="{{_expense.date}}" id="date" name="date" required></vaadin-date-picker>
-            <vaadin-text-field id="comment" name="comment" label="Comment" value="{{_expense.comment}}"></vaadin-text-field>
+            <vaadin-date-picker name="date" label="Date" value="{{_expense.date}}" required></vaadin-date-picker>
+            <vaadin-text-field name="comment" label="Comment" value="{{_expense.comment}}"></vaadin-text-field>
           </div>
           <vaadin-upload id="upload" accept="image/*" max-files="1" on-upload-before="_handleUpload">
             <div class="file-list">
@@ -148,7 +146,7 @@
           if (srcExpense) {
             this._expense = Object.assign({}, srcExpense);
 
-            const upload = this.$.dialog.$.overlay.$.content.querySelector('vaadin-upload');
+            const upload = this._getDialogChild('vaadin-upload');
             upload.set('i18n.dropFiles.one', 'Drop receipt here...');
             upload.set('i18n.addFiles.one', 'Select receipt');
             upload.files = [];
@@ -163,6 +161,16 @@
         }
 
         /**
+         * Specifies whether the dialog is opened.
+         *
+         * @param {{id:string, status:string}=} expense optional. The expense to edit.
+         * @return {boolean} true if dialog is opened.
+         */
+        _isDialogOpened(expense) {
+          return typeof expense === 'object' && expense !== null;
+        }
+
+        /**
          * Checks the form for validity.
          *
          * @return {boolean} true if all the fields are valid.
@@ -172,12 +180,22 @@
         }
 
         /**
+         * Returns the result of `querySelector` for the dialog content.
+         *
+         * @param {string} selector a CSS selector to use
+         * @return {HTMLElement} a list of form elements.
+         */
+        _getDialogChild(selector) {
+          return this.$.dialog.$.overlay.$.content.querySelector(selector);
+        }
+
+        /**
          * Collects the list of the form fields.
          *
          * @return {Array<HTMLElement>} a list of form elements.
          */
         _getFormFields() {
-          return Array.from(this.$.dialog.$.overlay.$.content.querySelector('#form').children).filter(el => typeof el.validate === 'function');
+          return Array.from(this._getDialogChild('#form').children).filter(el => typeof el.validate === 'function');
         }
 
         /**
@@ -264,7 +282,7 @@
             this.set('_expense.receipt', data);
           }, 'image/jpeg', 1000, 1000);
 
-          this.$.dialog.$.overlay.$.content.querySelector('vaadin-upload').files = [];
+          this._getDialogChild('vaadin-upload').files = [];
         }
 
         /**
