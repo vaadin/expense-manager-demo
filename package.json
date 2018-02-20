@@ -14,10 +14,13 @@
     "http2-push-manifest": "^1.0.0",
     "eslint": "^4.0.0",
     "eslint-config-vaadin": "latest",
-    "eslint-plugin-html": "^4.0.0"
+    "eslint-plugin-html": "^4.0.0",
+    "stylelint": "^8.0.0",
+    "stylelint-config-vaadin": "latest"
   },
   "scripts": {
-    "lint": "npm run lint:javascript",
+    "lint": "npm run lint:javascript & npm run lint:css",
+    "lint:css": "stylelint src/*.html",
     "lint:javascript": "eslint . --ext html --ignore-path .gitignore",
     "test": "polymer test",
     "test:integration": "polymer build # test that psk builds without error with the CLI"
