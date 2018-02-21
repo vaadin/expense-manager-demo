@@ -17,7 +17,7 @@
     <style include="shared-styles">
       :host {
         display: block;
-        padding: 0 24px;
+        padding: var(--lumo-space-wide-l);
         width: inherit;
         overflow: auto;
         -webkit-overflow-scrolling: touch;
@@ -25,6 +25,7 @@
 
       :host([phone]) {
         width: auto;
+        padding: 0 var(--lumo-space-m);
       }
 
       :host([phone]) .filters {
@@ -70,7 +71,7 @@
     <div class="filters">
       <div class="title section-title" hidden="[[phone]]">
         <span>Filter Expenses</span>
-        <vaadin-button on-click="_clearFilters" theme="tertiary-inline">Clear Filters</vaadin-button>
+        <vaadin-button on-click="_clearFilters" theme="tertiary-inline small">Clear Filters</vaadin-button>
       </div>
       <vaadin-date-picker label="From" value="{{filters.start}}" max="[[filters.end]]"></vaadin-date-picker>
       <vaadin-date-picker label="To" value="{{filters.end}}" min="[[filters.start]]"></vaadin-date-picker>

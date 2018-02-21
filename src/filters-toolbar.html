@@ -3,6 +3,8 @@
 <link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/sizing.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/spacing.html">
 <link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
 <link rel="import" href="search-filters.html">
 <link rel="import" href="data/store.html">
@@ -26,30 +28,21 @@
         flex-direction: column;
       }
 
-      #toolbar {
+      .toolbar {
         display: flex;
         flex-shrink: 0;
-        padding: 0 16px;
-        height: 48px;
+        padding: 0 var(--lumo-space-m);
+        height: var(--lumo-size-xl);
+        justify-content: space-between;
         align-items: center;
+      }
+
+      .toolbar[hidden] {
+        display: none;
       }
 
       #filters {
         transition: max-height 400ms cubic-bezier(0.4, 0, 0.2, 1);
-      }
-
-      #toolbar[hidden] {
-        display: none;
-      }
-
-      #total {
-        z-index: 2;
-        pointer-events: none;
-      }
-
-      #total .sum {
-        font-size: 32px;
-        font-weight: 300;
       }
 
       .count {
@@ -76,10 +69,7 @@
       }
 
       .total {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        line-height: initial;
+        line-height: var(--lumo-line-height-xs);
       }
 
       .total .sum {
@@ -87,10 +77,10 @@
       }
     </style>
 
-    <div id="toolbar" hidden="[[!phone]]">
+    <div class="toolbar" hidden="[[!phone]]">
       <div class="total">
         <small>To be reimbursed</small>
-        <span class="sum">$[[totalOwed]]</span>
+        <div class="sum">$[[totalOwed]]</div>
       </div>
       <vaadin-button theme="tertiary" on-click="_toggleFilters">
         <iron-icon icon="expense-manager:filters" slot="suffix"></iron-icon>
