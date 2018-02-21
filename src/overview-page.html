@@ -17,7 +17,7 @@
       }
 
       app-header-layout {
-        background-color: var(--primary-background-color);
+        background-color: var(--lumo-base-color);
       }
 
       app-header {
@@ -28,7 +28,7 @@
       }
 
       app-toolbar h1 {
-        color: var(--light-primary-color);
+        color: var(--lumo-primary-contrast-color);
         font-weight: 300;
         font-size: var(--lumo-font-size-xl);
       }
@@ -61,23 +61,6 @@
 
       #content-panel {
         flex: 1;
-      }
-
-      #sync {
-        color: var(--light-primary-color);
-        margin-left: 8px;
-        animation: spin 0.8s linear infinite;
-      }
-
-      #sync[hidden] {
-        display: none;
-        animation: none;
-      }
-
-      @keyframes spin {
-        100% {
-          transform: rotate(-360deg);
-        }
       }
 
       vaadin-button {
