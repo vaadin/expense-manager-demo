@@ -32,10 +32,6 @@
         flex-direction: column;
       }
 
-      .chart-title {
-        @apply --section-title;
-      }
-
       #horizontal {
         display: none;
       }
@@ -64,24 +60,16 @@
         display: block;
       }
 
-      @media (max-width: 900px) {
-        .total {
-          height: 64px;
-          flex-direction: row;
-        }
-        .total .sum {
-          margin-left: 12px;
-        }
-      }
-
       @media (max-width: 1124px) {
         #horizontal {
           display: flex;
         }
+
         #total {
           flex: 1;
           margin-left: 16px;
         }
+
         #total .sum {
           display: block;
           text-align: center;

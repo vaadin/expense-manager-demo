@@ -49,6 +49,7 @@
         flex: 1;
       }
 
+<<<<<<< HEAD
       #sync {
         color: var(--light-primary-color);
         margin-left: 8px;
@@ -65,6 +66,25 @@
           transform: rotate(-360deg);
         }
       }
+=======
+      vaadin-button {
+        margin: 0 var(--lumo-space-s);
+        color: var(--lumo-primary-contrast-color);
+        text-transform: uppercase;
+      }
+
+      @media (max-width: 900px) {
+        app-toolbar {
+          --app-toolbar-content: {
+            padding: 0 6px 0 16px;
+          }
+        }
+        app-toolbar h1 {
+          font-size: 20px;
+        }
+      }
+
+>>>>>>> Cleanup styles, replace paper-icon-button, use custom iconset
     </style>
 
     <app-header-layout fullbleed>
