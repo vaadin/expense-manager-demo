@@ -7,40 +7,34 @@
     <vaadin-dialog id="dialog" no-close-on-esc no-close-on-outside-click opened="[[open]]">
       <template>
         <style>
-          p {
-            font-size: 14px;
+          [part~="content"] {
+            padding: var(--lumo-space-l);
           }
 
           a {
-            text-decoration: none;
+            color: var(--lumo-primary-text-color);
           }
         </style>
 
         <h2>Welcome to Expense Manager</h2>
 
-        <div class="dialog-body">
-          <div class="instructions">
+        <p>
+          This is a sample Progressive Web App.
+        </p>
+        <p>
+          Try adding it to your home screen and using it offline.
+        </p>
+        <p>
+          This demo is built using <a tabindex="-1" href="https://www.polymer-project.org" target="_blank" rel="noopener">Polymer</a>
+          and <a tabindex="-1" href="https://vaadin.com/elements" target="_blank" rel="noopener">Vaadin Elements</a>.
+          <br>
+          You can find the source code and fork the project on <a tabindex="-1" href="https://github.com/vaadin/expense-manager-demo" rel="noopener">GitHub</a>.
+        </p>
 
-            <div class="text">
-              <p>
-                This is a sample Progressive Web App.
-              </p>
-              <p>
-                Try adding it to your home screen and using it offline.
-              </p>
-            </div>
-          </div>
-          <div class="about">
-            <p>
-              This demo is built using <a tabindex="-1" href="https://www.polymer-project.org" target="_blank">Polymer</a><br>
-              and <a tabindex="-1" href="https://vaadin.com/elements" target="_blank">Vaadin Elements</a>.
-              You can find the source code and fork the project on <a tabindex="-1" href="https://github.com/vaadin/expense-manager-demo">GitHub</a>.
-            </p>
-          </div>
-        </div>
         <div class="buttons">
-          <vaadin-button id="close-button" theme="primary" on-click="_close">Got it!</vaadin-button>
+          <vaadin-button theme="primary" on-click="_close">Got it!</vaadin-button>
         </div>
+
       </template>
     </vaadin-dialog>
 
