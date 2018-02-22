@@ -8,12 +8,10 @@
 <link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
 <link rel="import" href="data/store.html">
 
-
 <dom-module id="login-page">
   <template>
     <style include="lumo-color">
-       :host {
-        background: var(--lumo-base-color);
+      :host {
         min-height: 400px;
       }
 
@@ -21,10 +19,6 @@
         margin: 20px 0 0;
         padding-left: 30px;
         padding-right: 30px;
-      }
-
-      .error-message {
-        color: red;
       }
 
       .header {
@@ -46,10 +40,9 @@
       }
 
       .header h1 {
-        color: var(--lumo-primary-text-color);
         font-size: var(--lumo-font-size-xxl);
         font-weight: 300;
-        margin: 0 auto 16px;
+        margin: 0 auto var(--lumo-space-m);
         width: 300px;
       }
 
@@ -74,15 +67,14 @@
         align-items: center;
         position: absolute;
         bottom: 0;
-        color: var(--lumo-primary-text-color);
       }
 
       #footer a {
         text-decoration: none;
         color: var(--lumo-link-color);
       }
-
     </style>
+
     <iron-a11y-keys keys="enter" on-keys-pressed="_logIn"></iron-a11y-keys>
     <div id="header" class="header">
       <h1>Expense Manager</h1>
