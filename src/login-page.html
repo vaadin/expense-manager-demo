@@ -2,6 +2,7 @@
 <link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
 <link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/typography.html">
 <link rel="import" href="../bower_components/vaadin-text-field/vaadin-text-field.html">
 <link rel="import" href="../bower_components/vaadin-text-field/vaadin-password-field.html">
 
@@ -9,45 +10,41 @@
 
 <dom-module id="login-page">
   <template>
-    <style include="lumo-color">
+    <style include="lumo-color lumo-typography">
       :host {
-        min-height: 400px;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
       }
 
-      #login-button {
-        margin: 20px 0 0;
-        padding-left: 30px;
-        padding-right: 30px;
-      }
-
-      .header {
-        height: 36%;
+      .wrapper {
         display: flex;
         flex-direction: column;
-        flex: 1;
-        justify-content: flex-end;
-        margin: 0 !important;
-        padding: 0 !important;
+        justify-content: center;
+        height: calc(100% - var(--lumo-size-l));
+        min-height: 360px;
+      }
+
+      vaadin-button {
+        margin-top: var(--lumo-space-l);
       }
 
       .header::after {
+        display: block;
         content: "";
-        position: absolute;
         width: 100%;
-        top: 36%;
         border-bottom: 4px solid var(--lumo-primary-color-50pct);
       }
 
       .header h1 {
         font-size: var(--lumo-font-size-xxl);
         font-weight: 300;
-        margin: 0 auto var(--lumo-space-m);
+        margin: var(--lumo-space-m) auto;
         width: 300px;
       }
 
       .login {
         width: 300px;
-        margin: 16px auto;
+        margin: var(--lumo-space-m) auto;
       }
 
       .login vaadin-text-field,
@@ -55,35 +52,32 @@
         width: 100%;
       }
 
-      #footer {
-        font-size: var(--lumo-font-size-s);
-        background: var(--lumo-shade-20pct);
-        padding: 14px 26px;
+      .footer {
         width: 100%;
+        height: var(--lumo-size-l);
         display: flex;
+        padding: var(--lumo-space-wide-l);
         justify-content: space-between;
         box-sizing: border-box;
         align-items: center;
-        position: absolute;
-        bottom: 0;
-      }
-
-      #footer a {
-        text-decoration: none;
-        color: var(--lumo-link-color);
+        font-size: var(--lumo-font-size-s);
+        background: var(--lumo-shade-20pct);
       }
     </style>
 
     <iron-a11y-keys keys="enter" on-keys-pressed="_logIn"></iron-a11y-keys>
-    <div id="header" class="header">
-      <h1>Expense Manager</h1>
+
+    <div class="wrapper">
+      <div class="header">
+        <h1>Expense Manager</h1>
+      </div>
+      <div class="login">
+        <vaadin-text-field value="{{username}}" label="Username" name="username"></vaadin-text-field>
+        <vaadin-password-field value="{{password}}" label="Password" name="password"></vaadin-password-field>
+        <vaadin-button theme="primary large" on-click="_logIn">Login</vaadin-button>
+      </div>
     </div>
-    <div class="login">
-      <vaadin-text-field value={{username}} label="Username" name="username"></vaadin-text-field>
-      <vaadin-password-field value="{{password}}" label="Password" name="password"></vaadin-password-field>
-      <vaadin-button theme="primary" id="login-button" on-click="_logIn">Login</vaadin-button>
-    </div>
-    <div id="footer">
+    <div class="footer">
       <span class="fork-me">
         Fork me on <a href="https://github.com/vaadin/expense-manager-demo">GitHub</a>
       </span>
