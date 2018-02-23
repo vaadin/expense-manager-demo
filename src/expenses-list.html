@@ -2,7 +2,7 @@
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-sorter.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
-<link rel="import" href="moment-js.html">
+<link rel="import" href="date-helpers.html">
 <link rel="import" href="data/store.html">
 <link rel="import" href="icons.html">
 
@@ -205,7 +205,7 @@
          */
         _formatDate(date) {
           if (date) {
-            return moment(date).format('MM/DD/YYYY');
+            return window.ExpenseManager.dateHelpers.format(date, 'MM/DD/YYYY');
           }
         }
       }

@@ -1,0 +1,66 @@
+<script>
+  window.ExpenseManager = window.ExpenseManager || {};
+
+  window.ExpenseManager.dateHelpers = {
+    format(date, format) {
+      let result = format;
+      const dateObj = new Date(date);
+      const yy = dateObj.getFullYear();
+      const mm = dateObj.getMonth() + 1;
+      const dd = dateObj.getDate();
+
+      const values = [{
+        pattern: 'YYYY',
+        replace: yy
+      }, {
+        pattern: 'MM',
+        replace: (mm > 9 ? '' : '0') + mm
+      }, {
+        pattern: 'DD',
+        replace: (dd > 9 ? '' : '0') + dd
+      }];
+
+      for (let i = 0; i < values.length; i++) {
+        if (result.indexOf(values[i].pattern) < 0) {
+          return null;
+        }
+        result = result.replace(values[i].pattern, values[i].replace);
+      }
+
+      return result;
+    },
+
+    isAfter(first, second) {
+      return new Date(first) > new Date(second);
+    },
+
+    isBefore(first, second) {
+      return new Date(first) < new Date(second);
+    },
+
+    isValid(date) {
+      return !isNaN(Date.parse(date));
+    },
+
+    subtract(source, unit, count) {
+      const date = new Date(source);
+      let method;
+      switch (unit) {
+        case 'years':
+          method = 'FullYear';
+          break;
+        case 'months':
+          method = 'Month';
+          break;
+        case 'days':
+          method = 'Date';
+          break;
+        case 'hours':
+          method = 'Hours';
+          break;
+      }
+      date[`set${method}`].call(date, date[`get${method}`]() - count);
+      return date;
+    }
+  };
+</script>
