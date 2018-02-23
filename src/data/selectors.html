@@ -1,12 +1,13 @@
 <link rel="import" href="constants.html">
 <script src="../../node_modules/reselect/dist/reselect.js"></script>
-<script src="../moment.min.js"></script>
+<link rel="import" href="../date-helpers.html">
 
 <script>
   (() => {
 
     const getExpenses = state => state.expenses.expenses;
     const getFilters = state => state.filters.filters;
+    const helpers = ExpenseManager.dateHelpers;
 
     const expenses = Reselect.createSelector(
       [getExpenses, getFilters],
@@ -27,20 +28,10 @@
             return status && status.length > 0 ? status.indexOf(exp.status) >= 0 : false;
           })
           .filter(exp => {
-            if (start) {
-              const startDate = moment(start);
-              return !!(startDate.isValid() && moment(exp.date).isAfter(startDate));
-            } else {
-              return true;
-            }
+            return start && helpers.isValid(start) ? helpers.isAfter(exp.date, start) : true;
           })
           .filter(exp => {
-            if (end) {
-              const endDate = moment(end);
-              return !!(endDate.isValid() && moment(exp.date).isBefore(endDate));
-            } else {
-              return true;
-            }
+            return end && helpers.isValid(end) ? helpers.isBefore(exp.date, end) : true;
           });
       });
 
@@ -75,46 +66,12 @@
       return numFilters;
     });
 
-    const history = Reselect.createSelector([getExpenses], expenses => {
-      const historyData = [];
-      function findMonth(rawDate, historyData) {
-        const date = moment(rawDate);
-        let month;
-
-        historyData.forEach(m => {
-          if (m.month === date.month() && m.year === date.year()) {
-            month = m;
-          }
-        });
-
-        if (!month) {
-          month = {
-            month: date.month(),
-            year: date.year(),
-            total: 0
-          };
-          historyData.push(month);
-        }
-        return month;
-      }
-
-      const oneYearAgo = moment().subtract(1, 'years');
-      expenses.filter(expense => {
-        return moment(expense.date).isAfter(oneYearAgo);
-      }).forEach(expense => {
-        findMonth(expense.date, historyData).total += expense.total;
-      });
-
-      return historyData;
-    });
-
     window.ExpenseManager = window.ExpenseManager || {};
     window.ExpenseManager.select = {
       expenses,
       merchants,
       appliedFilters,
-      total,
-      history
+      total
     };
   })();
 
