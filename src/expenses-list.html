@@ -1,5 +1,4 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-sorter.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
@@ -133,14 +132,14 @@
       </vaadin-grid-column>
 
     </vaadin-grid>
-    <paper-fab icon="expense-manager:add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
+    <paper-fab icon="expense-manager:add" on-click="_showExpenseEditor" id="add-button"></paper-fab>
   </template>
   <script>
     (function() {
       /**
        * @memberof ExpenseManager
        */
-      class ExpensesListElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
+      class ExpensesListElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
         static get is() {
           return 'expenses-list';
         }

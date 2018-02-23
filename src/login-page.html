@@ -1,11 +1,10 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
-
+<link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
 <link rel="import" href="../bower_components/vaadin-text-field/vaadin-text-field.html">
 <link rel="import" href="../bower_components/vaadin-text-field/vaadin-password-field.html">
-<link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
-<link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
-<link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
+
 <link rel="import" href="data/store.html">
 
 <dom-module id="login-page">
@@ -82,7 +81,7 @@
     <div class="login">
       <vaadin-text-field value={{username}} label="Username" name="username"></vaadin-text-field>
       <vaadin-password-field value="{{password}}" label="Password" name="password"></vaadin-password-field>
-      <vaadin-button theme="primary" id="login-button" on-tap="_logIn">Login</vaadin-button>
+      <vaadin-button theme="primary" id="login-button" on-click="_logIn">Login</vaadin-button>
     </div>
     <div id="footer">
       <span class="fork-me">
@@ -99,7 +98,7 @@
       /**
        * @memberof ExpenseManager
        */
-      class LoginPageElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
+      class LoginPageElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
         static get is() {
           return 'login-page';
         }

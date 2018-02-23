@@ -10,6 +10,7 @@
 <link rel="import" href="data/store.html">
 <link rel="import" href="data/constants.html">
 
+<link rel="import" href="responsive-mixin.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="search-filters">
@@ -95,8 +96,9 @@
     (function() {
       /**
        * @memberof ExpenseManager
+       * @mixes ExpenseManager.ResponsiveMixin
        */
-      class SearchFiltersElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
+      class SearchFiltersElement extends ExpenseManager.ReduxMixin(ExpenseManager.ResponsiveMixin(Polymer.Element)) {
         static get is() {
           return 'search-filters';
         }
@@ -133,22 +135,6 @@
             statusOptions: {
               type: Array,
               value: () => ExpenseManager.constants.statuses
-            },
-
-            /**
-             * Whether the screen matches the phone breakpoint.
-             */
-            phone: {
-              type: Boolean,
-              reflectToAttribute: true
-            },
-
-            /**
-             * Whether the screen matches the tablet breakpoint.
-             */
-            tablet: {
-              type: Boolean,
-              reflectToAttribute: true
             }
           };
         }

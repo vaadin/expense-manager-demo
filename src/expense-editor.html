@@ -1,5 +1,4 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
 <link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
@@ -112,7 +111,7 @@
       /**
        * @memberof ExpenseManager
        */
-      class ExpenseEditorElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
+      class ExpenseEditorElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
         static get is() {
           return 'expense-editor';
         }
