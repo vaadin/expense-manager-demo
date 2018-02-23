@@ -14,9 +14,10 @@
     <style include="shared-styles">
       :host {
         display: block;
+        box-sizing: border-box;
         background: var(--lumo-shade-5pct);
-        padding: 12px 24px;
-        width: 250px;
+        padding: var(--lumo-space-wide-l);
+        width: 300px;
       }
 
       :host([phone]) {
@@ -27,31 +28,22 @@
         width: auto;
       }
 
-      #container {
+      .container {
         display: flex;
         flex-direction: column;
       }
 
-      .chart-title {
-        @apply --section-title;
-      }
-
-      #horizontal {
-        display: none;
-      }
-
-      #toolbar {
-        display: block;
-      }
-
-      #total {
+      .total {
         font-weight: 500;
         font-size: 18px;
         line-height: 1.4;
-        padding-bottom: 30px;
       }
 
-      #total .sum {
+      .total[hidden] {
+        display: none;
+      }
+
+      .total .sum {
         display: block;
         text-align: center;
         padding: 40px 0;
@@ -59,41 +51,9 @@
         font-weight: 300;
         color: var(--lumo-body-text-color);
       }
-
-      #total:not([hidden]) {
-        display: block;
-      }
-
-      @media (max-width: 900px) {
-        .total {
-          height: 64px;
-          flex-direction: row;
-        }
-        .total .sum {
-          margin-left: 12px;
-        }
-      }
-
-      @media (max-width: 1124px) {
-        #horizontal {
-          display: flex;
-        }
-        #total {
-          flex: 1;
-          margin-left: 16px;
-        }
-        #total .sum {
-          display: block;
-          text-align: center;
-          font-weight: 200;
-          font-size: 32px;
-          line-height: 100px;
-        }
-      }
-
     </style>
-    <div id="container">
-      <div id="total" hidden="[[tablet]]">
+    <div class="container">
+      <div class="total" hidden="[[tablet]]">
         <div class="section-title">To be reimbursed</div>
         <span class="sum">$[[totalOwed]]</span>
       </div>

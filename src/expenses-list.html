@@ -3,22 +3,9 @@
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-sorter.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
-<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="moment-js.html">
 <link rel="import" href="data/store.html">
-
-
-
-<!-- Guard against vaadin-license-dialog styles. For some reason the #header styles are not scoped
-if the license checker is collapsed to the top right corner on page load, and the scoping is fixed
-if you open the license dialog. -->
-<style>
-  vaadin-grid thead#header {
-    padding: 0;
-    margin: 0;
-  }
-
-</style>
+<link rel="import" href="icons.html">
 
 <dom-module id="expenses-list">
   <template>
@@ -50,7 +37,7 @@ if you open the license dialog. -->
       }
 
       vaadin-grid .status-new {
-        color: var(--accent-color);
+        color: var(--lumo-error-color);
         font-weight: 500;
       }
 
@@ -146,7 +133,7 @@ if you open the license dialog. -->
       </vaadin-grid-column>
 
     </vaadin-grid>
-    <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
+    <paper-fab icon="expense-manager:add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
   </template>
   <script>
     (function() {

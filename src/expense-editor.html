@@ -1,33 +1,39 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
-<link rel="import" href="../bower_components/vaadin-dialog/vaadin-dialog.html">
-<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
-
-<link rel="import" href="../bower_components/vaadin-text-field/vaadin-text-field.html">
+<link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
-<link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
 <link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../bower_components/vaadin-dialog/vaadin-dialog.html">
+<link rel="import" href="../bower_components/vaadin-text-field/vaadin-text-field.html">
 <link rel="import" href="../bower_components/vaadin-upload/vaadin-upload.html">
 
-<link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
-
 <link rel="import" href="data/store.html">
+<link rel="import" href="icons.html">
 
 <dom-module id="expense-editor">
   <template>
     <vaadin-dialog id="dialog" no-close-on-esc no-close-on-outside-click opened="[[_isDialogOpened(_expense)]]">
       <template>
         <style>
-          .main-layout {
-            display: flex;
+          [part~="content"] {
+            padding: var(--lumo-space-l);
           }
 
-          .main-layout h2 {
-            flex: 1;
+          .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+          }
+
+          .close-button {
+            margin: 0;
           }
 
           .wrapper {
             display: flex;
+            margin-top: var(--lumo-space-s);
           }
 
           #form {
@@ -37,7 +43,11 @@
           }
 
           #upload {
-            margin-left: 30px;
+            margin-left: var(--lumo-space-l);
+          }
+
+          .buttons vaadin-button {
+            margin-right: var(--lumo-space-m);
           }
 
           @media (max-width: 900px) {
@@ -60,9 +70,11 @@
           }
         </style>
 
-        <div class="main-layout">
+        <div class="header">
           <h2>[[_getCaption(_expense)]]</h2>
-          <paper-icon-button icon="close" on-click="close" class="close-button self-start"></paper-icon-button>
+          <vaadin-button on-click="close" theme="icon" class="close-button">
+            <iron-icon icon="expense-manager:close"></iron-icon>
+          </vaadin-button>
         </div>
 
         <div class="wrapper">
@@ -85,10 +97,10 @@
           </vaadin-upload>
         </div>
 
-        <div class="buttons-layout">
+        <div class="buttons">
           <vaadin-button on-click="_save" theme="primary" class="save-button">Save</vaadin-button>
           <vaadin-button on-click="close" class="cancel-button">Cancel</vaadin-button>
-          <vaadin-button on-click="_delete" id="delete" theme="tertiary danger" class="delete-button" hidden="[[!_showDelete(_expense)]]">Delete</vaadin-button>
+          <vaadin-button on-click="_delete" id="delete" theme="tertiary error" class="delete-button" hidden="[[!_showDelete(_expense)]]">Delete</vaadin-button>
         </div>
         <span>[[_errorText]]</span>
       </template>

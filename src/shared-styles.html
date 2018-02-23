@@ -1,4 +1,5 @@
 <link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/sizing.html">
 <link rel="import" href="../bower_components/vaadin-lumo-styles/spacing.html">
 <link rel="import" href="../bower_components/vaadin-lumo-styles/typography.html">
 
@@ -6,14 +7,27 @@
   <template>
     <style>
       .section-title {
+        min-height: var(--lumo-size-s);
+        margin: var(--lumo-space-s) 0 var(--lumo-space-m);
         font-weight: 400;
         font-size: var(--lumo-font-size-xs);
+        line-height: var(--lumo-line-height-m);
         border-bottom: 1px solid var(--lumo-shade-20pct);
-        padding-top: 14px;
-        padding-bottom: 6px;
-        margin-bottom: 18px;
-        margin-top: var(--lumo-space-xs);
         color: var(--lumo-secondary-text-color);
+      }
+    </style>
+  </template>
+</dom-module>
+
+<dom-module id="dialog-styles" theme-for="vaadin-dialog-overlay">
+  <template>
+    <style include="lumo-typography">
+      h2 {
+        margin-top: 0;
+      }
+
+      .buttons {
+        margin-top: var(--lumo-space-l);
       }
     </style>
   </template>
