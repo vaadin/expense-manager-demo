@@ -1,6 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
-<link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
 <link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
@@ -29,12 +28,12 @@
         height: 0.001px;
       }
 
-      #filters-toolbar[phone] {
+      filters-toolbar[phone] {
         width: auto;
         box-shadow: var(--lumo-shade-50pct) 0 -10px 6px -10px inset;
       }
 
-      #filters-toolbar {
+      filters-toolbar {
         width: 300px;
         box-shadow: inset -4px 0 16px -9px var(--lumo-shade-50pct);
       }
@@ -45,46 +44,9 @@
         }
       }
 
-      #content-panel {
+      content-panel {
         flex: 1;
       }
-
-<<<<<<< HEAD
-      #sync {
-        color: var(--light-primary-color);
-        margin-left: 8px;
-        animation: spin 0.8s linear infinite;
-      }
-
-      #sync[hidden] {
-        display: none;
-        animation: none;
-      }
-
-      @keyframes spin {
-        100% {
-          transform: rotate(-360deg);
-        }
-      }
-=======
-      vaadin-button {
-        margin: 0 var(--lumo-space-s);
-        color: var(--lumo-primary-contrast-color);
-        text-transform: uppercase;
-      }
-
-      @media (max-width: 900px) {
-        app-toolbar {
-          --app-toolbar-content: {
-            padding: 0 6px 0 16px;
-          }
-        }
-        app-toolbar h1 {
-          font-size: 20px;
-        }
-      }
-
->>>>>>> Cleanup styles, replace paper-icon-button, use custom iconset
     </style>
 
     <app-header-layout fullbleed>
@@ -93,8 +55,8 @@
       </app-header>
 
       <div class="content" phone$="[[_phone]]" tablet$="[[_tablet]]">
-        <filters-toolbar phone="[[_phone]]" tablet="[[_tablet]]" id="filters-toolbar"></filters-toolbar>
-        <content-panel phone="[[_phone]]" tablet="[[_tablet]]" id="content-panel"></content-panel>
+        <filters-toolbar phone="[[_phone]]" tablet="[[_tablet]]"></filters-toolbar>
+        <content-panel phone="[[_phone]]" tablet="[[_tablet]]"></content-panel>
       </div>
     </app-header-layout>
 
