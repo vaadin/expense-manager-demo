@@ -1,8 +1,9 @@
 <script src="../../node_modules/redux/dist/redux.min.js"></script>
-<script src="../moment.min.js"></script>
+<link rel="import" href="../date-helpers.html">
 
 <script>
   (() => {
+    const helpers = window.ExpenseManager.dateHelpers;
 
     let savedState = localStorage.getItem('ExpenseManagerState');
     if (savedState) {
@@ -109,10 +110,10 @@
     }
 
     function _generateDemoExpenses(num) {
-      let date = moment();
       const expenses = [];
+      const now = Date.now();
       for (let i = 0; i < num; i++) {
-        date = date.subtract(Math.floor(Math.random() * 168) + 1, 'hours');
+        const date = helpers.subtract(now, 'hours', Math.floor(Math.random() * 168) + 1);
         var status = 'new';
         if (i > 10) {
           status = 'reimbursed';
@@ -121,7 +122,7 @@
         }
         expenses.push({
           id: uuid(),
-          date: date.format('YYYY-MM-DD'),
+          date: (new Date(date.getTime() - date.getTimezoneOffset() * 60000)).toISOString().split('T')[0],
           merchant: [
             'Office supplies', 'Electronics', 'Rental car', 'Airline',
             'Hotel', 'Restaurant', 'Taxi', 'Ride sharing', 'Fast food',
