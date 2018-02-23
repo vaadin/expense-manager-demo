@@ -1,0 +1,43 @@
+<script>
+  window.ExpenseManager = window.ExpenseManager || {};
+
+  window.ExpenseManager.dateHelpers = {
+    format(date, format) {
+      const [y, m, d] = date.split('-');
+      return [m, d, y].join('/');
+    },
+
+    isAfter(first, second) {
+      return new Date(first) > new Date(second);
+    },
+
+    isBefore(first, second) {
+      return new Date(first) < new Date(second);
+    },
+
+    isValid(date) {
+      return !isNaN(Date.parse(date));
+    },
+
+    subtract(source, unit, count) {
+      const date = new Date(source);
+      let method;
+      switch (unit) {
+        case 'years':
+          method = 'FullYear';
+          break;
+        case 'months':
+          method = 'Month';
+          break;
+        case 'days':
+          method = 'Date';
+          break;
+        case 'hours':
+          method = 'Hours';
+          break;
+      }
+      date[`set${method}`].call(date, date[`get${method}`]() - count);
+      return date;
+    }
+  };
+</script>
