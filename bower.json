@@ -25,7 +25,7 @@
     "iron-iconset-svg": "polymerelements/iron-iconset-svg#^2.0.0",
     "iron-pages": "polymerelements/iron-pages#^2.0.0",
     "iron-media-query": "polymerelements/iron-media-query#^2.0.0",
-    "paper-fab": "polymerelements/paper-fab#^2.0.0",
+    "paper-icon-button": "polymerelements/paper-icon-button#^2.0.0",
     "polymer-redux": "^1.0.3"
   },
   "devDependencies": {
