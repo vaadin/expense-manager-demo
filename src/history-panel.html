@@ -11,13 +11,14 @@
 
 <dom-module id="history-panel">
   <template>
-    <style include="shared-styles">
+    <style include="shared-styles lumo-typography lumo-color">
       :host {
         display: block;
         box-sizing: border-box;
         background: var(--lumo-shade-5pct);
         padding: var(--lumo-space-wide-l);
         width: 300px;
+        color: var(--lumo-body-text-color);
       }
 
       :host([phone]) {
@@ -35,7 +36,7 @@
 
       .total {
         font-weight: 500;
-        font-size: 18px;
+        font-size: var(--lumo-font-size-l);
         line-height: 1.4;
       }
 
@@ -49,7 +50,6 @@
         padding: 40px 0;
         font-size: 32px;
         font-weight: 300;
-        color: var(--lumo-body-text-color);
       }
     </style>
     <div class="container">
