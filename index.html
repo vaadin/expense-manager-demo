@@ -6,13 +6,23 @@
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0">
 
   <title>Expense Manager</title>
+  <meta name="description" content="Progressive Web App built using Polymer and Vaadin Elements">
+
+  <!--
+    The `<base>` tag below is present to support two advanced deployment options:
+    1) Differential serving. 2) Serving from a non-root path (e.g. `my.domain/expense-manager/`)
+
+    Instead of manually editing the `<base>` tag yourself, you should generally either:
+    a) Add a `basePath` property to the build configuration in your `polymer.json`.
+    b) Use the `--base-path` command-line option for `polymer build`.
+    c) Add a `autoBasePath` property in your `polymer.json` to apply this setting for multiple builds.
+  -->
+  <base href="/">
 
   <link rel="shortcut icon" sizes="32x32" href="images/app-icon-32.png">
 
   <meta name="theme-color" content="#33383a">
   <link rel="manifest" href="manifest.json">
-
-  <base href="/">
 
   <!-- iOS -->
   <link rel="apple-touch-icon" href="images/icons/icon-144x144.png" />
@@ -20,6 +30,25 @@
   <meta name="mobile-web-app-status-bar-style" content="black" />
   <meta name="mobile-web-app-title" content="Expenses">
 
+  <script>
+    window.Polymer = {rootPath: document.querySelector('base').getAttribute('href')};
+    // Load and register pre-caching Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('service-worker.js', {
+          scope: Polymer.rootPath,
+        });
+      });
+    }
+  </script>
+
+  <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
+  <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+
+  <!-- Load your application shell -->
+  <link rel="import" href="src/expense-app.html">
+
+  <!-- Add any global styles for body, document, etc. -->
   <style>
     html {
       height: 100%;
@@ -37,30 +66,14 @@
       -webkit-tap-highlight-color: transparent;
       -webkit-font-smoothing: antialiased;
     }
-
   </style>
-
-  <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
-
-  <script>
-    // Register the base URL
-    const baseUrl = document.querySelector('base').href;
-
-    // Load and register pre-caching Service Worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register(baseUrl + 'service-worker.js');
-      });
-    }
-  </script>
-  <noscript>
-    This page requires JavaScript
-  </noscript>
-  <link rel="import" href="src/expense-app.html">
 </head>
 
 <body>
   <expense-app></expense-app>
+  <noscript>
+    This page requires JavaScript
+  </noscript>
 </body>
 
 </html>
