@@ -1,7 +1,10 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-sorter.html">
-<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/sizing.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button-light.html">
 <link rel="import" href="date-helpers.html">
 <link rel="import" href="data/store.html">
 <link rel="import" href="icons.html">
@@ -9,19 +12,23 @@
 <dom-module id="expenses-list">
   <template>
     <style>
-       :host {
+      :host {
         position: relative;
         display: flex;
         flex-direction: column;
-        background: #fff;
       }
 
       #add-button {
         position: absolute;
+        height: var(--lumo-size-xl);
+        width: var(--lumo-size-xl);
         right: 32px;
         bottom: 32px;
         z-index: 1;
-        --paper-fab-background: var(--lumo-error-color);
+        background: var(--lumo-error-color);
+        color: var(--lumo-error-contrast-color);
+        box-shadow: var(--lumo-box-shadow-m);
+        border-radius: 50%;
       }
 
       #expenses {
@@ -61,7 +68,6 @@
       vaadin-grid#expenses .comment {
         text-overflow: ellipsis;
       }
-
     </style>
 
     <vaadin-grid items="[[expenses]]" id="expenses" active-item="{{activeItem}}">
@@ -132,7 +138,13 @@
       </vaadin-grid-column>
 
     </vaadin-grid>
-    <paper-fab icon="expense-manager:add" on-click="_showExpenseEditor" id="add-button"></paper-fab>
+
+    <paper-icon-button-light on-click="_showExpenseEditor" id="add-button">
+      <button>
+        <iron-icon icon="expense-manager:add"></iron-icon>
+      </button>
+    </paper-icon-button-light>
+
   </template>
   <script>
     (function() {
