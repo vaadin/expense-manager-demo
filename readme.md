@@ -20,9 +20,18 @@ Install all  dependencies with `bower install && npm install`.
 ## Docker container for production
 You can use the included `Dockerfile` to deploy the built app using [prpl-server](https://github.com/Polymer/prpl-server-node).
 
-## Other build targets
-You can build the app with `polymer build`. Other options are listed in the [Polymer CLI](https://www.polymer-project.org/1.0/docs/tools/polymer-cli) documentation.
+## Build project locally
 
+The default `polymer.json` contains the `"autoBasePath": true` setting to support differential serving with the [prpl-server](https://github.com/Polymer/prpl-server-node).
+This option makes the build incompatible with static file servers, though. So, in order to serve bundled app locally using `polymer-cli`, do the following steps:
+
+1. Remove `"autoBasePath": true` setting from the `polymer.json`
+
+2. Run `polymer build`
+
+3. Run `polymer serve build/es6-bundled` (you can choose `es5-bundled` instead)
+
+Read more about the build options in the [Polymer: Build for production](https://www.polymer-project.org/2.0/toolbox/build-for-production) documentation.
 
 ## Note
 The demo uses [Vaadin Charts](https://vaadin.com/charts), which will ask for a license. You can close the window to try out the app without a license.
