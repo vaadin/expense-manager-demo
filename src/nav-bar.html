@@ -9,10 +9,9 @@
 
 <dom-module id="nav-bar">
   <template>
-    <style include="lumo-color">
+    <style include="lumo-color-legacy">
       :host {
         display: flex;
-        justify-content: flex-end;
         align-items: center;
         box-sizing: border-box;
         width: 100%;
@@ -30,6 +29,10 @@
         margin-left: var(--lumo-space-m);
         text-transform: uppercase;
         flex-shrink: 0;
+      }
+
+      vaadin-button:first-of-type {
+        margin-left: auto;
       }
     </style>
 
