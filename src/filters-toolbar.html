@@ -11,14 +11,16 @@
 
 <dom-module id="filters-toolbar">
   <template>
-    <style include="lumo-color">
+    <style include="lumo-color lumo-typography">
       :host {
         display: flex;
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
-        background: var(--lumo-shade-5pct);
+        background-color: var(--lumo-base-color);
+        background-image: linear-gradient(var(--lumo-shade-5pct) 0%, var(--lumo-shade-5pct) 100%);
+        color: var(--lumo-body-text-color);
         position: relative;
         z-index: 2;
       }
