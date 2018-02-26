@@ -42,12 +42,6 @@
     }
   </script>
 
-  <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
-  <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
-
-  <!-- Load your application shell -->
-  <link rel="import" href="src/expense-app.html">
-
   <!-- Add any global styles for body, document, etc. -->
   <style>
     html {
@@ -66,14 +60,35 @@
       -webkit-tap-highlight-color: transparent;
       -webkit-font-smoothing: antialiased;
     }
+
+    /* styling for render while resources are loading */
+    expense-app[unresolved] {
+      display: block;
+      position: relative;
+      top: calc((100% - 343px) / 2);
+      width: 300px;
+      margin: 0 auto;
+      font-size: 28px;
+      font-weight: 300;
+    }
+
+    @media (max-height: 375px) {
+      expense-app[unresolved] {
+        top: 16px;
+      }
+    }
   </style>
 </head>
 
 <body>
-  <expense-app></expense-app>
-  <noscript>
-    This page requires JavaScript
-  </noscript>
+  <expense-app unresolved>Expense Manager</expense-app>
+
+  <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
+  <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+
+  <!-- Load your application shell -->
+  <link rel="import" href="src/expense-app.html">
+
 </body>
 
 </html>
