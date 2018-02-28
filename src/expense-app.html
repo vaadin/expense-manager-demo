@@ -71,6 +71,9 @@
         ready() {
           super.ready();
 
+          // Custom elements polyfill safe way to indicate an element has been upgraded.
+          this.removeAttribute('unresolved');
+
           // Start loading the overview page after we're done showing the login page.
           requestAnimationFrame(() => {
             setTimeout(() =>

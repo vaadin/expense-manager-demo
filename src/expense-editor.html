@@ -73,7 +73,7 @@
           <vaadin-upload id="upload" accept="image/*" max-files="1" on-upload-before="_handleUpload">
             <div class="file-list">
               <div class="receipt-wrapper">
-                <img src$="[[_expense.receipt]]" alt="Receipt" hidden$="[[!_expense.receipt]]">
+                <img src$="[[rootPath]][[_expense.receipt]]" alt="Receipt" hidden$="[[!_expense.receipt]]">
               </div>
             </div>
           </vaadin-upload>
