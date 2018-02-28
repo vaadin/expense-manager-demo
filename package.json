@@ -5,20 +5,23 @@
   "main": "service-worker.js",
   "dependencies": {
     "redux": "^3.7.2",
-    "redux-thunk": "^2.2.0",
     "reselect": "^3.0.1"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-gh-pages": "^0.5.4",
-    "http2-push-manifest": "^1.0.0",
-    "eslint": "^3.19.0",
-    "eslint-config-google": "^0.7.0",
-    "eslint-plugin-html": "^2.0.0"
+    "eslint": "^4.0.0",
+    "eslint-config-vaadin": "latest",
+    "eslint-plugin-html": "^4.0.0",
+    "polymer-cli": "^1.6.0",
+    "stylelint": "^8.0.0",
+    "stylelint-config-vaadin": "latest"
   },
   "scripts": {
-    "lint": "npm run lint:javascript",
-    "lint:javascript": "eslint . --ext js,html --ignore-path .gitignore",
+    "lint": "npm run lint:javascript & npm run lint:css & npm run lint:polymer",
+    "lint:css": "stylelint src/*.html",
+    "lint:javascript": "eslint . --ext html --ignore-path .gitignore",
+    "lint:polymer": "polymer lint --rules polymer-2 --input src/*.html",
     "test": "polymer test",
     "test:integration": "polymer build # test that psk builds without error with the CLI"
   },

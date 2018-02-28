@@ -1,57 +1,37 @@
 <link rel="import" href="constants.html">
 <script src="../../node_modules/reselect/dist/reselect.js"></script>
-<script src="../moment.min.js"></script>
+<link rel="import" href="../date-helpers.html">
 
 <script>
   (() => {
 
     const getExpenses = state => state.expenses.expenses;
     const getFilters = state => state.filters.filters;
+    const helpers = ExpenseManager.dateHelpers;
 
     const expenses = Reselect.createSelector(
       [getExpenses, getFilters],
       (expenses, filters) => {
 
-        var merchant = filters.merchant;
-        var min = filters.min;
-        var max = filters.max;
-        var status = filters.status;
-        var start = filters.start;
-        var end = filters.end;
+        const merchant = filters.merchant;
+        const min = filters.min;
+        const max = filters.max;
+        const status = filters.status;
+        const start = filters.start;
+        const end = filters.end;
 
         return expenses
-          .filter(function (expense) {
-            return !(merchant && expense.merchant
-              .toUpperCase().indexOf(merchant.toUpperCase()) < 0);
+          .filter(exp => !(merchant && exp.merchant.toUpperCase().indexOf(merchant.toUpperCase()) < 0))
+          .filter(exp => !(min && exp.total < min))
+          .filter(exp => !(max && exp.total > max))
+          .filter(exp => {
+            return status && status.length > 0 ? status.indexOf(exp.status) >= 0 : false;
           })
-          .filter(function (expense) {
-            return !(min && expense.total < min);
+          .filter(exp => {
+            return start && helpers.isValid(start) ? helpers.isAfter(exp.date, start) : true;
           })
-          .filter(function (expense) {
-            return !(max && expense.total > max);
-          })
-          .filter(function (expense) {
-            if (status && status.length > 0) {
-              return status.indexOf(expense.status) >= 0;
-            } else {
-              return false;
-            }
-          })
-          .filter(function (expense) {
-            if (start) {
-              var startDate = moment(start);
-              return !!(startDate.isValid() && moment(expense.date).isAfter(startDate));
-            } else {
-              return true;
-            }
-          })
-          .filter(function (expense) {
-            if (end) {
-              var endDate = moment(end);
-              return !!(endDate.isValid() && moment(expense.date).isBefore(endDate));
-            } else {
-              return true;
-            }
+          .filter(exp => {
+            return end && helpers.isValid(end) ? helpers.isBefore(exp.date, end) : true;
           });
       });
 
@@ -74,7 +54,7 @@
       let numFilters = 0;
 
       Object.keys(filters).forEach(f => {
-        var filter = filters[f];
+        const filter = filters[f];
         if (filter) {
           if (Array.isArray(filter)) {
             numFilters += ExpenseManager.constants.statuses.length - filter.length;
@@ -86,46 +66,12 @@
       return numFilters;
     });
 
-    const history = Reselect.createSelector([getExpenses], expenses => {
-      const historyData = [];
-      function findMonth(rawDate, historyData) {
-        let date = moment(rawDate);
-        let month;
-
-        historyData.forEach(m => {
-          if (m.month === date.month() && m.year === date.year()) {
-            month = m;
-          }
-        });
-
-        if (!month) {
-          month = {
-            month: date.month(),
-            year: date.year(),
-            total: 0
-          };
-          historyData.push(month);
-        }
-        return month;
-      }
-
-      const oneYearAgo = moment().subtract(1, 'years');
-      expenses.filter(expense => {
-        return moment(expense.date).isAfter(oneYearAgo);
-      }).forEach(expense => {
-        findMonth(expense.date, historyData).total += expense.total;
-      });
-
-      return historyData;
-    });
-
     window.ExpenseManager = window.ExpenseManager || {};
     window.ExpenseManager.select = {
       expenses,
       merchants,
       appliedFilters,
-      total,
-      history
+      total
     };
   })();
 

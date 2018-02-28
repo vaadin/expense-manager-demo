@@ -1,75 +1,41 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-grid.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-sorter.html">
-<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
-<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
-<link rel="import" href="moment-js.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/sizing.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button-light.html">
+<link rel="import" href="date-helpers.html">
 <link rel="import" href="data/store.html">
-
-
-
-<!-- Guard against vaadin-license-dialog styles. For some reason the #header styles are not scoped
-if the license checker is collapsed to the top right corner on page load, and the scoping is fixed
-if you open the license dialog. -->
-<style>
-  vaadin-grid thead#header {
-    padding: 0;
-    margin: 0;
-  }
-
-</style>
+<link rel="import" href="icons.html">
 
 <dom-module id="expenses-list">
   <template>
     <style>
-       :host {
+      :host {
         position: relative;
         display: flex;
         flex-direction: column;
-        background: #fff;
       }
 
       #add-button {
         position: absolute;
+        height: var(--lumo-size-xl);
+        width: var(--lumo-size-xl);
         right: 32px;
         bottom: 32px;
-        z-index: 2;
-        --paper-fab-background: var(--valo-error-color);
+        z-index: 1;
+        background: var(--lumo-error-color);
+        color: var(--lumo-error-contrast-color);
+        box-shadow: var(--lumo-box-shadow-m);
+        border-radius: 50%;
       }
 
       #expenses {
-        flex: 1;
-        max-height: calc(100vh - 64px);
+        flex: auto;
+        height: 0.001px;
         border: 0;
-        height: 100%;
         font-weight: 300;
-      }
-
-      @media (max-width: 1124px) {
-        #expenses {
-          max-height: calc(100vh - 64px - 290px);
-        }
-        #add-button {
-          bottom: -28px;
-        }
-      }
-
-      @media (max-width: 900px) {
-        #expenses {
-          max-height: calc(100vh - 64px - 52px);
-        }
-        #add-button {
-          bottom: 32px;
-        }
-      }
-
-      @media (max-width: 600px) {
-        #expenses {
-          max-height: calc(100vh - 56px - 48px);
-        }
       }
 
       vaadin-grid .status {
@@ -77,7 +43,7 @@ if you open the license dialog. -->
       }
 
       vaadin-grid .status-new {
-        color: var(--accent-color);
+        color: var(--lumo-error-color);
         font-weight: 500;
       }
 
@@ -102,11 +68,8 @@ if you open the license dialog. -->
       vaadin-grid#expenses .comment {
         text-overflow: ellipsis;
       }
-
     </style>
 
-    <!-- https://github.com/Polymer/polymer/issues/2149#issuecomment-240884786 -->
-    <iron-media-query query="min-width: 1125px" query-matches="{{_largeScreen}}"></iron-media-query>
     <vaadin-grid items="[[expenses]]" id="expenses" active-item="{{activeItem}}">
 
       <vaadin-grid-column width="8em" frozen>
@@ -175,35 +138,52 @@ if you open the license dialog. -->
       </vaadin-grid-column>
 
     </vaadin-grid>
-    <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
+
+    <paper-icon-button-light on-click="_showExpenseEditor" id="add-button">
+      <button>
+        <iron-icon icon="expense-manager:add"></iron-icon>
+      </button>
+    </paper-icon-button-light>
+
   </template>
   <script>
     (function() {
-      class ExpensesListElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
+      /**
+       * @memberof ExpenseManager
+       */
+      class ExpensesListElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
         static get is() {
           return 'expenses-list';
         }
+
         static get properties() {
           return {
+            /**
+             * The list of expenses.
+             * @type {Array}
+             */
             expenses: {
               type: Array,
               statePath: ExpenseManager.select.expenses
             },
+
+            /**
+             * The selected expense object.
+             * @type {Array}
+             */
             activeItem: {
               observer: '_activeItemChanged'
-            },
-            _largeScreen: Boolean
+            }
           };
-        }
-
-        static get observers() {
-          return ['_isLargeScreen(_largeScreen)'];
         }
 
         _showExpenseEditor() {
           this.dispatch('editExpense');
         }
 
+        /**
+         * @param {Object|null} expense the selected expense, if any.
+         */
         _activeItemChanged(expense) {
           if (this.expenses && this.expenses.length > 0) { // don't trigger on init
             this.$.expenses.selectedItems = expense ? [expense] : [];
@@ -211,26 +191,34 @@ if you open the license dialog. -->
           }
         }
 
+        /**
+         * @param {number} total an expense amount to format.
+         * @return {string} a formatted amount.
+         */
         _formatTotal(total) {
           if (total) {
             return '$' + total.toFixed(2);
           }
         }
 
+        /**
+         * @param {string} status an expense status to format.
+         * @return {string} a formatted status.
+         */
         _formatStatus(status) {
           if (status) {
-            return status.replace('_', ' ')
+            return status.replace('_', ' ');
           }
         }
 
+        /**
+         * @param {string} date an expense date to format.
+         * @return {string} a formatted date.
+         */
         _formatDate(date) {
           if (date) {
-            return moment(date).format('MM/DD/YYYY');
+            return window.ExpenseManager.dateHelpers.format(date);
           }
-        }
-
-        _isLargeScreen() {
-          this.updateStyles();
         }
       }
 

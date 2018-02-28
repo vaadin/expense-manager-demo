@@ -1,149 +1,75 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/vaadin-charts/vaadin-bar-chart.html">
-<link rel="import" href="../bower_components/vaadin-charts/vaadin-column-chart.html">
-<link rel="import" href="moment-js.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/spacing.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/typography.html">
 <link rel="import" href="data/store.html">
 
+<link rel="import" href="responsive-mixin.html">
+<link rel="import" href="shared-styles.html">
 
 <dom-module id="history-panel">
   <template>
-    <style>
-       :host {
+    <style include="shared-styles lumo-typography lumo-color">
+      :host {
         display: block;
-        background: #f8f9f9;
-        padding: 20px 24px;
+        box-sizing: border-box;
+        background-color: var(--lumo-base-color);
+        background-image: linear-gradient(var(--lumo-shade-5pct) 0%, var(--lumo-shade-5pct) 100%);
+        padding: var(--lumo-space-wide-l);
+        width: 300px;
+        color: var(--lumo-body-text-color);
       }
 
-      #container {
+      :host([phone]) {
+        display: none;
+      }
+
+      :host([tablet]) {
+        width: auto;
+      }
+
+      .container {
         display: flex;
         flex-direction: column;
       }
 
-      .chart-title {
-        @apply --section-title;
+      .total {
+        font-weight: 500;
+        font-size: var(--lumo-font-size-l);
+        line-height: 1.4;
       }
 
-      #horizontal {
+      .total[hidden] {
         display: none;
       }
 
-      @media (max-width: 600px) {
-        .chart,
-        #horizontal {
-          display: none;
-        }
-        .total {
-          height: 64px;
-          flex-direction: row;
-        }
-        .total .sum {
-          margin-left: 12px;
-        }
+      .total .sum {
+        display: block;
+        text-align: center;
+        padding: 40px 0;
+        font-size: 32px;
+        font-weight: 300;
       }
-
-      @media (max-width: 1124px) {
-        #horizontal {
-          display: flex;
-        }
-        .chart-title {
-          display: none;
-        }
-        #horizontal .chart-title {
-          display: block;
-          width: 450px;
-        }
-        #total>span:first-child {
-          @apply --section-title;
-        }
-        #total {
-          flex: 1;
-          margin-left: 16px;
-        }
-        #total .sum {
-          display: block;
-          text-align: center;
-          font-weight: 200;
-          font-size: 32px;
-          line-height: 100px;
-        }
-        #barchart {
-          display: none;
-        }
-      }
-
-      @media (min-width: 1125px) {
-        .chart-title {
-          margin-top: 200px;
-        }
-      }
-
     </style>
-    <div id="container">
+    <div class="container">
+      <div class="total" hidden="[[tablet]]">
+        <div class="section-title">To be reimbursed</div>
+        <span class="sum">$[[totalOwed]]</span>
+      </div>
 
       <div class="chart">
-        <h2 class="chart-title section-title">Last 12 Months in total</h2>
-        <vaadin-bar-chart id="barchart">
-          <title>
-            <style display="none"></style>
-          </title>
-          <chart background-color="transparent" height="400" width="250"></chart>
-          <exporting enabled="false"></exporting>
-          <x-axis>
-            <title>
-              <style display="none"></style>
-            </title>
-            <labels>
-              <chart-style>{"color": "#000"}</chart-style>
-            </labels>
-          </x-axis>
-          <y-axis>
-            <title>
-              <style display="none"></style>
-            </title>
-          </y-axis>
-          <tooltip formatter="function() { return '$' + this.y.toFixed(2); }"></tooltip>
-          <data-series name="$" data="[[seriesData]]">
-            <color>#ffc13f</color>
-          </data-series>
-          <legend enabled="false"></legend>
-        </vaadin-bar-chart>
-
-        <div id="horizontal">
-          <div>
-            <h2 class="chart-title section-title">Last 12 Months in Total</h2>
-            <vaadin-column-chart id="columnchart">
-              <title>
-                <style display="none"></style>
-              </title>
-              <chart background-color="transparent" height="200" width="450"></chart>
-              <exporting enabled="false"></exporting>
-              <x-axis>
-                <title>
-                  <style display="none"></style>
-                </title>
-                <labels>
-                  <chart-style>{"color": "#000"}</chart-style>
-                </labels>
-              </x-axis>
-              <y-axis>
-                <title>
-                  <style display="none"></style>
-                </title>
-              </y-axis>
-              <tooltip formatter="function() { return '$' + this.y.toFixed(2); }"></tooltip>
-              <data-series name="$" data="[[seriesData]]">
-                <color>#ffc13f</color>
-              </data-series>
-              <legend enabled="false"></legend>
-            </vaadin-column-chart>
-          </div>
-        </div>
+        <h2 class="section-title">Last 12 Months in total</h2>
+        <h3> Vaadin Charts will be displayed in Pro version </h3>
       </div>
     </div>
   </template>
   <script>
     (function() {
-      class HistoryPanelElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
+      /**
+       * @memberof ExpenseManager
+       * @mixes ExpenseManager.ResponsiveMixin
+       */
+      class HistoryPanelElement extends ExpenseManager.ReduxMixin(ExpenseManager.ResponsiveMixin(Polymer.Element)) {
 
         static get is() {
           return 'history-panel';
@@ -151,43 +77,14 @@
 
         static get properties() {
           return {
-            historyData: {
-              type: Array,
-              statePath: ExpenseManager.select.history,
-              observer: 'update'
-            },
-            seriesData: {
-              type: Array,
-              notify: true
+            /**
+             * The total owed amount.
+             */
+            totalOwed: {
+              type: Number,
+              statePath: ExpenseManager.select.total
             }
           };
-        }
-
-        update(history) {
-          this.seriesData = history.map(function (month) {
-            return month.total;
-          });
-
-          function getHistoryLabel(item, index) {
-            var label = moment().year(item.year).month(item.month);
-            var format = (index === 0 || item.month === 11) ? 'YYYY MMM' : 'MMM';
-            return label.format(format);
-          }
-
-          // If at first you don't succeed, try again
-          const configureAxes = () => {
-            if (this.$.barchart.chart.xAxis) {
-              const historyLabels = history.map(getHistoryLabel);
-              this.$.barchart.chart.xAxis[0].setCategories(historyLabels);
-              this.$.barchart.chart.reflow();
-              this.$.columnchart.chart.xAxis[0].setCategories(historyLabels);
-              this.$.columnchart.chart.reflow();
-            } else {
-              setTimeout(configureAxes, 50);
-            }
-          }
-
-          configureAxes();
         }
       }
 

@@ -1,97 +1,45 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-button.html">
 <link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
-<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/vaadin-dialog/vaadin-dialog.html">
 
 <dom-module id="info-dialog">
   <template>
-    <style>
-       :host {
-        display: block;
-      }
+    <vaadin-dialog id="dialog" no-close-on-esc no-close-on-outside-click opened="[[open]]">
+      <template>
+        <style>
+          a {
+            color: var(--lumo-primary-text-color);
+          }
+        </style>
 
-      paper-dialog {
-        overflow: auto;
-      }
+        <h2>Welcome to Expense Manager</h2>
 
-      paper-button {
-        background: var(--primary-color);
-        color: var(--text-primary-color);
-      }
+        <p>
+          This is a sample Progressive Web App.
+        </p>
+        <p>
+          Try adding it to your home screen and using it offline.
+        </p>
+        <p>
+          This demo is built using <a tabindex="-1" href="https://www.polymer-project.org" target="_blank" rel="noopener">Polymer</a>
+          and <a tabindex="-1" href="https://vaadin.com/elements" target="_blank" rel="noopener">Vaadin Elements</a>.
+          <br>
+          You can find the source code and fork the project on <a tabindex="-1" href="https://github.com/vaadin/expense-manager-demo" rel="noopener">GitHub</a>.
+        </p>
 
-      #dialog {
-        max-width: 600px;
-      }
-
-      code {
-        font-weight: 600;
-        color: var(--paper-pink-a400);
-        background: #eee;
-        padding: 5px;
-      }
-
-      .highlight {
-        font-weight: 600;
-      }
-
-      .instructions {
-        display: flex;
-      }
-
-      #close-button {
-        margin: 0 16px 16px 0;
-      }
-
-      #qr {
-        align-self: center;
-        margin-left: 32px;
-        height: 150px;
-        width: 150px;
-      }
-
-      a {
-        text-decoration: none;
-        color: var(--primary-color);
-      }
-
-      @media (max-width: 600px) {
-        #qr {
-          display: none;
-        }
-      }
-
-    </style>
-
-    <paper-dialog id="dialog" modal opened="[[open]]">
-      <h2>Welcome to Expense Manager</h2>
-
-      <div class="dialog-body">
-        <div class="instructions">
-
-          <div class="text">
-            <p>
-              This is a sample Progressive Web App.
-            </p>
-            <p>
-              Try adding it to your home screen and using it offline.
-            </p>
-          </div>
+        <div class="buttons">
+          <vaadin-button theme="primary" on-click="_close">Got it!</vaadin-button>
         </div>
-        <div class="about">
-          <p>
-            This demo is built using <a href="https://www.polymer-project.org" target="_blank">Polymer</a>            and <a href="https://vaadin.com/elements" target="_blank">Vaadin Elements</a>.
-            You can find the source code and fork the project on <a href="https://github.com/vaadin/expense-manager-demo">GitHub</a>.
-          </p>
-        </div>
-      </div>
-      <div class="buttons">
-        <vaadin-button id="close-button" theme="primary" on-tap="close">Got it!</vaadin-button>
-      </div>
-    </paper-dialog>
+
+      </template>
+    </vaadin-dialog>
 
   </template>
   <script>
     (function() {
+      /**
+       * @memberof ExpenseManager
+       */
       class InfoDialogElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
         static get is() {
           return 'info-dialog';
@@ -99,15 +47,20 @@
 
         static get properties() {
           return {
-            url: String,
+            /**
+             * True if the dialog is opened.
+             */
             open: {
               type: Boolean,
               statePath: 'uiState.infoDialogVisible'
             }
-          }
+          };
         }
 
-        close() {
+        /**
+         * Closes the dialog.
+         */
+        _close() {
           this.dispatch('hideInfoDialog');
         }
       }

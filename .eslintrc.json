@@ -1,0 +1,28 @@
+{
+  "extends": "vaadin",
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  "plugins": [
+    "html"
+  ],
+  "rules": {
+    "valid-jsdoc": ["error", {
+      "requireParamDescription": false,
+      "requireReturnDescription": false,
+      "requireReturn": false,
+      "prefer": {
+        "returns": "return"
+      }
+    }]
+  },
+  "globals": {
+    "Polymer": false,
+    "ExpenseManager": false,
+    "PolymerRedux": false,
+    "Redux": false,
+    "Reselect": false
+  }
+}

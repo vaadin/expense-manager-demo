@@ -1,66 +1,47 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
-
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-text-field.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-password-field.html">
+<link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/typography.html">
 <link rel="import" href="../bower_components/vaadin-text-field/vaadin-text-field.html">
 <link rel="import" href="../bower_components/vaadin-text-field/vaadin-password-field.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-button.html">
-<link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
-<link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/color.html">
-<link rel="import" href="data/store.html">
 
+<link rel="import" href="data/store.html">
 
 <dom-module id="login-page">
   <template>
-
-    <style include="valo-dark">
-       :host {
-        background: var(--valo-base-color);
-        min-height: 400px;
+    <style include="lumo-color-legacy lumo-typography">
+      :host {
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
       }
 
-
-      #login-button {
-        margin: 20px 0 0 0;
-        padding-left: 30px;
-        padding-right: 30px;
-      }
-
-      .error-message {
-        color: red;
+      .wrapper {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        min-height: 360px;
       }
 
       .header {
-        height: 36%;
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        justify-content: flex-end;
-        margin: 0 !important;
-        padding: 0 !important;
-      }
-
-      .header::after {
-        content: "";
-        position: absolute;
-        width: 100%;
-        top: 36%;
-        border-bottom: 4px solid var(--valo-primary-color-50pct);
+        margin-top: auto;
+        border-bottom: 4px solid var(--lumo-primary-color-50pct);
       }
 
       .header h1 {
-        color: var(--text-primary-color);
-        font-size: 24px;
+        margin: var(--lumo-space-m) auto;
+        font-size: var(--lumo-font-size-xxl);
         font-weight: 300;
-        margin: 0 auto 16px;
+      }
+
+      .header h1,
+      .login {
         width: 300px;
       }
 
       .login {
-        width: 300px;
-        margin: 16px auto;
+        padding-bottom: var(--lumo-space-m);
+        margin: var(--lumo-space-m) auto auto;
       }
 
       .login vaadin-text-field,
@@ -68,62 +49,72 @@
         width: 100%;
       }
 
-      #footer {
-        font-size: 14px;
-        background: var(--valo-shade-20pct);
-        padding: 14px 26px;
+      vaadin-button {
+        margin-top: var(--lumo-space-l);
+      }
+
+      .footer {
         width: 100%;
+        height: var(--lumo-size-l);
         display: flex;
+        padding: var(--lumo-space-wide-l);
         justify-content: space-between;
         box-sizing: border-box;
         align-items: center;
-        position: absolute;
-        bottom: 0;
-        color: var(--text-primary-color);
+        font-size: var(--lumo-font-size-s);
+        background: var(--lumo-shade-20pct);
       }
-
-      #footer a {
-        text-decoration: none;
-        color: var(--valo-link-color);
-      }
-
     </style>
+
     <iron-a11y-keys keys="enter" on-keys-pressed="_logIn"></iron-a11y-keys>
-    <div id="header" class="header">
-      <h1>Expense Manager</h1>
-    </div>
-    <div class="login" theme="dark">
-      <vaadin-text-field value={{username}} label="Username" name="username"></vaadin-text-field>
-      <vaadin-password-field value="{{password}}" label="Password" name="password"></vaadin-password-field>
-      <span class="error-message">[[errorMessage]]</span>
-      <vaadin-button theme="primary" id="login-button" on-tap="_logIn">Login</vaadin-button>
-    </div>
-    <div id="footer">
-      <span class="fork-me">
-        Fork me on <a href="https://github.com/vaadin/expense-manager-demo">GitHub</a>
-      </span>
-      <span class="built-with">
-        Built with <a href="https://vaadin.com/elements">Vaadin Elements</a>
-      </span>
+
+    <div class="wrapper">
+      <div class="header">
+        <h1>Expense Manager</h1>
+      </div>
+      <div class="login">
+        <vaadin-text-field value="{{username}}" label="Username" name="username"></vaadin-text-field>
+        <vaadin-password-field value="{{password}}" label="Password" name="password"></vaadin-password-field>
+        <vaadin-button theme="primary large" on-click="_logIn">Login</vaadin-button>
+      </div>
+      <div class="footer">
+        <span class="fork-me">
+          Fork me on <a href="https://github.com/vaadin/expense-manager-demo">GitHub</a>
+        </span>
+        <span class="built-with">
+          Built with <a href="https://vaadin.com/elements">Vaadin Elements</a>
+        </span>
+      </div>
     </div>
   </template>
 
   <script>
     (function() {
-      class LoginPageElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
-        static get is() { return 'login-page'; }
+      /**
+       * @memberof ExpenseManager
+       */
+      class LoginPageElement extends ExpenseManager.ReduxMixin(Polymer.Element) {
+        static get is() {
+          return 'login-page';
+        }
 
         static get properties() {
           return {
+            /**
+             * The user name to authenticate with.
+             */
             username: {
               type: String,
               value: 'demo'
             },
+
+            /**
+             * The password to authenticate with.
+             */
             password: {
               type: String,
               value: 'demo'
-            },
-            errorMessage: String
+            }
           };
         }
 

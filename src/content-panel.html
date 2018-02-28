@@ -1,71 +1,47 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="history-panel.html">
 <link rel="import" href="expenses-list.html">
+<link rel="import" href="responsive-mixin.html">
+
 <dom-module id="content-panel">
   <template>
     <style>
-       :host {
+      :host {
         display: flex;
         height: 100%;
       }
 
-      #list {
+      :host([tablet]) {
+        flex-direction: column;
+      }
+
+      expenses-list {
         flex: 1;
         height: 100%;
       }
 
-      #history-panel {
-        border-left: 1px solid #ddd;
-        width: 250px;
-        box-shadow: rgba(0, 0, 0, 0.2) 6px 0px 16px -10px inset;
+      history-panel {
+        box-shadow: var(--lumo-shade-50pct) 6px 0 16px -10px inset;
         z-index: 1;
       }
 
-      @media (max-width: 1124px) {
-        #history-panel {
-          width: auto;
-          position: absolute;
-          bottom: 0;
-          left: 308px;
-          right: 0;
-          border: none;
-          height: 250px;
-          padding: 20px;
-          box-shadow: rgba(0, 0, 0, 0.2) 0px 6px 16px -10px inset;
-        }
-        #list {
-          margin-bottom: 290px;
-          height: calc(100% - 290px);
-        }
+      history-panel[tablet] {
+        box-shadow: var(--lumo-shade-50pct) 0 6px 16px -10px inset;
       }
-
-      @media (min-width: 1125px) {
-        #history-panel {
-          position: absolute;
-          right: 0;
-          top: 64px;
-          bottom: 0;
-        }
-      }
-
-      @media (max-width: 900px) {
-        #history-panel {
-          display: none;
-        }
-        #list {
-          margin-bottom: 0;
-          height: 100%;
-        }
-      }
-
     </style>
-    <expenses-list id="list"></expenses-list>
-    <history-panel id="history-panel"></history-panel>
+    <expenses-list></expenses-list>
+    <history-panel phone="[[phone]]" tablet="[[tablet]]"></history-panel>
   </template>
   <script>
     (function() {
-      class ContentPanelElement extends Polymer.Element {
-        static get is() { return 'content-panel'; }
+      /**
+       * @memberof ExpenseManager
+       * @mixes ExpenseManager.ResponsiveMixin
+       */
+      class ContentPanelElement extends ExpenseManager.ResponsiveMixin(Polymer.Element) {
+        static get is() {
+          return 'content-panel';
+        }
       }
 
       customElements.define(ContentPanelElement.is, ContentPanelElement);

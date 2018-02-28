@@ -1,262 +1,170 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
-<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-button.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/sizing.html">
+<link rel="import" href="../bower_components/vaadin-lumo-styles/spacing.html">
 <link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
 <link rel="import" href="search-filters.html">
+<link rel="import" href="responsive-mixin.html">
 <link rel="import" href="data/store.html">
+<link rel="import" href="icons.html">
 
 <dom-module id="filters-toolbar">
   <template>
-    <style>
-       :host {
+    <style include="lumo-color lumo-typography">
+      :host {
         display: flex;
-        position: relative;
-        z-index: 10;
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
+        background-color: var(--lumo-base-color);
+        background-image: linear-gradient(var(--lumo-shade-5pct) 0%, var(--lumo-shade-5pct) 100%);
+        color: var(--lumo-body-text-color);
+        position: relative;
+        z-index: 2;
+      }
+
+      :host([phone]) {
+        flex-direction: column;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-shrink: 0;
+        padding: 0 var(--lumo-space-m);
+        height: var(--lumo-size-xl);
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .toolbar[hidden] {
+        display: none;
       }
 
       #filters {
-        flex: 1;
+        transition: max-height 400ms cubic-bezier(0.4, 0, 0.2, 1);
       }
 
-      #toolbar {
-        display: flex;
-        align-items: center;
-        background: #f8f9f9;
-      }
-
-      #total {
-        z-index: 2;
-        pointer-events: none;
-      }
-
-      #total .sum {
-        font-size: 32px;
-        font-weight: 300;
-      }
-
-      #filters-toggle {
+      .count {
         position: absolute;
         top: 4px;
-        right: 16px;
-        display: none;
-        color: var(--primary-color);
-        z-index: 3;
-      }
-
-      #filters-toggle .count {
-        position: absolute;
-        top: 6px;
-        right: 0;
+        right: -4px;
         z-index: 1;
         width: 16px;
         height: 16px;
-        line-height: 16px;
         overflow: hidden;
         text-align: center;
         border-radius: 50%;
-        background: var(--accent-color);
-        color: var(--text-primary-color);
-        font-size: 12px;
+        color: var(--lumo-error-contrast-color);
+        background-color: var(--lumo-error-color);
+        font-family: var(--lumo-font-family);
+        font-size: var(--lumo-font-size-xs);
+        line-height: var(--lumo-line-height-xs);
         transform: scale(0);
-        transition: all 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
+        transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
       }
 
-      #filters-toggle .count[has-filters] {
+      .count[has-filters] {
         transform: scale(1);
       }
 
-      #filters-caption {
-        display: none;
+      .total {
+        line-height: var(--lumo-line-height-xs);
       }
 
-      #buttons {
-        justify-content: space-between;
+      .total .sum {
+        font-weight: 300;
       }
-
-      #done-button {
-        background: var(--primary-color);
-        color: var(--text-primary-color);
-        text-align: center;
-      }
-
-      #clear-button {
-        color: var(--primary-color);
-      }
-
-      @media (max-width: 1124px) {
-        #total {
-          display: none;
-        }
-      }
-
-      @media (min-width: 901px) {
-         :host {
-          height: 0;
-        }
-        #filters {
-          max-height: none !important;
-        }
-        #buttons {
-          position: absolute;
-          left: -248px;
-          width: 234px;
-          text-align: right;
-          padding: 9px 0;
-        }
-        #done-button {
-          display: none;
-        }
-        #clear-button {
-          font-size: 13px;
-          text-transform: none;
-        }
-      }
-
-      @media (max-width: 900px) {
-         :host {
-          flex-direction: column-reverse;
-        }
-        #filters-toggle {
-          display: flex;
-          align-items: center;
-          cursor: pointer;
-        }
-        #filters-toggle span {
-          margin-right: 4px;
-        }
-        #toolbar {
-          height: 48px;
-          padding: 0 16px;
-          flex-shrink: 0;
-        }
-        #total {
-          width: 100%;
-          display: flex;
-          flex-direction: column;
-        }
-        #total>span:first-child {
-          font-size: 12px;
-        }
-        #total .sum {
-          font-size: inherit;
-        }
-        #filters {
-          background: #f8f9f9;
-          max-height: 4px;
-          overflow: auto;
-          transition: max-height 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
-          box-shadow: rgba(0, 0, 0, 0.2) 0px -10px 6px -10px inset;
-        }
-        #buttons {
-          display: flex;
-          margin: 0 0 32px;
-        }
-        #done-button {
-          display: block;
-        }
-         :host([expanded]) #filters-caption {
-          display: block;
-          padding: 0;
-          margin: 16px;
-          font-size: 16px;
-          font-weight: 400;
-        }
-      }
-
-      @media (min-width: 1125px) {
-        #total>span:first-child {
-          @apply --section-title;
-        }
-        #toolbar {
-          display: block;
-        }
-        #total {
-          position: absolute;
-          width: 250px;
-          font-weight: 500;
-          font-size: 18px;
-          line-height: 1.4;
-          padding: 12px 24px;
-        }
-        #total .sum {
-          display: block;
-          text-align: center;
-          padding: 40px 0;
-        }
-      }
-
     </style>
-    <search-filters id="filters">
-      <div id="buttons">
-        <vaadin-button id="clear-button" on-tap="_clearFilters" theme="tertiary">Clear Filters</vaadin-button>
-        <vaadin-button id="done-button" on-tap="_hideFilters" raised>Done</vaadin-button>
-      </div>
-    </search-filters>
 
-    <div id="toolbar">
-      <div id="total">
-        <span>To be reimbursed</span>
-        <span class="sum">$[[totalOwed]]</span>
+    <div class="toolbar" hidden="[[!phone]]">
+      <div class="total">
+        <small>To be reimbursed</small>
+        <div class="sum">$[[totalOwed]]</div>
       </div>
-
-      <div id="filters-toggle" on-tap="_toggleFilters">
+      <vaadin-button theme="tertiary" on-click="_toggleFilters">
+        <iron-icon icon="expense-manager:filters" slot="suffix"></iron-icon>
         <span>Filters</span>
-        <div class="count" has-filters$="[[_hasFilters(appliedFilters)]]">[[appliedFilters]]</div>
-        <paper-icon-button icon="filter-list"></paper-icon-button>
-      </div>
+        <div class="count" slot="suffix" has-filters$="[[_hasFilters(appliedFilters)]]">[[appliedFilters]]</div>
+      </vaadin-button>
     </div>
+
+    <search-filters phone="[[phone]]" tablet="[[tablet]]" id="filters"></search-filters>
   </template>
   <script>
     (function() {
-      class FiltersToolbarElement extends ExpenseManager.ReduxMixin(Polymer.GestureEventListeners(Polymer.Element)) {
-        static get is() { return 'filters-toolbar'; }
+      /**
+       * @memberof ExpenseManager
+       * @mixes ExpenseManager.ResponsiveMixin
+       */
+      class FiltersToolbarElement extends ExpenseManager.ReduxMixin(ExpenseManager.ResponsiveMixin(Polymer.Element)) {
+        static get is() {
+          return 'filters-toolbar';
+        }
 
         static get properties() {
           return {
+            /**
+             * Whether the filters block is expanded.
+             */
+            expanded: {
+              type: Boolean,
+              value: false,
+              statePath: 'filters.filtersVisible'
+            },
+
+            /**
+             * The total owed amount.
+             */
             totalOwed: {
               type: Number,
               statePath: ExpenseManager.select.total
             },
-            expanded: {
-              type: Boolean,
-              value: false,
-              statePath: 'filters.filtersVisible',
-              observer: '_updateVisibilty'
-            },
+
+            /**
+             * The count of applied filters.
+             */
             appliedFilters: {
               type: Number,
               statePath: ExpenseManager.select.appliedFilters
-            }
+            },
           };
+        }
+
+        static get observers() {
+          return [
+            '_updateVisibility(phone, tablet, expanded)'
+          ];
         }
 
         _toggleFilters() {
           this.dispatch('toggleFilters');
         }
 
+        /**
+         * @param {string} appliedFilters a number of applied filters
+         * @return {boolean} true if there s at least one filter applied.
+         */
         _hasFilters(appliedFilters) {
           return appliedFilters > 0;
         }
 
-        _updateVisibilty() {
-          if (this.expanded) {
-            requestAnimationFrame(() => this.$.filters.style.maxHeight = this.$.filters.scrollHeight + 'px');
+        /**
+         * @param {string} phone whether the screen matches the phone breakpoint.
+         * @param {string} tablet whether the screen matches the tablet breakpoint.
+         * @param {string} expanded true if the filters block is expanded.
+         */
+        _updateVisibility(phone, tablet, expanded) {
+          if (phone) {
+            if (expanded) {
+              requestAnimationFrame(() => this.$.filters.style.maxHeight = this.$.filters.scrollHeight + 'px');
+            } else {
+              this.$.filters.style.maxHeight = '0';
+            }
           } else {
-            this.$.filters.style.maxHeight = '4px';
+            this.$.filters.style.maxHeight = 'none';
           }
-        }
-
-        _hideFilters() {
-          this.dispatch('hideFilters');
-        }
-
-        _clearFilters() {
-          this.dispatch('clearFilters');
         }
       }
 
