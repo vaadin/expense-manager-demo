@@ -13,13 +13,15 @@
     "eslint": "^4.0.0",
     "eslint-config-vaadin": "latest",
     "eslint-plugin-html": "^4.0.0",
+    "polymer-cli": "^1.6.0",
     "stylelint": "^8.0.0",
     "stylelint-config-vaadin": "latest"
   },
   "scripts": {
-    "lint": "npm run lint:javascript & npm run lint:css",
+    "lint": "npm run lint:javascript & npm run lint:css & npm run lint:polymer",
     "lint:css": "stylelint src/*.html",
     "lint:javascript": "eslint . --ext html --ignore-path .gitignore",
+    "lint:polymer": "polymer lint --rules polymer-2 --input src/*.html",
     "test": "polymer test",
     "test:integration": "polymer build # test that psk builds without error with the CLI"
   },
