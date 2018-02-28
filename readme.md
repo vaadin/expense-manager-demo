@@ -22,6 +22,32 @@ The application uses a [Service Worker](https://developers.google.com/web/fundam
 
 5. Go to http://127.0.0.1:8081
 
+## Linting
+
+### Run all lint tasks in parallel
+
+```
+npm run lint
+```
+
+### Run ESLint for JS
+
+```
+npm run lint:javascript
+```
+
+### Run Stylelint for CSS
+
+```
+npm run lint:css
+```
+
+### Run polymer-linter
+
+```
+npm run lint:polymer
+```
+
 ## Docker container for production
 You can use the included `Dockerfile` to deploy the built app using [prpl-server](https://github.com/Polymer/prpl-server-node).
 
