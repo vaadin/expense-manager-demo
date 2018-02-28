@@ -4,6 +4,7 @@
 <link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
 <link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
 <link rel="import" href="../bower_components/vaadin-dialog/vaadin-dialog.html">
+<link rel="import" href="../bower_components/vaadin-text-field/vaadin-text-area.html">
 <link rel="import" href="../bower_components/vaadin-text-field/vaadin-text-field.html">
 <link rel="import" href="../bower_components/vaadin-upload/vaadin-upload.html">
 
@@ -37,6 +38,10 @@
             margin-right: var(--lumo-space-m);
           }
 
+          vaadin-text-area {
+            min-height: 125px;
+          }
+
           @media (max-width: 900px) {
             [part~="overlay"] {
               align-self: stretch;
@@ -68,7 +73,7 @@
               <div slot="prefix">$</div>
             </vaadin-text-field>
             <vaadin-date-picker name="date" label="Date" value="{{_expense.date}}" required></vaadin-date-picker>
-            <vaadin-text-field name="comment" label="Comment" value="{{_expense.comment}}"></vaadin-text-field>
+            <vaadin-text-area name="comment" label="Comment" value="{{_expense.comment}}"></vaadin-text-area>
           </div>
           <vaadin-upload id="upload" accept="image/*" max-files="1" on-upload-before="_handleUpload">
             <div class="file-list">
