@@ -15,24 +15,22 @@
         flex-direction: column;
       }
 
-      #list {
+      expenses-list {
         flex: 1;
         height: 100%;
       }
 
-      #history-panel {
-        border-left: 1px solid #ddd;
+      history-panel {
         box-shadow: var(--lumo-shade-50pct) 6px 0 16px -10px inset;
         z-index: 1;
       }
 
-      #history-panel[tablet] {
+      history-panel[tablet] {
         box-shadow: var(--lumo-shade-50pct) 0 6px 16px -10px inset;
       }
-
     </style>
-    <expenses-list id="list"></expenses-list>
-    <history-panel id="history-panel" phone="[[phone]]" tablet="[[tablet]]"></history-panel>
+    <expenses-list></expenses-list>
+    <history-panel phone="[[phone]]" tablet="[[tablet]]"></history-panel>
   </template>
   <script>
     (function() {
