@@ -5,13 +5,11 @@
   "main": "service-worker.js",
   "dependencies": {
     "redux": "^3.7.2",
-    "redux-thunk": "^2.2.0",
     "reselect": "^3.0.1"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-gh-pages": "^0.5.4",
-    "http2-push-manifest": "^1.0.0",
     "eslint": "^4.0.0",
     "eslint-config-vaadin": "latest",
     "eslint-plugin-html": "^4.0.0",
