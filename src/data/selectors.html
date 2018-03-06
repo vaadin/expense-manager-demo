@@ -66,12 +66,47 @@
       return numFilters;
     });
 
+    const history = Reselect.createSelector([getExpenses], expenses => {
+      const historyData = [];
+      function findMonth(rawDate, historyData) {
+        let date = new Date(rawDate);
+        let month;
+
+        historyData.forEach(m => {
+          if (m.month === date.getMonth() && m.year === date.getFullYear()) {
+            month = m;
+          }
+        });
+
+        if (!month) {
+          month = {
+            month: date.getMonth(),
+            year: date.getFullYear(),
+            total: 0
+          };
+          historyData.push(month);
+        }
+        return month;
+      }
+
+      const oneYearAgo = new Date();
+      oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+      expenses.filter(expense => {
+        return new Date(expense.date) > oneYearAgo;
+      }).forEach(expense => {
+        findMonth(expense.date, historyData).total += expense.total;
+      });
+
+      return historyData;
+    });
+
     window.ExpenseManager = window.ExpenseManager || {};
     window.ExpenseManager.select = {
       expenses,
       merchants,
       appliedFilters,
-      total
+      total,
+      history
     };
   })();
 

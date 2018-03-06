@@ -2,10 +2,25 @@
 <link rel="import" href="../bower_components/vaadin-lumo-styles/color.html">
 <link rel="import" href="../bower_components/vaadin-lumo-styles/spacing.html">
 <link rel="import" href="../bower_components/vaadin-lumo-styles/typography.html">
+<link rel="import" href="../bower_components/vaadin-charts/vaadin-chart.html">
 <link rel="import" href="data/store.html">
 
 <link rel="import" href="responsive-mixin.html">
 <link rel="import" href="shared-styles.html">
+
+<dom-module id="expense-manager-charts-styles" theme-for="vaadin-chart">
+  <template>
+    <style include="vaadin-chart-default-theme">
+      .highcharts-background {
+        fill: transparent;
+      }
+
+      .highcharts-axis-labels {
+        font-size: 1.1em;
+      }
+    </style>
+  </template>
+</dom-module>
 
 <dom-module id="history-panel">
   <template>
@@ -59,7 +74,7 @@
 
       <div class="chart">
         <h2 class="section-title">Last 12 Months in total</h2>
-        <h3> Vaadin Charts will be displayed in Pro version </h3>
+        <vaadin-chart></vaadin-chart>
       </div>
     </div>
   </template>
@@ -83,8 +98,61 @@
             totalOwed: {
               type: Number,
               statePath: ExpenseManager.select.total
+            },
+
+            /**
+             * Array of objects describing amount spent each month
+             */
+            historyData: {
+              type: Array,
+              statePath: ExpenseManager.select.history
             }
           };
+        }
+
+        static get observers() {
+          return [
+            'update(historyData, tablet)'
+          ];
+        }
+
+        /**
+         * Updates the charts layout and data drawn.
+         *
+         * @param {Object[]} historyData array of objects ({month: number, year: number, total: number}) describing amount spent each month
+         * @param {boolean} current state of tablet attribute; is charts displayed on tablet
+         */
+        update(historyData, tablet) {
+          debugger;
+          const seriesType = (tablet) ? 'column' : 'bar';
+
+          function getHistoryLabel(item, index) {
+            const monthArray = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return (index === 0 || item.month === 0 || item.month === 11) ? item.year + ' ' + monthArray[item.month] : monthArray[item.month];
+          }
+
+          this.shadowRoot.querySelector('vaadin-chart').update({
+            legend: {
+              enabled: false
+            },
+            xAxis: {
+              categories: historyData.map(getHistoryLabel),
+            },
+            yAxis: {
+              title: {
+                text: null
+              }
+            },
+            tooltip: {
+              formatter: function () {
+                return '$' + this.y.toFixed(2);
+              }
+            },
+            series: [{
+              type: seriesType,
+              data: historyData.map(month => month.total)
+            }]
+          }, true);
         }
       }
 
