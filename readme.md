@@ -1,6 +1,6 @@
 # Progressive Web App with full offline capabilities
 
-This is an example project for how you can build a [Progressive Web Application](https://developers.google.com/web/progressive-web-apps/) with [Polymer](https://www.polymer-project.org/) and [Vaadin elements](https://vaadin.com/elements).
+This is an example project for how you can build a [Progressive Web Application](https://developers.google.com/web/progressive-web-apps/) with [Polymer](https://www.polymer-project.org/) and [Vaadin components](https://vaadin.com/components).
 
 
 The application uses a [Service Worker](https://developers.google.com/web/fundamentals/primers/service-workers/) to cache the [Application Shell](https://developers.google.com/web/fundamentals/architecture/app-shell). A [Web App Manifest file](https://developers.google.com/web/fundamentals/web-app-manifest/) ensures that the browser identifies our app as a Progressive Web Application and offers the user to install the application through an install banner.

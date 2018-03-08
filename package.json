@@ -1,7 +1,7 @@
 {
   "name": "vaadin-expense-manager",
   "version": "3.0.0",
-  "description": "Sample PWA showcasing Vaadin Elements",
+  "description": "Sample PWA showcasing Vaadin components",
   "main": "service-worker.js",
   "dependencies": {
     "redux": "^3.7.2",
