@@ -78,7 +78,7 @@
           <vaadin-upload id="upload" accept="image/*" max-files="1" on-upload-before="_handleUpload">
             <div class="file-list">
               <div class="receipt-wrapper">
-                <img src$="[[_expense.receipt]]" alt="Receipt" hidden$="[[!_expense.receipt]]">
+                <img src$="[[_receiptSrc(_expense.receipt)]]" alt="Receipt" hidden$="[[!_expense.receipt]]">
               </div>
             </div>
           </vaadin-upload>
@@ -136,6 +136,10 @@
              */
             _errorText: String
           };
+        }
+
+        _receiptSrc(url) {
+          return /^(https?|data):/i.test(url) ? url : (this.rootPath + url);
         }
 
         /**
