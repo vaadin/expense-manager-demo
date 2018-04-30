@@ -78,7 +78,7 @@
           <vaadin-upload id="upload" accept="image/*" max-files="1" on-upload-before="_handleUpload">
             <div class="file-list">
               <div class="receipt-wrapper">
-                <img src$="[[_expense.receipt]]" alt="Receipt" hidden$="[[!_expense.receipt]]">
+                <img src$="[[_receiptSrc]]" alt="Receipt" hidden$="[[!_expense.receipt]]">
               </div>
             </div>
           </vaadin-upload>
@@ -134,8 +134,21 @@
             /**
              * The text to show in case if some fields are invalid.
              */
-            _errorText: String
+            _errorText: String,
+
+            /**
+             * Url with the recepit image
+             */
+            _receiptSrc: String
           };
+        }
+
+        static get observers() {
+          return ['_receiptChanged(_expense.receipt)'];
+        }
+
+        _receiptChanged(url) {
+          this._receiptSrc = !/^(https?|data):/i.test(url) ? this.rootPath + url : url;
         }
 
         /**
