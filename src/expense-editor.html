@@ -38,6 +38,10 @@
             min-height: 125px;
           }
 
+          img {
+            max-width: 350px;
+          }
+
           @media (max-width: 900px) {
             [part~="overlay"] {
               align-self: stretch;
@@ -74,7 +78,7 @@
           <vaadin-upload id="upload" accept="image/*" max-files="1" on-upload-before="_handleUpload">
             <div class="file-list">
               <div class="receipt-wrapper">
-                <img src$="[[rootPath]][[_expense.receipt]]" alt="Receipt" hidden$="[[!_expense.receipt]]">
+                <img src$="[[_expense.receipt]]" alt="Receipt" hidden$="[[!_expense.receipt]]">
               </div>
             </div>
           </vaadin-upload>
