@@ -5,6 +5,9 @@ module.exports = {
     'bower_components/webcomponentsjs/webcomponents-loader.js',
     'images/default-receipt.png'
   ],
+  importScripts: [
+    'src/push/sw-push-import.js'
+  ],
   runtimeCaching: [{
     urlPattern: /https:\/\/fonts\.googleapis\.com.*/,
     handler: 'cacheFirst'

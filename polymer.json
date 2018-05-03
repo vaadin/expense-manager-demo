@@ -17,6 +17,10 @@
   "autoBasePath": true,
   "builds": [
     {
+      "name": "es6-unbundled",
+      "preset": "es6-unbundled"
+    },
+    {
       "name": "es5-bundled",
       "preset": "es5-bundled"
     },
