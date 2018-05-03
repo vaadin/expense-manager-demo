@@ -25,20 +25,31 @@
     };
 
     const saveExpense = (expense) => {
-      if (expense.id) {
-        return {
-          type: 'UPDATE_EXPENSE',
-          expense
-        };
-      } else {
-        return {
-          type: 'ADD_EXPENSE',
-          expense: Object.assign({}, expense, {
-            id: uuid(),
-            status: 'new'
-          })
-        };
+      const action = expense.id ? {
+        type: 'UPDATE_EXPENSE',
+        expense
+      } : {
+        type: 'ADD_EXPENSE',
+        expense: Object.assign({}, expense, {
+          id: uuid(),
+          status: 'new'
+        })
+      };
+
+      if (action.expense.status == 'new') {
+        ExpenseManager.Push.notifyNewExpenseToBackend(
+          Object.assign({}, action.expense, {
+            receipt: null
+          }));
       }
+      return action;
+    };
+
+    const updateStatus = (expense) => {
+      return {
+        type: 'UPDATE_STATUS',
+        expense
+      };
     };
 
     const cancelEdit = () => {
@@ -79,6 +90,7 @@
       editExpense,
       deleteExpense,
       saveExpense,
+      updateStatus,
       cancelEdit,
       clearFilters,
       toggleFilters,

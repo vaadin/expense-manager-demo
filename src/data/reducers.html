@@ -52,6 +52,16 @@
             selectedExpense: undefined
           });
 
+        case 'UPDATE_STATUS':
+          return Object.assign({}, state, {
+            expenses: state.expenses.map(e => {
+              if (e.id === action.expense.id) {
+                e.status = action.expense.status;
+              }
+              return e;
+            }),
+          });
+
         case 'ADD_EXPENSE':
           return Object.assign({}, state, {
             expenses: state.expenses.concat(action.expense),

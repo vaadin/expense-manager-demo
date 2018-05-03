@@ -8,6 +8,7 @@
 <link rel="import" href="date-helpers.html">
 <link rel="import" href="data/store.html">
 <link rel="import" href="icons.html">
+<script src="push/lib-push.js" charset="utf-8"></script>
 
 <dom-module id="expenses-list">
   <template>
@@ -174,6 +175,17 @@
               observer: '_activeItemChanged'
             }
           };
+        }
+
+        ready() {
+          super.ready();
+          ExpenseManager.Push.requestPushPermission(status => {
+            ExpenseManager.Push.subscribePushUser(subscription => {
+              ExpenseManager.Push.setPushListener(message => {
+                this.dispatch('updateStatus', message.data);
+              })
+            });
+          });
         }
 
         _showExpenseEditor() {
