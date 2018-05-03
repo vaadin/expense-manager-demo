@@ -107,7 +107,7 @@
          * Fills the list of checked options.
          */
         _updateValue() {
-          this.value = [...this.root.querySelectorAll('vaadin-checkbox')]
+          this.value = [...this.shadowRoot.querySelectorAll('vaadin-checkbox')]
             .filter(cb => cb.checked)
             .map(cb => cb.dataset.value);
         }
