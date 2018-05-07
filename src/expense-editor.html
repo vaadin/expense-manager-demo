@@ -189,7 +189,8 @@
          * @return {HTMLElement} a list of form elements.
          */
         _getDialogChild(selector) {
-          return this.$.dialog.$.overlay.$.content.shadowRoot.querySelector(selector);
+          return this.$.dialog.$.overlay.content &&
+                    this.$.dialog.$.overlay.content.querySelector(selector);
         }
 
         /**
