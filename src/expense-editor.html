@@ -160,24 +160,38 @@
           return /^(https?|data):/i.test(url) ? url : (this.rootPath + url);
         }
 
+        ready() {
+          super.ready();
+          this.$.dialog.$.overlay.removeEventListener('animationend', e => _onOverlayAnimationEnd(e));
+        }
+
+        _onOverlayAnimationEnd(e) {
+          if (this.$.dialog.opened) {
+            // Ensure that the scroll is returned to top on mobile
+            this.$.dialog.scrollTop = 0;
+          } else {
+            // unassign expense after dialog close animation
+            this._expense = null;
+          }
+        }
+
         /**
          * @param {Object|null} srcExpense the selected expense, if any.
          */
         _expenseChanged(srcExpense) {
+          // assign expense before dialog is opened
           if (srcExpense) {
             this._expense = Object.assign({}, srcExpense);
+          }
 
+          this.$.dialog.opened = !!srcExpense;
+
+          if (srcExpense) {
+            // reset upload after dialog is opened
             const upload = this._getDialogChild('vaadin-upload');
             upload.set('i18n.dropFiles.one', 'Drop receipt here...');
             upload.set('i18n.addFiles.one', 'Select receipt');
             upload.files = [];
-
-            // Ensure that the scroll is returned to top on mobile
-            setTimeout(() => {
-              this.$.dialog.scrollTop = 0;
-            }, 0);
-          } else {
-            this._expense = null;
           }
         }
 
