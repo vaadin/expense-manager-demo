@@ -5,7 +5,7 @@
 <link rel="import" href="nav-bar.html">
 <link rel="import" href="expense-editor.html">
 <link rel="import" href="info-dialog.html">
-<link rel="import" href="content-panel.html">
+<link rel="import" href="expenses-list.html">
 <link rel="import" href="filters-toolbar.html">
 <link rel="import" href="data/store.html">
 <link rel="import" href="responsive-mixin.html">
@@ -45,7 +45,7 @@
         }
       }
 
-      content-panel {
+      expenses-list {
         flex: 1;
       }
     </style>
@@ -57,7 +57,7 @@
 
       <div class="content">
         <filters-toolbar phone="[[phone]]" tablet="[[tablet]]"></filters-toolbar>
-        <content-panel phone="[[phone]]" tablet="[[tablet]]"></content-panel>
+        <expenses-list></expenses-list>
       </div>
     </app-header-layout>
 
