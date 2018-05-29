@@ -22,12 +22,17 @@
 <dom-module id="dialog-styles" theme-for="vaadin-dialog-overlay">
   <template>
     <style include="lumo-typography">
-      h2 {
-        margin-top: 0;
+      :host {
+        display: flex;
       }
 
-      .buttons {
-        margin-top: var(--lumo-space-l);
+      [part="overlay"] {
+        display: flex;
+      }
+
+      [part="content"] {
+        display: flex;
+        flex-direction: column;
       }
     </style>
   </template>

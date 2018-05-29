@@ -18,16 +18,34 @@
           .wrapper {
             display: flex;
             margin-top: var(--lumo-space-s);
+            overflow: auto;
+            flex: 1;
+          }
+
+          h2 {
+            margin: 0;
           }
 
           #form {
             min-width: 300px;
             display: flex;
             flex-direction: column;
+            flex-shrink: 0;
           }
 
           #upload {
             margin-left: var(--lumo-space-l);
+            flex-shrink: 0;
+            overflow: auto;
+          }
+
+          .buttons {
+            margin-top: var(--lumo-space-xs);
+            display: flex;
+          }
+
+          .buttons .space {
+            flex: 1;
           }
 
           .buttons vaadin-button {
@@ -62,10 +80,9 @@
           }
         </style>
 
-        <h2>[[_getCaption(_expense)]]</h2>
-
         <div class="wrapper">
           <div id="form">
+            <h2>[[_getCaption(_expense)]]</h2>
             <iron-a11y-keys keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
             <vaadin-combo-box name="merchant" items="[[_merchants]]" value="{{_expense.merchant}}"
               label="Merchant" allow-custom-value required></vaadin-combo-box>
@@ -87,6 +104,7 @@
         <div class="buttons">
           <vaadin-button on-click="_save" theme="primary" class="save-button">Save</vaadin-button>
           <vaadin-button on-click="close" class="cancel-button">Cancel</vaadin-button>
+          <div class="space"></div>
           <vaadin-button on-click="_delete" id="delete" theme="tertiary error" class="delete-button" hidden="[[!_showDelete(_expense)]]">Delete</vaadin-button>
         </div>
         <span>[[_errorText]]</span>
