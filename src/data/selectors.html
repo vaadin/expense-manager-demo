@@ -28,10 +28,10 @@
             return status && status.length > 0 ? status.indexOf(exp.status) >= 0 : false;
           })
           .filter(exp => {
-            return start && helpers.isValid(start) ? helpers.isAfter(exp.date, start) : true;
+            return helpers.isValid(start) ? helpers.isAfterOrEqual(exp.date, start) : true;
           })
           .filter(exp => {
-            return end && helpers.isValid(end) ? helpers.isBefore(exp.date, end) : true;
+            return helpers.isValid(end) ? helpers.isBeforeOrEqual(exp.date, end) : true;
           });
       });
 
