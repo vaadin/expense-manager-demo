@@ -7,12 +7,12 @@
       return [m, d, y].join('/');
     },
 
-    isAfter(first, second) {
-      return new Date(first) > new Date(second);
+    isAfterOrEqual(first, second) {
+      return new Date(first) >= new Date(second);
     },
 
-    isBefore(first, second) {
-      return new Date(first) < new Date(second);
+    isBeforeOrEqual(first, second) {
+      return new Date(first) <= new Date(second);
     },
 
     isValid(date) {
