@@ -68,11 +68,11 @@
           <div id="form">
             <iron-a11y-keys keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
             <vaadin-combo-box name="merchant" items="[[_merchants]]" value="{{_expense.merchant}}"
-              label="Merchant" allow-custom-value required></vaadin-combo-box>
-            <vaadin-text-field name="total" value="{{_expense.total}}" label="Total" pattern="[0-9]+[.]?[0-9]*" required>
+              label="Merchant" allow-custom-value required readonly$="[[!_isNew(_expense)]]"></vaadin-combo-box>
+            <vaadin-text-field name="total" value="{{_expense.total}}" label="Total" pattern="[0-9]+[.]?[0-9]*" required readonly$="[[!_isNew(_expense)]]">
               <div slot="prefix">$</div>
             </vaadin-text-field>
-            <vaadin-date-picker name="date" label="Date" value="{{_expense.date}}" required></vaadin-date-picker>
+            <vaadin-date-picker name="date" label="Date" value="{{_expense.date}}" required readonly$="[[!_isNew(_expense)]]"></vaadin-date-picker>
             <vaadin-text-area name="comment" label="Comment" value="{{_expense.comment}}"></vaadin-text-area>
           </div>
           <vaadin-upload id="upload" accept="image/*" max-files="1" on-upload-before="_handleUpload">
@@ -210,6 +210,16 @@
          */
         _showDelete(expense) {
           return expense && !(expense.id && expense.status === 'new');
+        }
+
+        /**
+         * Specifies whether a expense is new
+         *
+         * @param {{id:string, status:string}=} expense optional. The expense to edit.
+         * @return {boolean} true if expense has been reimbursed or is in process
+         */
+        _isNew(expense) {
+          return !expense || !expense.id || expense.status === 'new';
         }
 
         /**
