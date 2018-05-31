@@ -205,11 +205,11 @@
         /**
          * Specifies whether the "delete" button should be displayed or not.
          *
-         * @param {{id:string, status:string}=} expense optional. The expense to edit.
+         * @param {{id:string}=} expense optional. The expense to edit.
          * @return {boolean} true if expense has been changed.
          */
         _showDelete(expense) {
-          return expense && !(expense.id && expense.status === 'new');
+          return expense && !expense.id;
         }
 
         /**
