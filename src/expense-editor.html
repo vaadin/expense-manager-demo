@@ -13,11 +13,17 @@
 <dom-module id="expense-editor">
   <template>
     <style>
+      #container {
+        display: flex;
+        flex-direction: column;
+      }
+
       .wrapper {
         display: flex;
         margin-top: var(--lumo-space-s);
         overflow: auto;
-        flex: 1;
+         /* Workaround for ie11 as it's not possible to properly use flex-shrink */
+        max-height: calc(100vh - 2 * var(--lumo-space-m) - 100px - 3 * var(--lumo-space-xs) - var(--lumo-size-m));
       }
 
       h2 {
@@ -58,6 +64,12 @@
         max-width: 350px;
       }
 
+      @media (max-width: 600px), (max-height: 600px) {
+        .wrapper {
+          max-height: inherit;
+        }
+      }
+
       @media (max-width: 900px) {
         [part~="overlay"] {
           align-self: stretch;
@@ -79,34 +91,36 @@
     </style>
     <vaadin-dialog id="dialog" opened="[[_isDialogOpened(_expense)]]">
       <template>
-        <div class="wrapper">
-          <div id="form">
-            <h2>[[_getCaption(_expense)]]</h2>
-            <iron-a11y-keys keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
-            <vaadin-combo-box name="merchant" items="[[_merchants]]" value="{{_expense.merchant}}"
-              label="Merchant" allow-custom-value required readonly$="[[!_isNew(_expense)]]"></vaadin-combo-box>
-            <vaadin-text-field name="total" value="{{_expense.total}}" label="Total" pattern="[0-9]+[.]?[0-9]*" required readonly$="[[!_isNew(_expense)]]">
-              <div slot="prefix">$</div>
-            </vaadin-text-field>
-            <vaadin-date-picker name="date" label="Date" value="{{_expense.date}}" required readonly$="[[!_isNew(_expense)]]"></vaadin-date-picker>
-            <vaadin-text-area name="comment" label="Comment" value="{{_expense.comment}}"></vaadin-text-area>
-          </div>
-          <vaadin-upload id="upload" accept="image/*" max-files="1" on-upload-before="_handleUpload">
-            <div class="file-list">
-              <div class="receipt-wrapper">
-                <img src$="[[_receiptSrc(_expense.receipt)]]" alt="Receipt" hidden$="[[!_expense.receipt]]">
-              </div>
+        <div id="container">
+          <div class="wrapper">
+            <div id="form">
+              <h2>[[_getCaption(_expense)]]</h2>
+              <iron-a11y-keys keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
+              <vaadin-combo-box name="merchant" items="[[_merchants]]" value="{{_expense.merchant}}"
+                label="Merchant" allow-custom-value required readonly$="[[!_isNew(_expense)]]"></vaadin-combo-box>
+              <vaadin-text-field name="total" value="{{_expense.total}}" label="Total" pattern="[0-9]+[.]?[0-9]*" required readonly$="[[!_isNew(_expense)]]">
+                <div slot="prefix">$</div>
+              </vaadin-text-field>
+              <vaadin-date-picker name="date" label="Date" value="{{_expense.date}}" required readonly$="[[!_isNew(_expense)]]"></vaadin-date-picker>
+              <vaadin-text-area name="comment" label="Comment" value="{{_expense.comment}}"></vaadin-text-area>
             </div>
-          </vaadin-upload>
-        </div>
+            <vaadin-upload id="upload" accept="image/*" max-files="1" on-upload-before="_handleUpload">
+              <div class="file-list">
+                <div class="receipt-wrapper">
+                  <img src$="[[_receiptSrc(_expense.receipt)]]" alt="Receipt" hidden$="[[!_expense.receipt]]">
+                </div>
+              </div>
+            </vaadin-upload>
+          </div>
 
-        <div class="buttons">
-          <vaadin-button on-click="_save" theme="primary" class="save-button">Save</vaadin-button>
-          <vaadin-button on-click="close" class="cancel-button">Cancel</vaadin-button>
-          <div class="space"></div>
-          <vaadin-button on-click="_delete" id="delete" theme="tertiary error" class="delete-button" hidden="[[!_showDelete(_expense)]]">Delete</vaadin-button>
+          <div class="buttons">
+            <vaadin-button on-click="_save" theme="primary" class="save-button">Save</vaadin-button>
+            <vaadin-button on-click="close" class="cancel-button">Cancel</vaadin-button>
+            <div class="space"></div>
+            <vaadin-button on-click="_delete" id="delete" theme="tertiary error" class="delete-button" hidden="[[!_showDelete(_expense)]]">Delete</vaadin-button>
+          </div>
+          <span>[[_errorText]]</span>
         </div>
-        <span>[[_errorText]]</span>
       </template>
     </vaadin-dialog>
   </template>
