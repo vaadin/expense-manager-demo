@@ -12,74 +12,73 @@
 
 <dom-module id="expense-editor">
   <template>
+    <style>
+      .wrapper {
+        display: flex;
+        margin-top: var(--lumo-space-s);
+        overflow: auto;
+        flex: 1 1 auto;
+      }
+
+      h2 {
+        margin: 0;
+      }
+
+      #form {
+        min-width: 300px;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+      }
+
+      #upload {
+        margin-left: var(--lumo-space-l);
+        flex-shrink: 0;
+        overflow: auto;
+      }
+
+      .buttons {
+        margin-top: var(--lumo-space-xs);
+        display: flex;
+      }
+
+      .buttons .space {
+        flex: 1;
+      }
+
+      .buttons vaadin-button {
+        margin-right: var(--lumo-space-m);
+      }
+
+      vaadin-text-area {
+        min-height: 125px;
+      }
+
+      img {
+        max-width: 350px;
+      }
+
+      @media (max-width: 900px) {
+        [part~="overlay"] {
+         align-self: stretch;
+         border-radius: 0;
+        }
+
+        #upload {
+          margin: 10px 0;
+        }
+
+        .wrapper {
+          flex-direction: column;
+        }
+
+        .receipt-wrapper img {
+          max-width: 100%;
+        }
+      }
+    </style>
     <vaadin-dialog id="dialog" opened="[[_isDialogOpened(_expense)]]">
       <template>
-        <style>
-          .wrapper {
-            display: flex;
-            margin-top: var(--lumo-space-s);
-            overflow: auto;
-            flex: 1;
-          }
-
-          h2 {
-            margin: 0;
-          }
-
-          #form {
-            min-width: 300px;
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
-          }
-
-          #upload {
-            margin-left: var(--lumo-space-l);
-            flex-shrink: 0;
-            overflow: auto;
-          }
-
-          .buttons {
-            margin-top: var(--lumo-space-xs);
-            display: flex;
-          }
-
-          .buttons .space {
-            flex: 1;
-          }
-
-          .buttons vaadin-button {
-            margin-right: var(--lumo-space-m);
-          }
-
-          vaadin-text-area {
-            min-height: 125px;
-          }
-
-          img {
-            max-width: 350px;
-          }
-
-          @media (max-width: 900px) {
-            [part~="overlay"] {
-              align-self: stretch;
-              border-radius: 0;
-            }
-
-            #upload {
-              margin: 10px 0;
-            }
-
-            .wrapper {
-              flex-direction: column;
-            }
-
-            .receipt-wrapper img {
-              max-width: 100%;
-            }
-          }
-        </style>
-
         <div class="wrapper">
           <div id="form">
             <h2>[[_getCaption(_expense)]]</h2>
