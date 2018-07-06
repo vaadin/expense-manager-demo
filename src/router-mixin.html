@@ -1,0 +1,81 @@
+<link rel="import" href="../bower_components/polymer/lib/utils/import-href.html">
+<link rel="import" href="data/store.html">
+<script src="../node_modules/@vaadin/router/dist/vaadin-router.umd.min.js"></script>
+
+<script>
+  (function() {
+    'use strict';
+
+    window.ExpenseManager = window.ExpenseManager || {};
+
+    const {Router} = window.Vaadin;
+
+    /**
+    * @polymerMixin
+    * @memberof ExpenseManager
+    * @param {HTMLElement} subclass
+    * @return {HTMLElement}
+    */
+    ExpenseManager.RouterMixin = subclass => class RouterMixin extends ExpenseManager.ReduxMixin(subclass) {
+      static get properties() {
+        return {
+          /**
+           * Whether the user is authenticated or not.
+           */
+          authenticated: {
+            type: Boolean,
+            statePath: 'uiState.authenticated',
+            observer: '_authenticatedChanged'
+          },
+        };
+      }
+
+      _loadBundle(src) {
+        Polymer.importHref(
+          this.rootPath + src,
+          null,
+          err => {
+            throw new Error('Bundle not found: ' + src);
+          },
+          true
+        );
+      }
+
+      _authenticatedChanged(value, oldValue) {
+        if (value && oldValue === false) {
+          Router.go('/');
+        }
+        if (oldValue && value === false) {
+          Router.go('/login');
+        }
+      }
+
+      _initRouter(outlet) {
+        const router = new Router(outlet);
+
+        router.setRoutes([
+          {
+            path: '/',
+            component: 'overview-page',
+            action: (location, commands) => {
+              if (!this.authenticated) {
+                return commands.redirect('/login');
+              }
+              this._loadBundle('src/overview-page.html');
+            }
+          },
+          {
+            path: '/login',
+            component: 'login-page',
+            action: (location, commands) => {
+              if (this.authenticated) {
+                return commands.redirect('/');
+              }
+              this._loadBundle('src/login-page.html');
+            }
+          }
+        ]);
+      }
+    };
+  })();
+</script>

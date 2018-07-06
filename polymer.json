@@ -2,6 +2,7 @@
   "entrypoint": "index.html",
   "shell": "src/expense-app.html",
   "fragments": [
+    "src/login-page.html",
     "src/overview-page.html"
   ],
   "sources": [
