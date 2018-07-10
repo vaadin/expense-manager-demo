@@ -117,10 +117,21 @@
           };
         }
 
+        ready() {
+          super.ready();
+
+          // apply the theme configuration
+          this.setAttribute('theme', 'dark');
+
+          // force CSS custom properties in IE11
+          this.updateStyles();
+        }
+
         _logIn() {
           this.dispatch('login');
         }
       }
+
       customElements.define(LoginPageElement.is, LoginPageElement);
 
       /**

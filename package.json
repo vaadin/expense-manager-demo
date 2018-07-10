@@ -4,6 +4,7 @@
   "description": "Sample PWA showcasing Vaadin components",
   "main": "service-worker.js",
   "dependencies": {
+    "@vaadin/router": "^1.0.0-rc.0",
     "redux": "^3.7.2",
     "reselect": "^3.0.1"
   },
