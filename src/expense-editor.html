@@ -89,7 +89,7 @@
               <div slot="prefix">$</div>
             </vaadin-text-field>
             <vaadin-date-picker name="date" label="Date" value="{{_expense.date}}" required readonly$="[[!_isNew(_expense)]]"></vaadin-date-picker>
-            <vaadin-text-area name="comment" label="Comment" value="{{_expense.comment}}"></vaadin-text-area>
+            <vaadin-text-area name="comment" label="Comment" value="{{_expense.comment}}" on-keydown="_onCommentKeydown"></vaadin-text-area>
           </div>
           <vaadin-upload id="upload" accept="image/*" max-files="1" on-upload-before="_handleUpload">
             <div class="file-list">
@@ -153,6 +153,13 @@
              */
             _errorText: String
           };
+        }
+
+        _onCommentKeydown(e) {
+          if (e.keyCode === 13) {
+            // Prevent enter key in the text area from saving the form
+            e.stopPropagation();
+          }
         }
 
         _receiptSrc(url) {
