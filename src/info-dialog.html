@@ -27,7 +27,8 @@
         </p>
 
         <div class="buttons">
-          <vaadin-button theme="primary" on-click="_close">Got it!</vaadin-button>
+          <vaadin-button theme="primary" on-click="_close">Close</vaadin-button>
+          <vaadin-button theme="tertiary" on-click="_installApp" disabled="[[!_canInstallApp]]">Install app</vaadin-button>
         </div>
 
       </template>
@@ -51,9 +52,19 @@
              */
             open: {
               type: Boolean,
-              statePath: 'uiState.infoDialogVisible'
+              statePath: 'uiState.infoDialogVisible',
+              observer: '_openChanged'
+            },
+
+            _canInstallApp: {
+              type: Boolean,
+              value: false
             }
           };
+        }
+
+        _openChanged(open) {
+          this._canInstallApp = window.installPromptEvent !== undefined;
         }
 
         /**
@@ -61,6 +72,23 @@
          */
         _close() {
           this.dispatch('hideInfoDialog');
+        }
+
+        _installApp() {
+          // Update the install UI to remove the install button
+          this._canInstallApp = false;
+          // Show the modal add to home screen dialog
+          window.installPromptEvent.prompt();
+          // Wait for the user to respond to the prompt
+          installPromptEvent.userChoice.then((choice) => {
+            if (choice.outcome === 'accepted') {
+              console.log('User accepted the A2HS prompt');
+            } else {
+              console.log('User dismissed the A2HS prompt');
+            }
+            // Clear the saved prompt since it can't be used again
+            window.installPromptEvent = undefined;
+          });
         }
       }
 
