@@ -6,7 +6,7 @@
   "private": true,
   "dependencies": {
     "polymer": "polymer/polymer#^2.0.0",
-    "vaadin-core": "v10.0.5",
+    "vaadin-core": "^10.0.7",
     "vaadin-overlay": "~3.0.0",
     "iron-a11y-keys": "polymerelements/iron-a11y-keys#^2.0.0",
     "app-layout": "polymerelements/app-layout#^2.0.0",
