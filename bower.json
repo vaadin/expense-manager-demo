@@ -6,7 +6,7 @@
   "private": true,
   "dependencies": {
     "polymer": "polymer/polymer#^2.0.0",
-    "vaadin-core": "^14.0.0-beta3",
+    "vaadin-core": "^14.0.0-rc1",
     "iron-a11y-keys": "polymerelements/iron-a11y-keys#^2.0.0",
     "app-layout": "polymerelements/app-layout#^2.0.0",
     "iron-media-query": "polymerelements/iron-media-query#^2.0.0",
